@@ -8,7 +8,7 @@
 #       osx-arm64  → Mac con Apple Silicon (M1/M2/M3/M4)
 #       osx-x64    → Mac Intel
 #   - Las librerías nativas de BASS para macOS (.dylib) deben
-#     estar en: RM-Deep\src\RmsAudioPlayer.UI\runtimes\<rid>\native\
+#     estar en: RadioMaker\src\RadioMaker.UI\runtimes\<rid>\native\
 #     Descargalas de: https://www.un4seen.com
 #   - Los binarios NO quedan firmados desde Windows. En el Mac
 #     hay que correr "first-run.sh" una vez antes de ejecutar.
@@ -37,8 +37,13 @@ $rmWaveTemp    = Join-Path $publishRoot "RMWave-temp-$rid"
 
 $config = "Release"
 
-# --- Validaciones previas ---
-Write-Host "=== Validación de entorno ===" -ForegroundColor Cyan
+# --- Intro y Validaciones previas ---
+Write-Host "*************************************************" -ForegroundColor Yellow
+Write-Host "***     RADIOMAKER + Addons Compiler SHELL    ***" -ForegroundColor Yellow
+Write-Host "*** Copyright (c) 2026 Christian A. Del Monte ***" -ForegroundColor Yellow
+Write-Host "***  creadig@gmail.com / creadig@hotmail.com  ***" -ForegroundColor Yellow
+Write-Host "*************************************************" -ForegroundColor Yellow
+Write-Host "============= Validación de entorno =============" -ForegroundColor Cyan
 Write-Host "Runtime Identifier: $rid"
 
 $csprojRadioMaker = Join-Path $rmDeep "src\RadioMaker.UI\RadioMaker.UI.csproj"
