@@ -4,7 +4,7 @@
 # y empaqueta como .zip.
 #
 # Uso:
-#   1. Copiá este archivo al directorio que contiene RM-Deep, RMVoice y RMWave
+#   1. Copiá este archivo al directorio que contiene RadioMaker, RMVoice y RMWave
 #   2. Abrí PowerShell en ese directorio
 #   3. Ejecutá:  .\build-windows.ps1
 #
@@ -12,7 +12,7 @@
 #   - .NET 8 SDK (o superior) instalado
 #   - Las librerías nativas de BASS para Windows (bass.dll, bassmix.dll,
 #     bass_fx.dll) presentes en:
-#       RM-Deep\src\RmsAudioPlayer.UI\runtimes\win-x64\native\
+#       RadioMaker\src\RadioMaker.UI\runtimes\win-x64\native\
 #     Descargalas de: https://www.un4seen.com
 # ============================================================
 
@@ -32,8 +32,13 @@ $radioMakerOut = Join-Path $publishRoot $outputFolder
 $rmVoiceTemp   = Join-Path $publishRoot "RMVoice-temp-win"
 $rmWaveTemp    = Join-Path $publishRoot "RMWave-temp-win"
 
-# --- Validaciones previas ---
-Write-Host "=== Validación de entorno ===" -ForegroundColor Cyan
+# --- Intro y Validaciones previas ---
+Write-Host "*************************************************" -ForegroundColor Yellow
+Write-Host "***     RADIOMAKER + Addons Compiler SHELL    ***" -ForegroundColor Yellow
+Write-Host "*** Copyright (c) 2026 Christian A. Del Monte ***" -ForegroundColor Yellow
+Write-Host "***  creadig@gmail.com / creadig@hotmail.com  ***" -ForegroundColor Yellow
+Write-Host "*************************************************" -ForegroundColor Yellow
+Write-Host "============= Validación de entorno =============" -ForegroundColor Cyan
 Write-Host "Runtime Identifier: $rid"
 
 $csprojRadioMaker = Join-Path $rmDeep "src\RadioMaker.UI\RadioMaker.UI.csproj"
