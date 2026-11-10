@@ -1,0 +1,70 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        x:Class="RadioMaker.UI.Views.AddFavoriteDialog"
+        x:DataType="vm:AddFavoriteDialogViewModel"
+        Title="Agregar a Favoritos"
+        Width="500" Height="280"
+        MinWidth="440" MinHeight="260"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="{Binding $parent[controls:CustomChromeWindow].Title}"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,Auto,*,Auto"
+              Margin="20">
+
+            <!-- Carpeta -->
+            <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,14">
+                <TextBlock Text="Carpeta a agregar"
+                           FontSize="11"
+                           Foreground="{DynamicResource FgSecondary}" />
+                <TextBlock Text="{Binding FolderPath}"
+                           FontSize="12"
+                           FontFamily="Consolas"
+                           Foreground="{DynamicResource FgPrimary}"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip.Tip="{Binding FolderPath}" />
+            </StackPanel>
+
+            <!-- Nombre personalizado -->
+            <StackPanel Grid.Row="1" Spacing="4">
+                <TextBlock Text="Nombre personalizado (opcional)"
+                           FontSize="11"
+                           Foreground="{DynamicResource FgSecondary}" />
+                <TextBox Text="{Binding CustomName}"
+                         PlaceholderText="{Binding DefaultName, StringFormat='(por defecto: {0})'}"
+                         FontSize="12"
+                         Padding="6,4" />
+                <TextBlock Text="{Binding EffectiveName, StringFormat='Se guardara como: {0}'}"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgMuted}"
+                           Margin="0,2,0,0" />
+            </StackPanel>
+
+            <!-- Botones -->
+            <StackPanel Grid.Row="3"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8"
+                        Margin="0,14,0,0">
+                <Button Content="Cancelar"
+                        x:Name="CancelButton"
+                        Click="OnCancelClick"
+                        MinWidth="100" />
+                <Button Content="Agregar"
+                        x:Name="AddButton"
+                        Click="OnAddClick"
+                        MinWidth="100"
+                        Background="{DynamicResource Success}"
+                        Foreground="White" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</controls:CustomChromeWindow>

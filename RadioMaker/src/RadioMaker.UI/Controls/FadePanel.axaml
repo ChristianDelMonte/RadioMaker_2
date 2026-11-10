@@ -1,0 +1,169 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             x:Class="RadioMaker.UI.Controls.FadePanel"
+             x:DataType="vm:FadePanelViewModel">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+            <!-- ═══════ Auto-fade general ═══════ -->
+
+            <!-- Titulo -->
+            <TextBlock Grid.Row="0"
+                       Text="Fade automatico"
+                       FontWeight="SemiBold"
+                       FontSize="12"
+                       Foreground="{DynamicResource FgPrimary}"
+                       Margin="0,0,0,6" />
+
+            <!-- Checkbox activar -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="8,6"
+                    Margin="0,0,0,6">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+
+                    <CheckBox Grid.Row="0" Grid.Column="0"
+                              Content="Aplicar fade-in y fade-out automatico a todo audio"
+                              IsChecked="{Binding IsEnabled}"
+                              FontWeight="SemiBold"
+                              FontSize="11"
+                              Padding="4,0"
+                              Foreground="{DynamicResource FgPrimary}"
+                              VerticalAlignment="Center" />
+
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               Text="{Binding StatusText}"
+                               FontSize="10"
+                               Foreground="{DynamicResource AccentText}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"
+                               TextWrapping="Wrap"
+                               MaxWidth="280" />
+                </Grid>
+            </Border>
+
+            <!-- Slider de duracion -->
+            <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto"
+                  Margin="0,0,0,6">
+
+                <TextBlock Grid.Column="0"
+                           Text="Duracion del fade:"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0" />
+
+                <Slider Grid.Column="1"
+                        Minimum="0.1"
+                        Maximum="30"
+                        TickFrequency="0.1"
+                        IsSnapToTickEnabled="True"
+                        Value="{Binding Seconds}"
+                        IsEnabled="{Binding IsEnabled}" />
+
+                <TextBlock Grid.Column="2"
+                           Text="{Binding SecondsText}"
+                           FontFamily="Consolas"
+                           FontSize="11"
+                           Foreground="{DynamicResource FgPrimary}"
+                           VerticalAlignment="Center"
+                           MinWidth="50"
+                           Margin="6,0,0,0" />
+            </Grid>
+
+            <!-- Nota del auto-fade -->
+            <TextBlock Grid.Row="3"
+                       Text="El fade-out se ejecuta antes del final util del audio. Si el auto-trim esta activo, el fade-out se ubica justo antes del corte."
+                       FontSize="10"
+                       Foreground="{DynamicResource FgSecondary}"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,10" />
+
+            <!-- ═══════ Separador ═══════ -->
+            <Separator Grid.Row="4" Margin="0,0,0,10" />
+
+            <!-- ═══════ Crossfade entre carts ═══════ -->
+
+            <TextBlock Grid.Row="5"
+                       Text="Crossfade entre carts (botonera)"
+                       FontWeight="SemiBold"
+                       FontSize="12"
+                       Foreground="{DynamicResource FgPrimary}"
+                       Margin="0,0,0,6" />
+
+            <StackPanel Grid.Row="6" Spacing="6">
+
+                <!-- Checkbox activar crossfade -->
+                <Border Background="{DynamicResource BgQuaternary}"
+                        BorderBrush="{DynamicResource AccentSoft}"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="8,6">
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+
+                        <CheckBox Grid.Row="0" Grid.Column="0"
+                                  Content="Hacer crossfade al disparar un cart mientras suena otro"
+                                  IsChecked="{Binding CartCrossfadeEnabled}"
+                                  FontWeight="SemiBold"
+                                  FontSize="11"
+                                  Padding="4,0"
+                                  Foreground="{DynamicResource FgPrimary}"
+                                  VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding CartCrossfadeStatusText}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource AccentText}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   TextWrapping="Wrap"
+                                   MaxWidth="280" />
+                    </Grid>
+                </Border>
+
+                <!-- Slider de duracion del crossfade -->
+                <Grid ColumnDefinitions="Auto,*,Auto">
+
+                    <TextBlock Grid.Column="0"
+                               Text="Duracion del crossfade:"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,6,0" />
+
+                    <Slider Grid.Column="1"
+                            Minimum="0.1"
+                            Maximum="5.0"
+                            TickFrequency="0.1"
+                            IsSnapToTickEnabled="True"
+                            Value="{Binding CartCrossfadeSeconds}"
+                            IsEnabled="{Binding CartCrossfadeEnabled}" />
+
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding CartCrossfadeSecondsText}"
+                               FontFamily="Consolas"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center"
+                               MinWidth="50"
+                               Margin="6,0,0,0" />
+                </Grid>
+
+                <!-- Nota del crossfade -->
+                <TextBlock Text="Cuando esta activo, al disparar un cart mientras suena otro se hace fade-out del que suena y fade-in del nuevo. Cuando esta desactivado, los carts se superponen (comportamiento clasico)."
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+
+        </Grid>
+    </Border>
+</UserControl>

@@ -1,0 +1,19 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Rider
+.idea/
+
+# App data local
+profiles.local.json
+
+# Audio samples (no versionar audios pesados)
+*.wav
+*.mp3
+*.ogg
+*.flac
+!Assets/RegionTables/*.txt

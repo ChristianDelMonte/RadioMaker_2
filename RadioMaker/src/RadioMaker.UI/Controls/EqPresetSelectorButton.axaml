@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RmsAudioPlayer.UI.ViewModels"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.EqPresetSelectorButton"
+             x:CompileBindings="False">
+
+    <Button x:Name="SelectorButton"
+            Padding="4,2"
+            Background="Transparent"
+            BorderBrush="{DynamicResource AccentSoft}"
+            BorderThickness="1"
+            CornerRadius="5"
+            VerticalAlignment="Center"
+            ToolTip.Tip="Preset del ecualizador">
+
+        <Button.Flyout>
+            <Flyout Placement="BottomEdgeAlignedRight"
+                    Opened="OnFlyoutOpened">
+
+                <StackPanel Width="220" Spacing="6">
+
+                    <TextBlock Text="Preset del ecualizador"
+                               FontWeight="SemiBold"
+                               FontSize="12"
+                               Foreground="{DynamicResource FgPrimary}"
+                               Margin="4,2,4,0" />
+
+                    <Border Background="{DynamicResource BgQuaternary}"
+                            CornerRadius="4"
+                            Padding="8,4"
+                            Margin="0,0,0,4">
+                        <TextBlock Text="Elegi un preset de fabrica o uno guardado por vos."
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   TextWrapping="Wrap" />
+                    </Border>
+
+                    <ListBox ItemsSource="{Binding AvailablePresets}"
+                             SelectedItem="{Binding SelectedPreset, Mode=TwoWay}"
+                             MaxHeight="280"
+                             Background="Transparent"
+                             BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource FgPrimary}"
+                                           Padding="4,6" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Flyout>
+        </Button.Flyout>
+
+        <!-- Contenido visible del boton -->
+        <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+
+            <materialIcons:MaterialIcon Kind="Tune"
+                                        Width="15" Height="15"
+                                        Foreground="{DynamicResource FgPrimary}"
+                                        VerticalAlignment="Center" />
+
+            <TextBlock Text="{Binding SelectedPreset}"
+                       FontSize="11"
+                       Foreground="{DynamicResource FgPrimary}"
+                       VerticalAlignment="Center"
+                       MinWidth="60"
+                       MaxWidth="120"
+                       TextTrimming="CharacterEllipsis" />
+
+            <materialIcons:MaterialIcon Kind="ChevronDown"
+                                        Width="11" Height="11"
+                                        Foreground="{DynamicResource FgSecondary}"
+                                        VerticalAlignment="Center" />
+        </StackPanel>
+    </Button>
+</UserControl>

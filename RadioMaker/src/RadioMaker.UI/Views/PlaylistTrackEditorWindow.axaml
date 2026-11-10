@@ -1,0 +1,388 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="RadioMaker.UI.Views.PlaylistTrackEditorWindow"
+        x:DataType="vm:PlaylistTrackEditorViewModel"
+        Title="Editar pista"
+        Width="720" Height="600"
+        MinWidth="580" MinHeight="600"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="{Binding $parent[controls:CustomChromeWindow].Title}"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,*,Auto"
+              Margin="16">
+
+            <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,14">
+                <TextBlock Text="{Binding WorkingTrack.DisplayTitle}"
+                           FontSize="11"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1">
+                <StackPanel Spacing="14">
+
+                    <!-- ═══════════════════════════════════════════════════
+                         TIPO DE ITEM
+                         ═══════════════════════════════════════════════════ -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Tipo de ítem"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <ComboBox SelectedIndex="{Binding WorkingTrack.ItemKindIndex}"
+                                  MinWidth="260"
+                                  HorizontalAlignment="Left">
+                            <ComboBoxItem>Audio (archivo)</ComboBoxItem>
+                            <ComboBoxItem>Locución (RMVoice: hora / clima)</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!-- ═══════════════════════════════════════════════════
+                         MODO AUDIO
+                         ═══════════════════════════════════════════════════ -->
+                    <StackPanel Spacing="14" IsVisible="{Binding WorkingTrack.IsAudioItem}">
+
+                        <!-- Archivo principal -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Archivo de audio"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding WorkingTrack.FilePath}"
+                                         IsReadOnly="True"
+                                         PlaceholderText="(sin archivo)" />
+                                <Button Grid.Column="1"
+                                        x:Name="BrowseFileButton"
+                                        Click="OnBrowseFileClick"
+                                        Margin="8,0,0,0"
+                                        Padding="8,4"
+                                        ToolTip.Tip="Elegir archivo de audio">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                                    Width="15" Height="15"
+                                                                    Foreground="{DynamicResource FgPrimary}" />
+                                        <TextBlock Text="Examinar..."
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgPrimary}" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                            <TextBlock Text="{Binding WorkingTrack.DurationText}"
+                                       FontSize="11"
+                                       FontFamily="Consolas"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                        </StackPanel>
+
+                        <!-- Título (opcional) -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Titulo (opcional)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding WorkingTrack.Title}"
+                                     PlaceholderText="(usa el nombre del archivo)" />
+                        </StackPanel>
+
+                        <!-- Volumen + Enabled -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                                <TextBlock Text="Volumen relativo"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgSecondary}" />
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <Slider Minimum="-12" Maximum="12"
+                                            Value="{Binding WorkingTrack.VolumeDb}"
+                                            Width="240" TickFrequency="1" />
+                                    <TextBlock Text="{Binding WorkingTrack.VolumeText}"
+                                               FontFamily="Consolas" FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               VerticalAlignment="Center" MinWidth="60" />
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Bottom">
+                                <CheckBox Content="Habilitada"
+                                          Foreground="{DynamicResource FgPrimary}"
+                                          IsChecked="{Binding WorkingTrack.IsEnabled}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Notas -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Notas"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding WorkingTrack.Notes}"
+                                     AcceptsReturn="True" Height="60"
+                                     TextWrapping="Wrap"
+                                     PlaceholderText="(opcional)" />
+                        </StackPanel>
+
+                        <!-- ═══════════════════════════════════════════════
+                             MIXADO (solo audio)
+                             ═══════════════════════════════════════════════ -->
+                        <Separator />
+                        <TextBlock Text="Mixado intermedio (opcional)"
+                                   FontWeight="SemiBold"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgPrimary}" />
+
+                        <TextBlock Text="El mixado arranca en un momento especifico dentro del audio principal y se reproduce en paralelo reduciendo su volumen. Al terminar, la principal vuelve a su nivel normal."
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   TextWrapping="Wrap" />
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Tipo de mixado"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <ComboBox SelectedIndex="{Binding WorkingTrack.MixModeIndex}"
+                                      MinWidth="240"
+                                      HorizontalAlignment="Left">
+                                <ComboBoxItem>Sin mixado</ComboBoxItem>
+                                <ComboBoxItem>Audio (archivo)</ComboBoxItem>
+                                <ComboBoxItem>Locución (RMVoice: hora, clima)</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Mix Audio -->
+                        <StackPanel Spacing="12" IsVisible="{Binding WorkingTrack.IsMixAudio}">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Archivo de mixado"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgSecondary}" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBox Grid.Column="0"
+                                             Text="{Binding WorkingTrack.MixAudioPath}"
+                                             IsReadOnly="True"
+                                             PlaceholderText="(sin archivo de mixado)" />
+                                    <Button Grid.Column="1"
+                                            x:Name="BrowseMixButton"
+                                            Click="OnBrowseMixClick"
+                                            Margin="8,0,0,0"
+                                            Padding="8,4"
+                                            ToolTip.Tip="Elegir archivo de mixado">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                                        Width="15" Height="15"
+                                                                        Foreground="{DynamicResource FgPrimary}" />
+                                            <TextBlock Text="Examinar..."
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgPrimary}" />
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Volumen del mixado"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgSecondary}" />
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <Slider Minimum="-40" Maximum="0"
+                                            Value="{Binding WorkingTrack.MixVolumeDb}"
+                                            Width="240" TickFrequency="1"
+                                            ToolTip.Tip="{Binding WorkingTrack.MixVolumeText}" />
+                                    <TextBlock Text="{Binding WorkingTrack.MixVolumeText}"
+                                               FontFamily="Consolas" FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               VerticalAlignment="Center" MinWidth="60" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Mix Locución -->
+                        <StackPanel Spacing="12" IsVisible="{Binding WorkingTrack.IsMixLocution}">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Comando de locución"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgSecondary}" />
+                                <ComboBox ItemsSource="{Binding WorkingTrack.AvailableLocutionCommands}"
+                                          SelectedItem="{Binding WorkingTrack.MixLocutionCommand}"
+                                          MinWidth="280"
+                                          HorizontalAlignment="Left">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={x:Static vm:LocutionCommandLabelConverter.Instance}}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <Border Background="{DynamicResource BgQuaternary}"
+                                    BorderBrush="{DynamicResource Warning}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="8,6">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <materialIcons:MaterialIcon Kind="Alert"
+                                                                Width="14" Height="14"
+                                                                Foreground="{DynamicResource Warning}"
+                                                                VerticalAlignment="Center" />
+                                    <TextBlock FontSize="10"
+                                               Foreground="{DynamicResource FgSecondary}"
+                                               TextWrapping="Wrap"
+                                               VerticalAlignment="Center"
+                                               Text="Si RMVoice no esta disponible, el mixado no se ejecutara y el audio principal continuara sin interrupcion." />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Controles comunes (inicio + duck) -->
+                        <StackPanel Spacing="12" IsVisible="{Binding WorkingTrack.IsMixActive}">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Momento de inicio dentro del audio principal"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgSecondary}" />
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <NumericUpDown Value="{Binding WorkingTrack.MixStartSeconds}"
+                                                   Minimum="0"
+                                                   Maximum="{Binding WorkingTrack.MaxMixStartSeconds}"
+                                                   Increment="0.5"
+                                                   Width="150"
+                                                   ShowButtonSpinner="True"
+                                                   ToolTip.Tip="{Binding WorkingTrack.MixStartText}" />
+                                    <TextBlock Text="{Binding WorkingTrack.MixStartText}"
+                                               FontFamily="Consolas" FontSize="12"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               VerticalAlignment="Center" MinWidth="60" />
+                                    <TextBlock Text="seg"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgSecondary}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Reduccion de la principal durante el mixado"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgSecondary}" />
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <Slider Minimum="0" Maximum="1"
+                                            Value="{Binding WorkingTrack.MixDuckLevel}"
+                                            Width="240"
+                                            ToolTip.Tip="{Binding WorkingTrack.MixDuckLevelText}" />
+                                    <TextBlock Text="{Binding WorkingTrack.MixDuckLevelText}"
+                                               FontFamily="Consolas" FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               VerticalAlignment="Center" MinWidth="60" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                    </StackPanel>
+
+                    <!-- ═══════════════════════════════════════════════════
+                         MODO LOCUCIÓN
+                         ═══════════════════════════════════════════════════ -->
+                    <StackPanel Spacing="14" IsVisible="{Binding WorkingTrack.IsLocutionItem}">
+
+                        <Border Background="{DynamicResource BgQuaternary}"
+                                BorderBrush="{DynamicResource AccentSoft}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="10,8">
+                            <TextBlock FontSize="10"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       TextWrapping="Wrap"
+                                       Text="Este ítem no reproduce un archivo. Cuando le toque el turno en la playlist, RMVoice ejecutará el comando seleccionado. La duración real la determina RMVoice en el momento; el campo 'Duración estimada' se usa solo para calcular el total de la playlist y el progreso." />
+                        </Border>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Comando de locución"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <ComboBox ItemsSource="{Binding WorkingTrack.AvailableLocutionCommands}"
+                                      SelectedItem="{Binding WorkingTrack.LocutionCommand}"
+                                      MinWidth="280"
+                                      HorizontalAlignment="Left">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={x:Static vm:LocutionCommandLabelConverter.Instance}}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Duración estimada (segundos)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <NumericUpDown Value="{Binding WorkingTrack.EstimatedDurationSeconds}"
+                                           Minimum="1" Maximum="60"
+                                           Increment="0.5"
+                                           Width="150"
+                                           ShowButtonSpinner="True"
+                                           ToolTip.Tip="Duración estimada para el cálculo del total de la playlist" />
+                            <TextBlock Text="Solo se usa para el cálculo del total. No afecta la reproducción real."
+                                       FontSize="10"
+                                       Foreground="{DynamicResource FgMuted}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Titulo (opcional)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding WorkingTrack.Title}"
+                                     PlaceholderText="(usa el nombre del comando)" />
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                                <TextBlock Text="Volumen relativo"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgSecondary}" />
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <Slider Minimum="-12" Maximum="12"
+                                            Value="{Binding WorkingTrack.VolumeDb}"
+                                            Width="240" TickFrequency="1"
+                                            ToolTip.Tip="{Binding WorkingTrack.VolumeText}" />
+                                    <TextBlock Text="{Binding WorkingTrack.VolumeText}"
+                                               FontFamily="Consolas" FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               VerticalAlignment="Center" MinWidth="60" />
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Bottom">
+                                <CheckBox Content="Habilitada"
+                                          Foreground="{DynamicResource FgPrimary}"
+                                          IsChecked="{Binding WorkingTrack.IsEnabled}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Notas"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding WorkingTrack.Notes}"
+                                     AcceptsReturn="True" Height="60"
+                                     TextWrapping="Wrap"
+                                     PlaceholderText="(opcional)" />
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8"
+                        Margin="0,14,0,0">
+                <Button Content="Cancelar" x:Name="CancelButton"
+                        Click="OnCancelClick" MinWidth="100" />
+                <Button Content="Guardar" x:Name="SaveButton"
+                        Click="OnSaveClick" MinWidth="100" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</controls:CustomChromeWindow>

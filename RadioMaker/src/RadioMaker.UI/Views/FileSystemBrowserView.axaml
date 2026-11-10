@@ -1,0 +1,385 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Views.FileSystemBrowserView"
+             x:DataType="vm:FileSystemBrowserViewModel">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="0">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto">
+
+            <!-- Barra de herramientas -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1"
+                    Padding="4,2">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="0">
+                        <Button Command="{Binding GoHomeCommand}"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Ir a la carpeta personal">
+                            <materialIcons:MaterialIcon Kind="Home"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+
+                        <Button Command="{Binding GoDesktopCommand}"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Ir al escritorio">
+                            <materialIcons:MaterialIcon Kind="Monitor"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+
+                        <Button Command="{Binding GoUpCommand}"
+                                IsEnabled="{Binding CanGoUp}"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Subir un nivel">
+                            <materialIcons:MaterialIcon Kind="ArrowUp"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+
+                        <Button Command="{Binding RefreshCommand}"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Refrescar">
+                            <materialIcons:MaterialIcon Kind="Refresh"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Combo de filtro por extension -->
+                    <ComboBox Grid.Column="1"
+                              ItemsSource="{Binding AvailableFilters}"
+                              SelectedItem="{Binding SelectedFilter}"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Left"
+                              Margin="8,0,0,0"
+                              MinWidth="170"
+                              MaxWidth="240"
+                              FontSize="10"
+                              ToolTip.Tip="Filtrar por tipo de archivo">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:FileExtensionFilter">
+                                <TextBlock Text="{Binding DisplayName}"
+                                           FontSize="10" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <controls:BusSelectorButton Grid.Column="2"
+                                                DataContext="{Binding BusSelector}"
+                                                VerticalAlignment="Center"
+                                                Margin="6,0,0,0"
+                                                ToolTip.Tip="Bus de salida para preescucha" />
+
+                    <!-- Boton detener (visible solo si algo esta sonando) -->
+                    <Button Grid.Column="3"
+                            Command="{Binding StopPlaybackCommand}"
+                            IsVisible="{Binding IsPlaying}"
+                            Padding="3" Background="Transparent" BorderThickness="0"
+                            VerticalAlignment="Center"
+                            Margin="4,0,0,0"
+                            ToolTip.Tip="Detener preescucha">
+                        <materialIcons:MaterialIcon Kind="Stop"
+                                                    Width="13" Height="13"
+                                                    Foreground="{DynamicResource Error}" />
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- Ruta actual -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource BgTertiary}"
+                    Padding="8,4"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1">
+                <TextBlock Text="{Binding CurrentPath}"
+                           FontSize="9"
+                           FontFamily="Consolas"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip.Tip="{Binding CurrentPath}" />
+            </Border>
+
+            <!-- Filtro de busqueda -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource BgSecondary}"
+                    Padding="8,4"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1">
+                <TextBox Text="{Binding SearchFilter}"
+                         PlaceholderText="Filtrar por nombre..."
+                         FontSize="10"
+                         Padding="4,2" />
+            </Border>
+
+            <!-- Arbol de directorios -->
+            <Border Grid.Row="3"
+                    Background="{DynamicResource BgTertiary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1"
+                    MaxHeight="180">
+                <ScrollViewer>
+                    <TreeView Name="DirsTreeView"
+                              ItemsSource="{Binding RootNodes}"
+                              SelectedItem="{Binding SelectedNode}"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              Padding="2"
+                              DoubleTapped="OnTreeDoubleTapped">
+                        <TreeView.Styles>
+                            <Style Selector="TreeViewItem" x:DataType="vm:FileSystemNodeViewModel">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            </Style>
+                        </TreeView.Styles>
+                        <TreeView.ItemTemplate>
+                            <TreeDataTemplate x:DataType="vm:FileSystemNodeViewModel"
+                                              ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal" Spacing="4"
+                                            Background="Transparent"
+                                            PointerPressed="OnTreeNodePointerPressed">
+                                    <StackPanel.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Agregar a Favoritos..."
+                                                      IsEnabled="{Binding !IsFavorite}"
+                                                      Click="OnAddFavoriteClick" />
+                                            <MenuItem Header="Quitar de Favoritos"
+                                                      IsEnabled="{Binding IsFavorite}"
+                                                      Click="OnRemoveFavoriteClick" />
+                                        </ContextMenu>
+                                    </StackPanel.ContextMenu>
+
+                                    <TextBlock Text="{Binding Icon}"
+                                               FontSize="11"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </TreeDataTemplate>
+                        </TreeView.ItemTemplate>              
+                    </TreeView>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Lista de archivos (audios + proyectos nativos .rmf/.tnd/.rms/.rcb) -->
+            <ListBox Grid.Row="4"
+                     Name="FilesListBox"
+                     ItemsSource="{Binding Files}"
+                     SelectedItem="{Binding SelectedFile}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Padding="0"
+                     DoubleTapped="OnFileDoubleTapped"
+                     KeyDown="OnFileKeyDown">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="MinHeight" Value="0" />
+                    </Style>
+                    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                        <Setter Property="Background" Value="{DynamicResource BgSelected}" />
+                    </Style>
+                </ListBox.Styles>
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:AudioFileViewModel">
+                        <Border Padding="8,4"
+                                BorderBrush="{DynamicResource BorderSubtle}"
+                                BorderThickness="0,0,0,1"
+                                Background="Transparent"
+                                Cursor="Hand"
+                                PointerPressed="OnFilePointerPressed"
+                                ToolTip.Tip="{Binding FullPath}">
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <!-- Solo audios: editar tags -->
+                                    <MenuItem Header="Editar tags..."
+                                              IsVisible="{Binding IsAudio}"
+                                              Click="OnFileContextEditTags"
+                                              IsEnabled="{Binding FullPath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}" />
+                                    <MenuItem Header="Editar en RMWave..."
+                                              Click="OnFileContextEditInRMWave"
+                                              IsEnabled="{Binding FullPath, Converter={x:Static vm:IsRmwFileConverter.Instance}}" />
+                                    <!-- Proyectos nativos: solo informativo -->
+                                    <MenuItem Header="Proyecto de RadioMaker (arrastralo a una pestaña)"
+                                              IsVisible="{Binding IsNativeProject}"
+                                              IsEnabled="False" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+
+                                <!-- Badge de extension -->
+                                <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                                        Background="{DynamicResource BorderSubtle}"
+                                        CornerRadius="3"
+                                        Padding="5,2"
+                                        Margin="0,0,8,0"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Extension}"
+                                               FontSize="8"
+                                               FontFamily="Consolas"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource AccentText}" />
+                                </Border>
+
+                                <!-- Titulo + badge de tipo (solo proyectos nativos) -->
+                                <StackPanel Grid.Row="0" Grid.Column="1"
+                                            Orientation="Horizontal" Spacing="6"
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding DisplayTitle}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+
+                                    <Border Background="{Binding KindColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                            CornerRadius="3"
+                                            Padding="4,1"
+                                            IsVisible="{Binding IsNativeProject}"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding KindText}"
+                                                   FontSize="8"
+                                                   FontWeight="Bold"
+                                                   Foreground="White" />
+                                    </Border>
+                                </StackPanel>
+
+                                <TextBlock Grid.Row="0" Grid.Column="2"
+                                           Text="{Binding DurationText}"
+                                           FontSize="10"
+                                           FontFamily="Consolas"
+                                           Foreground="{DynamicResource FgSecondary}"
+                                           VerticalAlignment="Center"
+                                           Margin="6,0,0,0" />
+
+                                <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                           Text="{Binding DetailText}"
+                                           FontSize="9"
+                                           Foreground="{DynamicResource FgMuted}"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,1,0,0" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Status bar -->
+            <Border Grid.Row="5"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,1,0,0"
+                    Padding="8,4">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding StatusMessage}"
+                               FontSize="9"
+                               Foreground="{DynamicResource FgSecondary}"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding NowPlayingText, StringFormat='▶ {0}'}"
+                               FontSize="9"
+                               Foreground="{DynamicResource Success}"
+                               IsVisible="{Binding IsPlaying}"
+                               TextTrimming="CharacterEllipsis"
+                               MaxWidth="180"
+                               Margin="8,0,8,0" />
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding FileCountText}"
+                               FontSize="9"
+                               Foreground="{DynamicResource FgSecondary}" />
+                </Grid>
+            </Border>
+
+            <!-- Panel de TAGS del archivo seleccionado -->
+            <Border Grid.Row="6"
+                    Background="{DynamicResource BgTertiary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,1,0,0"
+                    Padding="8,6"
+                    IsVisible="{Binding HasSelection}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+
+                    <Border Grid.Column="0"
+                            Width="86" Height="86"
+                            Background="{DynamicResource BgPrimary}"
+                            BorderBrush="{DynamicResource BorderPrimary}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            ClipToBounds="True">
+                        <Panel>
+                            <!-- Placeholder para audios sin caratula -->
+                            <TextBlock Text="Sin&#10;caratula"
+                                       FontSize="9"
+                                       Foreground="{DynamicResource FgMuted}"
+                                       TextAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       IsVisible="{Binding !SelectedFile.HasCoverArt}" />
+                            <Image Source="{Binding SelectedFile.CoverArt}"
+                                   Stretch="UniformToFill"
+                                   IsVisible="{Binding SelectedFile.HasCoverArt}" />
+                        </Panel>
+                    </Border>
+
+                    <Grid Grid.Column="1"
+                          RowDefinitions="Auto,Auto,Auto,Auto,*"
+                          VerticalAlignment="Top">
+
+                        <TextBlock Grid.Row="0"
+                                   Text="{Binding SelectedFile.DisplayTitle}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding SelectedFile.TagsLineArtistAlbum}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,2,0,0" />
+
+                        <TextBlock Grid.Row="2"
+                                   Text="{Binding SelectedFile.TagsLineMeta}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,2,0,0" />
+
+                        <TextBlock Grid.Row="3"
+                                   Text="{Binding SelectedFile.TagsLineTechnical}"
+                                   FontSize="9"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,2,0,0" />
+
+                        <TextBlock Grid.Row="4"
+                                   Text="{Binding SelectedFile.TagsComment}"
+                                   FontSize="9"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   FontStyle="Italic"
+                                   TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,3,0,0"
+                                   IsVisible="{Binding SelectedFile.HasComment}" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Border>
+</UserControl>

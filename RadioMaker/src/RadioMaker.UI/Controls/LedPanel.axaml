@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+             x:Class="RadioMaker.UI.Controls.LedPanel">
+
+    <Border x:Name="PanelBorder"
+            Background="#0A0A0C"
+            BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Padding="8,4">
+        <StackPanel Spacing="6"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch">
+            <controls:LedLine Name="Line1Display"
+                              Text="{Binding $parent[controls:LedPanel].Line1Text}"
+                              OnBrush="{Binding $parent[controls:LedPanel].OnBrush}"
+                              OffBrush="{Binding $parent[controls:LedPanel].OffBrush}"
+                              IsActive="{Binding $parent[controls:LedPanel].IsActive}"
+                              InactiveBrush="{Binding $parent[controls:LedPanel].InactiveBrush}"
+                              Height="{Binding $parent[controls:LedPanel].LineHeight}"
+                              HorizontalAlignment="Stretch"
+                              ContentAlignment="Right" />
+
+            <controls:LedLine Name="Line2Display"
+                              Text="{Binding $parent[controls:LedPanel].Line2Text}"
+                              OnBrush="{Binding $parent[controls:LedPanel].OnBrush}"
+                              OffBrush="{Binding $parent[controls:LedPanel].OffBrush}"
+                              IsActive="{Binding $parent[controls:LedPanel].IsActive}"
+                              InactiveBrush="{Binding $parent[controls:LedPanel].InactiveBrush}"
+                              Height="{Binding $parent[controls:LedPanel].LineHeight}"
+                              HorizontalAlignment="Stretch"
+                              ContentAlignment="Right" />
+        </StackPanel>
+    </Border>
+</UserControl>

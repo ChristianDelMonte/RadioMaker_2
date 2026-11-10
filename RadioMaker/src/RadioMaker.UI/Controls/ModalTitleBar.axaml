@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:RmsAudioPlayer.UI.Controls"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.ModalTitleBar"
+             x:Name="TitleBarRoot">
+
+    <Border Name="TitleBarBorder"
+            Background="{DynamicResource BgSecondary}"
+            BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="0,0,0,1"
+            Padding="10,4"
+            WindowDecorationProperties.ElementRole="TitleBar">
+
+        <Grid ColumnDefinitions="Auto,*,Auto">
+
+            <!-- Icono generico + titulo de la ventana -->
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal"
+                        Spacing="8"
+                        VerticalAlignment="Center">
+                <materialIcons:MaterialIcon Kind="ApplicationOutline"
+                                            Width="14" Height="14"
+                                            Foreground="{DynamicResource Accent}"
+                                            VerticalAlignment="Center" />
+                <TextBlock Text="{Binding #TitleBarRoot.WindowTitle}"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource FgPrimary}"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+
+            <!-- Espacio de arrastre -->
+            <Panel Grid.Column="1" />
+
+            <!-- Boton Cerrar -->
+            <Button Grid.Column="2"
+                    Padding="10,4"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    VerticalAlignment="Center"
+                    WindowDecorationProperties.ElementRole="CloseButton"
+                    Click="OnCloseClick"
+                    ToolTip.Tip="Cerrar">
+                <materialIcons:MaterialIcon Kind="Close"
+                                            Width="14" Height="14"
+                                            Foreground="{DynamicResource Error}" />
+            </Button>
+        </Grid>
+    </Border>
+</UserControl>

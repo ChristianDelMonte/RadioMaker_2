@@ -1,0 +1,643 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:services="clr-namespace:RadioMaker.UI.Services"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="RadioMaker.UI.Views.PlaylistGeneratorWindow"
+        x:DataType="vm:PlaylistGeneratorWindowViewModel"
+        Title="Generar Playlist Automaticamente"
+        Width="880" Height="860"
+        MinWidth="760" MinHeight="680"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+        <!-- Barra de titulo personalizada -->
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="{Binding $parent[controls:CustomChromeWindow].Title}"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <!-- Toolbar de presets -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,0,0,1"
+                Padding="8,5">
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto">
+
+                <TextBlock Grid.Column="0"
+                           Text="Preset:"
+                           FontSize="11"
+                           Foreground="{DynamicResource FgSecondary}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0" />
+
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding AvailablePresets}"
+                          SelectedItem="{Binding SelectedPreset}"
+                          MinWidth="220"
+                          MaxWidth="320"
+                          FontSize="11"
+                          VerticalAlignment="Center">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="services:PresetHistoryEntry">
+                            <TextBlock Text="{Binding DisplayName}"
+                                       FontSize="11" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <!-- Espacio flexible -->
+                <Panel Grid.Column="2" />
+
+                <!-- Botones de preset -->
+                <Button Grid.Column="3"
+                        Command="{Binding NewPresetCommand}"
+                        Padding="6,4"
+                        Margin="0,0,4,0"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Preset nuevo (resetear formulario)">
+                    <materialIcons:MaterialIcon Kind="FilePlus"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource FgPrimary}" />
+                </Button>
+
+                <Button Grid.Column="4"
+                        x:Name="OpenPresetButton"
+                        Click="OnOpenPresetClick"
+                        Padding="6,4"
+                        Margin="0,0,4,0"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Abrir preset (.rpg)">
+                    <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource FgPrimary}" />
+                </Button>
+
+                <StackPanel Grid.Column="5"
+                            Orientation="Horizontal"
+                            Spacing="0">
+                    <Button x:Name="SavePresetButton"
+                            Click="OnSavePresetClick"
+                            IsEnabled="{Binding HasCurrentPreset}"
+                            Padding="6,4"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="Guardar preset (sobrescribir)">
+                        <materialIcons:MaterialIcon Kind="ContentSave"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <Button x:Name="SavePresetAsButton"
+                            Click="OnSavePresetAsClick"
+                            Padding="6,4"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="Guardar preset como...">
+                        <materialIcons:MaterialIcon Kind="ContentSaveEdit"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Contenido scrollable -->
+        <ScrollViewer Grid.Row="2" Margin="16">
+            <StackPanel Spacing="14">
+
+                <!-- Warning: se van a reemplazar las pistas existentes -->
+                <Border Background="{DynamicResource BgQuaternary}"
+                        BorderBrush="{DynamicResource Warning}"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="12,8"
+                        IsVisible="{Binding HasExistingContent}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <materialIcons:MaterialIcon Kind="Alert"
+                                                    Width="16" Height="16"
+                                                    Foreground="{DynamicResource Warning}"
+                                                    VerticalAlignment="Center" />
+                        <TextBlock FontSize="11"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   TextWrapping="Wrap"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding ExistingTrackCount, StringFormat='La playlist actual tiene {0} pista(s). Se van a REEMPLAZAR por las pistas generadas.'}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Nombre del preset actual -->
+                <Border Background="{DynamicResource BgTertiary}"
+                        BorderBrush="{DynamicResource BorderPrimary}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="10,6"
+                        IsVisible="{Binding HasCurrentPreset}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <materialIcons:MaterialIcon Kind="Bookmark"
+                                                    Width="13" Height="13"
+                                                    Foreground="{DynamicResource AccentText}"
+                                                    VerticalAlignment="Center" />
+                        <TextBlock Text="Preset actual:"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding CurrentPresetName}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource AccentText}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Origen -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Carpeta de origen"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgPrimary}" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding SourceFolder}"
+                                 PlaceholderText="Selecciona una carpeta..."
+                                 FontSize="11" />
+                        <Button Grid.Column="1"
+                                x:Name="BrowseFolderButton"
+                                Click="OnBrowseFolderClick"
+                                Margin="8,0,0,0"
+                                Padding="8,4">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                            Width="15" Height="15"
+                                                            Foreground="{DynamicResource FgPrimary}" />
+                                <TextBlock Text="Examinar..."
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgPrimary}" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <CheckBox Content="Incluir subcarpetas"
+                              FontSize="11"
+                              Foreground="{DynamicResource FgPrimary}"
+                              IsChecked="{Binding IncludeSubfolders}" />
+                </StackPanel>
+
+                <!-- Contenido -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Contenido"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgPrimary}" />
+
+                    <RadioButton GroupName="GenMode"
+                                 Content="Cantidad de pistas"
+                                 FontSize="11"
+                                 Foreground="{DynamicResource FgPrimary}"
+                                 IsChecked="{Binding IsTrackCountMode, Mode=OneWay}"
+                                 Click="OnTrackCountModeClick" />
+
+                    <Grid ColumnDefinitions="Auto,140,Auto"
+                          ColumnSpacing="8"
+                          Margin="24,0,0,0"
+                          IsEnabled="{Binding IsTrackCountMode}">
+                        <TextBlock Grid.Column="0"
+                                   Text="Cantidad:"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+                        <NumericUpDown Grid.Column="1"
+                                       Value="{Binding TargetTrackCount}"
+                                       Minimum="1" Maximum="999"
+                                       Increment="1"
+                                       HorizontalAlignment="Stretch"
+                                       ShowButtonSpinner="True" />
+                        <TextBlock Grid.Column="2"
+                                   Text="pistas"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+
+                    <RadioButton GroupName="GenMode"
+                                 Content="Duración objetivo"
+                                 FontSize="11"
+                                 Foreground="{DynamicResource FgPrimary}"
+                                 IsChecked="{Binding IsDurationMode, Mode=OneWay}"
+                                 Click="OnDurationModeClick" />
+
+                    <Grid ColumnDefinitions="Auto,140,Auto"
+                          RowDefinitions="Auto,Auto"
+                          ColumnSpacing="8"
+                          RowSpacing="6"
+                          Margin="24,0,0,0"
+                          IsEnabled="{Binding IsDurationMode}">
+
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="Duración objetivo:"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+                        <NumericUpDown Grid.Row="0" Grid.Column="1"
+                                       Value="{Binding TargetDurationMinutes}"
+                                       Minimum="1" Maximum="1440"
+                                       Increment="5"
+                                       HorizontalAlignment="Stretch"
+                                       ShowButtonSpinner="True" />
+                        <TextBlock Grid.Row="0" Grid.Column="2"
+                                   Text="minutos"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="Tolerancia (±):"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+                        <NumericUpDown Grid.Row="1" Grid.Column="1"
+                                       Value="{Binding ToleranceMinutes}"
+                                       Minimum="0" Maximum="60"
+                                       Increment="1"
+                                       HorizontalAlignment="Stretch"
+                                       ShowButtonSpinner="True" />
+                        <TextBlock Grid.Row="1" Grid.Column="2"
+                                   Text="minutos"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+
+                <!-- Filtros -->
+                <Expander Header="Filtros (opcional)"
+                          IsExpanded="False"
+                          HorizontalAlignment="Stretch"
+                          FontSize="12">
+                    <StackPanel Spacing="10" Margin="0,8,0,0">
+
+                        <TextBlock Text="{Binding FiltersSummaryText}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   Margin="0,0,0,4" />
+
+                        <Grid ColumnDefinitions="140,*" ColumnSpacing="8">
+                            <TextBlock Grid.Column="0"
+                                       Text="Género contiene:"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding FilterGenre}"
+                                     PlaceholderText="(vacio = sin filtro)"
+                                     FontSize="11" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="140,*" ColumnSpacing="8">
+                            <TextBlock Grid.Column="0"
+                                       Text="Artista contiene:"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding FilterArtist}"
+                                     PlaceholderText="(vacio = sin filtro)"
+                                     FontSize="11" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="140,*" ColumnSpacing="8">
+                            <TextBlock Grid.Column="0"
+                                       Text="Álbum contiene:"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding FilterAlbum}"
+                                     PlaceholderText="(vacio = sin filtro)"
+                                     FontSize="11" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="Auto,120,Auto,120,Auto"
+                              ColumnSpacing="8"
+                              Margin="0,4,0,0">
+                            <CheckBox Grid.Column="0"
+                                      Content="Rango de año:"
+                                      FontSize="11"
+                                      Foreground="{DynamicResource FgSecondary}"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding IsYearRangeFilterEnabled}" />
+                            <NumericUpDown Grid.Column="1"
+                                           Value="{Binding FilterYearMin}"
+                                           Minimum="1900" Maximum="2100"
+                                           Increment="1"
+                                           HorizontalAlignment="Stretch"
+                                           IsEnabled="{Binding IsYearRangeFilterEnabled}"
+                                           ShowButtonSpinner="True" />
+                            <TextBlock Grid.Column="2"
+                                       Text="a"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Column="3"
+                                           Value="{Binding FilterYearMax}"
+                                           Minimum="1900" Maximum="2100"
+                                           Increment="1"
+                                           HorizontalAlignment="Stretch"
+                                           IsEnabled="{Binding IsYearRangeFilterEnabled}"
+                                           ShowButtonSpinner="True" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="Auto,120,Auto,120,Auto"
+                              ColumnSpacing="8"
+                              Margin="0,4,0,0">
+                            <CheckBox Grid.Column="0"
+                                      Content="Duración por pista:"
+                                      FontSize="11"
+                                      Foreground="{DynamicResource FgSecondary}"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding IsDurationRangeFilterEnabled}" />
+                            <NumericUpDown Grid.Column="1"
+                                           Value="{Binding FilterMinDurationMinutes}"
+                                           Minimum="0" Maximum="120"
+                                           Increment="0.5"
+                                           FormatString="0.0"
+                                           HorizontalAlignment="Stretch"
+                                           IsEnabled="{Binding IsDurationRangeFilterEnabled}"
+                                           ShowButtonSpinner="True" />
+                            <TextBlock Grid.Column="2"
+                                       Text="a"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Column="3"
+                                           Value="{Binding FilterMaxDurationMinutes}"
+                                           Minimum="0" Maximum="120"
+                                           Increment="0.5"
+                                           FormatString="0.0"
+                                           HorizontalAlignment="Stretch"
+                                           IsEnabled="{Binding IsDurationRangeFilterEnabled}"
+                                           ShowButtonSpinner="True" />
+                            <TextBlock Grid.Column="4"
+                                       Text="min"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+
+                        <Border Background="{DynamicResource BgQuaternary}"
+                                BorderBrush="{DynamicResource AccentSoft}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="8,5"
+                                Margin="0,4,0,0">
+                            <TextBlock FontSize="10"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       TextWrapping="Wrap"
+                                       Text="Los filtros por género, artista, álbum y año requieren leer las etiquetas de cada archivo. Los archivos sin el tag correspondiente se excluyen." />
+                        </Border>
+                    </StackPanel>
+                </Expander>
+
+                <!-- Variedad -->
+                <Expander Header="Variedad (opcional)"
+                          IsExpanded="False"
+                          HorizontalAlignment="Stretch"
+                          FontSize="12">
+                    <StackPanel Spacing="10" Margin="0,8,0,0">
+
+                        <TextBlock Text="{Binding VarietySummaryText}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   Margin="0,0,0,4" />
+
+                        <CheckBox Content="Evitar mismo artista consecutivo"
+                                  FontSize="11"
+                                  Foreground="{DynamicResource FgPrimary}"
+                                  IsChecked="{Binding AvoidSameArtistConsecutive}" />
+
+                        <Grid ColumnDefinitions="Auto,120,Auto"
+                              ColumnSpacing="8"
+                              Margin="0,2,0,0">
+                            <CheckBox Grid.Column="0"
+                                      Content="Mínimo de pistas entre mismo artista:"
+                                      FontSize="11"
+                                      Foreground="{DynamicResource FgPrimary}"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding IsMinTracksBetweenEnabled}" />
+                            <NumericUpDown Grid.Column="1"
+                                           Value="{Binding MinTracksBetweenSameArtist}"
+                                           Minimum="1" Maximum="50"
+                                           Increment="1"
+                                           HorizontalAlignment="Stretch"
+                                           IsEnabled="{Binding IsMinTracksBetweenEnabled}"
+                                           ShowButtonSpinner="True" />
+                            <TextBlock Grid.Column="2"
+                                       Text="pistas"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+
+                        <CheckBox Content="Balance por artista (round-robin)"
+                                  FontSize="11"
+                                  Foreground="{DynamicResource FgPrimary}"
+                                  IsChecked="{Binding BalanceByArtist}"
+                                  ToolTip.Tip="Reparte los temas de cada artista de forma equitativa a lo largo de la playlist" />
+
+                        <Separator Margin="0,4,0,4" />
+
+                        <CheckBox Content="Relajar reglas si no alcanza para llegar al objetivo"
+                                  FontSize="11"
+                                  Foreground="{DynamicResource FgPrimary}"
+                                  IsChecked="{Binding RelaxIfNotEnough}"
+                                  ToolTip.Tip="Si las reglas de variedad impiden llegar a la cantidad/duración pedida, se completa con las pistas descartadas." />
+
+                        <Border Background="{DynamicResource BgQuaternary}"
+                                BorderBrush="{DynamicResource AccentSoft}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="8,5"
+                                Margin="0,4,0,0">
+                            <TextBlock FontSize="10"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       TextWrapping="Wrap"
+                                       Text="Las reglas de variedad dependen del tag de artista. Las pistas sin ese tag son wildcard: nunca bloquean a otras y nunca son bloqueadas." />
+                        </Border>
+                    </StackPanel>
+                </Expander>
+
+                <!-- Orden -->
+                <StackPanel Spacing="6" IsVisible="{Binding !BalanceByArtist}">
+                    <TextBlock Text="Orden"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgPrimary}" />
+                    <ComboBox SelectedItem="{Binding Order}"
+                              ItemsSource="{Binding AvailableOrders}"
+                              MinWidth="260"
+                              FontSize="11">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={x:Static vm:PlaylistGeneratorOrderLabelConverter.Instance}}"
+                                           FontSize="11" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <Border Background="{DynamicResource BgQuaternary}"
+                        BorderBrush="{DynamicResource AccentSoft}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="8,5"
+                        IsVisible="{Binding BalanceByArtist}">
+                    <TextBlock FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               TextWrapping="Wrap"
+                               Text="El balance por artista reemplaza al orden manual. Las pistas se intercalan por artista para máxima distribución." />
+                </Border>
+
+                <!-- Preview -->
+                <Separator />
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="Preview"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}" />
+                        <TextBlock Text="{Binding PreviewSummaryText}"
+                                   FontSize="11"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource AccentText}"
+                                   IsVisible="{Binding HasPreview}" />
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                            Command="{Binding GenerateCommand}"
+                            Padding="10,5">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <materialIcons:MaterialIcon Kind="AutoFix"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource AccentText}" />
+                            <TextBlock Text="Generar"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource FgPrimary}"
+                                       IsVisible="{Binding !HasPreview}" />
+                            <TextBlock Text="Regenerar"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource FgPrimary}"
+                                       IsVisible="{Binding HasPreview}" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <Border BorderBrush="{DynamicResource BorderPrimary}"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="4"
+                        MinHeight="180"
+                        MaxHeight="240">
+                    <Panel>
+                        <TextBlock Text="Presiona Generar para ver el resultado."
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding !HasPreview}" />
+
+                        <ScrollViewer IsVisible="{Binding HasPreview}">
+                            <ItemsControl ItemsSource="{Binding PreviewTracks}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:PlaylistGeneratorPreviewItem">
+                                        <Grid ColumnDefinitions="40,*,Auto"
+                                              RowDefinitions="Auto,Auto"
+                                              Margin="6,3">
+                                            <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                                                       Text="{Binding Index, StringFormat='{}{0}.'}"
+                                                       FontSize="10"
+                                                       FontFamily="Consolas"
+                                                       Foreground="{DynamicResource FgSecondary}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                       Text="{Binding DisplayName}"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgPrimary}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                                       Text="{Binding Subtitle}"
+                                                       FontSize="9"
+                                                       Foreground="{DynamicResource FgMuted}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       IsVisible="{Binding HasSubtitle}"
+                                                       Margin="0,1,0,0" />
+                                            <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                                       Text="{Binding DurationText}"
+                                                       FontSize="10"
+                                                       FontFamily="Consolas"
+                                                       Foreground="{DynamicResource FgSecondary}"
+                                                       VerticalAlignment="Center"
+                                                       Margin="8,0,0,0" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Panel>
+                </Border>
+
+                <!-- Status + Barra de progreso -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{Binding StatusMessage}"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               TextWrapping="Wrap"
+                               MinHeight="16" />
+
+                    <ProgressBar IsVisible="{Binding IsProgressVisible}"
+                                 Value="{Binding ProgressValue}"
+                                 Maximum="{Binding ProgressMaximum}"
+                                 IsIndeterminate="{Binding IsProgressIndeterminate}"
+                                 Height="6"
+                                 Foreground="{DynamicResource Accent}" />
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="3"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,1,0,0"
+                Padding="12,8">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8">
+                <Button Content="Cancelar"
+                        x:Name="CancelButton"
+                        Click="OnCancelClick"
+                        MinWidth="100"
+                        FontSize="11" />
+                <Button Content="Aceptar"
+                        x:Name="AcceptButton"
+                        Click="OnAcceptClick"
+                        IsEnabled="{Binding HasPreview}"
+                        MinWidth="100"
+                        FontSize="11" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</controls:CustomChromeWindow>

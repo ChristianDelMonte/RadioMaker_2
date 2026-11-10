@@ -1,0 +1,594 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="RadioMaker.UI.Views.ScheduledItemEditorWindow"
+        x:DataType="vm:ScheduledItemEditorViewModel"
+        Title="Editar item programado"
+        Width="820" Height="820"
+        MinWidth="700" MinHeight="640"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*"
+          DragDrop.AllowDrop="True">
+
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="{Binding $parent[controls:CustomChromeWindow].Title}"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,*,Auto"
+              Margin="16">
+
+            <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,14">
+                <TextBlock Text="{Binding WorkingItem.DisplayTitle}"
+                           FontSize="11"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1">
+                <StackPanel Spacing="14">
+
+                    <!-- Tipo de contenido -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Tipo de contenido"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <RadioButton Name="SingleFileRadio"
+                                         Content="Archivo unico"
+                                         GroupName="ItemKind"
+                                         Foreground="{DynamicResource FgPrimary}"
+                                         IsChecked="{Binding WorkingItem.IsSingleFile, Mode=OneWay}"
+                                         Click="OnSingleFileKindClick" />
+                            <RadioButton Name="TandaRadio"
+                                         Content="Tanda"
+                                         GroupName="ItemKind"
+                                         Foreground="{DynamicResource FgPrimary}"
+                                         IsChecked="{Binding WorkingItem.IsTanda, Mode=OneWay}"
+                                         Click="OnTandaKindClick" />
+                            <RadioButton Name="PlaylistRadio"
+                                         Content="Playlist (.rmf)"
+                                         GroupName="ItemKind"
+                                         Foreground="{DynamicResource FgPrimary}"
+                                         IsChecked="{Binding WorkingItem.IsPlaylist, Mode=OneWay}"
+                                         Click="OnPlaylistKindClick" />
+                            <RadioButton Name="BlockRadio"
+                                         Content="Bloque"
+                                         GroupName="ItemKind"
+                                         Foreground="{DynamicResource FgPrimary}"
+                                         IsChecked="{Binding WorkingItem.IsBlock, Mode=OneWay}"
+                                         Click="OnBlockKindClick" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- MODO ARCHIVO -->
+                    <StackPanel Spacing="6" IsVisible="{Binding WorkingItem.IsSingleFile}">
+                        <TextBlock Text="Archivo de audio"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding WorkingItem.FilePath}"
+                                     IsReadOnly="True"
+                                     PlaceholderText="(sin archivo)" />
+                            <Button Grid.Column="1"
+                                    x:Name="BrowseFileButton"
+                                    Click="OnBrowseFileClick"
+                                    Margin="8,0,0,0"
+                                    Padding="8,4"
+                                    ToolTip.Tip="Elegir archivo de audio">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                                Width="15" Height="15"
+                                                                Foreground="{DynamicResource FgPrimary}" />
+                                    <TextBlock Text="Examinar..."
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Badge duracion (archivo) -->
+                        <Border Background="{DynamicResource AccentSoft}"
+                                BorderBrush="{DynamicResource Accent}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="8,3"
+                                HorizontalAlignment="Left"
+                                IsVisible="{Binding WorkingItem.HasContent}">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <materialIcons:MaterialIcon Kind="ClockOutline"
+                                                            Width="12" Height="12"
+                                                            Foreground="{DynamicResource AccentText}"
+                                                            VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding WorkingItem.DurationText}"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           FontFamily="Consolas"
+                                           Foreground="{DynamicResource AccentText}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- MODO PLAYLIST -->
+                    <StackPanel Spacing="6" IsVisible="{Binding WorkingItem.IsPlaylist}">
+                        <TextBlock Text="Playlist (.rmf)"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding WorkingItem.FilePath}"
+                                     IsReadOnly="True"
+                                     PlaceholderText="(sin playlist)" />
+                            <Button Grid.Column="1"
+                                    x:Name="BrowsePlaylistButton"
+                                    Click="OnBrowsePlaylistClick"
+                                    Margin="8,0,0,0"
+                                    Padding="8,4"
+                                    ToolTip.Tip="Elegir playlist (.rmf)">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                                Width="15" Height="15"
+                                                                Foreground="{DynamicResource FgPrimary}" />
+                                    <TextBlock Text="Elegir .rmf..."
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Info + badge duracion de la playlist -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding WorkingItem.PathText}"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0" />
+                            <Border Grid.Column="1"
+                                    Background="{DynamicResource AccentSoft}"
+                                    BorderBrush="{DynamicResource Accent}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="8,3"
+                                    VerticalAlignment="Center"
+                                    IsVisible="{Binding WorkingItem.HasContent}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <materialIcons:MaterialIcon Kind="ClockOutline"
+                                                                Width="12" Height="12"
+                                                                Foreground="{DynamicResource AccentText}"
+                                                                VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding WorkingItem.DurationText}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               FontFamily="Consolas"
+                                               Foreground="{DynamicResource AccentText}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Border Background="{DynamicResource BgQuaternary}"
+                                BorderBrush="{DynamicResource AccentSoft}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="10,7"
+                                Margin="0,4,0,0">
+                            <TextBlock Text="La playlist se arma y edita en su propia pestaña (Playlists). Aca solo elegis cual se va a reproducir cuando se dispare este programado. Al dispararse, se reproduce UNA vez, ignorando el modo Loop/Shuffle de la playlist."
+                                       FontSize="10"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- MODO TANDA (referencia a .tnd) -->
+                    <StackPanel Spacing="6" IsVisible="{Binding WorkingItem.IsTanda}">
+                        <TextBlock Text="Tanda (.tnd)"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding WorkingItem.FilePath}"
+                                     IsReadOnly="True"
+                                     PlaceholderText="(sin tanda)" />
+                            <Button Grid.Column="1"
+                                    x:Name="BrowseTandaButton"
+                                    Click="OnBrowseTandaClick"
+                                    Margin="8,0,0,0"
+                                    Padding="8,4"
+                                    ToolTip.Tip="Elegir tanda (.tnd)">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                                Width="15" Height="15"
+                                                                Foreground="{DynamicResource FgPrimary}" />
+                                    <TextBlock Text="Elegir .tnd..."
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Info + badge duracion de la tanda -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding WorkingItem.PathText}"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0" />
+                            <Border Grid.Column="1"
+                                    Background="{DynamicResource AccentSoft}"
+                                    BorderBrush="{DynamicResource Accent}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="8,3"
+                                    VerticalAlignment="Center"
+                                    IsVisible="{Binding WorkingItem.HasContent}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <materialIcons:MaterialIcon Kind="ClockOutline"
+                                                                Width="12" Height="12"
+                                                                Foreground="{DynamicResource AccentText}"
+                                                                VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding WorkingItem.DurationText}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               FontFamily="Consolas"
+                                               Foreground="{DynamicResource AccentText}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Border Background="{DynamicResource BgQuaternary}"
+                                BorderBrush="{DynamicResource AccentSoft}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="10,7"
+                                Margin="0,4,0,0">
+                            <TextBlock Text="La tanda se arma y edita en su propia pestaña (Tandas). Aca solo elegis cual se va a reproducir cuando se dispare este programado."
+                                       FontSize="10"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- MODO BLOQUE -->
+                    <StackPanel Spacing="10" IsVisible="{Binding WorkingItem.IsBlock}">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Nombre del bloque"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding WorkingItem.BlockName}" />
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="Contenido del bloque (se reproduce en orden)"
+                                       FontWeight="SemiBold"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource FgPrimary}"
+                                       VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                <Button Command="{Binding WorkingItem.AddBlockItemPlaylistCommand}"
+                                        Padding="8,4"
+                                        ToolTip.Tip="Agregar una playlist (.rmf)">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <materialIcons:MaterialIcon Kind="PlaylistMusic"
+                                                                    Width="15" Height="15"
+                                                                    Foreground="{DynamicResource Success}" />
+                                        <TextBlock Text="Playlist"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgPrimary}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{Binding WorkingItem.AddBlockItemTandaCommand}"
+                                        Padding="8,4"
+                                        ToolTip.Tip="Agregar una tanda (.tnd)">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <materialIcons:MaterialIcon Kind="FormatListBulleted"
+                                                                    Width="15" Height="15"
+                                                                    Foreground="{DynamicResource Warning}" />
+                                        <TextBlock Text="Tanda"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgPrimary}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{Binding WorkingItem.AddBlockItemFileCommand}"
+                                        Padding="8,4"
+                                        ToolTip.Tip="Agregar un archivo de audio">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <materialIcons:MaterialIcon Kind="MusicNote"
+                                                                    Width="15" Height="15"
+                                                                    Foreground="{DynamicResource AccentText}" />
+                                        <TextBlock Text="Archivo"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgPrimary}" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="Sin contenido. Usa los botones de arriba para agregar items."
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   IsVisible="{Binding WorkingItem.HasNoBlockItems}" />
+
+                        <ItemsControl ItemsSource="{Binding WorkingItem.BlockItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:ScheduledBlockItemViewModel">
+                                    <Border BorderBrush="{DynamicResource BorderPrimary}"
+                                            BorderThickness="1" CornerRadius="6"
+                                            Padding="10,8" Margin="0,0,0,6">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto,Auto">
+                                            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                                                    Background="{Binding KindColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                                    CornerRadius="3" Padding="6,2"
+                                                    Margin="0,0,10,0"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding KindText}"
+                                                           FontSize="9" FontWeight="Bold"
+                                                           Foreground="White" />
+                                            </Border>
+
+                                            <StackPanel Grid.Row="0" Grid.Column="1" Spacing="2">
+                                                <TextBlock Text="{Binding DisplayTitle}"
+                                                           FontSize="12" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource FgPrimary}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding FilePath}"
+                                                           FontSize="10"
+                                                           Foreground="{DynamicResource FgMuted}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+
+                                            <!-- Badge de duracion del item del bloque -->
+                                            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                                    Background="{DynamicResource AccentSoft}"
+                                                    BorderBrush="{DynamicResource Accent}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="4"
+                                                    Padding="8,3"
+                                                    Margin="10,0,10,0"
+                                                    VerticalAlignment="Center"
+                                                    IsVisible="{Binding HasContent}">
+                                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                                    <materialIcons:MaterialIcon Kind="ClockOutline"
+                                                                                Width="12" Height="12"
+                                                                                Foreground="{DynamicResource AccentText}"
+                                                                                VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding DurationText}"
+                                                               FontSize="11"
+                                                               FontWeight="SemiBold"
+                                                               FontFamily="Consolas"
+                                                               Foreground="{DynamicResource AccentText}"
+                                                               VerticalAlignment="Center"
+                                                               MinWidth="60"
+                                                               TextAlignment="Right" />
+                                                </StackPanel>
+                                            </Border>
+
+                                            <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="3"
+                                                        Orientation="Horizontal" Spacing="2"
+                                                        VerticalAlignment="Center">
+                                                <Button x:Name="BrowseBlockItemButton"
+                                                        Click="OnBrowseBlockItemClick"
+                                                        Padding="4" Background="Transparent" BorderThickness="0"
+                                                        ToolTip.Tip="Elegir archivo">
+                                                    <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                                                Width="15" Height="15"
+                                                                                Foreground="{DynamicResource FgPrimary}" />
+                                                </Button>
+                                                <Button Command="{Binding $parent[ItemsControl].((vm:ScheduledItemEditorViewModel)DataContext).WorkingItem.MoveBlockItemUpCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="4" Background="Transparent" BorderThickness="0"
+                                                        ToolTip.Tip="Mover arriba">
+                                                    <materialIcons:MaterialIcon Kind="ArrowUp"
+                                                                                Width="15" Height="15"
+                                                                                Foreground="{DynamicResource FgPrimary}" />
+                                                </Button>
+                                                <Button Command="{Binding $parent[ItemsControl].((vm:ScheduledItemEditorViewModel)DataContext).WorkingItem.MoveBlockItemDownCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="4" Background="Transparent" BorderThickness="0"
+                                                        ToolTip.Tip="Mover abajo">
+                                                    <materialIcons:MaterialIcon Kind="ArrowDown"
+                                                                                Width="15" Height="15"
+                                                                                Foreground="{DynamicResource FgPrimary}" />
+                                                </Button>
+                                                <Button Command="{Binding $parent[ItemsControl].((vm:ScheduledItemEditorViewModel)DataContext).WorkingItem.RemoveBlockItemCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="4" Background="Transparent" BorderThickness="0"
+                                                        ToolTip.Tip="Quitar item">
+                                                    <materialIcons:MaterialIcon Kind="Close"
+                                                                                Width="15" Height="15"
+                                                                                Foreground="{DynamicResource Error}" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Badge total del bloque -->
+                        <Border Background="{DynamicResource AccentSoft}"
+                                BorderBrush="{DynamicResource Accent}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="12,6"
+                                HorizontalAlignment="Right"
+                                IsVisible="{Binding WorkingItem.HasBlockItems}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <materialIcons:MaterialIcon Kind="ClockOutline"
+                                                            Width="14" Height="14"
+                                                            Foreground="{DynamicResource AccentText}"
+                                                            VerticalAlignment="Center" />
+                                <TextBlock Text="Total del bloque:"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource AccentText}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding WorkingItem.BlockTotalDurationText}"
+                                           FontSize="13"
+                                           FontWeight="Bold"
+                                           FontFamily="Consolas"
+                                           Foreground="{DynamicResource AccentText}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Titulo -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Titulo (opcional)"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBox Text="{Binding WorkingItem.Title}"
+                                 PlaceholderText="(usa el nombre por defecto)" />
+                    </StackPanel>
+
+                    <!-- Prioridad + Activo -->
+                    <Grid ColumnDefinitions="Auto,Auto,*">
+                        <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                            <TextBlock Text="Prioridad"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <ComboBox ItemsSource="{Binding AvailablePriorities}"
+                                      SelectedItem="{Binding WorkingItem.Priority}"
+                                      MinWidth="140">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={x:Static vm:PriorityLabelConverter.Instance}}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Bottom">
+                            <CheckBox Content="Activo"
+                                      Foreground="{DynamicResource FgPrimary}"
+                                      IsChecked="{Binding WorkingItem.IsEnabled}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Notas -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Notas"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBox Text="{Binding WorkingItem.Notes}"
+                                 AcceptsReturn="True" Height="60"
+                                 TextWrapping="Wrap"
+                                 PlaceholderText="(opcional)" />
+                    </StackPanel>
+
+                    <!-- Horarios -->
+                    <Separator />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="Horarios programados"
+                                   FontWeight="SemiBold" FontSize="12"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   VerticalAlignment="Center" />
+                        <Button Grid.Column="1"
+                                Command="{Binding WorkingItem.AddEntryCommand}"
+                                Padding="8,4"
+                                ToolTip.Tip="Agregar un horario programado">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <materialIcons:MaterialIcon Kind="Plus"
+                                                            Width="15" Height="15"
+                                                            Foreground="{DynamicResource AccentText}" />
+                                <TextBlock Text="Horario"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgPrimary}" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <TextBlock Text="Sin horarios."
+                               FontSize="11"
+                               Foreground="{DynamicResource FgMuted}"
+                               IsVisible="{Binding WorkingItem.HasNoEntries}" />
+
+                    <ItemsControl ItemsSource="{Binding WorkingItem.Entries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ScheduleEntryViewModel">
+                                <Border BorderBrush="{DynamicResource BorderPrimary}"
+                                        BorderThickness="1" CornerRadius="6"
+                                        Padding="12,10" Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                        <CheckBox Grid.Row="0" Grid.Column="0"
+                                                  IsChecked="{Binding IsEnabled}"
+                                                  Margin="0,0,12,0" />
+                                        <StackPanel Grid.Row="0" Grid.Column="1"
+                                                    Orientation="Horizontal" Spacing="4"
+                                                    Margin="0,0,16,0">
+                                            <TextBlock Text="Hora:"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgSecondary}"
+                                                       VerticalAlignment="Center" />
+                                            <NumericUpDown Value="{Binding Hour}"
+                                                           Minimum="0" Maximum="23"
+                                                           Width="70" ShowButtonSpinner="True" />
+                                            <TextBlock Text=":"
+                                                       FontSize="13"
+                                                       Foreground="{DynamicResource FgPrimary}"
+                                                       VerticalAlignment="Center" />
+                                            <NumericUpDown Value="{Binding Minute}"
+                                                           Minimum="0" Maximum="59"
+                                                           Width="70" ShowButtonSpinner="True" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="0" Grid.Column="3"
+                                                   Text="{Binding ShortDescription}"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgSecondary}"
+                                                   VerticalAlignment="Center" />
+                                        <Button Grid.Row="0" Grid.Column="4"
+                                                Command="{Binding $parent[ItemsControl].((vm:ScheduledItemEditorViewModel)DataContext).WorkingItem.RemoveEntryCommand}"
+                                                CommandParameter="{Binding}"
+                                                Padding="6,2"
+                                                Margin="12,0,0,0"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                ToolTip.Tip="Quitar horario">
+                                            <materialIcons:MaterialIcon Kind="Close"
+                                                                        Width="15" Height="15"
+                                                                        Foreground="{DynamicResource Error}" />
+                                        </Button>
+                                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
+                                                    Orientation="Horizontal" Spacing="8"
+                                                    Margin="0,8,0,0">
+                                            <CheckBox Content="Lun" FontSize="11" Foreground="{DynamicResource FgPrimary}" IsChecked="{Binding Monday}" />
+                                            <CheckBox Content="Mar" FontSize="11" Foreground="{DynamicResource FgPrimary}" IsChecked="{Binding Tuesday}" />
+                                            <CheckBox Content="Mie" FontSize="11" Foreground="{DynamicResource FgPrimary}" IsChecked="{Binding Wednesday}" />
+                                            <CheckBox Content="Jue" FontSize="11" Foreground="{DynamicResource FgPrimary}" IsChecked="{Binding Thursday}" />
+                                            <CheckBox Content="Vie" FontSize="11" Foreground="{DynamicResource FgPrimary}" IsChecked="{Binding Friday}" />
+                                            <CheckBox Content="Sab" FontSize="11" Foreground="{DynamicResource FgPrimary}" IsChecked="{Binding Saturday}" />
+                                            <CheckBox Content="Dom" FontSize="11" Foreground="{DynamicResource FgPrimary}" IsChecked="{Binding Sunday}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8"
+                        Margin="0,14,0,0">
+                <Button Content="Cancelar" x:Name="CancelButton"
+                        Click="OnCancelClick" MinWidth="100" />
+                <Button Content="Guardar" x:Name="SaveButton"
+                        Click="OnSaveClick" MinWidth="100" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</controls:CustomChromeWindow>

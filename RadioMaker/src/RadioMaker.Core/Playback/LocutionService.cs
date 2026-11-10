@@ -1,0 +1,250 @@
+using ManagedBass;
+using RMVoice.Core;
+using RMVoice.Core.Models;
+using RadioMaker.Core.Logging;
+
+namespace RadioMaker.Core.Playback;
+
+/// <summary>
+/// Servicio que envuelve el motor de locución de RMVoice.
+///
+/// Responsabilidades:
+///   - Inicializar el <see cref="IAnnouncer"/> una vez al arrancar RadioMaker
+///     con <c>OwnsBass = false</c> (RadioMaker ya tiene BASS inicializado).
+///   - Exponer métodos semánticos (PlayHourAsync, PlayClimateAsync, etc.)
+///     que mapean a los comandos de RadioMaker.
+///   - Asegurar que el device de reproducción sea el MISMO del bus donde
+///     suena la pista principal.
+///   - Cachear y refrescar el clima (llamando a FetchWeatherAsync).
+///   - Reportar fallos de inicialización o de red sin romper la app.
+///
+/// El servicio es TOLERANTE A FALLOS: si RMVoice.Engine no está disponible
+/// o falla al inicializar, <see cref="IsAvailable"/> queda en false y todos
+/// los Play* devuelven false. La app sigue funcionando con normalidad.
+/// </summary>
+public sealed class LocutionService : IDisposable
+{
+    private readonly object _gate = new();
+    private IAnnouncer? _announcer;
+    private bool _available;
+    private bool _disposed;
+
+    public LocutionService() { }
+
+    /// <summary>True si RMVoice.Engine está cargado e inicializado.</summary>
+    public bool IsAvailable
+    {
+        get
+        {
+            lock (_gate) return _available && _announcer?.IsInitialized == true;
+        }
+    }
+
+    /// <summary>True si hay una locución reproduciéndose ahora.</summary>
+    public bool IsPlaying
+    {
+        get
+        {
+            lock (_gate) return _announcer?.IsPlaying == true;
+        }
+    }
+
+    /// <summary>Se dispara cuando cambia el estado de disponibilidad.</summary>
+    public event EventHandler? StateChanged;
+
+    // ───── Ciclo de vida ─────────────────────────────────────────────────
+
+    /// <summary>
+    /// Inicializa el motor de locución. Es idempotente.
+    /// Se llama una vez al arranque de RadioMaker (durante el splash).
+    ///
+    /// IMPORTANTE: llamar DESPUÉS de que RadioMaker inicializó BASS
+    /// (BassEngine.Initialize).
+    /// </summary>
+    public void Initialize()
+    {
+        lock (_gate)
+        {
+            if (_announcer is not null) return;
+
+            try
+            {
+                var options = new AnnouncerOptions
+                {
+                    OwnsBass = false,
+                    UserAgent = "RadioMaker/1.0"
+                };
+
+                _announcer = new Announcer(options);
+                _announcer.Initialize();
+
+                _available = _announcer.IsInitialized;
+
+                if (_available)
+                {
+                    AppLogger.Info("LOCUTION",
+                        $"RMVoice inicializado. {_announcer.Profiles.Count} perfil(es) de voz.");
+                }
+                else
+                {
+                    AppLogger.Warning("LOCUTION",
+                        "RMVoice.Initialize() completó pero IsInitialized sigue false.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _available = false;
+                AppLogger.Error("LOCUTION",
+                    $"No se pudo inicializar RMVoice: {ex.Message}", ex);
+            }
+
+            StateChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    // ───── Reproducción ──────────────────────────────────────────────────
+
+    /// <summary>
+    /// Reproduce un comando de locución en el device indicado.
+    /// El await termina cuando la locución acaba.
+    /// Devuelve false si RMVoice no está disponible o si falló.
+    /// </summary>
+    public async Task<bool> PlayAsync(
+        LocutionCommand command,
+        int deviceIndex,
+        float volume = 1f,
+        CancellationToken ct = default)
+    {
+        IAnnouncer? announcer;
+        lock (_gate)
+        {
+            if (_disposed) return false;
+            if (!_available || _announcer is null) return false;
+            announcer = _announcer;
+        }
+
+        var content = MapCommand(command);
+
+        try
+        {
+            // Aseguramos que el CurrentDevice del hilo actual apunte al
+            // device objetivo, así si RMVoice crea streams nuevos van ahí.
+            // (ChannelSetDevice interno también lo hace, pero por las dudas.)
+            int previous = Bass.CurrentDevice;
+            try
+            {
+                if (deviceIndex >= 0 && previous != deviceIndex)
+                    Bass.CurrentDevice = deviceIndex;
+
+                var request = new AnnounceRequest
+                {
+                    Content = content,
+                    DeviceIndex = deviceIndex,
+                    Volume = Math.Clamp(volume, 0f, 1f)
+                };
+
+                await announcer.PlayAsync(request, ct).ConfigureAwait(false);
+                return true;
+            }
+            finally
+            {
+                try
+                {
+                    if (Bass.CurrentDevice != previous)
+                        Bass.CurrentDevice = previous;
+                }
+                catch { }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warning("LOCUTION",
+                $"Error al reproducir locución {command}: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>Corta la locución en curso (si la hay).</summary>
+    public void Stop()
+    {
+        try
+        {
+            IAnnouncer? announcer;
+            lock (_gate) announcer = _announcer;
+            announcer?.Stop();
+        }
+        catch { }
+    }
+
+    // ───── Clima ─────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Refresca el clima consultando la API (Open-Meteo) ahora mismo.
+    /// Es seguro llamarlo aunque no haya ubicación configurada: solo
+    /// loguea un warning.
+    /// </summary>
+    public async Task RefreshWeatherAsync(CancellationToken ct = default)
+    {
+        IAnnouncer? announcer;
+        lock (_gate)
+        {
+            if (_disposed || !_available || _announcer is null) return;
+            announcer = _announcer;
+        }
+
+        try
+        {
+            await announcer.FetchWeatherAsync(ct).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warning("LOCUTION",
+                $"No se pudo refrescar el clima: {ex.Message}");
+        }
+    }
+
+    /// <summary>Último snapshot de clima cacheado por el engine (o null).</summary>
+    public WeatherSnapshot? LastWeather
+    {
+        get
+        {
+            lock (_gate) return _announcer?.LastWeather;
+        }
+    }
+
+    /// <summary>Ubicación de clima configurada (o null).</summary>
+    public WeatherLocation? ActiveWeatherLocation
+    {
+        get
+        {
+            lock (_gate) return _announcer?.ActiveWeatherLocation;
+        }
+    }
+
+    // ───── Helpers ───────────────────────────────────────────────────────
+
+    private static AnnounceContent MapCommand(LocutionCommand command) => command switch
+    {
+        LocutionCommand.HourAndMinute => AnnounceContent.HourAndMinute,
+        LocutionCommand.Climate => AnnounceContent.ClimateOnly,
+        LocutionCommand.HourAndClimate => AnnounceContent.HourMinuteAndClimate,
+        _ => AnnounceContent.HourAndMinute
+    };
+
+    public void Dispose()
+    {
+        lock (_gate)
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            try { _announcer?.Dispose(); } catch { }
+            _announcer = null;
+            _available = false;
+        }
+    }
+}

@@ -1,0 +1,372 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="RadioMaker.UI.Views.AboutWindow"
+        x:DataType="vm:AboutWindowViewModel"
+        Title="Acerca de RadioMaker"
+        Width="720" Height="640"
+        MinWidth="600" MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+        <!-- Barra de titulo personalizada -->
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="{Binding $parent[controls:CustomChromeWindow].Title}"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <!-- ═══ Header con imagen de fondo ═══ -->
+        <Border Grid.Row="1"
+                Height="180"
+                ClipToBounds="True">
+            <Grid>
+                <!-- Imagen de fondo (splash) -->
+                <Image Source="{Binding SplashImage}"
+                       Stretch="UniformToFill"
+                       Opacity="0.45"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+
+                <!-- Overlay con gradiente de arriba transparente a abajo solido -->
+                <Border>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                            <GradientStop Color="#33000000" Offset="0.0" />
+                            <GradientStop Color="#80000000" Offset="0.5" />
+                            <GradientStop Color="#FF0F0F14" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                <!-- Texto sobre el header (parte inferior) -->
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            Spacing="2"
+                            Margin="0,0,0,14">
+                    <TextBlock Text="{Binding AppName}"
+                               FontSize="32"
+                               FontWeight="Bold"
+                               Foreground="#FFFFFF"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding AppVersion}"
+                               FontSize="12"
+                               Foreground="#00E5FF"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding AppSlogan}"
+                               FontSize="11"
+                               FontStyle="Italic"
+                               Foreground="#9CA3AF"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══ Tabs: Acerca de / Librerias ═══ -->
+        <TabControl Grid.Row="2"
+                    Margin="16,12,16,0"
+                    SelectedIndex="0">
+
+            <!-- ═════ TAB 1: ACERCA DE ═════ -->
+            <TabItem Header="Acerca de">
+                <ScrollViewer Padding="4,10,4,10">
+                    <StackPanel Spacing="14">
+
+                        <!-- Descripcion -->
+                        <Border Background="{DynamicResource BgTertiary}"
+                                BorderBrush="{DynamicResource BorderPrimary}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="14,10">
+                            <TextBlock Text="{Binding AppDescription}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource FgPrimary}"
+                                       TextWrapping="Wrap"
+                                       LineHeight="19" />
+                        </Border>
+
+                        <!-- Info de compilacion -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Informacion de compilacion"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource FgPrimary}"
+                                       Margin="0,4,0,4" />
+
+                            <Border Background="{DynamicResource BgTertiary}"
+                                    BorderBrush="{DynamicResource BorderPrimary}"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Padding="12,8">
+                                <Grid ColumnDefinitions="120,*"
+                                      RowDefinitions="Auto,Auto,Auto"
+                                      RowSpacing="6">
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                                               Text="Version:"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgSecondary}" />
+                                    <TextBlock Grid.Row="0" Grid.Column="1"
+                                               Text="{Binding AppVersion}"
+                                               FontSize="11"
+                                               FontFamily="Consolas"
+                                               Foreground="{DynamicResource FgPrimary}" />
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0"
+                                               Text="Compilacion:"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgSecondary}" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                               Text="{Binding AppBuild}"
+                                               FontSize="11"
+                                               FontFamily="Consolas"
+                                               Foreground="{DynamicResource FgPrimary}" />
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0"
+                                               Text="Plataforma:"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgSecondary}" />
+                                    <TextBlock Grid.Row="2" Grid.Column="1"
+                                               Text="{Binding FrameworkText}"
+                                               FontSize="11"
+                                               FontFamily="Consolas"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               TextWrapping="Wrap" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Links rapidos -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Enlaces de interes"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource FgPrimary}"
+                                       Margin="0,4,0,4" />
+
+                            <ItemsControl ItemsSource="{Binding QuickLinks}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:QuickLinkInfo">
+                                        <Button x:Name="QuickLinkButton"
+                                                Click="OnQuickLinkClick"
+                                                Tag="{Binding Url}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Padding="6,4"
+                                                HorizontalAlignment="Left"
+                                                HorizontalContentAlignment="Left"
+                                                Margin="0,1">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <materialIcons:MaterialIcon Kind="OpenInNew"
+                                                                            Width="13" Height="13"
+                                                                            Foreground="{DynamicResource AccentText}"
+                                                                            VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Label}"
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource AccentText}"
+                                                           VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <!-- Copyright -->
+                        <Border Background="{DynamicResource BgQuaternary}"
+                                BorderBrush="{DynamicResource AccentSoft}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="12,10"
+                                Margin="0,8,0,0">
+                            <TextBlock Text="{Binding CopyrightText}"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}"
+                                       TextWrapping="Wrap"
+                                       HorizontalAlignment="Center" />
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ═════ TAB 2: LIBRERIAS ═════ -->
+            <TabItem Header="Librerías">
+                <ScrollViewer Padding="4,10,4,10">
+                    <StackPanel Spacing="16">
+
+                        <TextBlock Text="RadioMaker esta construido sobre las siguientes librerias open source y comerciales. Cada una tiene su propia licencia, cuyos terminos se respetan integramente."
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   TextWrapping="Wrap"
+                                   LineHeight="17"
+                                   Margin="0,0,0,6" />
+
+                        <!-- Grupos de dependencias -->
+                        <ItemsControl ItemsSource="{Binding DependencyGroups}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:DependencyGroup">
+                                    <StackPanel Spacing="8" Margin="0,0,0,12">
+
+                                        <!-- Titulo del grupo -->
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource FgPrimary}" />
+
+                                        <!-- Items del grupo -->
+                                        <ItemsControl ItemsSource="{Binding Items}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="vm:DependencyInfo">
+                                                    <Border Background="{DynamicResource BgTertiary}"
+                                                            BorderBrush="{DynamicResource BorderPrimary}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="6"
+                                                            Padding="12,10"
+                                                            Margin="0,0,0,6">
+                                                        <StackPanel Spacing="4">
+
+                                                            <!-- Fila 1: nombre + version + licencia -->
+                                                            <Grid ColumnDefinitions="*,Auto,Auto">
+                                                                <StackPanel Grid.Column="0"
+                                                                            Orientation="Horizontal"
+                                                                            Spacing="6"
+                                                                            VerticalAlignment="Center">
+                                                                    <TextBlock Text="{Binding Name}"
+                                                                               FontSize="12"
+                                                                               FontWeight="SemiBold"
+                                                                               Foreground="{DynamicResource FgPrimary}"
+                                                                               VerticalAlignment="Center" />
+                                                                    <TextBlock Text="{Binding Version, StringFormat='v{0}'}"
+                                                                               FontSize="10"
+                                                                               FontFamily="Consolas"
+                                                                               Foreground="{DynamicResource FgMuted}"
+                                                                               VerticalAlignment="Center" />
+                                                                </StackPanel>
+
+                                                                <Border Grid.Column="2"
+                                                                        Background="{DynamicResource AccentSoft}"
+                                                                        CornerRadius="4"
+                                                                        Padding="6,2"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="8,0,0,0">
+                                                                    <TextBlock Text="{Binding License}"
+                                                                               FontSize="9"
+                                                                               FontWeight="Bold"
+                                                                               Foreground="{DynamicResource AccentText}" />
+                                                                </Border>
+                                                            </Grid>
+
+                                                            <!-- Fila 2: descripcion -->
+                                                            <TextBlock Text="{Binding Description}"
+                                                                       FontSize="10"
+                                                                       Foreground="{DynamicResource FgSecondary}"
+                                                                       TextWrapping="Wrap"
+                                                                       LineHeight="15" />
+
+                                                            <!-- Fila 3: link -->
+                                                            <Button x:Name="DependencyLinkButton"
+                                                                    Click="OnDependencyLinkClick"
+                                                                    Tag="{Binding Url}"
+                                                                    IsVisible="{Binding HasUrl}"
+                                                                    Background="Transparent"
+                                                                    BorderThickness="0"
+                                                                    Padding="0"
+                                                                    HorizontalAlignment="Left"
+                                                                    HorizontalContentAlignment="Left"
+                                                                    Margin="0,2,0,0">
+                                                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                                                    <materialIcons:MaterialIcon Kind="LinkVariant"
+                                                                                                Width="11" Height="11"
+                                                                                                Foreground="{DynamicResource AccentText}"
+                                                                                                VerticalAlignment="Center" />
+                                                                    <TextBlock Text="{Binding Url}"
+                                                                               FontSize="9"
+                                                                               Foreground="{DynamicResource AccentText}"
+                                                                               TextDecorations="Underline"
+                                                                               VerticalAlignment="Center"
+                                                                               TextTrimming="CharacterEllipsis"
+                                                                               MaxWidth="450" />
+                                                                </StackPanel>
+                                                            </Button>
+
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Nota final -->
+                        <Border Background="{DynamicResource BgQuaternary}"
+                                BorderBrush="{DynamicResource AccentSoft}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="12,10"
+                                Margin="0,8,0,0">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Nota sobre BASS"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource FgPrimary}" />
+                                <TextBlock FontSize="10"
+                                           Foreground="{DynamicResource FgSecondary}"
+                                           TextWrapping="Wrap"
+                                           LineHeight="15"
+                                           Text="La libreria nativa BASS de Un4seen es gratuita para uso personal y educativo. El uso comercial (venta del software, uso en una emisora con fines de lucro, etc.) requiere una licencia comercial de Un4seen Developments. Consultar https://www.un4seen.com para mas informacion." />
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- ═══ Footer ═══ -->
+        <Border Grid.Row="3"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,1,0,0"
+                Padding="14,10">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding CopyrightText}"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgMuted}"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" />
+
+                <Button Grid.Column="1"
+                        x:Name="CopyInfoButton"
+                        Click="OnCopyInfoClick"
+                        Padding="10,5"
+                        Margin="0,0,8,0"
+                        FontSize="11"
+                        ToolTip.Tip="Copia la info de la app al portapapeles">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <materialIcons:MaterialIcon Kind="ContentCopy"
+                                                    Width="13" Height="13"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                        <TextBlock Text="Copiar info"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgPrimary}" />
+                    </StackPanel>
+                </Button>
+
+                <Button Grid.Column="2"
+                        x:Name="CloseButton"
+                        Click="OnCloseClick"
+                        Padding="16,5"
+                        MinWidth="100"
+                        FontSize="11"
+                        Content="Cerrar" />
+            </Grid>
+        </Border>
+    </Grid>
+</controls:CustomChromeWindow>

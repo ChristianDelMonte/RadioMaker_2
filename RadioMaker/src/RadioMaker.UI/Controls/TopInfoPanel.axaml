@@ -1,0 +1,372 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.TopInfoPanel"
+             x:DataType="vm:MainWindowViewModel">
+
+    <Border Background="{DynamicResource BgSecondary}"
+            BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="0,0,0,1"
+            Padding="8,6">
+        <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,Auto,Auto,Auto,Auto"
+              ColumnSpacing="8">
+
+            <!-- ═══════════════════════════════════════════════════════
+                 0) Logo de la app
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource BgTertiary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Width="220" Height="66"
+                    ClipToBounds="True">
+                <Panel>
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="2">
+                        <materialIcons:MaterialIcon Kind="MusicNote"
+                                                    Width="24" Height="24"
+                                                    Foreground="{DynamicResource Accent}"
+                                                    HorizontalAlignment="Center" />
+                        <TextBlock Text="LOGO"
+                                   FontSize="9"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <Image Source="/Assets/logo.png"
+                           Stretch="Uniform"
+                           IsVisible="true" />
+                </Panel>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 1) En reproduccion
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Column="1"
+                    Background="{Binding NowPlayingPanelBackground}"
+                    BorderBrush="{Binding NowPlayingPanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="10,5"
+                    Height="66"
+                    MinWidth="200">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+
+                    <Grid Grid.Column="0" RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0"
+                                   Text="EN REPRODUCCION"
+                                   FontSize="8"
+                                   FontWeight="Bold"
+                                   Foreground="{Binding NowPlayingPanelForeground}"
+                                   LetterSpacing="1" />
+
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding NowPlayingTitle}"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   Foreground="{Binding NowPlayingPanelForeground}"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,2,0,0" />
+
+                        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,2,0,0">
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding NowPlayingArtist}"
+                                       FontSize="10"
+                                       Foreground="{Binding NowPlayingPanelForeground}"
+                                       Opacity="0.75"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding NowPlayingPosition}"
+                                       FontSize="10"
+                                       FontFamily="Consolas"
+                                       Foreground="{Binding NowPlayingPanelForeground}"
+                                       Opacity="0.75"
+                                       Margin="6,0,0,0" />
+                        </Grid>
+                    </Grid>
+
+                    <controls:MiniWaveform Grid.Column="1"
+                                           Channel="{Binding NowPlayingChannel}"
+                                           Width="110" Height="56"
+                                           VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 2) LED: tiempo transcurrido / restante
+                 ═══════════════════════════════════════════════════════ -->
+            <controls:LedPanel Grid.Column="2"
+                               Line1Text="{Binding ElapsedText}"
+                               Line2Text="{Binding RemainingText}"
+                               IsActive="{Binding IsAnyAudioPlaying}"
+                               Height="66"
+                               LineHeight="18"
+                               MinWidth="135"
+                               VerticalAlignment="Center"
+                               ToolTip.Tip="Tiempo transcurrido / restante" />
+
+            <!-- ═══════════════════════════════════════════════════════
+                 3) Siguiente
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Column="3"
+                    Background="{Binding NextPlayingPanelBackground}"
+                    BorderBrush="{Binding NextPlayingPanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="10,5"
+                    Height="66"
+                    MinWidth="200">
+                <Grid RowDefinitions="Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0"
+                               Text="SIGUIENTE"
+                               FontSize="8"
+                               FontWeight="Bold"
+                               Foreground="{Binding NextPlayingPanelForeground}"
+                               LetterSpacing="1" />
+
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding NextTitle}"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{Binding NextPlayingPanelForeground}"
+                               TextTrimming="CharacterEllipsis"
+                               Margin="0,2,0,0" />
+
+                    <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,2,0,0">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding NextArtist}"
+                                   FontSize="10"
+                                   Foreground="{Binding NextPlayingPanelForeground}"
+                                   Opacity="0.75"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding NextPosition}"
+                                   FontSize="10"
+                                   FontFamily="Consolas"
+                                   Foreground="{Binding NextPlayingPanelForeground}"
+                                   Opacity="0.75"
+                                   Margin="6,0,0,0" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 4) VU meter horizontal
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Column="4"
+                    Background="{Binding VuPanelBackground}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="8,5"
+                    MinWidth="180"
+                    MaxWidth="220">
+                <controls:VuMeter Orientation="Horizontal"
+                                  Style="{Binding VuSettings.Style}"
+                                  ShowDbScale="False"
+                                  SegmentCount="{Binding VuSettings.SegmentCount}"
+                                  ShowPeakHold="{Binding VuSettings.ShowPeakHold}"
+                                  ShowRms="{Binding VuSettings.ShowRms}"
+                                  ShowClipIndicator="{Binding VuSettings.ShowClipIndicator}"
+                                  BarWidth="20"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  GreenZoneColor="{Binding VuSettings.GreenColor}"
+                                  AmberZoneColor="{Binding VuSettings.AmberColor}"
+                                  RedZoneColor="{Binding VuSettings.RedColor}"
+                                  ScaleTextColor="{Binding VuSettings.ScaleColor}"
+                                  AccentColor="{Binding VuSettings.AccentColor}"
+                                  LeftLevel="{Binding VuLeftLevel}"
+                                  RightLevel="{Binding VuRightLevel}"
+                                  LeftPeak="{Binding VuLeftPeak}"
+                                  RightPeak="{Binding VuRightPeak}"
+                                  LeftRms="{Binding VuLeftRms}"
+                                  RightRms="{Binding VuRightRms}"
+                                  ShowClip="{Binding VuClip}" />
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 5) LED fecha/hora + boton de locucion de hora
+                 ═══════════════════════════════════════════════════════ -->
+            <Grid Grid.Column="5"
+                  ColumnDefinitions="Auto,Auto"
+                  ColumnSpacing="4">
+
+                <!-- Boton "dar la hora" -->
+                <Button Grid.Column="0"
+                        Command="{Binding LocutionPanel.PlayHourCommand}"
+                        IsEnabled="{Binding LocutionPanel.CanPlay}"
+                        Width="26" Height="66"
+                        Padding="0"
+                        Background="{DynamicResource BgTertiary}"
+                        BorderBrush="{DynamicResource BorderPrimary}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="{Binding LocutionPanel.HourButtonTooltip}">
+                    <materialIcons:MaterialIcon Kind="ClockOutline"
+                                                Width="16" Height="16"
+                                                Foreground="{DynamicResource Accent}" />
+                </Button>
+
+                <!-- LED fecha/hora -->
+                <controls:LedPanel Grid.Column="1"
+                                   Line1Text="{Binding DateText}"
+                                   Line2Text="{Binding TimeText}"
+                                   IsActive="True"
+                                   Height="66"
+                                   LineHeight="18"
+                                   MinWidth="155"
+                                   VerticalAlignment="Center"
+                                   ToolTip.Tip="Fecha / hora" />
+            </Grid>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 6) Volumen general (dial)
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Column="6"
+                    Background="{DynamicResource BgTertiary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="6,4"
+                    Height="66"
+                    MinWidth="66"
+                    VerticalAlignment="Center">
+                <controls:RotaryDial Minimum="0" Maximum="1"
+                                     Step="0.01"
+                                     Value="{Binding Volume, Mode=TwoWay}"
+                                     Width="48" Height="48"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     ToolTip.Tip="Volumen general" />
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 7) Ducking
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Column="7"
+                    Background="{DynamicResource BgTertiary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="6,4"
+                    Height="66"
+                    MinWidth="72"
+                    VerticalAlignment="Center">
+                <StackPanel Orientation="Vertical"
+                            Spacing="4"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="Ducking por microfono">
+                    <TextBlock Text="DUCKING"
+                               FontSize="8"
+                               FontWeight="Bold"
+                               LetterSpacing="0.5"
+                               Foreground="{DynamicResource FgSecondary}"
+                               HorizontalAlignment="Center" />
+                    <ToggleSwitch IsChecked="{Binding Ducking.IsEnabled}"
+                                  OnContent=""
+                                  OffContent=""
+                                  HorizontalAlignment="Center"
+                                  MinWidth="0"
+                                  Padding="0">
+                        <ToggleSwitch.RenderTransform>
+                            <ScaleTransform ScaleX="0.75" ScaleY="0.75" />
+                        </ToggleSwitch.RenderTransform>
+                    </ToggleSwitch>
+                </StackPanel>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 8) Clima + boton de locucion de clima
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Column="8"
+                    Background="{DynamicResource BgTertiary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="8,5"
+                    Height="66"
+                    MinWidth="200"
+                    VerticalAlignment="Center">
+
+                <Border.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Refrescar datos"
+                                  Command="{Binding LocutionPanel.RefreshWeatherCommand}" />
+                        <Separator />
+                        <MenuItem Header="Configuracion..."
+                                  Command="{Binding LocutionPanel.RequestOpenSettingsCommand}" />
+                        <MenuItem Header="Abrir RMVoice..."
+                                  Command="{Binding LocutionPanel.RequestOpenRMVoiceCommand}" />
+                    </ContextMenu>
+                </Border.ContextMenu>
+
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+
+                    <!-- Boton "dar el clima" -->
+                    <Button Grid.Column="0"
+                            Command="{Binding LocutionPanel.PlayClimateCommand}"
+                            IsEnabled="{Binding LocutionPanel.CanPlay}"
+                            Width="30" Height="50"
+                            Padding="0"
+                            Background="{DynamicResource BgPrimary}"
+                            BorderBrush="{DynamicResource BorderPrimary}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="{Binding LocutionPanel.ClimateButtonTooltip}">
+                        <materialIcons:MaterialIcon Kind="WeatherPartlyCloudy"
+                                                    Width="18" Height="18"
+                                                    Foreground="{DynamicResource Accent}" />
+                    </Button>
+
+                    <!-- Info climatica -->
+                    <Grid Grid.Column="1"
+                          RowDefinitions="Auto,Auto"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch">
+
+                        <!-- Linea 1: Ciudad, Pais -->
+                        <TextBlock Grid.Row="0"
+                                   Text="{Binding LocutionPanel.LocationDisplayText}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   TextTrimming="CharacterEllipsis"
+                                   HorizontalAlignment="Center"/>
+
+                        <!-- Linea 2: Temperatura y Humedad -->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    Spacing="8"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,4,0,0">
+
+                            <TextBlock Text="{Binding LocutionPanel.TemperatureDisplayText}"
+                                       FontSize="16"
+                                       FontFamily="Consolas"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource AccentText}" />
+                            <TextBlock Text="·"
+                                       FontSize="14"
+                                       Foreground="{DynamicResource FgMuted}"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding LocutionPanel.HumidityDisplayText}"
+                                       FontSize="16"
+                                       FontFamily="Consolas"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource AccentText}" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

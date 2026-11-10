@@ -1,0 +1,553 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:core="clr-namespace:RadioMaker.Core.Abstractions;assembly=RadioMaker.Core"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="RadioMaker.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="RMS Audio Player"
+        Icon="/Assets/app.ico"
+        Width="1280" Height="720"
+        MinWidth="1280" MinHeight="720"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowDecorations="None"
+        WindowStartupLocation="CenterScreen"
+        WindowState="FullScreen">
+
+    <Window.Styles>
+        <!-- Animacion de parpadeo del banner de emergencia -->
+        <Style Selector="Border.emergency-banner">
+            <Style.Animations>
+                <Animation Duration="0:0:2" IterationCount="INFINITE" PlaybackDirection="Alternate">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Background" Value="#EF4444" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Background" Value="#1A0000" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </Window.Styles>
+
+    <Grid>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- CONTENIDO PRINCIPAL                                                 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- BARRA DE TITULO PERSONALIZADA (solo Windows/macOS)              -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1"
+                    Padding="10,4"
+                    Name="CustomTitleBar"
+                    WindowDecorationProperties.ElementRole="TitleBar"
+                    IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}">
+
+                <Grid ColumnDefinitions="*,Auto,*">
+
+                    <!-- Columna izquierda: vacia (solo espacio) -->
+                    <Panel Grid.Column="0" />
+
+                    <!-- Columna central: icono + nombre + version + build + slogan -->
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                Spacing="10"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+
+                        <!-- Icono de la app -->
+                        <Image Source="/Assets/app.ico"
+                               Width="22" Height="22"
+                               VerticalAlignment="Center" />
+
+                        <!-- Nombre de la app -->
+                        <TextBlock Text="{Binding AppName}"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   VerticalAlignment="Center" />
+
+                        <!-- Separador -->
+                        <Border Width="1"
+                                Height="14"
+                                Background="{DynamicResource BorderPrimary}"
+                                VerticalAlignment="Center" />
+
+                        <!-- Version -->
+                        <TextBlock Text="{Binding AppVersionText}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+
+                        <!-- Separador -->
+                        <Border Width="1"
+                                Height="14"
+                                Background="{DynamicResource BorderPrimary}"
+                                VerticalAlignment="Center" />
+
+                        <!-- Compilacion -->
+                        <TextBlock Text="{Binding AppBuildText}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+
+                        <!-- Separador -->
+                        <Border Width="1"
+                                Height="14"
+                                Background="{DynamicResource BorderPrimary}"
+                                VerticalAlignment="Center" />
+
+                        <!-- Slogan -->
+                        <TextBlock Text="{Binding AppSlogan}"
+                                   FontSize="12"
+                                   FontStyle="Italic"
+                                   Foreground="{DynamicResource Accent}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Columna derecha: botones de la ventana alineados a la derecha -->
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                Spacing="0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center">
+
+                        <Button Name="MinimizeButton"
+                                WindowDecorationProperties.ElementRole="MinimizeButton"
+                                Padding="10,4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ToolTip.Tip="Minimizar">
+                            <materialIcons:MaterialIcon Kind="WindowMinimize"
+                                                        Width="14" Height="14"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+
+                        <Button Name="MaximizeButton"
+                                WindowDecorationProperties.ElementRole="MaximizeButton"
+                                Padding="10,4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ToolTip.Tip="Maximizar">
+                            <Panel Width="14" Height="14">
+                                <materialIcons:MaterialIcon Kind="WindowMaximize"
+                                                            Width="14" Height="14"
+                                                            Foreground="{DynamicResource FgPrimary}"
+                                                            IsVisible="{Binding !IsMaximized}" />
+                                <materialIcons:MaterialIcon Kind="WindowRestore"
+                                                            Width="14" Height="14"
+                                                            Foreground="{DynamicResource FgPrimary}"
+                                                            IsVisible="{Binding IsMaximized}" />
+                            </Panel>
+                        </Button>
+
+                        <Button Name="CloseButton"
+                                WindowDecorationProperties.ElementRole="CloseButton"
+                                Padding="10,4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ToolTip.Tip="Cerrar">
+                            <materialIcons:MaterialIcon Kind="Close"
+                                                        Width="14" Height="14"
+                                                        Foreground="{DynamicResource Error}" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- MODULO 1: Menu principal (izquierda) + iconos rapidos (derecha) -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+
+                    <!-- Menu a la izquierda -->
+                    <Menu Grid.Column="0"
+                          Background="Transparent"
+                          Padding="4,2">
+
+                        <MenuItem Header="_Archivo">
+                            <!-- Nuevo -->
+                            <MenuItem Header="Nuevo">
+                                <MenuItem Header="Tanda" Click="OnMenuNewTanda" />
+                                <MenuItem Header="Programado" Click="OnMenuNewScheduled" />
+                                <MenuItem Header="Playlist" Click="OnMenuNewPlaylist" />
+                                <MenuItem Header="Cart" Click="OnMenuNewCart" />
+                                <MenuItem Header="Nota" Click="OnMenuNewNotes" />
+                            </MenuItem>
+
+                            <!-- Abrir -->
+                            <MenuItem Header="Abrir">
+                                <MenuItem Header="Tanda..." Click="OnMenuOpenTanda" />
+                                <MenuItem Header="Programado..." Click="OnMenuOpenScheduled" />
+                                <MenuItem Header="Playlist..." Click="OnMenuOpenPlaylist" />
+                                <MenuItem Header="Cart..." Click="OnMenuOpenCart" />
+                                <MenuItem Header="Nota..." Click="OnMenuOpenNotes" />
+                            </MenuItem>
+
+                            <!-- Guardar (segun la pestaña activa) -->
+                            <MenuItem Header="Guardar">
+                                <MenuItem Header="Tanda..."
+                                          IsEnabled="{Binding CanSaveTanda}"
+                                          Click="OnMenuSaveTanda" />
+                                <MenuItem Header="Programado..."
+                                          IsEnabled="{Binding CanSaveScheduledList}"
+                                          Click="OnMenuSaveScheduled" />
+                                <MenuItem Header="Playlist..."
+                                          IsEnabled="{Binding CanSavePlaylist}"
+                                          Click="OnMenuSavePlaylist" />
+                                <MenuItem Header="Cart..."
+                                          IsEnabled="{Binding CanSaveCart}"
+                                          Click="OnMenuSaveCart" />
+                                <MenuItem Header="Nota..."
+                                          IsEnabled="{Binding CanSaveNotes}"
+                                          Click="OnMenuSaveNotes" />
+                            </MenuItem>
+
+                            <Separator />
+                            <MenuItem Header="Salir" Click="OnMenuExit" />
+                        </MenuItem>
+
+                        <MenuItem Header="_Edicion">
+                            <!-- Editar item seleccionado en Programados -->
+                            <MenuItem Header="Editar">
+                                <MenuItem Header="Bloque..."
+                                          IsEnabled="{Binding CanEditBlock}"
+                                          Click="OnMenuEditBlock" />
+                                <MenuItem Header="Tanda..."
+                                          IsEnabled="{Binding CanEditTandaItem}"
+                                          Click="OnMenuEditTandaItem" />
+                                <MenuItem Header="Playlist..."
+                                          IsEnabled="{Binding CanEditPlaylistItem}"
+                                          Click="OnMenuEditPlaylistItem" />
+                            </MenuItem>
+
+                            <Separator />
+
+                            <!-- Editar tags del archivo audio seleccionado -->
+                            <MenuItem Header="Editar tags..."
+                                      IsEnabled="{Binding CanEditAudioTags}"
+                                      Click="OnMenuEditTags" />
+
+                            <Separator />
+
+                            <!-- Generador de playlists -->
+                            <MenuItem Header="Playlists">
+                                <MenuItem Header="Generador Automatico..."
+                                          Click="OnMenuGeneratePlaylist" />
+                            </MenuItem>
+
+                            <Separator />
+
+                            <MenuItem Header="Configuracion..." Click="OnConfigureAudioClick" />
+                        </MenuItem>
+
+                        <MenuItem Header="_Complementos">
+                            <MenuItem Header="RM Wave..." Click="OnMenuLaunchRMWave" />
+                            <MenuItem Header="RM Voice..." Click="OnMenuLaunchRMVoice" />
+                            <MenuItem Header="RM Cast..." Click="OnMenuLaunchRMCast" />
+                        </MenuItem>
+
+                        <MenuItem Header="_Ayuda">
+                            <MenuItem Header="Acerca de..." Click="OnMenuAbout" />
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- Iconos rapidos a la derecha: AL AIRE + theme + configuracion -->
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                Spacing="2"
+                                VerticalAlignment="Center"
+                                Margin="0,0,8,0">
+
+                        <!-- Indicador AL AIRE -->
+                        <Border Background="{Binding AlAireBackground}"
+                                BorderBrush="{Binding AlAireBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="8,3"
+                                VerticalAlignment="Center"
+                                Margin="0,0,6,0"
+                                ToolTip.Tip="Estado de la salida al aire">
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="6"
+                                        VerticalAlignment="Center">
+                                <Ellipse Width="8" Height="8"
+                                         Fill="{Binding AlAireLedColor}"
+                                         VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding AlAireText}"
+                                           FontSize="10"
+                                           FontWeight="Bold"
+                                           LetterSpacing="0.5"
+                                           Foreground="{Binding AlAireTextColor}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Toggle de tema claro/oscuro -->
+                        <Button Command="{Binding ToggleThemeCommand}"
+                                Padding="6,4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                VerticalAlignment="Center"
+                                ToolTip.Tip="Cambiar entre tema claro y oscuro">
+                            <Panel Width="16" Height="16">
+                                <materialIcons:MaterialIcon Kind="WeatherSunny"
+                                                            Width="16" Height="16"
+                                                            Foreground="{DynamicResource Warning}"
+                                                            IsVisible="{Binding IsDarkTheme}" />
+                                <materialIcons:MaterialIcon Kind="WeatherNight"
+                                                            Width="16" Height="16"
+                                                            Foreground="{DynamicResource AccentText}"
+                                                            IsVisible="{Binding IsLightTheme}" />
+                            </Panel>
+                        </Button>
+
+                        <!-- Configuracion unificada -->
+                        <Button Click="OnConfigureAudioClick"
+                                Padding="6,4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                VerticalAlignment="Center"
+                                ToolTip.Tip="Configuracion">
+                            <materialIcons:MaterialIcon Kind="Cog"
+                                                        Width="16" Height="16"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- MODULO 2: Panel superior informativo                            -->
+            <!-- (aca van, mas adelante, el dial de volumen y el ducking)        -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <controls:TopInfoPanel Grid.Row="2" />
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- MODULO 3: Contenido principal (3 columnas)                      -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="3" ColumnDefinitions="*,4,*,4,*" Margin="12">
+
+                <controls:TabHost Grid.Column="0"
+                                  DataContext="{Binding TabHost}"
+                                  MinWidth="320"
+                                  VerticalAlignment="Stretch" />
+
+                <GridSplitter Grid.Column="1"
+                              Background="{DynamicResource BorderPrimary}"
+                              ResizeDirection="Columns"
+                              ResizeBehavior="PreviousAndNext"
+                              Cursor="SizeWestEast"
+                              Width="4" />
+
+                <Grid Grid.Column="2" Margin="8,0,8,0" RowDefinitions="3*,4,2*">
+
+                    <controls:TabHost Grid.Row="0"
+                                      DataContext="{Binding TabHostCenter}"
+                                      VerticalAlignment="Stretch" />
+
+                    <GridSplitter Grid.Row="1"
+                                  Background="{DynamicResource BorderPrimary}"
+                                  ResizeDirection="Rows"
+                                  ResizeBehavior="PreviousAndNext"
+                                  Cursor="SizeNorthSouth"
+                                  Height="4"
+                                  HorizontalAlignment="Stretch" />
+
+                    <TabControl Grid.Row="2"
+                                Name="CenterTabs"
+                                SelectedIndex="0">
+
+                        <!-- Tab 1: Spectrum -->
+                        <TabItem Header="Spectrum">
+                            <ContentControl Content="{Binding Spectrum}" Margin="0,4,0,0" />
+                        </TabItem>
+
+                        <!-- Tab 2: Ecualizador -->
+                        <TabItem Header="Ecualizador">
+                            <ScrollViewer Margin="0,4,0,0">
+                                <ContentControl Content="{Binding Equalizer}" />
+                            </ScrollViewer>
+                        </TabItem>
+
+                        <!-- Tab 3: Log -->
+                        <TabItem Header="Log">
+                            <ContentControl Content="{Binding PlaybackLog}" Margin="0,4,0,0" />
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+
+                <GridSplitter Grid.Column="3"
+                              Background="{DynamicResource BorderPrimary}"
+                              ResizeDirection="Columns"
+                              ResizeBehavior="PreviousAndNext"
+                              Cursor="SizeWestEast"
+                              Width="4" />
+
+                <controls:TabHost Grid.Column="4"
+                                  DataContext="{Binding TabHostRight}"
+                                  MinWidth="280"
+                                  VerticalAlignment="Stretch" />
+            </Grid>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- MODULO 5: Barra de estado inferior                              -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="4"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,1,0,0"
+                    Padding="10,4">
+                <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+
+                    <!-- Columna 0: estado de reproduccion -->
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding PlaybackStateText}"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0" />
+
+                    <!-- Columna 1: mensaje del operador (feedback inmediato) -->
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding StatusMessage}"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis"
+                               MaxWidth="280"
+                               Margin="0,0,12,0" />
+
+                    <!-- Columna 2: tip rotativo (ocupa el espacio central) -->
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                Spacing="6"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                ToolTip.Tip="Click para ver otro tip">
+                        <materialIcons:MaterialIcon Kind="{Binding CurrentTip.Icon}"
+                                                    Width="13" Height="13"
+                                                    Foreground="{DynamicResource AccentText}"
+                                                    VerticalAlignment="Center"
+                                                    Margin="0,0,2,0" />
+                        <TextBlock Text="{Binding CurrentTip.Message}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   FontStyle="Italic"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <!-- Columna 3: bus de salida -->
+                    <TextBlock Grid.Column="3"
+                               Text="{Binding SelectedBus.DisplayName, StringFormat='Bus: {0}'}"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgMuted}"
+                               VerticalAlignment="Center"
+                               Margin="12,0,0,0" />
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- BANNER DE EMERGENCIA (overlay, al final = encima de todo)        -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="0" Grid.RowSpan="5"
+                    Classes="emergency-banner"
+                    VerticalAlignment="Top"
+                    Padding="16,10"
+                    IsVisible="{Binding IsEmergencyActive}">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <StackPanel Grid.Column="0"
+                                Orientation="Horizontal"
+                                Spacing="10"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="🚨" FontSize="24" VerticalAlignment="Center" />
+                        <StackPanel>
+                            <TextBlock Text="EMERGENCIA ACTIVA"
+                                       FontSize="15"
+                                       FontWeight="Bold"
+                                       Foreground="White" />
+                            <TextBlock Text="{Binding EmergencyStatusText}"
+                                       FontSize="11"
+                                       Foreground="White"
+                                       Opacity="0.9" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Command="{Binding StopEmergencyCommand}"
+                            Content="DETENER EMERGENCIA"
+                            Padding="16,8"
+                            Background="White"
+                            Foreground="#DC2626"
+                            FontWeight="Bold"
+                            FontSize="12"
+                            CornerRadius="4"
+                            VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- CAPA DE RESIZE (zonas de hit-test para agrandar/achicar)            -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <Grid Panel.ZIndex="9999"
+              IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Row="0" Grid.Column="0"
+                    Background="Transparent"
+                    WindowDecorationProperties.ElementRole="ResizeNW" />
+
+            <Border Grid.Row="0" Grid.Column="1"
+                    Background="Transparent"
+                    WindowDecorationProperties.ElementRole="ResizeN" />
+
+            <Border Grid.Row="0" Grid.Column="2"
+                    Background="Transparent"
+                    WindowDecorationProperties.ElementRole="ResizeNE" />
+
+            <Border Grid.Row="1" Grid.Column="0"
+                    Background="Transparent"
+                    WindowDecorationProperties.ElementRole="ResizeW" />
+
+            <Border Grid.Row="1" Grid.Column="2"
+                    Background="Transparent"
+                    WindowDecorationProperties.ElementRole="ResizeE" />
+
+            <Border Grid.Row="2" Grid.Column="0"
+                    Background="Transparent"
+                    WindowDecorationProperties.ElementRole="ResizeSW" />
+
+            <Border Grid.Row="2" Grid.Column="1"
+                    Background="Transparent"
+                    WindowDecorationProperties.ElementRole="ResizeS" />
+
+            <Border Grid.Row="2" Grid.Column="2"
+                    Background="Transparent"
+                    WindowDecorationProperties.ElementRole="ResizeSE" />
+
+        </Grid>
+    </Grid>
+</controls:CustomChromeWindow>

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RadioMaker.Core</RootNamespace>
+    <AssemblyName>RadioMaker.Core</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Wrapper .NET de la librería BASS de Un4seen. -->
+    <!-- IMPORTANTE: las DLLs nativas (bass.dll / libbass.so / libbass.dylib) -->
+    <!-- NO vienen con este paquete — ver README.md. -->
+    <!-- Motor principal BASS. -->
+    <PackageReference Include="ManagedBass" Version="4.0.2" />
+
+    <!-- AddOn de efectos (EQ, compressor, etc). -->
+    <PackageReference Include="ManagedBass.Fx" Version="4.0.2" />
+
+    <!-- ===== INTEGRACIÓN RMWave ===== -->
+    <PackageReference Include="ManagedBass.Mix" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Enc" Version="4.0.2" />
+
+    <!-- AddOns de formato. -->
+    <PackageReference Include="ManagedBass.Flac" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Aac" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Opus" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Wv" Version="4.0.2" />
+
+    <!-- Lectura de TAGs de archivos de audio (ID3v1, ID3v2, Vorbis, FLAC, MP4, APE, WAV). -->
+    <PackageReference Include="TagLibSharp" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ===== INTEGRACIÓN RMVoice ===== -->
+    <ProjectReference Include="..\..\..\RMVoice\src\RMVoice.Core\RMVoice.Core.csproj" />
+    <!-- ===== INTEGRACIÓN RMWave ===== -->
+    <ProjectReference Include="..\..\..\RMWave\src\RMWave.Core\RMWave.Core.csproj" />
+  </ItemGroup>
+
+</Project>

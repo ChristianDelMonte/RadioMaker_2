@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             x:Class="RadioMaker.UI.Controls.PluginsPanel"
+             x:DataType="vm:PluginsWindowViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+        <!-- Encabezado (subtitulo) -->
+        <TextBlock Grid.Row="0"
+                   Text="Estado de los addons de BASS cargados en esta sesion."
+                   FontSize="11"
+                   Foreground="{DynamicResource FgSecondary}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,12" />
+
+        <!-- Resumen -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource BgQuaternary}"
+                BorderBrush="{DynamicResource AccentSoft}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12,10"
+                Margin="0,0,0,12"
+                VerticalAlignment="Top">
+            <TextBlock Text="{Binding SummaryText}"
+                       FontSize="13"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource Success}" />
+        </Border>
+
+        <!-- Lista de plugins -->
+        <Border Grid.Row="2"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="4"
+                Margin="0,0,0,12">
+            <Grid RowDefinitions="Auto,*">
+                <Grid Grid.Row="0" ColumnDefinitions="30,180,*,90" Margin="8,6">
+                    <TextBlock Grid.Column="0" Text="" />
+                    <TextBlock Grid.Column="1" Text="Plugin"
+                               FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgMuted}" />
+                    <TextBlock Grid.Column="2" Text="Extensiones"
+                               FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgMuted}" />
+                    <TextBlock Grid.Column="3" Text="Estado"
+                               FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgMuted}"
+                               HorizontalAlignment="Right" />
+                </Grid>
+
+                <ScrollViewer Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Plugins}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:PluginInfoViewModel">
+                                <Grid ColumnDefinitions="30,180,*,90" Margin="8,6">
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding StatusIcon}"
+                                               FontSize="14" FontWeight="Bold"
+                                               Foreground="{Binding StatusColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Name}"
+                                               FontWeight="SemiBold"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding ExtensionsText}"
+                                               FontFamily="Consolas" FontSize="11"
+                                               Foreground="{DynamicResource FgSecondary}"
+                                               VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding StatusText}"
+                                               FontSize="11"
+                                               Foreground="{Binding StatusColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- Formatos soportados -->
+        <Border Grid.Row="3"
+                Background="{DynamicResource BgTertiary}"
+                CornerRadius="6"
+                Padding="12">
+            <Grid RowDefinitions="Auto,*">
+                <TextBlock Grid.Row="0"
+                           Text="Formatos soportados actualmente"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource FgPrimary}"
+                           Margin="0,0,0,8" />
+
+                <ScrollViewer Grid.Row="1" MaxHeight="200">
+                    <ItemsControl ItemsSource="{Binding FormatGroups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:FormatGroupViewModel">
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="8"
+                                            Margin="0,3">
+                                    <TextBlock Text="{Binding Name}"
+                                               FontWeight="SemiBold"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               MinWidth="110" />
+                                    <TextBlock Text="{Binding ExtensionsText}"
+                                               FontFamily="Consolas"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgSecondary}"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

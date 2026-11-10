@@ -1,0 +1,235 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        x:Class="RadioMaker.UI.Views.AudioTagEditorWindow"
+        x:DataType="vm:AudioTagEditorViewModel"
+        Title="Editar tags"
+        Width="560" Height="650"
+        MinWidth="560" MinHeight="650"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Barra de titulo personalizada -->
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="{Binding $parent[controls:CustomChromeWindow].Title}"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <!-- Contenido con el margen original -->
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,*,Auto,Auto"
+              Margin="12">
+
+            <!-- Header: caratula + info tecnica -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="10,8"
+                    Margin="0,0,0,10">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+
+                    <Border Grid.Column="0"
+                            Width="196" Height="196"
+                            Background="{DynamicResource BgPrimary}"
+                            BorderBrush="{DynamicResource BorderPrimary}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            ClipToBounds="True"
+                            IsVisible="{Binding HasCoverArt}">
+                        <Image Source="{Binding CoverArt}"
+                               Stretch="UniformToFill" />
+                    </Border>
+
+                    <Border Grid.Column="0"
+                            Width="196" Height="196"
+                            Background="{DynamicResource BgPrimary}"
+                            BorderBrush="{DynamicResource BorderPrimary}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            IsVisible="{Binding !HasCoverArt}">
+                        <TextBlock Text="Sin&#10;caratula"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1"
+                                Spacing="3"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="{Binding FileName}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding FullPath}"
+                                   FontSize="9"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   FontFamily="Consolas"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding TechnicalLine}"
+                                   FontSize="9"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   FontFamily="Consolas"
+                                   Margin="0,2,0,0" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Formulario -->
+            <ScrollViewer Grid.Row="1">
+                <Grid ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                      RowSpacing="6"
+                      ColumnSpacing="10"
+                      Margin="2">
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Text="Titulo:"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center" />
+                    <TextBox Grid.Row="0" Grid.Column="1"
+                             Text="{Binding Title}"
+                             FontSize="11"
+                             Padding="6,4"
+                             PlaceholderText="Titulo del audio" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="Artista(s):"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center" />
+                    <TextBox Grid.Row="1" Grid.Column="1"
+                             Text="{Binding Performers}"
+                             FontSize="11"
+                             Padding="6,4"
+                             PlaceholderText="Multiples separados por ;" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Text="Album:"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center" />
+                    <TextBox Grid.Row="2" Grid.Column="1"
+                             Text="{Binding Album}"
+                             FontSize="11"
+                             Padding="6,4"
+                             PlaceholderText="Nombre del album" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0"
+                               Text="Album Artists:"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center" />
+                    <TextBox Grid.Row="3" Grid.Column="1"
+                             Text="{Binding AlbumArtists}"
+                             FontSize="11"
+                             Padding="6,4"
+                             PlaceholderText="Multiples separados por ;" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0"
+                               Text="Genero(s):"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center" />
+                    <TextBox Grid.Row="4" Grid.Column="1"
+                             Text="{Binding Genres}"
+                             FontSize="11"
+                             Padding="6,4"
+                             PlaceholderText="Multiples separados por ;" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0"
+                               Text="Año / Pista / Disco:"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center" />
+                    <Grid Grid.Row="5" Grid.Column="1"
+                          ColumnDefinitions="*,8,*,8,*">
+                        <NumericUpDown Grid.Column="0"
+                                       Value="{Binding Year}"
+                                       Minimum="0" Maximum="9999"
+                                       Increment="1"
+                                       FontSize="11"
+                                       ShowButtonSpinner="True"
+                                       FormatString="0" />
+                        <NumericUpDown Grid.Column="2"
+                                       Value="{Binding Track}"
+                                       Minimum="0" Maximum="9999"
+                                       Increment="1"
+                                       FontSize="11"
+                                       ShowButtonSpinner="True"
+                                       FormatString="0" />
+                        <NumericUpDown Grid.Column="4"
+                                       Value="{Binding Disc}"
+                                       Minimum="0" Maximum="9999"
+                                       Increment="1"
+                                       FontSize="11"
+                                       ShowButtonSpinner="True"
+                                       FormatString="0" />
+                    </Grid>
+
+                    <TextBlock Grid.Row="6" Grid.Column="0"
+                               Text="Comentario:"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Top"
+                               Margin="0,4,0,0" />
+                    <TextBox Grid.Row="6" Grid.Column="1"
+                             Text="{Binding Comment}"
+                             FontSize="11"
+                             Padding="6,4"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             MinHeight="80"
+                             MaxHeight="120"
+                             PlaceholderText="Comentario libre (opcional)" />
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Nota + status -->
+            <StackPanel Grid.Row="2" Spacing="4" Margin="2,10,2,0">
+                <Border Background="{DynamicResource BgSecondary}"
+                        BorderBrush="{DynamicResource BorderPrimary}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="8,5">
+                    <TextBlock Text="La caratula embebida no se modifica desde este editor. Los campos vacios borran el tag correspondiente."
+                               FontSize="9"
+                               Foreground="{DynamicResource FgSecondary}"
+                               TextWrapping="Wrap" />
+                </Border>
+
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="10"
+                           TextWrapping="Wrap"
+                           IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                           Foreground="{Binding HasError, Converter={x:Static vm:TagEditorStatusColorConverter.Instance}}" />
+            </StackPanel>
+
+            <!-- Botones -->
+            <StackPanel Grid.Row="3"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="6"
+                        Margin="0,10,0,0">
+                <Button Content="Cancelar"
+                        x:Name="CancelButton"
+                        Click="OnCancelClick"
+                        MinWidth="90"
+                        FontSize="11" />
+                <Button Content="Guardar"
+                        x:Name="SaveButton"
+                        Click="OnSaveClick"
+                        MinWidth="90"
+                        FontSize="11"
+                        Background="{DynamicResource Success}"
+                        Foreground="White" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</controls:CustomChromeWindow>

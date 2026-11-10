@@ -1,0 +1,97 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        x:Class="RadioMaker.UI.Views.SplashWindow"
+        x:DataType="vm:SplashWindowViewModel"
+        Title="RadioMaker"
+        Width="600" Height="500"
+        CanResize="False"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        WindowDecorations="None"
+        TransparencyLevelHint="Transparent"
+        Background="Transparent">
+
+    <Border BorderBrush="#2A2A35"
+            BorderThickness="1"
+            CornerRadius="14"
+            ClipToBounds="True">
+        <Grid>
+
+            <!-- ═════ Imagen de fondo completa (aleatoria por sesion) ═════ -->
+            <Image Source="{Binding SplashImage}"
+                   Stretch="UniformToFill"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch" />
+
+            <!-- ═════ Overlay oscuro para legibilidad de textos ═════ -->
+            <Border>
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                        <GradientStop Color="#00000000" Offset="0.0" />
+                        <GradientStop Color="#40000000" Offset="0.55" />
+                        <GradientStop Color="#CC000000" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!-- ═════ Contenido sobre la imagen ═════ -->
+            <Grid RowDefinitions="*,Auto">
+
+                <!-- Fila 1: barra de onda anclada a la derecha -->
+                <controls:AudioWaveProgressBar Grid.Row="0"
+                                               Width="40"
+                                               Height="450"
+                                               Margin="0,80,0,0"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Stretch"
+                                               Progress="{Binding Progress}"
+                                               BarCount="100"
+                                               BarThickness="3.5"
+                                               MinBarWidth="3"
+                                               ActiveBrush="#00E5FF"
+                                               InactiveBrush="#40FFFFFF"
+                                               BackgroundBrush="#40000000" />
+
+                <!-- Fila 2: nombre + slogan + estado -->
+                <Grid Grid.Row="1"
+                      RowDefinitions="Auto,Auto"
+                      ColumnDefinitions="*,Auto"
+                      Margin="28,0,28,22">
+
+                    <StackPanel Grid.Row="0" Grid.Column="0"
+                                Orientation="Vertical"
+                                Spacing="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom">
+                        <TextBlock Text="{Binding AppName}"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFF" />
+                        <TextBlock Text="{Binding AppSlogan}"
+                                   FontSize="11"
+                                   FontStyle="Italic"
+                                   Foreground="#00E5FF" />
+                        <TextBlock Text="{Binding VersionText}"
+                                   FontSize="10"
+                                   FontFamily="Consolas"
+                                   Foreground="#9CA3AF"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                               Text="{Binding StatusText}"
+                               FontSize="11"
+                               FontFamily="Consolas"
+                               Foreground="#D0D5DB"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Bottom"
+                               Margin="0,10,0,0"
+                               TextTrimming="CharacterEllipsis" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

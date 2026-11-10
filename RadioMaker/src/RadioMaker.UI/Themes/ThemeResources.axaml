@@ -1,0 +1,120 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             TEMA OSCURO (por defecto)
+             ═══════════════════════════════════════════════════════════════ -->
+        <ResourceDictionary x:Key="Dark">
+
+            <!-- Fondos -->
+            <SolidColorBrush x:Key="BgPrimary">#1A1D24</SolidColorBrush>
+            <SolidColorBrush x:Key="BgSecondary">#15171C</SolidColorBrush>
+            <SolidColorBrush x:Key="BgTertiary">#0F0F10</SolidColorBrush>
+            <SolidColorBrush x:Key="BgQuaternary">#141B2D</SolidColorBrush>
+            <SolidColorBrush x:Key="BgHover">#1E2230</SolidColorBrush>
+            <SolidColorBrush x:Key="BgSelected">#2A3050</SolidColorBrush>
+            <SolidColorBrush x:Key="BgOverlay">#0A0A0C</SolidColorBrush>
+
+            <!-- Bordes -->
+            <SolidColorBrush x:Key="BorderPrimary">#2A2D35</SolidColorBrush>
+            <SolidColorBrush x:Key="BorderSubtle">#1E2230</SolidColorBrush>
+            <SolidColorBrush x:Key="BorderStrong">#3D4553</SolidColorBrush>
+
+            <!-- Texto -->
+            <SolidColorBrush x:Key="FgPrimary">#E5E5E5</SolidColorBrush>
+            <SolidColorBrush x:Key="FgSecondary">#9CA3AF</SolidColorBrush>
+            <SolidColorBrush x:Key="FgMuted">#6B7280</SolidColorBrush>
+            <SolidColorBrush x:Key="FgOnAccent">#FFFFFF</SolidColorBrush>
+            <SolidColorBrush x:Key="FgSubtle">#4B5563</SolidColorBrush>
+
+            <!-- Acentos -->
+            <SolidColorBrush x:Key="Accent">#4D6BFE</SolidColorBrush>
+            <SolidColorBrush x:Key="AccentSoft">#2A3050</SolidColorBrush>
+            <SolidColorBrush x:Key="AccentText">#9DB1FF</SolidColorBrush>
+
+            <!-- Estados -->
+            <SolidColorBrush x:Key="Success">#10B981</SolidColorBrush>
+            <SolidColorBrush x:Key="Warning">#F59E0B</SolidColorBrush>
+            <SolidColorBrush x:Key="Error">#EF4444</SolidColorBrush>
+
+            <!-- Inputs -->
+            <SolidColorBrush x:Key="InputBackground">#0F0F10</SolidColorBrush>
+            <SolidColorBrush x:Key="InputBorder">#2A2D35</SolidColorBrush>
+            <SolidColorBrush x:Key="InputBorderFocus">#4D6BFE</SolidColorBrush>
+            <SolidColorBrush x:Key="InputPlaceholder">#6B7280</SolidColorBrush>
+
+                        <!-- Estados dinamicos de filas / botones -->
+            <SolidColorBrush x:Key="RowPlayingBg">#2D0F0F</SolidColorBrush>
+            <SolidColorBrush x:Key="RowPlayedBg">#101216</SolidColorBrush>
+            <SolidColorBrush x:Key="CartPlayingBg">#5A1F1F</SolidColorBrush>
+            <SolidColorBrush x:Key="TrackMixColor">#8B5CF6</SolidColorBrush>
+
+            <!-- Paneles con estilo LED (cyan) -->
+            <SolidColorBrush x:Key="LedActive">#00E5FF</SolidColorBrush>
+            <SolidColorBrush x:Key="LedInactive">#0D3D4A</SolidColorBrush>
+            <SolidColorBrush x:Key="PanelLedActiveBg">#071A20</SolidColorBrush>
+            <SolidColorBrush x:Key="PanelLedInactiveBg">#0F0F10</SolidColorBrush>
+
+        </ResourceDictionary>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             TEMA CLARO
+             ═══════════════════════════════════════════════════════════════ -->
+        <ResourceDictionary x:Key="Light">
+
+            <!-- Fondos -->
+            <SolidColorBrush x:Key="BgPrimary">#F5F6F8</SolidColorBrush>
+            <SolidColorBrush x:Key="BgSecondary">#FFFFFF</SolidColorBrush>
+            <SolidColorBrush x:Key="BgTertiary">#FAFBFC</SolidColorBrush>
+            <SolidColorBrush x:Key="BgQuaternary">#EEF1F7</SolidColorBrush>
+            <SolidColorBrush x:Key="BgHover">#E5E7EB</SolidColorBrush>
+            <SolidColorBrush x:Key="BgSelected">#DBE4FF</SolidColorBrush>
+            <SolidColorBrush x:Key="BgOverlay">#FFFFFF</SolidColorBrush>
+
+            <!-- Bordes -->
+            <SolidColorBrush x:Key="BorderPrimary">#D1D5DB</SolidColorBrush>
+            <SolidColorBrush x:Key="BorderSubtle">#E5E7EB</SolidColorBrush>
+            <SolidColorBrush x:Key="BorderStrong">#9CA3AF</SolidColorBrush>
+
+            <!-- Texto -->
+            <SolidColorBrush x:Key="FgPrimary">#0D0D0D</SolidColorBrush>
+            <SolidColorBrush x:Key="FgSecondary">#4B5563</SolidColorBrush>
+            <SolidColorBrush x:Key="FgMuted">#6B7280</SolidColorBrush>
+            <SolidColorBrush x:Key="FgOnAccent">#FFFFFF</SolidColorBrush>
+            <SolidColorBrush x:Key="FgSubtle">#9CA3AF</SolidColorBrush>
+
+            <!-- Acentos -->
+            <SolidColorBrush x:Key="Accent">#4D6BFE</SolidColorBrush>
+            <SolidColorBrush x:Key="AccentSoft">#DBE4FF</SolidColorBrush>
+            <SolidColorBrush x:Key="AccentText">#1E3A8A</SolidColorBrush>
+
+            <!-- Estados -->
+            <SolidColorBrush x:Key="Success">#059669</SolidColorBrush>
+            <SolidColorBrush x:Key="Warning">#D97706</SolidColorBrush>
+            <SolidColorBrush x:Key="Error">#DC2626</SolidColorBrush>
+
+            <!-- Inputs -->
+            <SolidColorBrush x:Key="InputBackground">#FFFFFF</SolidColorBrush>
+            <SolidColorBrush x:Key="InputBorder">#D1D5DB</SolidColorBrush>
+            <SolidColorBrush x:Key="InputBorderFocus">#4D6BFE</SolidColorBrush>
+            <SolidColorBrush x:Key="InputPlaceholder">#9CA3AF</SolidColorBrush>
+
+                        <!-- Estados dinamicos de filas / botones -->
+            <SolidColorBrush x:Key="RowPlayingBg">#FEE2E2</SolidColorBrush>
+            <SolidColorBrush x:Key="RowPlayedBg">#F1F2F4</SolidColorBrush>
+            <SolidColorBrush x:Key="CartPlayingBg">#FEE2E2</SolidColorBrush>
+            <SolidColorBrush x:Key="TrackMixColor">#8B5CF6</SolidColorBrush>
+
+            <!-- Paneles con estilo LED (cyan) -->
+            <SolidColorBrush x:Key="LedActive">#0097A7</SolidColorBrush>
+            <SolidColorBrush x:Key="LedInactive">#9BBFC9</SolidColorBrush>
+            <SolidColorBrush x:Key="PanelLedActiveBg">#D6F4F8</SolidColorBrush>
+            <SolidColorBrush x:Key="PanelLedInactiveBg">#F5F6F8</SolidColorBrush>
+
+        </ResourceDictionary>
+
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <!-- Versión de Avalonia: fijar aquí para actualizar todo el proyecto a la vez. -->
+    <AvaloniaVersion Condition="'$(AvaloniaVersion)' == ''">11.3.0</AvaloniaVersion>
+
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,546 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:controls="clr-namespace:RMWave.UI.Controls" 
+        x:Class="RMWave.UI.MainWindow"
+        KeyDown="Window_KeyDown"
+        Title="RadioMaker Wave Addon"
+        Width="1250"
+        Height="680"
+        FontSize="10">
+
+    <controls:CustomChromeWindow.Styles>
+        <!-- Chrome custom: hover de minimizar/maximizar -->
+        <Style Selector="Button.chrome-btn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#33FFFFFF" />
+        </Style>
+        <!-- Chrome custom: hover del boton cerrar (rojo) -->
+        <Style Selector="Button.chrome-close:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#EF4444" />
+        </Style>
+    </controls:CustomChromeWindow.Styles>
+
+    <Grid>
+        <Grid RowDefinitions="Auto,*">
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- BARRA DE TITULO CUSTOM (solo Windows/macOS)            -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Row="0"
+                    Name="CustomTitleBar"
+                    Background="#1A1A20"
+                    BorderBrush="#2A2A35"
+                    BorderThickness="0,0,0,1"
+                    Padding="10,4"
+                    WindowDecorationProperties.ElementRole="TitleBar"
+                    IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}">
+                <Grid ColumnDefinitions="*,Auto,*">
+                    <Panel Grid.Column="0" />
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                Spacing="8"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <mi:MaterialIcon Kind="Waveform"
+                                         Width="18" Height="18"
+                                         Foreground="#4D6BFE"
+                                         VerticalAlignment="Center" />
+                        <TextBlock Text="RadioMaker Wave Addon"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Foreground="#F0F0F0"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center">
+                        <Button Name="MinimizeButton"
+                                Classes="chrome-btn"
+                                WindowDecorationProperties.ElementRole="MinimizeButton"
+                                Padding="10,4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ToolTip.Tip="Minimizar">
+                            <mi:MaterialIcon Kind="WindowMinimize"
+                                             Width="14" Height="14"
+                                             Foreground="#F0F0F0" />
+                        </Button>
+                        <Button Name="MaximizeButton"
+                                Classes="chrome-btn"
+                                WindowDecorationProperties.ElementRole="MaximizeButton"
+                                Padding="10,4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ToolTip.Tip="Maximizar">
+                            <mi:MaterialIcon Kind="WindowMaximize"
+                                             Width="14" Height="14"
+                                             Foreground="#F0F0F0" />
+                        </Button>
+                        <Button Name="CloseButton"
+                                Classes="chrome-close"
+                                WindowDecorationProperties.ElementRole="CloseButton"
+                                Padding="10,4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ToolTip.Tip="Cerrar">
+                            <mi:MaterialIcon Kind="Close"
+                                             Width="14" Height="14"
+                                             Foreground="#F0F0F0" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- CONTENIDO ORIGINAL (solo se agrego Grid.Row="1")       -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <DockPanel Grid.Row="1" Margin="12">
+
+        <!-- ========================================== -->
+        <!-- MENÚ PRINCIPAL -->
+        <!-- ========================================== -->
+        <Menu DockPanel.Dock="Top">
+
+            <MenuItem Header="Archivo">
+                <MenuItem Header="Nuevo"
+                          Click="NewProject_Click"
+                          InputGesture="Ctrl+N">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="FilePlusOutline" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Abrir..."
+                          Click="OpenProject_Click"
+                          InputGesture="Ctrl+O">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="FolderOpenOutline" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Guardar"
+                          Click="SaveProject_Click"
+                          InputGesture="Ctrl+S">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="ContentSaveOutline" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Propiedades del proyecto..."
+                          Click="ProjectProperties_Click">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="InformationOutline" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Exportar mezcla..."
+                          Click="Export_Click"
+                          InputGesture="Ctrl+E">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="ExportVariant" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Exportar selección..."
+                          Click="ExportSelection_Click"
+                          InputGesture="Ctrl+Shift+E">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="ExportVariant" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem x:Name="RecentMenu" Header="Proyectos recientes">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="History" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                    <!-- Se llena dinámicamente desde el código -->
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Salir" Click="Exit_Click">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="ExitToApp" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="Dispositivos" x:Name="DevicesMenu">
+                <!-- Los items se agregan dinámicamente desde el code-behind -->
+            </MenuItem>
+
+            <MenuItem Header="Edición">
+                <MenuItem Header="Duplicar clip"
+                          Click="DuplicateClip_Click"
+                          InputGesture="Ctrl+D">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="ContentCopy" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Eliminar clip"
+                          Click="DeleteClip_Click"
+                          InputGesture="Delete">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="DeleteOutline" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Cortar clip en el cursor"
+                          Click="SplitClip_Click"
+                          InputGesture="Ctrl+B">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="ContentCut" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Agregar marcador"
+                          Click="AddMarker_Click"
+                          InputGesture="M">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="MapMarker" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Marcadores..."
+                          Click="MarkersList_Click">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="FormatListBulleted" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Importar marcadores de regiones..."
+                          Click="ImportMarkers_Click">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="FileImportOutline" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Grabar audio..."
+                          Click="Record_Click"
+                          InputGesture="Ctrl+R">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="Microphone" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem x:Name="ThemeMenu" Header="Tema">
+                <MenuItem.Icon>
+                    <mi:MaterialIcon Kind="Palette" Width="16" Height="16" />
+                </MenuItem.Icon>
+                <!-- Los temas se llenan dinámicamente desde el código -->
+            </MenuItem>
+
+            <MenuItem Header="Ayuda">
+                <MenuItem Header="Acerca de RMWave" Click="About_Click">
+                    <MenuItem.Icon>
+                        <mi:MaterialIcon Kind="InformationOutline" Width="16" Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+        </Menu>
+
+        <!-- Transporte superior -->
+        <StackPanel DockPanel.Dock="Top"
+                    Orientation="Horizontal"
+                    Spacing="8">
+
+            <!-- NUEVO -->
+            <Button Click="NewProject_Click"
+                    ToolTip.Tip="Nuevo proyecto"
+                    Width="36" Height="30">
+                <mi:MaterialIcon Kind="FilePlusOutline"
+                                 Width="18" Height="18" />
+            </Button>
+
+            <!-- ABRIR -->
+            <Button Click="OpenProject_Click"
+                    ToolTip.Tip="Abrir proyecto"
+                    Width="36" Height="30">
+                <mi:MaterialIcon Kind="FolderOpenOutline"
+                                 Width="18" Height="18" />
+            </Button>
+
+            <!-- GUARDAR -->
+            <Button Click="SaveProject_Click"
+                    ToolTip.Tip="Guardar proyecto"
+                    Width="36" Height="30">
+                <mi:MaterialIcon Kind="ContentSaveOutline"
+                                 Width="18" Height="18" />
+            </Button>
+
+            <Border Width="20" />
+
+            <Button x:Name="AddTrackButton"
+                    Click="AddTrack_Click"
+                    IsEnabled="False"
+                    ToolTip.Tip="Agregar pista">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <mi:MaterialIcon Kind="PlaylistPlus"
+                                     Width="16" Height="16" />
+                    <TextBlock Text="Agregar pista" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="PlayButton"
+                    Click="Play_Click"
+                    IsEnabled="False"
+                    ToolTip.Tip="Reproducir (Espacio)"
+                    Width="40" Height="30">
+                <mi:MaterialIcon Kind="Play"
+                                 Width="18" Height="18" />
+            </Button>
+
+            <Button x:Name="PauseButton"
+                    Click="Pause_Click"
+                    IsEnabled="False"
+                    ToolTip.Tip="Pausa (Espacio)"
+                    Width="40" Height="30">
+                <mi:MaterialIcon Kind="Pause"
+                                 Width="18" Height="18" />
+            </Button>
+
+            <Button x:Name="StopButton"
+                    Click="Stop_Click"
+                    IsEnabled="False"
+                    ToolTip.Tip="Detener"
+                    Width="40" Height="30">
+                <mi:MaterialIcon Kind="Stop"
+                                 Width="18" Height="18" />
+            </Button>
+
+            <Border Width="20" />
+
+            <Button x:Name="RecordButton"
+                    Click="Record_Click"
+                    ToolTip.Tip="Grabar audio"
+                    Foreground="#FF4444">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <mi:MaterialIcon Kind="Microphone" Width="16" Height="16" />
+                    <TextBlock Text="Grabar" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <Border Width="20" />
+
+            <controls:VuMeter x:Name="MasterVuMeter"
+                              Orientation="Horizontal"
+                              Width="260"
+                              Height="56"
+                              BarThickness="14"
+                              BarSpacing="4"
+                              ShowDbText="True"
+                              ShowPeakHold="True"
+                              DisplayMode="Solid"
+                              VerticalAlignment="Center" />
+
+            <ProgressBar x:Name="ExportProgress"
+                         Width="150"
+                         VerticalAlignment="Center"
+                         IsVisible="false"
+                         Minimum="0"
+                         Maximum="100"
+                         Value="0" />
+
+            <CheckBox x:Name="SnapCheckBox"
+                      Content="Snap"
+                      IsChecked="True"
+                      VerticalAlignment="Center"
+                      ToolTip.Tip="Activar/desactivar ajuste magnético" />
+
+            <Border Width="20" />
+
+        </StackPanel>
+
+        <!-- Parte inferior: editor de clip seleccionado + transporte -->
+        <StackPanel DockPanel.Dock="Bottom"
+                    Spacing="6">
+
+            <Border x:Name="SelectedClipPanel"
+                    IsVisible="False"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="8">
+
+                <StackPanel Spacing="6">
+
+                    <TextBlock x:Name="SelectedClipName"
+                               FontWeight="Bold"
+                               Text="Clip seleccionado" />
+
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="8">
+
+                        <TextBlock Text="Inicio"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="SelectedStart"
+                                 Width="30"
+                                 MaxWidth="36"
+                                 MinHeight="22"
+                                 Padding="3,1"
+                                 VerticalAlignment="Center" />
+
+                        <TextBlock Text="Offset"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="SelectedOffset"
+                                 Width="30"
+                                 MaxWidth="36"
+                                 MinHeight="22"
+                                 Padding="3,1"
+                                 VerticalAlignment="Center" />
+
+                        <TextBlock Text="Duración"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="SelectedDuration"
+                                 Width="30"
+                                 MaxWidth="36"
+                                 MinHeight="22"
+                                 Padding="3,1"
+                                 VerticalAlignment="Center" />
+
+                        <TextBlock Text="Ganancia"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0" />
+
+                        <controls:AudioKnob x:Name="SelectedGain"
+                                            Minimum="0" Maximum="3"
+                                            Value="1"
+                                            KnobSize="42"
+                                            Label="Gain"
+                                            ValueFormat="0.00" />
+
+                        <TextBlock x:Name="SelectedGainValue"
+                                   Text="1.00"
+                                   VerticalAlignment="Center"
+                                   Width="20" />
+
+                        <TextBlock Text="Fade In"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0" />
+
+                        <TextBox x:Name="SelectedFadeIn"
+                                 Width="30"
+                                 MaxWidth="36"
+                                 MinHeight="22"
+                                 Padding="3,1"
+                                 VerticalAlignment="Center" />
+
+                        <TextBlock Text="Fade Out"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0" />
+
+                        <TextBox x:Name="SelectedFadeOut"
+                                 Width="30"
+                                 MaxWidth="36"
+                                 MinHeight="22"
+                                 Padding="3,1"
+                                 VerticalAlignment="Center" />
+
+                        <Button Click="ApplyClip_Click"
+                                ToolTip.Tip="Aplicar cambios"
+                                Width="36" Height="30">
+                            <mi:MaterialIcon Kind="Check" Width="16" Height="16" />
+                        </Button>
+
+                        <Button Click="DuplicateClip_Click"
+                                ToolTip.Tip="Duplicar clip (Ctrl+D)"
+                                Margin="12,0,0,0"
+                                Width="36" Height="30">
+                            <mi:MaterialIcon Kind="ContentCopy" Width="16" Height="16" />
+                        </Button>
+
+                        <Button Click="SplitClip_Click"
+                                ToolTip.Tip="Cortar clip en el cursor (Ctrl+B)"
+                                Margin="12,0,0,0"
+                                Width="36" Height="30">
+                            <mi:MaterialIcon Kind="ContentCut" Width="16" Height="16" />
+                        </Button>
+
+                        <Button Click="DeleteClip_Click"
+                                ToolTip.Tip="Eliminar clip (Delete)"
+                                Foreground="#FF6666"
+                                Width="36" Height="30">
+                            <mi:MaterialIcon Kind="DeleteOutline" Width="16" Height="16" />
+                        </Button>
+
+                        <Button Click="NormalizeClip_Click"
+                                ToolTip.Tip="Ajusta la ganancia para que el peak del clip llegue a -1 dB"
+                                Margin="12,0,0,0"
+                                Width="36" Height="30">
+                            <mi:MaterialIcon Kind="VolumeHigh" Width="16" Height="16" />
+                        </Button>
+
+                        <Button Click="DeselectClip_Click"
+                                ToolTip.Tip="Cerrar panel"
+                                Margin="12,0,0,0"
+                                Width="36" Height="30">
+                            <mi:MaterialIcon Kind="Close" Width="16" Height="16" />
+                        </Button>
+
+                    </StackPanel>
+
+                </StackPanel>
+
+            </Border>
+
+            <Grid ColumnDefinitions="Auto,*,Auto">
+
+                <TextBlock x:Name="PositionText"
+                           Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Text="00:00:00.0" />
+
+                <Slider x:Name="PositionSlider"
+                        Grid.Column="1"
+                        Margin="8,0"
+                        Minimum="0"
+                        Maximum="0"
+                        Value="0"
+                        ValueChanged="PositionSlider_ValueChanged" />
+
+                <TextBlock x:Name="DurationText"
+                           Grid.Column="2"
+                           VerticalAlignment="Center"
+                           Text="00:00:00.0" />
+
+            </Grid>
+
+            <TextBlock x:Name="StatusText"
+                       Text="Inicializando audio..." />
+
+        </StackPanel>
+
+        <!-- Área de pistas -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="TracksPanel"
+                        Spacing="10" />
+        </ScrollViewer>
+
+            </DockPanel>
+        </Grid>
+
+        <!-- Zonas de resize para chrome custom (solo Win/Mac) -->
+        <Grid IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Row="0" Grid.Column="0" Background="Transparent" WindowDecorationProperties.ElementRole="ResizeNW" />
+            <Border Grid.Row="0" Grid.Column="1" Background="Transparent" WindowDecorationProperties.ElementRole="ResizeN" />
+            <Border Grid.Row="0" Grid.Column="2" Background="Transparent" WindowDecorationProperties.ElementRole="ResizeNE" />
+            <Border Grid.Row="1" Grid.Column="0" Background="Transparent" WindowDecorationProperties.ElementRole="ResizeW" />
+            <Border Grid.Row="1" Grid.Column="2" Background="Transparent" WindowDecorationProperties.ElementRole="ResizeE" />
+            <Border Grid.Row="2" Grid.Column="0" Background="Transparent" WindowDecorationProperties.ElementRole="ResizeSW" />
+            <Border Grid.Row="2" Grid.Column="1" Background="Transparent" WindowDecorationProperties.ElementRole="ResizeS" />
+            <Border Grid.Row="2" Grid.Column="2" Background="Transparent" WindowDecorationProperties.ElementRole="ResizeSE" />
+        </Grid>
+    </Grid>
+</controls:CustomChromeWindow>

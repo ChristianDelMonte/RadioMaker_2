@@ -1,0 +1,267 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:core="clr-namespace:RadioMaker.Core.Configuration;assembly=RadioMaker.Core"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.EmergencyPanel"
+             x:DataType="vm:EmergencyPanelViewModel">
+
+    <StackPanel Spacing="12">
+
+        <!-- Toggle global -->
+        <Border Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12">
+            <StackPanel Spacing="6">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ToggleSwitch IsChecked="{Binding IsEnabled}"
+                                  OnContent=""
+                                  OffContent=""
+                                  VerticalAlignment="Center" />
+                    <TextBlock Text="Habilitar vigilancia de silencio"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+                <TextBlock Text="Si esta activo, RadioMaker monitorea el bus de AIRE. Si detecta silencio prolongado, reproduce automaticamente una playlist de emergencia hasta que el operador la detenga."
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <!-- Deteccion -->
+        <Border Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12"
+                IsEnabled="{Binding IsEnabled}">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Deteccion"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource FgPrimary}" />
+
+                <StackPanel Spacing="4">
+                    <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
+                        <Run Text="Umbral de silencio:" />
+                        <Run Text="{Binding SilenceThresholdSeconds}" FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" />
+                        <Run Text=" segundos" />
+                    </TextBlock>
+                    <Slider Minimum="5" Maximum="300"
+                            Value="{Binding SilenceThresholdSeconds}"
+                            TickFrequency="5" />
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                    <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
+                        <Run Text="Nivel minimo (dBFS):" />
+                        <Run Text="{Binding ThresholdDb, StringFormat='{}{0:F0} dB'}" FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" />
+                    </TextBlock>
+                    <Slider Minimum="-100" Maximum="-20"
+                            Value="{Binding ThresholdDb}"
+                            TickFrequency="5" />
+                </StackPanel>
+
+                <Separator Margin="0,4" />
+
+                <CheckBox Content="Detectar cuando NO hay ningun canal activo en el bus de AIRE"
+                          FontSize="11"
+                          Foreground="{DynamicResource FgPrimary}"
+                          IsChecked="{Binding DetectNoChannels}" />
+
+                <CheckBox Content="Detectar cuando hay canales activos pero estan por debajo del umbral (silencio digital)"
+                          FontSize="11"
+                          Foreground="{DynamicResource FgPrimary}"
+                          IsChecked="{Binding DetectSilence}" />
+            </StackPanel>
+        </Border>
+
+        <!-- Origen de archivos -->
+        <Border Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12"
+                IsEnabled="{Binding IsEnabled}">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Origen de archivos de emergencia"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource FgPrimary}" />
+
+                <ComboBox ItemsSource="{Binding AvailableModes}"
+                          SelectedItem="{Binding Mode}"
+                          MinWidth="280"
+                          HorizontalAlignment="Left"
+                          FontSize="11">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={x:Static vm:EmergencySourceModeLabelConverter.Instance}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <!-- Prearmed (visible si Mode lo incluye) -->
+                <StackPanel Spacing="4" IsVisible="{Binding IsPrearmed}">
+                    <TextBlock Text="Playlist pre-armada (.rmf)"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding PrearmedPlaylistPath}"
+                                 IsReadOnly="True"
+                                 PlaceholderText="(sin playlist)" />
+                        <Button Grid.Column="1"
+                                Command="{Binding BrowsePrearmedPlaylistCommand}"
+                                Margin="8,0,0,0"
+                                Padding="8,4">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <materialIcons:MaterialIcon Kind="FolderOpen" Width="15" Height="15"
+                                                            Foreground="{DynamicResource FgPrimary}" />
+                                <TextBlock Text="Elegir..." FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Folder (visible si Mode lo incluye) -->
+                <StackPanel Spacing="4" IsVisible="{Binding IsFolder}">
+                    <TextBlock Text="Carpeta con audios (shuffle)"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding EmergencyFolder}"
+                                 IsReadOnly="True"
+                                 PlaceholderText="(sin carpeta)" />
+                        <Button Grid.Column="1"
+                                Command="{Binding BrowseEmergencyFolderCommand}"
+                                Margin="8,0,0,0"
+                                Padding="8,4">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <materialIcons:MaterialIcon Kind="FolderOpen" Width="15" Height="15"
+                                                            Foreground="{DynamicResource FgPrimary}" />
+                                <TextBlock Text="Elegir..." FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <CheckBox Content="Incluir subcarpetas"
+                              FontSize="11"
+                              Foreground="{DynamicResource FgPrimary}"
+                              IsChecked="{Binding IncludeSubfolders}" />
+                </StackPanel>
+
+                <TextBlock Text="Las pistas se reproducen en loop hasta que el operador detenga la emergencia."
+                           FontSize="10"
+                           FontStyle="Italic"
+                           Foreground="{DynamicResource FgMuted}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <!-- Beep -->
+        <Border Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12"
+                IsEnabled="{Binding IsEnabled}">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Alarma sonora"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource FgPrimary}" />
+
+                <CheckBox Content="Emitir beep periodicamente para alertar al operador"
+                          FontSize="11"
+                          Foreground="{DynamicResource FgPrimary}"
+                          IsChecked="{Binding BeepEnabled}" />
+
+                <StackPanel Spacing="4" IsEnabled="{Binding BeepEnabled}">
+                    <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
+                        <Run Text="Beep cada" />
+                        <Run Text="{Binding BeepEveryNTracks}" FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" />
+                        <Run Text="pista(s)" />
+                    </TextBlock>
+                    <NumericUpDown Value="{Binding BeepEveryNTracks}"
+                                   Minimum="1" Maximum="20"
+                                   Increment="1"
+                                   Width="100"
+                                   HorizontalAlignment="Left"
+                                   ShowButtonSpinner="True" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Acciones / estado -->
+        <Border Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12">
+            <StackPanel Spacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Command="{Binding TestNowCommand}"
+                            Padding="10,5"
+                            FontSize="11"
+                            ToolTip.Tip="Dispara la emergencia manualmente para probar la configuracion">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <materialIcons:MaterialIcon Kind="Alert" Width="14" Height="14"
+                                                        Foreground="{DynamicResource Warning}" />
+                            <TextBlock Text="Probar emergencia ahora" FontSize="11" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding TestBeepCommand}"
+                            Padding="10,5"
+                            FontSize="11"
+                            ToolTip.Tip="Reproduce el beep de alarma sin disparar la emergencia">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <materialIcons:MaterialIcon Kind="Bell" Width="14" Height="14"
+                                                        Foreground="{DynamicResource AccentText}" />
+                            <TextBlock Text="Probar beep" FontSize="11" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding StopEmergencyCommand}"
+                            IsVisible="{Binding IsActive}"
+                            Background="{DynamicResource Error}"
+                            Foreground="White"
+                            Padding="10,5"
+                            FontSize="11">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <materialIcons:MaterialIcon Kind="Stop" Width="14" Height="14"
+                                                        Foreground="White" />
+                            <TextBlock Text="DETENER EMERGENCIA" FontSize="11" FontWeight="Bold" Foreground="White" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <Border Background="{DynamicResource BgQuaternary}"
+                        BorderBrush="{DynamicResource AccentSoft}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="8,5"
+                        IsVisible="{Binding IsActive}">
+                    <TextBlock Text="{Binding LiveStatusText}"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               TextWrapping="Wrap" />
+                </Border>
+
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="10"
+                           FontStyle="Italic"
+                           Foreground="{DynamicResource FgMuted}"
+                           TextWrapping="Wrap"
+                           IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+</UserControl>

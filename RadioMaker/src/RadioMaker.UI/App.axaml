@@ -1,0 +1,77 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:RadioMaker.UI"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+             xmlns:views="clr-namespace:RadioMaker.UI.Views"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.App"
+             RequestedThemeVariant="Dark">
+
+    <Application.DataTemplates>
+        <!--
+            DataTemplates EXPLICITOS para los paneles cuyo nombre no sigue
+            la convencion XxxViewModel -> XxxView. Van PRIMERO para tener
+            prioridad sobre el ViewLocator generico.
+        -->
+        <DataTemplate DataType="vm:SpectrumPanelViewModel">
+            <controls:SpectrumPanel />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:EqualizerPanelViewModel">
+            <controls:EqualizerPanel />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:SchedulerPanelViewModel">
+            <controls:SchedulerPanel />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:PlaybackLogViewModel">
+            <controls:LogPanel />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:EventsPanelViewModel">
+            <controls:EventsPanel />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:NotesEditorViewModel">
+            <controls:NotesEditorView />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:FavoriteFolderPanelViewModel">
+            <views:FavoriteFolderPanelView />
+        </DataTemplate>
+
+        <!-- Fallback: resuelve por convencion de nombre (XxxView) -->
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+        <materialIcons:MaterialIconStyles />
+
+        <!--
+            Compactar las pestañas del TabControl central. El tema default
+            de Fluent trae un tamano de fuente y padding mas grandes que
+            los que tenia la app originalmente.
+        -->
+        <Style Selector="TabItem">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+
+        <Style Selector="TabItem /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Margin" Value="0" />
+        </Style>
+    </Application.Styles>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://RadioMaker/Themes/ThemeResources.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

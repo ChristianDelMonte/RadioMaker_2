@@ -1,0 +1,37 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="RMVoice.UI.App">
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+
+        <!-- ═══════ Tema claro ═══════ -->
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="RMVCardBackground" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="RMVCardBorder" Color="#E5E7EB" />
+          <SolidColorBrush x:Key="RMVCardForeground" Color="#111827" />
+          <SolidColorBrush x:Key="RMVHintForeground" Color="#6B7280" />
+          <SolidColorBrush x:Key="RMVStatusBarBackground" Color="#F3F4F6" />
+          <SolidColorBrush x:Key="RMVStatusBarForeground" Color="#374151" />
+        </ResourceDictionary>
+
+        <!-- ═══════ Tema oscuro ═══════ -->
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="RMVCardBackground" Color="#1F2937" />
+          <SolidColorBrush x:Key="RMVCardBorder" Color="#374151" />
+          <SolidColorBrush x:Key="RMVCardForeground" Color="#F3F4F6" />
+          <SolidColorBrush x:Key="RMVHintForeground" Color="#9CA3AF" />
+          <SolidColorBrush x:Key="RMVStatusBarBackground" Color="#1F2937" />
+          <SolidColorBrush x:Key="RMVStatusBarForeground" Color="#D1D5DB" />
+        </ResourceDictionary>
+
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+  </Application.Styles>
+</Application>

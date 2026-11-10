@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             x:Class="RadioMaker.UI.Controls.SilencePanel"
+             x:DataType="vm:SilencePanelViewModel">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+
+            <!-- Titulo -->
+            <TextBlock Grid.Row="0"
+                       Text="Analisis de silencios"
+                       FontWeight="SemiBold"
+                       FontSize="12"
+                       Foreground="{DynamicResource FgPrimary}"
+                       Margin="0,0,0,6" />
+
+            <!-- Auto-trim -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="8,6"
+                    Margin="0,0,0,6">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+                    <CheckBox Grid.Row="0" Grid.Column="0"
+                              Content="Auto-trim activado (saltar silencio inicial/final)"
+                              IsChecked="{Binding AutoTrimEnabled}"
+                              FontWeight="SemiBold"
+                              FontSize="11"
+                              Padding="4,0"
+                              Foreground="{DynamicResource FgPrimary}" />
+
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               Text="{Binding TrimStatusText}"
+                               FontSize="10"
+                               Foreground="{DynamicResource AccentText}"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"
+                               MaxWidth="360"
+                               HorizontalAlignment="Right" />
+                </Grid>
+            </Border>
+
+            <!-- Configuracion -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource BgTertiary}"
+                    CornerRadius="6"
+                    Padding="8,6"
+                    Margin="0,0,0,6">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto"
+                      RowDefinitions="Auto,Auto">
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Text="Umbral (dB):"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               Margin="0,0,6,0" />
+                    <Slider Grid.Row="0" Grid.Column="1"
+                            Minimum="-90" Maximum="-20"
+                            TickFrequency="1"
+                            Value="{Binding ThresholdDb}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2"
+                               Text="{Binding ThresholdDbText}"
+                               FontFamily="Consolas"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center"
+                               MinWidth="60"
+                               Margin="6,0,16,0" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="Bloque (ms):"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               Margin="0,6,6,0" />
+                    <TextBox Grid.Row="1" Grid.Column="1"
+                             Text="{Binding BlockMs}"
+                             Width="80"
+                             FontSize="11"
+                             Padding="4,2"
+                             HorizontalAlignment="Left"
+                             Margin="0,6,0,0" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="2"
+                               Text="Silencio min (ms):"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               Margin="0,6,16,0" />
+                    <TextBox Grid.Row="1" Grid.Column="3"
+                             Text="{Binding MinSilenceMs}"
+                             Width="80"
+                             FontSize="11"
+                             Padding="4,2"
+                             Margin="0,6,0,0" />
+                </Grid>
+            </Border>
+
+            <!-- Nota explicativa -->
+            <Border Grid.Row="3"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="8,5"
+                    Margin="0,0,0,6">
+                <TextBlock Text="El analisis corre automaticamente al cargar cada archivo. Los resultados se guardan en cache."
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextWrapping="Wrap" />
+            </Border>
+
+            <!-- Resumen principal -->
+            <Border Grid.Row="4"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="10,6"
+                    Margin="0,0,0,6"
+                    IsVisible="{Binding HasResult}">
+                <Grid ColumnDefinitions="*,*,*">
+                    <StackPanel Grid.Column="0" Spacing="1">
+                        <TextBlock Text="Silencio inicial"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding StartSilenceText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource AccentText}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="1">
+                        <TextBlock Text="Duracion efectiva"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding EffectiveDurationText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource Success}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Spacing="1">
+                        <TextBlock Text="Silencio final"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding EndSilenceText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource AccentText}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Estado -->
+            <StackPanel Grid.Row="5" Spacing="3">
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextWrapping="Wrap" />
+                <ProgressBar IsVisible="{Binding IsAnalyzing}"
+                             IsIndeterminate="True"
+                             Height="3" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

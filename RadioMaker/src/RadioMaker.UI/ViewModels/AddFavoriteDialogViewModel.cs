@@ -1,0 +1,49 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace RadioMaker.UI.ViewModels;
+
+/// <summary>
+/// ViewModel del dialogo "Agregar a Favoritos".
+/// Pide un nombre personalizado opcional para la carpeta.
+///
+/// Si el usuario deja el nombre vacio, el favorito usa el nombre de
+/// la carpeta por defecto.
+/// </summary>
+public sealed partial class AddFavoriteDialogViewModel : ViewModelBase
+{
+    /// <summary>Ruta de la carpeta a agregar.</summary>
+    public string FolderPath { get; }
+
+    /// <summary>Nombre por defecto de la carpeta (para mostrar en el dialogo).</summary>
+    public string DefaultName { get; }
+
+    /// <summary>Nombre personalizado ingresado por el usuario (puede quedar vacio).</summary>
+    [ObservableProperty] private string _customName = string.Empty;
+
+    /// <summary>Nombre que se usara finalmente: CustomName si esta cargado, sino DefaultName.</summary>
+    public string EffectiveName =>
+        !string.IsNullOrWhiteSpace(CustomName) ? CustomName.Trim() : DefaultName;
+
+    public AddFavoriteDialogViewModel(string folderPath)
+    {
+        FolderPath = folderPath ?? string.Empty;
+        DefaultName = ComputeDefaultName(folderPath);
+    }
+
+    private static string ComputeDefaultName(string? folderPath)
+    {
+        if (string.IsNullOrWhiteSpace(folderPath)) return "(sin nombre)";
+
+        var trimmed = folderPath!.TrimEnd(
+            System.IO.Path.DirectorySeparatorChar,
+            System.IO.Path.AltDirectorySeparatorChar);
+
+        var name = System.IO.Path.GetFileName(trimmed);
+        return string.IsNullOrWhiteSpace(name) ? trimmed : name;
+    }
+
+    partial void OnCustomNameChanged(string value)
+    {
+        OnPropertyChanged(nameof(EffectiveName));
+    }
+}

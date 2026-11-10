@@ -1,0 +1,409 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:core="clr-namespace:RadioMaker.Core.Scheduling;assembly=RadioMaker.Core"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.EventsPanel"
+             x:DataType="vm:EventsPanelViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto">
+
+        <!-- ═══════════ TOOLBAR: estado del scheduler ═══════════ -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,0,0,1"
+                Padding="8,5">
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto">
+
+                <!-- Indicador de estado -->
+                <Border Grid.Column="0"
+                        Background="{Binding IsSchedulerRunning, Converter={x:Static vm:BoolToThemeBrushConverter.Instance}, ConverterParameter='Success|FgMuted'}"
+                        CornerRadius="4"
+                        Padding="8,3"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding IsSchedulerRunning, Converter={x:Static vm:BoolSchedulerStateTextConverter.Instance}}"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Foreground="White" />
+                </Border>
+
+                <!-- Contadores -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalAlignment="Center">
+                    <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
+                        <Run Text="Activas:" />
+                        <Run Text="{Binding ActiveListCount}" FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" />
+                    </TextBlock>
+                    <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}"
+                               IsVisible="{Binding DisabledListCount, Converter={x:Static vm:IntPositiveConverter.Instance}}">
+                        <Run Text="Desactivadas:" />
+                        <Run Text="{Binding DisabledListCount}" FontWeight="Bold" Foreground="{DynamicResource Warning}" />
+                    </TextBlock>
+                    <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
+                        <Run Text="Pendientes:" />
+                        <Run Text="{Binding PendingCount}" FontWeight="Bold" Foreground="{DynamicResource AccentText}" />
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- Botones a la derecha -->
+                <Button Grid.Column="3"
+                        Command="{Binding ToggleSchedulerCommand}"
+                        Padding="6,3"
+                        Margin="4,0"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Iniciar / Detener scheduler">
+                    <materialIcons:MaterialIcon Kind="PlayPause"
+                                                Width="14" Height="14"
+                                                Foreground="{DynamicResource FgPrimary}" />
+                </Button>
+
+                <Button Grid.Column="4"
+                        Command="{Binding ResetStateCommand}"
+                        Padding="6,3"
+                        Margin="4,0"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Reiniciar estado de disparos (marca todos como no disparados)">
+                    <materialIcons:MaterialIcon Kind="Refresh"
+                                                Width="14" Height="14"
+                                                Foreground="{DynamicResource Warning}" />
+                </Button>
+
+                <Button Grid.Column="5"
+                        Command="{Binding ClearLogCommand}"
+                        Padding="6,3"
+                        Margin="4,0"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Limpiar el log de eventos">
+                    <materialIcons:MaterialIcon Kind="DeleteSweep"
+                                                Width="14" Height="14"
+                                                Foreground="{DynamicResource Error}" />
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════ EN REPRODUCCIÓN ═══════════ -->
+        <!-- Visible solo cuando hay algo sonando (scheduler O playlist). -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource BgTertiary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,0,0,1"
+                Padding="10,8"
+                IsVisible="{Binding !ShowEmptyState}">
+            <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+
+                <!-- Fila 0: badge de estado + info + posición -->
+                <StackPanel Grid.Row="0" Grid.Column="0"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            VerticalAlignment="Center">
+
+                    <!-- Badge del scheduler -->
+                    <Border Background="{Binding PlaybackState.KindColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                            CornerRadius="4"
+                            Padding="8,3"
+                            VerticalAlignment="Center"
+                            IsVisible="{Binding ShowSchedulerPanel}">
+                        <TextBlock Text="{Binding PlaybackState.KindText}"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="White" />
+                    </Border>
+
+                    <!-- Badge de la playlist -->
+                    <Border Background="{Binding PlaylistStatusColorKey, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                            CornerRadius="4"
+                            Padding="8,3"
+                            VerticalAlignment="Center"
+                            IsVisible="{Binding ShowPlaylistPanel}">
+                        <TextBlock Text="{Binding PlaylistStatusText}"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="White" />
+                    </Border>
+
+                    <!-- Info del scheduler -->
+                    <StackPanel IsVisible="{Binding ShowSchedulerPanel}"
+                                Orientation="Horizontal"
+                                Spacing="6"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="{Binding PlaybackState.ItemTitle}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding PlaybackState.TandaProgressText}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding PlaybackState.IsTanda}" />
+                        <TextBlock Text="{Binding PlaybackState.TandaTrackTitle}"
+                                   FontSize="10"
+                                   FontStyle="Italic"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding PlaybackState.IsTanda}"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <!-- Info de la playlist -->
+                    <StackPanel IsVisible="{Binding ShowPlaylistPanel}"
+                                Orientation="Horizontal"
+                                Spacing="6"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="{Binding PlaylistHeaderText}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding PlaylistProgressText}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding PlaylistTrackText}"
+                                   FontSize="10"
+                                   FontStyle="Italic"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Posición / duración a la derecha -->
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           Text="{Binding PlaybackState.PositionText}"
+                           FontSize="11"
+                           FontFamily="Consolas"
+                           Foreground="{DynamicResource FgSecondary}"
+                           VerticalAlignment="Center"
+                           Margin="12,0,0,0"
+                           IsVisible="{Binding ShowSchedulerPanel}" />
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           Text="{Binding PlaylistPositionText}"
+                           FontSize="11"
+                           FontFamily="Consolas"
+                           Foreground="{DynamicResource FgSecondary}"
+                           VerticalAlignment="Center"
+                           Margin="12,0,0,0"
+                           IsVisible="{Binding ShowPlaylistPanel}" />
+
+                <!-- Fila 1: barra de progreso -->
+                <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                             Value="{Binding PlaybackState.ProgressFraction}"
+                             Minimum="0"
+                             Maximum="1"
+                             Height="6"
+                             Margin="0,6,0,0"
+                             IsVisible="{Binding ShowSchedulerPanel}" />
+                <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                             Value="{Binding PlaylistProgressFraction}"
+                             Minimum="0"
+                             Maximum="1"
+                             Height="6"
+                             Margin="0,6,0,0"
+                             IsVisible="{Binding ShowPlaylistPanel}" />
+
+            </Grid>
+        </Border>
+
+        <!-- ═══════════ LISTA CENTRAL: pendientes agrupados por dia ═══════════ -->
+        <Border Grid.Row="2"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0">
+            <Grid RowDefinitions="Auto,*">
+
+                <TextBlock Grid.Row="0"
+                           Text="Próximos disparos programados"
+                           FontWeight="SemiBold"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           Margin="8,6,8,3" />
+
+                <TextBlock Grid.Row="1"
+                           Text="No hay items pendientes de disparar."
+                           FontSize="11"
+                           Foreground="{DynamicResource FgMuted}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding HasNoPending}" />
+
+                <ScrollViewer Grid.Row="1" IsVisible="{Binding HasPending}">
+                    <ItemsControl ItemsSource="{Binding PendingGroups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:PendingDayGroup">
+                                <StackPanel Margin="0,0,0,10">
+
+                                    <Border Background="{DynamicResource BgTertiary}"
+                                            BorderBrush="{DynamicResource BorderPrimary}"
+                                            BorderThickness="0,0,0,1"
+                                            Padding="8,5">
+                                        <TextBlock Text="{Binding Header}"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource FgPrimary}" />
+                                    </Border>
+
+                                    <ItemsControl ItemsSource="{Binding Items}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:PendingScheduledItem">
+                                                <Border Padding="8,5"
+                                                        BorderBrush="{DynamicResource BorderSubtle}"
+                                                        BorderThickness="0,0,0,1">
+                                                    <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto"
+                                                          RowDefinitions="Auto,Auto"
+                                                          ColumnSpacing="8">
+
+                                                        <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                                                                   Text="{Binding DayIndex}"
+                                                                   FontSize="10"
+                                                                   FontFamily="Consolas"
+                                                                   Foreground="{DynamicResource FgMuted}"
+                                                                   VerticalAlignment="Center"
+                                                                   MinWidth="20"
+                                                                   TextAlignment="Right" />
+
+                                                        <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                                                                   Text="{Binding TimeText}"
+                                                                   FontSize="11"
+                                                                   FontFamily="Consolas"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="{DynamicResource AccentText}"
+                                                                   VerticalAlignment="Center"
+                                                                   MinWidth="70" />
+
+                                                        <StackPanel Grid.Row="0" Grid.Column="2"
+                                                                    Orientation="Horizontal"
+                                                                    Spacing="6"
+                                                                    VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding ItemTitle}"
+                                                                       FontSize="11"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="{DynamicResource FgPrimary}"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       VerticalAlignment="Center" />
+
+                                                            <Border Background="{Binding KindColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                                                    CornerRadius="3"
+                                                                    Padding="4,1"
+                                                                    VerticalAlignment="Center">
+                                                                <TextBlock Text="{Binding KindText}"
+                                                                           FontSize="8"
+                                                                           FontWeight="Bold"
+                                                                           Foreground="White" />
+                                                            </Border>
+
+                                                            <Border Background="{Binding PriorityColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                                                    CornerRadius="3"
+                                                                    Padding="4,1"
+                                                                    VerticalAlignment="Center">
+                                                                <TextBlock Text="{Binding PriorityText}"
+                                                                           FontSize="8"
+                                                                           FontWeight="Bold"
+                                                                           Foreground="White" />
+                                                            </Border>
+                                                        </StackPanel>
+
+                                                        <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="3"
+                                                                   Text="{Binding DurationText}"
+                                                                   FontSize="10"
+                                                                   FontFamily="Consolas"
+                                                                   Foreground="{DynamicResource FgSecondary}"
+                                                                   VerticalAlignment="Center"
+                                                                   IsVisible="{Binding HasDuration}"
+                                                                   MinWidth="60"
+                                                                   TextAlignment="Right" />
+
+                                                        <TextBlock Grid.Row="1" Grid.Column="2"
+                                                                   Text="{Binding UnderlyingFile}"
+                                                                   FontSize="9"
+                                                                   FontFamily="Consolas"
+                                                                   Foreground="{DynamicResource FgMuted}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   IsVisible="{Binding HasFile}" />
+
+                                                        <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="4"
+                                                                   Text="{Binding ListName}"
+                                                                   FontSize="9"
+                                                                   Foreground="{DynamicResource FgMuted}"
+                                                                   FontStyle="Italic"
+                                                                   VerticalAlignment="Center"
+                                                                   MaxWidth="120"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════ LOG ACHICADO (abajo) ═══════════ -->
+        <Border Grid.Row="3"
+                Background="{DynamicResource BgTertiary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,1,0,0"
+                Height="150">
+            <Grid RowDefinitions="Auto,*">
+
+                <TextBlock Grid.Row="0"
+                           Text="Log de eventos"
+                           FontWeight="SemiBold"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           Margin="8,4,8,2" />
+
+                <ScrollViewer Grid.Row="1" Padding="4,0,4,4">
+                    <ItemsControl ItemsSource="{Binding LogEntries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="core:SchedulerLogEntry">
+                                <Grid ColumnDefinitions="Auto,Auto,*"
+                                      ColumnSpacing="6"
+                                      Margin="2,1">
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding TimeText}"
+                                               FontSize="9"
+                                               FontFamily="Consolas"
+                                               Foreground="{DynamicResource FgMuted}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding LevelText}"
+                                               FontSize="9"
+                                               FontWeight="Bold"
+                                               Foreground="{Binding LevelColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                               MinWidth="40" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding Message}"
+                                               FontSize="9"
+                                               Foreground="{DynamicResource FgSecondary}"
+                                               TextTrimming="CharacterEllipsis" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════ STATUS BAR ═══════════ -->
+        <Border Grid.Row="4"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,1,0,0"
+                Padding="8,3">
+            <TextBlock Text="{Binding StatusText}"
+                       FontSize="10"
+                       Foreground="{DynamicResource FgSecondary}"
+                       TextTrimming="CharacterEllipsis" />
+        </Border>
+
+    </Grid>
+</UserControl>

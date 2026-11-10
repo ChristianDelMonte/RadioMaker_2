@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.SpectrumPanel"
+             x:DataType="vm:SpectrumPanelViewModel">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="0">
+        <Grid RowDefinitions="Auto,*,Auto">
+
+            <!-- Barra de controles -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource BgPrimary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1"
+                    Padding="6,4">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+
+                    <TextBlock Grid.Column="0"
+                               Text="Analizador de espectro"
+                               FontWeight="SemiBold"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0" />
+
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding StatusMessage}"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis" />
+
+                    <!-- Selector de modo -->
+                    <ComboBox Grid.Column="2"
+                              ItemsSource="{Binding AvailableModes}"
+                              SelectedItem="{Binding Mode}"
+                              FontSize="10"
+                              MinWidth="130"
+                              VerticalAlignment="Center"
+                              Margin="6,0,2,0">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={x:Static vm:SpectrumModeLabelConverter.Instance}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <!-- Boton siguiente modo -->
+                    <Button Grid.Column="3"
+                            Command="{Binding NextModeCommand}"
+                            Padding="3,2" Background="Transparent" BorderThickness="0"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="Siguiente modo">
+                        <materialIcons:MaterialIcon Kind="ChevronRight"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <!-- Boton pausar/reanudar -->
+                    <Button Grid.Column="4"
+                            Command="{Binding ToggleRunningCommand}"
+                            Padding="3,2" Background="Transparent" BorderThickness="0"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="Pausar / reanudar">
+                        <materialIcons:MaterialIcon Kind="Pause"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource Warning}" />
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- Analizador -->
+            <Border Grid.Row="1"
+                    Background="#0A0A0C"
+                    CornerRadius="0"
+                    Margin="4">
+                <controls:SpectrumAnalyzer
+                    Name="Analyzer"
+                    Channel="{Binding Channel}"
+                    Mode="{Binding Mode}"
+                    IsRunning="{Binding IsRunning}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    MinHeight="180" />
+            </Border>
+
+            <!-- Status inferior -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,1,0,0"
+                    Padding="6,3">
+                <TextBlock Text="Click sobre el analizador o usa el selector para cambiar de modo. Modos: FFT, Bandas, Waterfall, Onda."
+                           FontSize="9"
+                           Foreground="{DynamicResource FgMuted}"
+                           TextTrimming="CharacterEllipsis" />
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

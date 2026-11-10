@@ -1,0 +1,218 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="RadioMaker.UI.Views.CartButtonEditorWindow"
+        x:DataType="vm:CartButtonEditorViewModel"
+        Title="Editar boton"
+        Width="560" Height="680"
+        MinWidth="500" MinHeight="600"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Barra de titulo personalizada -->
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="{Binding $parent[controls:CustomChromeWindow].Title}"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <!-- Contenido con el margen original -->
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,*,Auto"
+              Margin="16">
+
+            <!-- Header (solo subtitulo) -->
+            <TextBlock Grid.Row="0"
+                       Text="{Binding Header}"
+                       FontSize="11"
+                       Foreground="{DynamicResource FgSecondary}"
+                       TextTrimming="CharacterEllipsis"
+                       Margin="0,0,0,14" />
+
+            <!-- Formulario -->
+            <ScrollViewer Grid.Row="1">
+                <StackPanel Spacing="14">
+
+                    <!-- Archivo -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Archivo de audio"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <Grid ColumnDefinitions="*,Auto,Auto">
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding FilePath}"
+                                     IsReadOnly="True"
+                                     PlaceholderText="(sin archivo)" />
+                            <Button Grid.Column="1"
+                                    x:Name="BrowseButton"
+                                    Click="OnBrowseClick"
+                                    Margin="8,0,0,0"
+                                    Padding="8,4"
+                                    ToolTip.Tip="Elegir archivo de audio">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                                Width="15" Height="15"
+                                                                Foreground="{DynamicResource FgPrimary}" />
+                                    <TextBlock Text="Examinar..."
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="2"
+                                    x:Name="ClearFileButton"
+                                    Click="OnClearFileClick"
+                                    Margin="8,0,0,0"
+                                    Padding="6,4"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    ToolTip.Tip="Quitar archivo">
+                                <materialIcons:MaterialIcon Kind="Close"
+                                                            Width="15" Height="15"
+                                                            Foreground="{DynamicResource Error}" />
+                            </Button>
+                        </Grid>
+                        <TextBlock Text="{Binding DurationText}"
+                                   FontSize="11"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   IsVisible="{Binding HasFile}"
+                                   Margin="0,2,0,0" />
+                    </StackPanel>
+
+                    <!-- Etiqueta -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Etiqueta (texto del boton)"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBox Text="{Binding Label}"
+                                 PlaceholderText="(usa el nombre del archivo)" />
+                    </StackPanel>
+
+                    <!-- Color -->
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Color de fondo"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0"
+                                    Background="{Binding Color}"
+                                    Width="48" Height="32"
+                                    CornerRadius="4"
+                                    BorderBrush="{DynamicResource BorderPrimary}"
+                                    BorderThickness="1"
+                                    Margin="0,0,10,0"
+                                    VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding Color}"
+                                     FontFamily="Consolas"
+                                     VerticalAlignment="Center" />
+                        </Grid>
+
+                        <TextBlock Text="Colores rapidos"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   Margin="0,6,0,0" />
+                        <ItemsControl ItemsSource="{Binding QuickColors}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Click="OnQuickColorClick"
+                                            Tag="{Binding}"
+                                            Background="{Binding}"
+                                            Width="32" Height="32"
+                                            Margin="0,0,6,6"
+                                            Padding="0"
+                                            BorderBrush="{DynamicResource BorderPrimary}"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            ToolTip.Tip="{Binding}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Hotkey -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Atajo de teclado (opcional)"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBox Text="{Binding Hotkey}"
+                                 PlaceholderText="ej: 1, F1, Numpad1 (proximamente)" />
+                    </StackPanel>
+
+                    <!-- Volumen -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Volumen relativo"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Slider Grid.Column="0"
+                                    Minimum="-12" Maximum="12"
+                                    Value="{Binding VolumeDb}"
+                                    TickFrequency="1"
+                                    ToolTip.Tip="{Binding VolumeText}" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding VolumeText}"
+                                       FontFamily="Consolas"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgPrimary}"
+                                       VerticalAlignment="Center"
+                                       MinWidth="60"
+                                       Margin="12,0,0,0" />
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Flags -->
+                    <StackPanel Spacing="6">
+                        <CheckBox Content="Boton habilitado"
+                                  IsChecked="{Binding IsEnabled}"
+                                  FontSize="12"
+                                  Foreground="{DynamicResource FgPrimary}" />
+                        <CheckBox Content="Reproducir en loop (proximamente)"
+                                  IsChecked="{Binding Loop}"
+                                  IsEnabled="False"
+                                  FontSize="12"
+                                  Foreground="{DynamicResource FgPrimary}" />
+                    </StackPanel>
+
+                    <!-- Notas -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Notas"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBox Text="{Binding Notes}"
+                                 AcceptsReturn="True"
+                                 Height="80"
+                                 TextWrapping="Wrap"
+                                 PlaceholderText="(opcional)" />
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Botones inferiores -->
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8"
+                        Margin="0,14,0,0">
+                <Button Content="Cancelar"
+                        x:Name="CancelButton"
+                        Click="OnCancelClick"
+                        MinWidth="100" />
+                <Button Content="Guardar"
+                        x:Name="SaveButton"
+                        Click="OnSaveClick"
+                        MinWidth="100"
+                        Classes="accent" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</controls:CustomChromeWindow>

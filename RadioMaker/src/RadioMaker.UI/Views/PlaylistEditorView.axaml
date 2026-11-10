@@ -1,0 +1,439 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Views.PlaylistEditorView"
+             x:DataType="vm:PlaylistEditorViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto">
+
+        <!-- Barra de herramientas -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource BgPrimary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,0,0,1"
+                Padding="4,2">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="0">
+                    <!-- Nuevo / Abrir / Guardar -->
+                    <Button x:Name="NewButton" Click="OnNewClick"
+                            ToolTip.Tip="Nueva playlist" Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="FilePlus"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <Button x:Name="OpenButton" Click="OnOpenClick"
+                            ToolTip.Tip="Abrir archivo .rmf" Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <Button x:Name="SaveButton" Click="OnSaveClick"
+                            ToolTip.Tip="Guardar" Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="ContentSave"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <Button x:Name="SaveAsButton" Click="OnSaveAsClick"
+                            ToolTip.Tip="Guardar como..." Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="ContentSaveEdit"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <Border Width="1" Background="{DynamicResource BorderPrimary}" Margin="3,2" />
+
+                    <!-- Agregar / Quitar -->
+                    <Button x:Name="GenerateButton" Click="OnGenerateClick"
+                            ToolTip.Tip="Generar playlist automaticamente desde una carpeta"
+                            Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="AutoFix"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource AccentText}" />
+                    </Button>
+
+                    <Button Command="{Binding AddTrackCommand}"
+                            ToolTip.Tip="Agregar pista" Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="Plus"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource AccentText}" />
+                    </Button>
+
+                    <Button Command="{Binding RemoveTrackCommand}"
+                            IsEnabled="{Binding HasSelection}"
+                            ToolTip.Tip="Quitar pista seleccionada" Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="Close"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource Error}" />
+                    </Button>
+
+                    <Border Width="1" Background="{DynamicResource BorderPrimary}" Margin="3,2" />
+
+                    <!-- Importar / Exportar -->
+                    <Button ToolTip.Tip="Importar playlist" Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="Download"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource AccentText}" />
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                <MenuItem Header="Importar desde M3U / M3U8" Click="OnImportM3uClick" />
+                                <MenuItem Header="Importar desde PLS" Click="OnImportPlsClick" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <Button ToolTip.Tip="Exportar playlist" Padding="3" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="Upload"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource Success}" />
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                <MenuItem Header="Exportar a M3U / M3U8" Click="OnExportM3uClick" />
+                                <MenuItem Header="Exportar a PLS" Click="OnExportPlsClick" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+
+                <!-- Modo de reproduccion -->
+                <controls:PlaylistModeSelectorButton Grid.Column="1"
+                                                     VerticalAlignment="Center"
+                                                     Margin="6,0,0,0" />
+
+                <!-- Selector de bus de salida de la playlist -->
+                <controls:BusSelectorButton Grid.Column="2"
+                                            DataContext="{Binding BusSelector}"
+                                            VerticalAlignment="Center"
+                                            Margin="6,0,0,0" />
+            </Grid>
+        </Border>
+
+        <!-- Barra de reproduccion -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource BgTertiary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,0,0,1"
+                Padding="8,6"
+                IsVisible="{Binding IsThisPlaylistPlaying}">
+            <Grid ColumnDefinitions="Auto,*">
+                <Border Grid.Column="0"
+                        Background="{Binding PlayerStateColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                        CornerRadius="4" Padding="6,2"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding PlayerStateText}"
+                               FontSize="9" FontWeight="Bold"
+                               Foreground="White" />
+                </Border>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal" Spacing="10"
+                            VerticalAlignment="Center"
+                            IsVisible="{Binding HasPlayerTrack}">
+                    <TextBlock Text="{Binding PlayerState.TrackProgressText}"
+                               FontSize="10" FontFamily="Consolas"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding PlayerState.TrackTitle}"
+                               FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgPrimary}"
+                               TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Lista de pistas -->
+        <Border Grid.Row="2"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0">
+            <Grid RowDefinitions="Auto,*">
+
+                <TextBlock Grid.Row="0"
+                           Text="Pistas de la playlist (clic derecho para editar)"
+                           FontWeight="SemiBold"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           Margin="8,6,8,3" />
+
+                <ListBox Grid.Row="1"
+                         Name="TracksListBox"
+                         ItemsSource="{Binding Tracks}"
+                         SelectedItem="{Binding SelectedTrack}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Padding="0"
+                         DoubleTapped="OnTrackDoubleTapped">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="MinHeight" Value="0" />
+                        </Style>
+                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                            <Setter Property="Background" Value="{DynamicResource BgSelected}" />
+                        </Style>
+
+                        <!-- Botones de reordenar: ocultos por defecto, visibles al seleccionar -->
+                        <Style Selector="ListBoxItem StackPanel.reorder-controls">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                        <Style Selector="ListBoxItem:selected StackPanel.reorder-controls">
+                            <Setter Property="IsVisible" Value="True" />
+                        </Style>
+                    </ListBox.Styles>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:PlaylistTrackViewModel">
+                            <Border Padding="8,6,8,8"
+                                    BorderBrush="{DynamicResource BorderSubtle}"
+                                    BorderThickness="0,0,0,1"
+                                    Background="{Binding RowBackground, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                    Opacity="{Binding EffectiveOpacity}"
+                                    PointerPressed="OnTrackPointerPressed">
+                                <Border.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Editar..." Click="OnContextEditClick" />
+                                        <Separator />
+                                        <MenuItem Header="Editar en RMWave..."
+                                                  Click="OnContextEditInRMWaveClick"
+                                                  IsEnabled="{Binding FilePath, Converter={x:Static vm:IsRmwFileConverter.Instance}}" />
+                                        <Separator />
+                                        <MenuItem Header="Eliminar" Click="OnContextDeleteClick" />
+                                    </ContextMenu>
+                                </Border.ContextMenu>
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
+
+                                    <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0"
+                                            Background="{Binding MarkerColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                            Width="3" Margin="0,0,8,0"
+                                            CornerRadius="2" />
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1"
+                                                Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="{Binding DisplayTitle}"
+                                                   FontSize="11" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource FgPrimary}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   VerticalAlignment="Center" />
+
+                                        <!-- Badge "PROYECTO RMWAVE" — solo visible si la pista es .rmw -->
+                                        <Border IsVisible="{Binding IsRmwProject}"
+                                                Background="{Binding FileTypeBadgeColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                                CornerRadius="3" Padding="5,1"
+                                                VerticalAlignment="Center"
+                                                Margin="6,0,0,0">
+                                            <TextBlock Text="{Binding FileTypeBadge}"
+                                                       FontSize="8" FontWeight="Bold"
+                                                       Foreground="White"
+                                                       LetterSpacing="0.5" />
+                                        </Border>
+
+                                        <!-- Badge LOC (locución) -->
+                                        <Border Background="{DynamicResource AccentSoft}"
+                                                CornerRadius="3" Padding="4,1"
+                                                IsVisible="{Binding IsLocutionItem}"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="LOC"
+                                                       FontSize="8" FontWeight="Bold"
+                                                       Foreground="{DynamicResource AccentText}" />
+                                        </Border>
+
+                                        <!-- Badge MIX (solo audio con mix) -->
+                                        <Border Background="{DynamicResource AccentSoft}"
+                                                CornerRadius="3" Padding="4,1"
+                                                IsVisible="{Binding HasMix}"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="MIX"
+                                                       FontSize="8" FontWeight="Bold"
+                                                       Foreground="{DynamicResource AccentText}" />
+                                        </Border>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                               Text="{Binding DurationText}"
+                                               FontSize="9" FontFamily="Consolas"
+                                               Foreground="{DynamicResource FgSecondary}"
+                                               Margin="0,3,0,0" />
+
+                                    <TextBlock Grid.Row="2" Grid.Column="1"
+                                               Text="{Binding FilePath}"
+                                               FontSize="9"
+                                               Foreground="{DynamicResource FgMuted}"
+                                               TextTrimming="CharacterEllipsis"
+                                               IsVisible="{Binding IsAudioItem}"
+                                               Margin="0,1,0,0" />
+
+                                    <!-- Botones de reordenar (subir/bajar) -->
+                                    <StackPanel Grid.Row="0" Grid.RowSpan="3" Grid.Column="2"
+                                                Classes="reorder-controls"
+                                                Orientation="Vertical"
+                                                Spacing="2"
+                                                VerticalAlignment="Center"
+                                                Margin="6,0,0,0">
+                                        <Button Padding="2"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                ToolTip.Tip="Subir pista"
+                                                Command="{Binding $parent[ListBox].DataContext.MoveTrackUpCommand}"
+                                                CommandParameter="{Binding}">
+                                            <materialIcons:MaterialIcon Kind="ChevronUp"
+                                                                        Width="14" Height="14"
+                                                                        Foreground="{DynamicResource FgPrimary}" />
+                                        </Button>
+                                        <Button Padding="2"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                ToolTip.Tip="Bajar pista"
+                                                Command="{Binding $parent[ListBox].DataContext.MoveTrackDownCommand}"
+                                                CommandParameter="{Binding}">
+                                            <materialIcons:MaterialIcon Kind="ChevronDown"
+                                                                        Width="14" Height="14"
+                                                                        Foreground="{DynamicResource FgPrimary}" />
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <!-- Controles de reproduccion (centrados) + totalizador de duracion (derecha) -->
+        <Border Grid.Row="3"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,1,0,0"
+                Padding="8,6">
+            <Grid ColumnDefinitions="*,Auto,*">
+
+                <Panel Grid.Column="0" />
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="4"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Button Command="{Binding PrevPlaybackCommand}"
+                            IsEnabled="{Binding CanPrevPlayback}"
+                            ToolTip.Tip="Pista anterior"
+                            ToolTip.Placement="Bottom"
+                            ToolTip.ShowDelay="800"
+                            Padding="8,5" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="SkipPrevious"
+                                                    Width="16" Height="16"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <Button Command="{Binding StartPlaybackCommand}"
+                            IsEnabled="{Binding CanStartPlayback}"
+                            ToolTip.Tip="Reproducir"
+                            ToolTip.Placement="Bottom"
+                            ToolTip.ShowDelay="800"
+                            Padding="8,5" Background="Transparent" BorderThickness="0"
+                            IsVisible="{Binding !IsThisPlaylistPlaying}">
+                        <materialIcons:MaterialIcon Kind="Play"
+                                                    Width="16" Height="16"
+                                                    Foreground="{DynamicResource Success}" />
+                    </Button>
+
+                    <Button Command="{Binding ResumePlaybackCommand}"
+                            IsEnabled="{Binding CanResumePlayback}"
+                            ToolTip.Tip="Reanudar"
+                            ToolTip.Placement="Bottom"
+                            ToolTip.ShowDelay="800"
+                            Padding="8,5" Background="Transparent" BorderThickness="0"
+                            IsVisible="{Binding IsThisPlaylistPlaying}">
+                        <materialIcons:MaterialIcon Kind="Play"
+                                                    Width="16" Height="16"
+                                                    Foreground="{DynamicResource Success}" />
+                    </Button>
+
+                    <Button Command="{Binding PausePlaybackCommand}"
+                            IsEnabled="{Binding CanPausePlayback}"
+                            ToolTip.Tip="Pausar"
+                            ToolTip.Placement="Bottom"
+                            ToolTip.ShowDelay="800"
+                            Padding="8,5" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="Pause"
+                                                    Width="16" Height="16"
+                                                    Foreground="{DynamicResource Warning}" />
+                    </Button>
+
+                    <Button Command="{Binding StopPlaybackCommand}"
+                            IsEnabled="{Binding CanStopPlayback}"
+                            ToolTip.Tip="Detener"
+                            ToolTip.Placement="Bottom"
+                            ToolTip.ShowDelay="800"
+                            Padding="8,5" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="Stop"
+                                                    Width="16" Height="16"
+                                                    Foreground="{DynamicResource Error}" />
+                    </Button>
+
+                    <Button Command="{Binding NextPlaybackCommand}"
+                            IsEnabled="{Binding CanNextPlayback}"
+                            ToolTip.Tip="Pista siguiente"
+                            ToolTip.Placement="Bottom"
+                            ToolTip.ShowDelay="800"
+                            Padding="8,5" Background="Transparent" BorderThickness="0">
+                        <materialIcons:MaterialIcon Kind="SkipNext"
+                                                    Width="16" Height="16"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            Spacing="6"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="12,0,4,0"
+                            ToolTip.Tip="Duración total de las pistas habilitadas"
+                            ToolTip.Placement="Bottom"
+                            ToolTip.ShowDelay="800">
+                    <materialIcons:MaterialIcon Kind="ClockOutline"
+                                                Width="13" Height="13"
+                                                Foreground="{DynamicResource FgSecondary}"
+                                                VerticalAlignment="Center" />
+                    <TextBlock Text="Total:"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding TotalDurationText}"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               FontFamily="Consolas"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Status bar -->
+        <Border Grid.Row="4"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,1,0,0"
+                Padding="6,3">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusMessage}"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="1"
+                           Text="{Binding SummaryText}"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}" />
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>

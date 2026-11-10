@@ -1,0 +1,236 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Views.CartBoardView"
+             x:DataType="vm:CartBoardViewModel"
+             DragDrop.AllowDrop="True">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="0">
+        <Grid RowDefinitions="Auto,*,Auto">
+
+            <!-- Barra de herramientas -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1"
+                    Padding="4,2">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+
+                    <StackPanel Grid.Column="0"
+                                Orientation="Horizontal"
+                                Spacing="0">
+                        <Button x:Name="NewButton" Click="OnNewClick"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Nueva botonera">
+                            <materialIcons:MaterialIcon Kind="FilePlus"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+
+                        <Button x:Name="OpenButton" Click="OnOpenClick"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Abrir botonera .rcb">
+                            <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+
+                        <Button x:Name="SaveButton" Click="OnSaveClick"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Guardar en el archivo actual">
+                            <materialIcons:MaterialIcon Kind="ContentSave"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+
+                        <Button x:Name="SaveAsButton" Click="OnSaveAsClick"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Guardar como...">
+                            <materialIcons:MaterialIcon Kind="ContentSaveEdit"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource FgPrimary}" />
+                        </Button>
+
+                        <Border Width="1" Background="{DynamicResource BorderPrimary}" Margin="3,2" />
+
+                        <!-- Play del boton seleccionado -->
+                        <Button Command="{Binding PlaySelectedCommand}"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Reproducir el boton seleccionado">
+                            <materialIcons:MaterialIcon Kind="Play"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource Success}" />
+                        </Button>
+
+                        <!-- Stop fijo: siempre visible, solo habilitado si hay algo sonando -->
+                        <Button Command="{Binding StopAllCommand}"
+                                IsEnabled="{Binding IsAnyPlaying}"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Detener todos los botones">
+                            <materialIcons:MaterialIcon Kind="Stop"
+                                                        Width="15" Height="15"
+                                                        Foreground="{DynamicResource Error}" />
+                        </Button>
+
+                        <!-- Toggle de crossfade -->
+                        <Button Command="{Binding ToggleCrossfadeCommand}"
+                                Padding="3" Background="Transparent" BorderThickness="0"
+                                ToolTip.Tip="Activar/desactivar crossfade entre carts">
+                            <Panel>
+                                <materialIcons:MaterialIcon Kind="SwapHorizontal"
+                                                            Width="15" Height="15"
+                                                            Foreground="{DynamicResource FgMuted}"
+                                                            IsVisible="{Binding !IsCrossfadeEnabled}" />
+                                <materialIcons:MaterialIcon Kind="SwapHorizontal"
+                                                            Width="15" Height="15"
+                                                            Foreground="{DynamicResource Success}"
+                                                            IsVisible="{Binding IsCrossfadeEnabled}" />
+                            </Panel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Selector de bus de salida del modulo Cart -->
+                    <controls:BusSelectorButton Grid.Column="2"
+                                                DataContext="{Binding BusSelector}"
+                                                VerticalAlignment="Center"
+                                                Margin="6,0,0,0"
+                                                ToolTip.Tip="Bus de salida de la botonera" />
+                </Grid>
+            </Border>
+
+            <!-- Grilla -->
+            <ScrollViewer Grid.Row="1" Padding="6">
+                <ItemsControl ItemsSource="{Binding Buttons}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="{Binding $parent[ItemsControl].((vm:CartBoardViewModel)DataContext).Rows}"
+                                         Columns="{Binding $parent[ItemsControl].((vm:CartBoardViewModel)DataContext).Columns}" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:CartButtonViewModel">
+                            <!-- AllowDrop="True" convierte a CADA boton en su propio drop
+                                 target. Sin esto, el hit-test del drag siempre caia en
+                                 el UserControl raiz, y el evento no identificaba cual
+                                 boton estaba bajo el cursor. Con esto, e.Source apunta
+                                 al Border del boton (o a un hijo), y el drop funciona
+                                 siempre, tenga o no tenga audio asignado. -->
+                            <Border Margin="2"
+                                    DragDrop.AllowDrop="True"
+                                    Background="{Binding EffectiveBackground, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                    BorderBrush="{Binding EffectiveBorderColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                    BorderThickness="{Binding EffectiveBorderThickness}"
+                                    CornerRadius="5"
+                                    Padding="5"
+                                    Cursor="Hand"
+                                    Opacity="{Binding EffectiveOpacity}"
+                                    ToolTip.Tip="{Binding FilePath}">
+                                <Border.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Editar..." Click="OnContextEditClick" />
+                                        <MenuItem Header="Editar tags..."
+                                                  IsVisible="{Binding HasFile}"
+                                                  Click="OnContextEditTagsClick"
+                                                  IsEnabled="{Binding FilePath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}" />
+                                        <Separator />
+                                        <MenuItem Header="Editar en RMWave..."
+                                                  Click="OnContextEditInRMWaveClick"
+                                                  IsVisible="{Binding FilePath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                                  IsEnabled="{Binding FilePath, Converter={x:Static vm:IsRmwFileConverter.Instance}}" />
+                                        <Separator />
+                                        <MenuItem Header="Reproducir" Click="OnContextPlayClick" />
+                                        <MenuItem Header="Detener" Click="OnContextStopClick" />
+                                        <Separator />
+                                        <MenuItem Header="Limpiar boton" Click="OnContextClearClick" />
+                                    </ContextMenu>
+                                </Border.ContextMenu>
+
+                                <Grid RowDefinitions="Auto,*,Auto">
+
+                                    <Border Grid.Row="0"
+                                            HorizontalAlignment="Right"
+                                            Background="#00000040"
+                                            CornerRadius="3"
+                                            Padding="3,1"
+                                            IsVisible="{Binding HasHotkey}">
+                                        <TextBlock Text="{Binding Hotkey}"
+                                                   FontSize="8"
+                                                   FontFamily="Consolas"
+                                                   FontWeight="Bold"
+                                                   Foreground="#C9B3FF" />
+                                    </Border>
+
+                                    <!-- Fila central: badge REPRODUCIENDO arriba + texto del boton abajo -->
+                                    <StackPanel Grid.Row="1"
+                                                Orientation="Vertical"
+                                                Spacing="3"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+
+                                        <!-- Badge REPRODUCIENDO: visible SOLO cuando SI esta reproduciendo -->
+                                        <Border Background="{Binding PlayingBadgeBackground, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                                CornerRadius="3"
+                                                Padding="6,2"
+                                                HorizontalAlignment="Center"
+                                                IsVisible="{Binding IsPlaying}">
+                                            <TextBlock Text="REPRODUCIENDO"
+                                                       FontSize="7"
+                                                       FontWeight="Bold"
+                                                       LetterSpacing="0.5"
+                                                       Foreground="White" />
+                                        </Border>
+
+                                        <!-- Texto del boton: siempre visible -->
+                                        <TextBlock Text="{Binding ButtonText}"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Center"
+                                                   TextWrapping="Wrap"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="2"
+                                               Text="{Binding DurationText}"
+                                               FontSize="8"
+                                               FontFamily="Consolas"
+                                               Foreground="#FFFFFF80"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Bottom"
+                                               IsVisible="{Binding HasFile}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- Status bar: StatusMessage a la izquierda, SummaryText a la derecha -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,1,0,0"
+                    Padding="6,3">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding StatusMessage}"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding SummaryText}"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               Margin="8,0,0,0" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

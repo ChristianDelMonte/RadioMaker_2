@@ -1,0 +1,231 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:core="clr-namespace:RadioMaker.Core.Abstractions;assembly=RadioMaker.Core"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.DuckingPanel"
+             x:DataType="vm:DuckingPanelViewModel">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
+
+            <!-- Titulo + enable -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,6">
+                <TextBlock Grid.Column="0"
+                           Text="Ducking por microfono"
+                           FontWeight="SemiBold"
+                           FontSize="12"
+                           Foreground="{DynamicResource FgPrimary}"
+                           VerticalAlignment="Center" />
+                <CheckBox Grid.Column="1"
+                          Content="Activar"
+                          IsChecked="{Binding IsEnabled}"
+                          FontWeight="SemiBold"
+                          FontSize="11"
+                          Padding="4,0"
+                          Foreground="{DynamicResource FgPrimary}" />
+            </Grid>
+
+            <!-- Selector de microfono -->
+            <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,6">
+                <TextBlock Grid.Column="0"
+                           Text="Microfono:"
+                           VerticalAlignment="Center"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           Margin="0,0,6,0" />
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding AvailableMics}"
+                          SelectedItem="{Binding SelectedMic}"
+                          IsEnabled="{Binding IsEnabled}"
+                          FontSize="11"
+                          HorizontalAlignment="Stretch">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="core:MicDeviceInfo">
+                            <TextBlock Text="{Binding DisplayName}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Grid.Column="2"
+                        Command="{Binding RefreshMicsCommand}"
+                        Padding="4,2"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Margin="4,0,0,0"
+                        ToolTip.Tip="Refrescar lista de microfonos">
+                    <materialIcons:MaterialIcon Kind="Refresh"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource FgPrimary}" />
+                </Button>
+            </Grid>
+
+            <!-- Niveles en vivo -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="10,6"
+                    Margin="0,0,0,6">
+                <Grid ColumnDefinitions="*,*,*">
+
+                    <StackPanel Grid.Column="0" Spacing="1">
+                        <TextBlock Text="Nivel microfono"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding MicLevelText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource AccentText}" />
+                        <TextBlock Text="Voz detectada"
+                                   FontSize="9"
+                                   IsVisible="{Binding IsVoiceDetected}"
+                                   Foreground="{DynamicResource Success}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Spacing="1">
+                        <TextBlock Text="Umbral"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding ThresholdDbText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource AccentText}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Spacing="1">
+                        <TextBlock Text="Ganancia aplicada"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding CurrentGainText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource Success}" />
+                        <TextBlock Text="DUCKING ACTIVO"
+                                   FontSize="9" FontWeight="Bold"
+                                   IsVisible="{Binding IsDuckingActive}"
+                                   Foreground="{DynamicResource Warning}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Configuracion -->
+            <Border Grid.Row="3"
+                    Background="{DynamicResource BgTertiary}"
+                    CornerRadius="6"
+                    Padding="8,6"
+                    Margin="0,0,0,6">
+                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Text="Umbral (dB):"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,6,0" />
+                    <Slider Grid.Row="0" Grid.Column="1"
+                            Minimum="-70" Maximum="-10"
+                            TickFrequency="1"
+                            Value="{Binding ThresholdDb}"
+                            IsEnabled="{Binding IsEnabled}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2"
+                               Text="{Binding ThresholdDbText}"
+                               FontFamily="Consolas"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center"
+                               MinWidth="50"
+                               Margin="6,0,0,0" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="Reduccion (dB):"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center"
+                               Margin="0,6,6,0" />
+                    <Slider Grid.Row="1" Grid.Column="1"
+                            Minimum="1" Maximum="40"
+                            TickFrequency="1"
+                            Value="{Binding ReductionDb}"
+                            IsEnabled="{Binding IsEnabled}"
+                            Margin="0,6,0,0" />
+                    <TextBlock Grid.Row="1" Grid.Column="2"
+                               Text="{Binding ReductionDbText}"
+                               FontFamily="Consolas"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center"
+                               MinWidth="50"
+                               Margin="6,6,0,0" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Text="Retencion (ms):"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center"
+                               Margin="0,6,6,0" />
+                    <Slider Grid.Row="2" Grid.Column="1"
+                            Minimum="0" Maximum="3000"
+                            TickFrequency="50"
+                            Value="{Binding HoldMs}"
+                            IsEnabled="{Binding IsEnabled}"
+                            Margin="0,6,0,0" />
+                    <TextBlock Grid.Row="2" Grid.Column="2"
+                               Text="{Binding HoldMs}"
+                               FontFamily="Consolas"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center"
+                               MinWidth="50"
+                               Margin="6,6,0,0" />
+
+                    <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
+                          ColumnDefinitions="Auto,Auto,Auto,Auto,*"
+                          Margin="0,6,0,0">
+                        <TextBlock Grid.Column="0"
+                                   Text="Ataque (ms):"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,6,0" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding AttackMs}"
+                                 Width="70"
+                                 FontSize="11"
+                                 Padding="4,2"
+                                 IsEnabled="{Binding IsEnabled}" />
+                        <TextBlock Grid.Column="2"
+                                   Text="Liberacion (ms):"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,6,0" />
+                        <TextBox Grid.Column="3"
+                                 Text="{Binding ReleaseMs}"
+                                 Width="70"
+                                 FontSize="11"
+                                 Padding="4,2"
+                                 IsEnabled="{Binding IsEnabled}" />
+                    </Grid>
+
+                </Grid>
+            </Border>
+
+            <!-- Estado -->
+            <StackPanel Grid.Row="4" Spacing="3">
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="El ducking atenua todos los canales activos de todos los buses cuando el microfono supera el umbral."
+                           FontSize="9"
+                           Foreground="{DynamicResource FgMuted}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+
+        </Grid>
+    </Border>
+</UserControl>

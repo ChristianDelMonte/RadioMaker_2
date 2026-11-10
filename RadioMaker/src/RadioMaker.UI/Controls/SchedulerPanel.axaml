@@ -1,0 +1,427 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:core="clr-namespace:RadioMaker.Core.Scheduling;assembly=RadioMaker.Core"
+             xmlns:abs="clr-namespace:RadioMaker.Core.Abstractions;assembly=RadioMaker.Core"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.SchedulerPanel"
+             x:DataType="vm:SchedulerPanelViewModel">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+
+            <!-- Titulo + estado + acciones -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,0,0,6">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="Motor de programacion"
+                               FontWeight="SemiBold"
+                               FontSize="12"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center" />
+                    <Border CornerRadius="4" Padding="6,1"
+                            Background="{Binding StateColor, Converter={x:Static vm:ThemeColorConverter.Instance}}">
+                        <TextBlock Text="{Binding StateText}"
+                                   FontSize="9"
+                                   FontWeight="Bold"
+                                   Foreground="White" />
+                    </Border>
+                </StackPanel>
+
+                <!-- Iniciar -->
+                <Button Grid.Column="1"
+                        Command="{Binding ToggleRunCommand}"
+                        IsVisible="{Binding !IsRunning}"
+                        Padding="4,2" Background="Transparent" BorderThickness="0"
+                        ToolTip.Tip="Iniciar scheduler">
+                    <materialIcons:MaterialIcon Kind="Play"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource Success}" />
+                </Button>
+
+                <!-- Detener -->
+                <Button Grid.Column="1"
+                        Command="{Binding ToggleRunCommand}"
+                        IsVisible="{Binding IsRunning}"
+                        Padding="4,2" Background="Transparent" BorderThickness="0"
+                        ToolTip.Tip="Detener scheduler">
+                    <materialIcons:MaterialIcon Kind="Stop"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource Error}" />
+                </Button>
+
+                <!-- Forzar evaluacion -->
+                <Button Grid.Column="2"
+                        Command="{Binding EvaluateNowCommand}"
+                        Padding="4,2" Background="Transparent" BorderThickness="0"
+                        Margin="2,0,0,0"
+                        ToolTip.Tip="Forzar evaluacion inmediata de todos los items">
+                    <materialIcons:MaterialIcon Kind="LightningBolt"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource Warning}" />
+                </Button>
+            </Grid>
+
+            <!-- Panel de estado de reproduccion (scheduler O playlist) -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="10,6"
+                    Margin="0,0,0,6">
+                <Grid>
+
+                    <!-- ═══ Caso 1: scheduler activo (o suspendido) ═══ -->
+                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                          IsVisible="{Binding IsSchedulerActive}">
+
+                        <Border Grid.Row="0" Grid.Column="0"
+                                Background="{Binding PlaybackState.KindColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                CornerRadius="4"
+                                Padding="6,2"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="{Binding PlaybackState.KindText}"
+                                       FontSize="9"
+                                       FontWeight="Bold"
+                                       Foreground="White" />
+                        </Border>
+
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding PlaybackState.ItemTitle}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding PlaybackState.HasItem}" />
+
+                        <Border Grid.Row="0" Grid.Column="2"
+                                Background="{Binding PlaybackState.PriorityColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                CornerRadius="3"
+                                Padding="5,1"
+                                IsVisible="{Binding PlaybackState.HasItem}"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="{Binding PlaybackState.PriorityText}"
+                                       FontSize="8"
+                                       FontWeight="Bold"
+                                       Foreground="White" />
+                        </Border>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                   Text="{Binding PlaybackState.SourceListName}"
+                                   FontSize="9"
+                                   Foreground="{DynamicResource FgMuted}"
+                                   Margin="0,2,0,0"
+                                   IsVisible="{Binding PlaybackState.HasSource}" />
+
+                        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                                Background="{DynamicResource BgQuaternary}"
+                                BorderBrush="{DynamicResource AccentSoft}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="6,4"
+                                Margin="0,4,0,0"
+                                IsVisible="{Binding PlaybackState.IsTanda}">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <TextBlock Grid.Column="0"
+                                           Text="TANDA"
+                                           FontSize="8"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource AccentText}"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,6,0" />
+                                <StackPanel Grid.Column="1" Spacing="1">
+                                    <TextBlock Text="{Binding PlaybackState.TandaNameText}"
+                                               FontSize="10"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource AccentText}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding PlaybackState.TandaTrackTitle}"
+                                               FontSize="9"
+                                               Foreground="{DynamicResource FgSecondary}"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding PlaybackState.TandaProgressText}"
+                                           FontSize="9"
+                                           FontFamily="Consolas"
+                                           Foreground="{DynamicResource AccentText}"
+                                           VerticalAlignment="Center"
+                                           Margin="6,0,0,0" />
+                            </Grid>
+                        </Border>
+
+                        <ProgressBar Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                                     Minimum="0" Maximum="1"
+                                     Value="{Binding PlaybackState.ProgressFraction}"
+                                     Height="4"
+                                     Margin="0,6,10,0"
+                                     VerticalAlignment="Center"
+                                     IsVisible="{Binding PlaybackState.IsActive}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="2"
+                                   Text="{Binding PlaybackState.PositionText}"
+                                   FontFamily="Consolas"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   Margin="0,6,0,0"
+                                   IsVisible="{Binding PlaybackState.IsActive}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
+                                   Text="{Binding PlaybackState.ErrorMessage}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource Error}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,4,0,0"
+                                   IsVisible="{Binding PlaybackState.HasError}" />
+                    </Grid>
+
+                    <!-- ═══ Caso 2: playlist sonando (sin scheduler activo) ═══ -->
+                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto"
+                          IsVisible="{Binding ShowPlaylistPanel}">
+
+                        <Border Grid.Row="0" Grid.Column="0"
+                                Background="{Binding PlaylistStatusColorKey, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                CornerRadius="4"
+                                Padding="6,2"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="{Binding PlaylistStatusText}"
+                                       FontSize="9"
+                                       FontWeight="Bold"
+                                       Foreground="White" />
+                        </Border>
+
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding PlaylistHeaderText}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
+
+                        <Border Grid.Row="0" Grid.Column="2"
+                                Background="{DynamicResource AccentSoft}"
+                                CornerRadius="3"
+                                Padding="5,1"
+                                VerticalAlignment="Center"
+                                IsVisible="{Binding IsPlaylistSuspended}">
+                            <TextBlock Text="EN ESPERA"
+                                       FontSize="8"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource AccentText}" />
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                    Orientation="Horizontal"
+                                    Spacing="8"
+                                    Margin="0,2,0,0">
+                            <TextBlock Text="{Binding PlaylistProgressText}"
+                                       FontSize="9"
+                                       FontFamily="Consolas"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBlock Text="{Binding PlaylistTrackText}"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource FgPrimary}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+
+                        <ProgressBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                     Minimum="0" Maximum="1"
+                                     Value="{Binding PlaylistProgressFraction}"
+                                     Height="4"
+                                     Margin="0,6,10,0"
+                                     VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="2"
+                                   Text="{Binding PlaylistPositionText}"
+                                   FontFamily="Consolas"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   Margin="0,6,0,0" />
+                    </Grid>
+
+                    <!-- ═══ Caso 3: nada reproduciendose ═══ -->
+                    <TextBlock Text="Nada reproduciendose"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgMuted}"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding ShowEmptyState}" />
+                </Grid>
+            </Border>
+
+            <!-- Info: listas + botones secundarios + comportamiento -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="10,6"
+                    Margin="0,0,0,6">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto" RowDefinitions="Auto,Auto">
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Spacing="1">
+                        <TextBlock Text="{Binding RegisteredText}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource AccentText}" />
+                        <TextBlock Text="{Binding EnabledText}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                    </StackPanel>
+
+                    <Button Grid.Row="0" Grid.Column="1"
+                            Command="{Binding StopPlaybackCommand}"
+                            Padding="4,2" Background="Transparent" BorderThickness="0"
+                            Margin="0,0,2,0"
+                            ToolTip.Tip="Detener la reproduccion programada actual">
+                        <materialIcons:MaterialIcon Kind="Stop"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource Error}" />
+                    </Button>
+
+                    <Button Grid.Row="0" Grid.Column="2"
+                            Command="{Binding ResetStateCommand}"
+                            Padding="4,2" Background="Transparent" BorderThickness="0"
+                            Margin="2,0,0,0"
+                            ToolTip.Tip="Olvidar que items ya se dispararon este minuto">
+                        <materialIcons:MaterialIcon Kind="Refresh"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <Button Grid.Row="0" Grid.Column="3"
+                            Command="{Binding ClearLogCommand}"
+                            Padding="4,2" Background="Transparent" BorderThickness="0"
+                            Margin="2,0,0,0"
+                            ToolTip.Tip="Limpiar el log del scheduler">
+                        <materialIcons:MaterialIcon Kind="Delete"
+                                                    Width="15" Height="15"
+                                                    Foreground="{DynamicResource Error}" />
+                    </Button>
+
+                </Grid>
+            </Border>
+
+            <!-- Cola de pendientes (visible solo si hay items en cola) -->
+            <Border Grid.Row="3"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="8,6"
+                    Margin="0,0,0,6"
+                    IsVisible="{Binding QueuedItems.Count}">
+                <Grid RowDefinitions="Auto,Auto">
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal"
+                                Spacing="6"
+                                Margin="0,0,0,4">
+                        <materialIcons:MaterialIcon Kind="PlaylistPlay"
+                                                    Width="14" Height="14"
+                                                    Foreground="{DynamicResource Warning}"
+                                                    VerticalAlignment="Center" />
+                        <TextBlock Text="En cola de espera"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Warning}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding QueuedItems.Count, StringFormat='({0} item/s)'}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding QueuedItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:QueuedItemViewModel">
+                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2">
+                                    <Border Grid.Column="0"
+                                            Background="{Binding PriorityColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
+                                            CornerRadius="3"
+                                            Padding="4,1"
+                                            Margin="0,0,6,0"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding PriorityText}"
+                                                   FontSize="8"
+                                                   FontWeight="Bold"
+                                                   Foreground="White" />
+                                    </Border>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Title}"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource FgPrimary}"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding SourceText}"
+                                               FontSize="9"
+                                               Foreground="{DynamicResource FgMuted}"
+                                               Margin="6,0,0,0"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+
+            <!-- Log -->
+            <Border Grid.Row="4"
+                    Background="{DynamicResource BgTertiary}"
+                    CornerRadius="6"
+                    Padding="0"
+                    MinHeight="140">
+                <Grid>
+                    <TextBlock Text="Sin eventos todavia"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgMuted}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasNoLog}" />
+
+                    <ScrollViewer IsVisible="{Binding HasLog}">
+                        <ItemsControl ItemsSource="{Binding LogEntries}" Padding="6">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="core:SchedulerLogEntry">
+                                    <Grid ColumnDefinitions="60,40,*" Margin="0,1">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding TimeText}"
+                                                   FontFamily="Consolas"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource FgMuted}" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding LevelText}"
+                                                   FontFamily="Consolas"
+                                                   FontSize="10"
+                                                   FontWeight="Bold"
+                                                   Foreground="{Binding LevelColor, Converter={x:Static vm:ThemeColorConverter.Instance}}" />
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding Message}"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource FgPrimary}"
+                                                   TextWrapping="Wrap" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Status -->
+            <TextBlock Grid.Row="5"
+                       Text="{Binding StatusText}"
+                       FontSize="10"
+                       Foreground="{DynamicResource FgSecondary}"
+                       Margin="0,6,0,0"
+                       TextWrapping="Wrap" />
+
+        </Grid>
+    </Border>
+</UserControl>

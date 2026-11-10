@@ -1,0 +1,130 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:core="clr-namespace:RadioMaker.Core.Abstractions;assembly=RadioMaker.Core"
+        x:Class="RadioMaker.UI.Views.AudioBusesWindow"
+        x:DataType="vm:AudioBusesWindowViewModel"
+        Title="Configuración de dispositivos y buses"
+        Width="820" Height="560"
+        MinWidth="680" MinHeight="440"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:AudioBusesWindowViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,12" Spacing="4">
+            <TextBlock Text="Buses de salida" FontSize="20" FontWeight="SemiBold" />
+            <TextBlock Text="Cada bus apunta a un dispositivo de audio distinto y tiene su propio volumen master."
+                       FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" ColumnDefinitions="240,*">
+
+            <!-- Lista de buses -->
+            <Border Grid.Column="0"
+                    BorderBrush="#333" BorderThickness="1" CornerRadius="6" Padding="4">
+                <Grid RowDefinitions="*,Auto">
+                    <ListBox Grid.Row="0"
+                             ItemsSource="{Binding Buses}"
+                             SelectedItem="{Binding SelectedBus}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:BusViewModel">
+                                <StackPanel Spacing="2" Margin="0,4">
+                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding SelectedDevice.DisplayName}"
+                                               FontSize="11" Opacity="0.7" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="4">
+                        <Button Content="+ Agregar"
+                                Command="{Binding AddBusCommand}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                MinWidth="100" />
+                        <Button Content="⟳"
+                                ToolTip.Tip="Refrescar lista de dispositivos"
+                                Command="{Binding RefreshDevicesCommand}"
+                                MinWidth="40" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Detalle del bus seleccionado -->
+            <Border Grid.Column="1"
+                    BorderBrush="#333" BorderThickness="1" CornerRadius="6"
+                    Padding="16" Margin="12,0,0,0">
+                <ScrollViewer>
+                    <StackPanel Spacing="14"
+                                IsVisible="{Binding SelectedBus, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                        <TextBlock Text="Detalles del bus"
+                                   FontSize="14" FontWeight="SemiBold" />
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Nombre" FontSize="12" Opacity="0.7" />
+                            <TextBox Text="{Binding SelectedBus.DisplayName}" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Dispositivo de salida" FontSize="12" Opacity="0.7" />
+                            <ComboBox ItemsSource="{Binding SelectedBus.AvailableDevices}"
+                                      SelectedItem="{Binding SelectedBus.SelectedDevice}"
+                                      IsEnabled="{Binding SelectedBus.CanChangeDevice}"
+                                      HorizontalAlignment="Stretch">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="core:AudioDeviceInfo">
+                                        <TextBlock Text="{Binding DisplayName}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock Text="El bus primario usa el dispositivo elegido al iniciar la app."
+                                       FontSize="11" Opacity="0.6" TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Volumen master" FontSize="12" Opacity="0.7" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Slider Grid.Column="0" Minimum="0" Maximum="1"
+                                        Value="{Binding SelectedBus.MasterVolume}" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding SelectedBus.MasterVolume, StringFormat='{}{0:P0}'}"
+                                           FontFamily="Consolas" VerticalAlignment="Center"
+                                           Margin="12,0,0,0" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="▶ Probar salida (440 Hz)"
+                                    Command="{Binding SelectedBus.TestToneCommand}"
+                                    MinWidth="180" />
+                            <Button Content="Eliminar bus"
+                                    Command="{Binding SelectedBus.RemoveCommand}"
+                                    IsEnabled="{Binding SelectedBus.CanRemove}"
+                                    MinWidth="120" />
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding SelectedBus.StatusMessage}"
+                                   FontSize="11" Opacity="0.8"
+                                   TextWrapping="Wrap" />
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+        </Grid>
+
+        <!-- Pie con estado global -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Spacing="8" Margin="0,12,0,0">
+            <TextBlock Text="{Binding StatusMessage}"
+                       VerticalAlignment="Center" Opacity="0.8" FontSize="12" />
+            <Button Content="Cerrar" x:Name="CloseButton" MinWidth="100" Click="OnCloseClick" />
+        </StackPanel>
+
+    </Grid>
+</Window>

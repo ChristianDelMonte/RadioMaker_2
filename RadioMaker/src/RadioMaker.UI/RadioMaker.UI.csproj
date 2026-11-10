@@ -1,0 +1,203 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RadioMaker.UI</RootNamespace>
+    <AssemblyName>RadioMaker</AssemblyName>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RuntimeIdentifiers>win-x64;linux-x64;osx-x64;osx-arm64</RuntimeIdentifiers>
+    <!-- Icono del ejecutable (Windows) -->
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- VERSIONADO AUTOMATICO                                               -->
+  <!--                                                                     -->
+  <!-- Formato: 2.01.YYMMDD.HHmm                                           -->
+  <!--   - 2.01      = version mayor.menor (editar a mano cuando quieras)  -->
+  <!--   - YYMMDD    = fecha UTC de compilacion                            -->
+  <!--   - HHmm      = hora UTC de compilacion                             -->
+  <!--                                                                     -->
+  <!-- Se recalcula en cada build. No requiere archivos externos.          -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+	<PropertyGroup>
+		<!-- Componentes crudos para el formato "bonito" (UI) -->
+		<VerMajor>2</VerMajor>
+		<VerMinor>1</VerMinor>
+		<VerDate>$([System.DateTime]::UtcNow.ToString("yyMMdd"))</VerDate>
+		<VerTimeRaw>$([System.DateTime]::UtcNow.ToString("HHmm"))</VerTimeRaw>
+
+		<!--
+      FileVersion exige que TODOS los componentes sean UInt16 (0..65535).
+      "yyMMdd" (6 digitos, ej: 261107) excede ese rango.
+
+      Solucion: usar "yyMM" (4 digitos, ej: 2611) para build y "ddHH"
+      (4 digitos, ej: 0714) para revision. Ambos se mantienen por debajo
+      de 65535 incluso hasta el ano 9999.
+    -->
+		<VerBuild>$([System.Convert]::ToInt32($([System.DateTime]::UtcNow.ToString("yyMM"))))</VerBuild>
+		<VerRevision>$([System.Convert]::ToInt32($([System.DateTime]::UtcNow.ToString("ddHH"))))</VerRevision>
+
+		<!-- Version "bonita" para mostrar en la UI (sin restricciones de rango) -->
+		<InformationalVersion>$(VerMajor).01.$(VerDate).$(VerTimeRaw)</InformationalVersion>
+
+		<!-- FileVersion: formato estricto, todos los componentes en UInt16 -->
+		<FileVersion>$(VerMajor).$(VerMinor).$(VerBuild).$(VerRevision)</FileVersion>
+
+		<!-- AssemblyVersion estable para evitar problemas de binding -->
+		<AssemblyVersion>$(VerMajor).$(VerMinor).0.0</AssemblyVersion>
+
+		<!-- Version para NuGet (mantiene formato bonito) -->
+		<Version>$(InformationalVersion)</Version>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets/**" />
+    <AvaloniaResource Include="Themes/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.5" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.5" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.5" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.5" />
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="3.0.2" />
+
+    <!-- Generacion de Excel (.xlsx) para exportacion del log. -->
+    <PackageReference Include="ClosedXML" Version="0.105.1" />
+
+    <!-- Generacion de PDF para exportacion del log.
+         Licencia MIT para proyectos con facturacion anual < USD 1M. -->
+    <PackageReference Include="QuestPDF" Version="2024.12.3" />
+
+    <PackageReference Include="ManagedBass" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Aac" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Ac3" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Aix" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Alac" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Ape" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Dsd" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Flac" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Fx" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Hls" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Mix" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Mpc" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Ofr" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Opus" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Spx" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.WA" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Wma" Version="4.0.2" />
+    <PackageReference Include="ManagedBass.Wv" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RadioMaker.Core\RadioMaker.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    Target 1: compila explicitamente el proyecto de RMVoice (UI/EXE) antes
+    del Build de RadioMaker. Esto garantiza que el .exe exista cuando el
+    target de copia se ejecute, independientemente de como Visual Studio
+    maneje los ProjectReference con ReferenceOutputAssembly=false.
+  -->
+<Target Name="BuildRMVoiceAddon" BeforeTargets="Build" Condition="'$(RuntimeIdentifier)' == ''">
+    <PropertyGroup>
+      <RMVoiceCsproj>$(MSBuildThisFileDirectory)..\..\..\RMVoice\src\RMVoice.UI\RMVoice.UI.csproj</RMVoiceCsproj>
+    </PropertyGroup>
+
+    <MSBuild Condition="Exists('$(RMVoiceCsproj)')"
+             Projects="$(RMVoiceCsproj)"
+             Targets="Build"
+             Properties="Configuration=$(Configuration)" />
+
+    <Warning Condition="!Exists('$(RMVoiceCsproj)')"
+             Text="No se encontro el proyecto RMVoice en '$(RMVoiceCsproj)'. El Addon quedara vacio." />
+  </Target>
+
+  <!--
+    Target 2: copia la salida compilada de RMVoice (incluyendo su carpeta
+    Assets/ con tablas de regiones y audios) a Addons/RMVoice/ dentro del
+    output de RadioMaker.
+  -->
+  <Target Name="CopyRMVoiceAddon" AfterTargets="Build">
+    <PropertyGroup>
+      <RMVoiceOutputDir>$(MSBuildThisFileDirectory)..\..\..\RMVoice\src\RMVoice.UI\bin\$(Configuration)\net8.0\</RMVoiceOutputDir>
+      <RMVoiceAddonDir>$(OutDir)Addons\RMVoice\</RMVoiceAddonDir>
+    </PropertyGroup>
+
+    <ItemGroup Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe')">
+      <RMVoiceOutputFiles Include="$(RMVoiceOutputDir)**\*.*"
+                          Exclude="$(RMVoiceOutputDir)runtimes\**\bass*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(RMVoiceOutputFiles)"
+          DestinationFolder="$(RMVoiceAddonDir)%(RecursiveDir)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe')" />
+
+    <Message Condition="!Exists('$(RMVoiceOutputDir)RMVoice.exe')"
+             Text="RMVoice no compilado todavia. Addons/RMVoice quedara vacio. Verifica que el proyecto RMVoice exista y compile."
+             Importance="high" />
+  </Target>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- TARGET: Compilar y copiar el addon RMWave                           -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+<Target Name="BuildRMWaveAddon" BeforeTargets="Build" Condition="'$(RuntimeIdentifier)' == ''">
+    <PropertyGroup>
+      <RMWaveCsproj>$(MSBuildThisFileDirectory)..\..\..\RMWave\src\RMWave.UI\RMWave.UI.csproj</RMWaveCsproj>
+    </PropertyGroup>
+
+    <MSBuild Condition="Exists('$(RMWaveCsproj)')"
+             Projects="$(RMWaveCsproj)"
+             Targets="Build"
+             Properties="Configuration=$(Configuration)" />
+
+    <Warning Condition="!Exists('$(RMWaveCsproj)')"
+             Text="No se encontro el proyecto RMWave en '$(RMWaveCsproj)'. El Addon quedara vacio." />
+  </Target>
+
+  <Target Name="CopyRMWaveAddon" AfterTargets="Build">
+    <PropertyGroup>
+      <RMWaveOutputDir>$(MSBuildThisFileDirectory)..\..\..\RMWave\src\RMWave.UI\bin\$(Configuration)\net8.0\</RMWaveOutputDir>
+      <RMWaveAddonDir>$(OutDir)Addons\RMWave\</RMWaveAddonDir>
+    </PropertyGroup>
+
+    <!-- 1) Copiar TODO el output de RMWave (exe + dlls + assets + runtimes propios). -->
+     <ItemGroup Condition="Exists('$(RMWaveOutputDir)RMWave.exe') OR Exists('$(RMWaveOutputDir)RMWave')">
+      <RMWaveOutputFiles Include="$(RMWaveOutputDir)**\*.*"
+                         Exclude="$(RMWaveOutputDir)runtimes\**\bass*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(RMWaveOutputFiles)"
+          DestinationFolder="$(RMWaveAddonDir)%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
+
+    <Message Condition="!Exists('$(RMWaveOutputDir)RMWave.exe') AND !Exists('$(RMWaveOutputDir)RMWave')"
+             Text="RMWave no compilado todavia. Addons/RMWave quedara vacio."
+             Importance="high" />
+  </Target>
+
+  <!--
+    Empaquetado de DLLs nativas de BASS.
+    Colocar los archivos en src/RadioMaker.UI/runtimes/{rid}/native/ y
+    se copiarán automáticamente junto al ejecutable respetando la estructura.
+  -->
+<ItemGroup>
+    <None Include="runtimes\**\native\*"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest"
+          Link="runtimes\%(RecursiveDir)%(Filename)%(Extension)" />
+</ItemGroup>
+
+</Project>

@@ -1,0 +1,248 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.VuMeterPanel"
+             x:DataType="vm:VuMeterSettingsWindowViewModel">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Subtitulo -->
+        <TextBlock Grid.Row="0"
+                   Text="Ajustá el estilo, la orientación, los segmentos, la escala y los colores. El preview se actualiza en vivo."
+                   FontSize="11"
+                   Foreground="{DynamicResource FgSecondary}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,12" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="380,*">
+
+            <!-- Panel de configuracion -->
+            <Border Grid.Column="0"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="14">
+                <ScrollViewer>
+                    <StackPanel Spacing="14">
+                        <TextBlock Text="Estilo y orientación"
+                                   FontWeight="SemiBold"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgPrimary}" />
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Estilo"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <ComboBox SelectedItem="{Binding Settings.Style}"
+                                      ItemsSource="{Binding AvailableStyles}"
+                                      FontSize="11"
+                                      HorizontalAlignment="Stretch" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Orientación"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <ComboBox SelectedItem="{Binding Settings.Orientation}"
+                                      ItemsSource="{Binding AvailableOrientations}"
+                                      FontSize="11"
+                                      HorizontalAlignment="Stretch" />
+                        </StackPanel>
+
+                        <Separator />
+                        <TextBlock Text="Estructura"
+                                   FontWeight="SemiBold"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgPrimary}" />
+
+                        <CheckBox Content="Mostrar escala en dB"
+                                  FontSize="11"
+                                  Foreground="{DynamicResource FgPrimary}"
+                                  IsChecked="{Binding Settings.ShowDbScale}" />
+                        <CheckBox Content="Marcador de peak hold"
+                                  FontSize="11"
+                                  Foreground="{DynamicResource FgPrimary}"
+                                  IsChecked="{Binding Settings.ShowPeakHold}" />
+                        <CheckBox Content="Superponer RMS (estilo Console)"
+                                  FontSize="11"
+                                  Foreground="{DynamicResource FgPrimary}"
+                                  IsChecked="{Binding Settings.ShowRms}" />
+                        <CheckBox Content="Indicador de clipping"
+                                  FontSize="11"
+                                  Foreground="{DynamicResource FgPrimary}"
+                                  IsChecked="{Binding Settings.ShowClipIndicator}" />
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Cantidad de segmentos (estilo LEDs)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Slider Grid.Column="0" Minimum="6" Maximum="64"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        Value="{Binding Settings.SegmentCount}" />
+                                <TextBlock Grid.Column="1" Margin="12,0,0,0"
+                                           VerticalAlignment="Center" FontFamily="Consolas"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgPrimary}"
+                                           Text="{Binding Settings.SegmentCount}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Ancho de barra (px)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Slider Grid.Column="0" Minimum="8" Maximum="60" Value="{Binding Settings.BarWidth}" />
+                                <TextBlock Grid.Column="1" Margin="12,0,0,0"
+                                           VerticalAlignment="Center" FontFamily="Consolas"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgPrimary}"
+                                           Text="{Binding Settings.BarWidth, StringFormat='{}{0:F0}'}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Duración del peak hold (ms)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Slider Grid.Column="0" Minimum="200" Maximum="4000" Value="{Binding Settings.PeakHoldDecayMs}" />
+                                <TextBlock Grid.Column="1" Margin="12,0,0,0"
+                                           VerticalAlignment="Center" FontFamily="Consolas"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource FgPrimary}"
+                                           Text="{Binding Settings.PeakHoldDecayMs}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <Separator />
+                        <TextBlock Text="Colores (hex #RRGGBB)"
+                                   FontWeight="SemiBold"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgPrimary}" />
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Zona verde"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding Settings.GreenZoneColor}" FontSize="11" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Zona ámbar"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding Settings.AmberZoneColor}" FontSize="11" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Zona roja"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding Settings.RedZoneColor}" FontSize="11" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Fondo del meter"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding Settings.BackgroundColor}" FontSize="11" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Texto de escala"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding Settings.ScaleTextColor}" FontSize="11" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Color de acento (estilo Minimal)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource FgSecondary}" />
+                            <TextBox Text="{Binding Settings.AccentColor}" FontSize="11" />
+                        </StackPanel>
+
+                        <Separator />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Command="{Binding ResetColorsCommand}"
+                                    Padding="8,4"
+                                    FontSize="11">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <materialIcons:MaterialIcon Kind="Refresh"
+                                                                Width="14" Height="14"
+                                                                Foreground="{DynamicResource FgPrimary}" />
+                                    <TextBlock Text="Reset colores"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding ResetLayoutCommand}"
+                                    Padding="8,4"
+                                    FontSize="11">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <materialIcons:MaterialIcon Kind="Refresh"
+                                                                Width="14" Height="14"
+                                                                Foreground="{DynamicResource FgPrimary}" />
+                                    <TextBlock Text="Reset layout"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource FgPrimary}" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Preview -->
+            <Border Grid.Column="1"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="16"
+                    Margin="12,0,0,0">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Row="0"
+                               Text="Preview en vivo"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgPrimary}"
+                               Margin="0,0,0,12" />
+
+                    <Border Grid.Row="1"
+                            Background="#0F0F10"
+                            CornerRadius="6"
+                            Padding="16">
+                        <controls:VuMeter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Style="{Binding Settings.Style}"
+                                          Orientation="{Binding Settings.Orientation}"
+                                          ShowDbScale="{Binding Settings.ShowDbScale}"
+                                          SegmentCount="{Binding Settings.SegmentCount}"
+                                          ShowPeakHold="{Binding Settings.ShowPeakHold}"
+                                          ShowRms="{Binding Settings.ShowRms}"
+                                          ShowClipIndicator="{Binding Settings.ShowClipIndicator}"
+                                          BarWidth="{Binding Settings.BarWidth}"
+                                          GreenZoneColor="{Binding Settings.GreenColor}"
+                                          AmberZoneColor="{Binding Settings.AmberColor}"
+                                          RedZoneColor="{Binding Settings.RedColor}"
+                                          BackgroundColor="{Binding Settings.BgColor}"
+                                          ScaleTextColor="{Binding Settings.ScaleColor}"
+                                          AccentColor="{Binding Settings.AccentColor}"
+                                          LeftLevel="{Binding PreviewLeftLevel}"
+                                          RightLevel="{Binding PreviewRightLevel}"
+                                          LeftPeak="{Binding PreviewLeftPeak}"
+                                          RightPeak="{Binding PreviewRightPeak}"
+                                          LeftRms="{Binding PreviewLeftRms}"
+                                          RightRms="{Binding PreviewRightRms}"
+                                          ShowClip="{Binding PreviewClip}" />
+                    </Border>
+
+                    <CheckBox Grid.Row="2"
+                              Content="Señal de demostración activa"
+                              FontSize="11"
+                              Foreground="{DynamicResource FgPrimary}"
+                              IsChecked="{Binding DemoEnabled}"
+                              Margin="0,12,0,0" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

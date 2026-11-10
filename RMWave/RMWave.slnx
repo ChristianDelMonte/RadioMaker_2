@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/RMWave.Core/RMWave.Core.csproj" />
+  <Project Path="src/RMWave.UI/RMWave.UI.csproj">
+    <BuildDependency Project="src/RMWave.Core/RMWave.Core.csproj" />
+  </Project>
+</Solution>

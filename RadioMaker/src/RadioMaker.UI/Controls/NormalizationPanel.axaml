@@ -1,0 +1,174 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             x:Class="RadioMaker.UI.Controls.NormalizationPanel"
+             x:DataType="vm:NormalizationPanelViewModel">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+
+            <!-- Titulo -->
+            <TextBlock Grid.Row="0"
+                       Text="Normalizacion de niveles"
+                       FontWeight="SemiBold"
+                       FontSize="12"
+                       Foreground="{DynamicResource FgPrimary}"
+                       Margin="0,0,0,6" />
+
+            <!-- Enable -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="8,6"
+                    Margin="0,0,0,6">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+                    <CheckBox Grid.Row="0" Grid.Column="0"
+                              Content="Normalizacion activada (aplicar ganancia al reproducir)"
+                              IsChecked="{Binding IsEnabled}"
+                              FontWeight="SemiBold"
+                              FontSize="11"
+                              Padding="4,0"
+                              Foreground="{DynamicResource FgPrimary}" />
+
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               Text="{Binding TrimStatusText}"
+                               FontSize="10"
+                               Foreground="{DynamicResource AccentText}"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"
+                               MaxWidth="360"
+                               HorizontalAlignment="Right" />
+                </Grid>
+            </Border>
+
+            <!-- Configuracion: modo + target -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource BgTertiary}"
+                    CornerRadius="6"
+                    Padding="8,6"
+                    Margin="0,0,0,6">
+                <Grid ColumnDefinitions="Auto,160,*,Auto,*"
+                      RowDefinitions="Auto,Auto">
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Text="Modo:"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               Margin="0,0,6,0" />
+                    <ComboBox Grid.Row="0" Grid.Column="1"
+                              ItemsSource="{Binding AvailableModes}"
+                              SelectedItem="{Binding Mode}"
+                              FontSize="11"
+                              HorizontalAlignment="Stretch" />
+
+                    <TextBlock Grid.Row="0" Grid.Column="2"
+                               Text="{Binding ModeDescription}"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               VerticalAlignment="Center"
+                               Margin="12,0,0,0"
+                               TextWrapping="Wrap" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="Target (dBFS):"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               Margin="0,6,6,0" />
+                    <Slider Grid.Row="1" Grid.Column="1"
+                            Minimum="-30" Maximum="0"
+                            TickFrequency="1"
+                            Value="{Binding TargetDb}"
+                            Margin="0,6,0,0" />
+                    <TextBlock Grid.Row="1" Grid.Column="2"
+                               Text="{Binding TargetDbText}"
+                               FontFamily="Consolas"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgPrimary}"
+                               VerticalAlignment="Center"
+                               Margin="12,6,0,0" />
+                </Grid>
+            </Border>
+
+            <!-- Nota explicativa -->
+            <Border Grid.Row="3"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="8,5"
+                    Margin="0,0,0,6">
+                <TextBlock Text="El analisis de peak/RMS corre automaticamente al cargar cada archivo. Los resultados se guardan en cache."
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextWrapping="Wrap" />
+            </Border>
+
+            <!-- Resumen -->
+            <Border Grid.Row="4"
+                    Background="{DynamicResource BgQuaternary}"
+                    BorderBrush="{DynamicResource AccentSoft}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="10,6"
+                    Margin="0,0,0,6"
+                    IsVisible="{Binding HasResult}">
+                <Grid ColumnDefinitions="*,*,*,*">
+                    <StackPanel Grid.Column="0" Spacing="1">
+                        <TextBlock Text="Peak maximo"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding PeakDbText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource AccentText}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="1">
+                        <TextBlock Text="RMS promedio"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding RmsDbText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource AccentText}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Spacing="1">
+                        <TextBlock Text="Factor de cresta"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding CrestFactorText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource AccentText}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" Spacing="1">
+                        <TextBlock Text="Ganancia calculada"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                        <TextBlock Text="{Binding GainText}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   FontFamily="Consolas"
+                                   Foreground="{DynamicResource Success}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Estado -->
+            <StackPanel Grid.Row="5" Spacing="3">
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextWrapping="Wrap" />
+                <ProgressBar IsVisible="{Binding IsAnalyzing}"
+                             IsIndeterminate="True"
+                             Height="3" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

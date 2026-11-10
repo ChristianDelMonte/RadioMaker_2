@@ -1,0 +1,113 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        x:Class="RadioMaker.UI.Views.LogExportDialog"
+        x:DataType="vm:LogExportDialogViewModel"
+        Title="Exportar log"
+        Width="520" Height="420"
+        MinWidth="440" MinHeight="360"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Barra de titulo personalizada -->
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="{Binding $parent[controls:CustomChromeWindow].Title}"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <!-- Contenido con el margen original -->
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,*,Auto"
+              Margin="20">
+
+            <!-- Encabezado (subtitulo) -->
+            <TextBlock Grid.Row="0"
+                       Text="Elegi el formato y el contenido a exportar."
+                       FontSize="11"
+                       Foreground="{DynamicResource FgSecondary}"
+                       Margin="0,0,0,16" />
+
+            <!-- Formulario -->
+            <StackPanel Grid.Row="1" Spacing="16">
+
+                <!-- Nombre del archivo -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Nombre del archivo"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding FileName}"
+                                 PlaceholderText="nombre-sin-extension" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Extension, StringFormat='.{0}'}"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgSecondary}"
+                                   VerticalAlignment="Center"
+                                   Margin="6,0,0,0" />
+                    </Grid>
+                </StackPanel>
+
+                <!-- Formato -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Formato de salida"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}" />
+                    <ComboBox ItemsSource="{Binding AvailableFormats}"
+                              SelectedItem="{Binding Format}"
+                              HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={x:Static vm:LogExportFormatLabelConverter.Instance}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Alcance -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Contenido a exportar"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgSecondary}" />
+
+                    <RadioButton GroupName="Scope"
+                                 Foreground="{DynamicResource FgPrimary}"
+                                 IsChecked="{Binding ExportAll}">
+                        <TextBlock Text="{Binding AllLabel}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgPrimary}" />
+                    </RadioButton>
+
+                    <RadioButton GroupName="Scope"
+                                 Foreground="{DynamicResource FgPrimary}"
+                                 IsEnabled="{Binding HasFiltered}"
+                                 IsChecked="{Binding !ExportAll}">
+                        <TextBlock Text="{Binding FilteredLabel}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource FgPrimary}" />
+                    </RadioButton>
+                </StackPanel>
+
+            </StackPanel>
+
+            <!-- Botones -->
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8"
+                        Margin="0,20,0,0">
+                <Button Content="Cancelar"
+                        x:Name="CancelButton"
+                        Click="OnCancelClick"
+                        MinWidth="100" />
+                <Button Content="Exportar..."
+                        x:Name="ExportButton"
+                        Click="OnExportClick"
+                        MinWidth="120" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</controls:CustomChromeWindow>

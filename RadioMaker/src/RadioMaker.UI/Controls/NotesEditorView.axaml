@@ -1,0 +1,110 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.NotesEditorView"
+             x:DataType="vm:NotesEditorViewModel">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Barra de herramientas -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource BgPrimary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,0,0,1"
+                Padding="4,2">
+            <StackPanel Orientation="Horizontal" Spacing="0">
+                <!-- Nuevo -->
+                <Button x:Name="NewButton"
+                        Click="OnNewClick"
+                        Padding="3" Background="Transparent" BorderThickness="0"
+                        ToolTip.Tip="Nuevo documento">
+                    <materialIcons:MaterialIcon Kind="FilePlus"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource FgPrimary}" />
+                </Button>
+
+                <!-- Abrir -->
+                <Button x:Name="OpenButton" Click="OnOpenClick"
+                        Padding="3" Background="Transparent" BorderThickness="0"
+                        ToolTip.Tip="Abrir archivo .txt">
+                    <materialIcons:MaterialIcon Kind="FolderOpen"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource FgPrimary}" />
+                </Button>
+
+                <!-- Guardar -->
+                <Button x:Name="SaveButton" Click="OnSaveClick"
+                        Padding="3" Background="Transparent" BorderThickness="0"
+                        ToolTip.Tip="Guardar">
+                    <materialIcons:MaterialIcon Kind="ContentSave"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource FgPrimary}" />
+                </Button>
+
+                <!-- Guardar como -->
+                <Button x:Name="SaveAsButton" Click="OnSaveAsClick"
+                        Padding="3" Background="Transparent" BorderThickness="0"
+                        ToolTip.Tip="Guardar como...">
+                    <materialIcons:MaterialIcon Kind="ContentSaveEdit"
+                                                Width="15" Height="15"
+                                                Foreground="{DynamicResource FgPrimary}" />
+                </Button>
+
+                <Border Width="1" Background="{DynamicResource BorderPrimary}" Margin="3,2" />
+
+                <!-- Estado (nombre de archivo + dirty) -->
+                <TextBlock Text="{Binding DisplayName}"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource FgPrimary}"
+                           VerticalAlignment="Center"
+                           Margin="6,0,0,0" />
+                <TextBlock Text=" *"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource Warning}"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding IsDirty}" />
+            </StackPanel>
+        </Border>
+
+        <!-- Editor de texto -->
+        <TextBox Grid.Row="1"
+                 Text="{Binding Text, Mode=TwoWay}"
+                 AcceptsReturn="True"
+                 AcceptsTab="True"
+                 TextWrapping="Wrap"
+                 FontFamily="Consolas"
+                 FontSize="12"
+                 Padding="8"
+                 Background="{DynamicResource BgTertiary}"
+                 BorderThickness="0"
+                 VerticalContentAlignment="Top"
+                 PlaceholderText="Empeza a escribir..." />
+
+        <!-- Status bar -->
+        <Border Grid.Row="2"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,1,0,0"
+                Padding="6,3">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusMessage}"
+                           FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="1"
+                           Text="{Binding LoadedFilePath}"
+                           FontSize="9"
+                           FontFamily="Consolas"
+                           Foreground="{DynamicResource FgMuted}"
+                           MaxWidth="300"
+                           TextTrimming="CharacterEllipsis"
+                           IsVisible="{Binding HasFilePath}" />
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>

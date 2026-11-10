@@ -1,0 +1,274 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+             xmlns:svc="clr-namespace:RadioMaker.UI.Services"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="RadioMaker.UI.Controls.TabHost"
+             x:DataType="vm:TabHostViewModel">
+
+    <Border BorderBrush="{DynamicResource BorderPrimary}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="0">
+        <Grid RowDefinitions="Auto,*">
+
+            <!-- Barra de pestañas -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource BgSecondary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="0,0,0,1"
+                    Padding="6,4">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+
+                    <!-- Boton "<" (scroll izquierda) -->
+                    <Button Grid.Column="0"
+                            x:Name="ScrollLeftButton"
+                            IsVisible="False"
+                            Padding="3"
+                            Margin="0,0,4,0"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ToolTip.Tip="Desplazar pestañas a la izquierda"
+                            Click="OnScrollLeftClick">
+                        <materialIcons:MaterialIcon Kind="ChevronLeft"
+                                                    Width="14" Height="14"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <!-- Scroll de las pestañas (scrollbar oculta) -->
+                    <ScrollViewer Grid.Column="1"
+                                  x:Name="TabsScrollViewer"
+                                  HorizontalScrollBarVisibility="Hidden"
+                                  VerticalScrollBarVisibility="Disabled">
+                        <ItemsControl Name="TabsItemsControl"
+                                      ItemsSource="{Binding Tabs}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:TabItemViewModel">
+                                    <Border Classes="tab"
+                                            Classes.selected="{Binding IsSelected}"
+                                            BorderThickness="1"
+                                            CornerRadius="6,6,0,0"
+                                            Padding="10,6"
+                                            MinWidth="120"
+                                            Cursor="Hand">
+
+                                        <Border.Styles>
+                                            <Style Selector="Border.tab">
+                                                <Setter Property="Background" Value="{DynamicResource PanelLedInactiveBg}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource BorderPrimary}" />
+                                            </Style>
+                                            <Style Selector="Border.tab:pointerover">
+                                                <Setter Property="Background" Value="{DynamicResource BgHover}" />
+                                            </Style>
+                                            <Style Selector="Border.tab.selected">
+                                                <Setter Property="Background" Value="{DynamicResource PanelLedActiveBg}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource LedActive}" />
+                                            </Style>
+
+                                            <!-- Titulo (TextBlock) -->
+                                            <Style Selector="Border.tab TextBlock.tabTitle">
+                                                <Setter Property="Foreground" Value="{DynamicResource LedInactive}" />
+                                            </Style>
+                                            <Style Selector="Border.tab.selected TextBlock.tabTitle">
+                                                <Setter Property="Foreground" Value="{DynamicResource LedActive}" />
+                                            </Style>
+
+                                            <!-- Iconos (MaterialIcon) -->
+                                            <Style Selector="Border.tab materialIcons|MaterialIcon.tabIcon">
+                                                <Setter Property="Foreground" Value="{DynamicResource LedInactive}" />
+                                            </Style>
+                                            <Style Selector="Border.tab.selected materialIcons|MaterialIcon.tabIcon">
+                                                <Setter Property="Foreground" Value="{DynamicResource LedActive}" />
+                                            </Style>
+                                        </Border.Styles>
+
+                                        <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+                                            <materialIcons:MaterialIcon Grid.Column="0"
+                                                                        Classes="tabIcon"
+                                                                        Kind="{Binding IconKind}"
+                                                                        Width="14" Height="14"
+                                                                        Margin="0,0,7,0"
+                                                                        VerticalAlignment="Center" />
+
+                                            <Panel Grid.Column="1">
+                                                <!-- Modo lectura: circulo indicador + titulo -->
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="6"
+                                                            VerticalAlignment="Center"
+                                                            IsVisible="{Binding !IsEditing}">
+                                                    <!-- Circulo: rojo = al aire, amarillo = pausado por scheduler -->
+                                                    <Ellipse Width="8" Height="8"
+                                                             VerticalAlignment="Center"
+                                                             IsVisible="{Binding HasLiveIndicator}"
+                                                             Fill="{Binding LiveIndicatorColor, Converter={x:Static vm:ThemeColorConverter.Instance}}" />
+
+                                                    <TextBlock Name="TitleText"
+                                                               Classes="tabTitle"
+                                                               Text="{Binding DisplayTitle}"
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               VerticalAlignment="Center"
+                                                               ToolTip.Tip="Doble clic para renombrar" />
+                                                </StackPanel>
+
+                                                <!-- Modo edicion: textbox -->
+                                                <TextBox Name="TitleEdit"
+                                                         Text="{Binding EditingTitle}"
+                                                         FontSize="12"
+                                                         IsVisible="{Binding IsEditing}"
+                                                         MinWidth="100"
+                                                         Padding="2,1" />
+                                            </Panel>
+
+                                            <Button Grid.Column="2"
+                                                    Padding="4,1"
+                                                    Margin="8,0,0,0"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    IsVisible="{Binding IsClosable}"
+                                                    Command="{Binding RequestCloseCommand}"
+                                                    ToolTip.Tip="Cerrar pestaña">
+                                                <materialIcons:MaterialIcon Kind="Close"
+                                                                            Classes="tabIcon"
+                                                                            Width="11" Height="11"
+                                                                            Opacity="0.75" />
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- Boton ">" (scroll derecha) -->
+                    <Button Grid.Column="2"
+                            x:Name="ScrollRightButton"
+                            IsVisible="False"
+                            Padding="3"
+                            Margin="4,0,0,0"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ToolTip.Tip="Desplazar pestañas a la derecha"
+                            Click="OnScrollRightClick">
+                        <materialIcons:MaterialIcon Kind="ChevronRight"
+                                                    Width="14" Height="14"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+                    </Button>
+
+                    <!-- Boton "+" con menu desplegable -->
+                    <Button Grid.Column="3"
+                        Padding="8,3"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="Agregar nueva pestaña">
+                        <materialIcons:MaterialIcon Kind="Plus"
+                                                    Width="14" Height="14"
+                                                    Foreground="{DynamicResource FgPrimary}" />
+
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                <MenuItem Header="Nuevo Programado"
+                                          IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
+                                          Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddScheduledTabCommand}">
+                                    <MenuItem.Icon>
+                                        <materialIcons:MaterialIcon Kind="CalendarPlus"
+                                                                    Width="14" Height="14"
+                                                                    Foreground="{DynamicResource AccentText}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <MenuItem Header="Nueva Tanda"
+                                          IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
+                                          Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddTandaTabCommand}">
+                                    <MenuItem.Icon>
+                                        <materialIcons:MaterialIcon Kind="FormatListBulleted"
+                                                                    Width="14" Height="14"
+                                                                    Foreground="{DynamicResource Warning}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <MenuItem Header="Nueva Playlist"
+                                          IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
+                                          Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddPlaylistTabCommand}">
+                                    <MenuItem.Icon>
+                                        <materialIcons:MaterialIcon Kind="PlaylistMusic"
+                                                                    Width="14" Height="14"
+                                                                    Foreground="{DynamicResource Success}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}" />
+
+                                <MenuItem Header="Nueva Nota"
+                                          IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
+                                          Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddNotesTabCommand}">
+                                    <MenuItem.Icon>
+                                        <materialIcons:MaterialIcon Kind="NoteText"
+                                                                    Width="14" Height="14"
+                                                                    Foreground="{DynamicResource FgPrimary}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Separador + Nuevo Cart: solo en la zona central -->
+                                <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).CanAddCartTab}" />
+
+                                <MenuItem Header="Nuevo Cart"
+                                          IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).CanAddCartTab}"
+                                          Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddCartTabCommand}">
+                                    <MenuItem.Icon>
+                                        <materialIcons:MaterialIcon Kind="Grid"
+                                                                    Width="14" Height="14"
+                                                                    Foreground="{DynamicResource FgPrimary}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Submenu de carpetas favoritas: solo en la zona derecha -->
+                                <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).IsRightZone}" />
+
+                                <MenuItem Header="Carpetas favoritas"
+                                          IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).IsRightZone}">
+                                    <MenuItem.Icon>
+                                        <materialIcons:MaterialIcon Kind="FolderStar"
+                                                                    Width="14" Height="14"
+                                                                    Foreground="{DynamicResource Warning}" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.ItemsSource>
+                                        <Binding Path="$parent[UserControl].((vm:TabHostViewModel)DataContext).FavoriteFolders" />
+                                    </MenuItem.ItemsSource>
+                                    <MenuItem.ItemTemplate>
+                                        <DataTemplate x:DataType="svc:FavoriteFolderEntry">
+                                            <MenuItem Header="{Binding EffectiveName}"
+                                                      Click="OnFavoriteFolderClick"
+                                                      Tag="{Binding}">
+                                                <MenuItem.Icon>
+                                                    <materialIcons:MaterialIcon Kind="Folder"
+                                                                                Width="13" Height="13"
+                                                                                Foreground="{DynamicResource FgPrimary}" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </DataTemplate>
+                                    </MenuItem.ItemTemplate>
+                                </MenuItem>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- Contenido de la pestaña activa -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource BgPrimary}"
+                    MinHeight="200">
+                <ContentControl Content="{Binding SelectedTab.Content}" />
+            </Border>
+
+        </Grid>
+    </Border>
+</UserControl>
