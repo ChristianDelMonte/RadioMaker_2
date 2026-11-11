@@ -99,4 +99,8 @@ requiere un certificado de firma de código (no incluido).
 ## Soporte
 
 - Documentación técnica completa: ver `README.md` en el repositorio
-- Reportar problemas: en el repositorio del proyecto
+- [github.com/ChristianDelMonte/RadioMaker_2/](https://github.com/ChristianDelMonte/RadioMaker_2/)
+- Reportar problemas: [github.com/ChristianDelMonte/RadioMaker_2/issues](https://github.com/ChristianDelMonte/RadioMaker_2/issues)
+
+## Para Donaciones monetarias y apoyar el proyecto comunicarse via correo electronico:
+<strong>creadig@gmail.com / creadig@hotmail.com</strong>
