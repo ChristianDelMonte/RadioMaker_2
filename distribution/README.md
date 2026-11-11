@@ -289,6 +289,7 @@ reproducen como archivos comunes en RadioMaker.
 RadioMaker se compone de **3 soluciones independientes** que se integran entre
 sí mediante referencias de proyecto y contratos públicos.
 
+```bash
 RadioMaker/                              ← repo principal
 │
 ├── src/
@@ -321,7 +322,8 @@ RadioMaker/                              ← repo principal
 ├── build-mac.ps1                        ← Script de compilación macOS
 ├── RadioMaker.sln
 └── README.md                            ← Este archivo
-
+```
+```bash
 RMVoice/                                 ← Addon de locuciones (repo hermano)
 │
 ├── src/
@@ -349,7 +351,8 @@ RMVoice/                                 ← Addon de locuciones (repo hermano)
 │
 ├── RMVoice.sln
 └── README.md
-
+```
+```bash
 RMWave/                                  ← Addon de edición multipista (repo hermano)
 │
 ├── src/
@@ -366,6 +369,7 @@ RMWave/                                  ← Addon de edición multipista (repo 
 │
 ├── RMWave.sln
 └── README.md
+```
 
 ### AssemblyNames de salida
 
@@ -724,6 +728,8 @@ hay `using` explícitos en RadioMaker.Core y RMWave.Core).
 ---
 <p align="center">
   <strong>🎙️ RadioMaker</strong><br>
+  <strong>Copyright (c) 2020 / 2026 - Christian A. Del Monte</strong><br>
+  <strong>creadig@gmail.com / creadig@hotmail.com</strong><br>
   <em>Forever FREE Radio Automation Software</em>
 </p><p align="center">
   Hecho con ❤️ para la comunidad de radios libres y proyectos independientes.
