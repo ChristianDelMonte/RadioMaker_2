@@ -1,6 +1,11 @@
-# 🎙️ RadioMaker
+<p align="center">
+	<img alt="RadioMaker" height="150" src="imagenes/RM100_ICON.png"/>
+</p>
+<p align="center">
+	<img alt="RadioMaker" height="50" src="imagenes/RM_SMALL.bmp"/>
+</p>
 
-> **Forever FREE Radio Automation Software!**
+> 🎙️ **Forever FREE Radio Automation Software!**
 
 Suite completa de automatización de radio multiplataforma, compuesta por un
 **motor central** y dos **addons opcionales** para locuciones y edición
@@ -720,8 +725,8 @@ hay `using` explícitos en RadioMaker.Core y RMWave.Core).
 
 ## 💬 Soporte
 
-- **Issues**: [github.com/tu-usuario/RadioMaker/issues](https://github.com/tu-usuario/RadioMaker/issues)
-- **Discusiones**: [github.com/tu-usuario/RadioMaker/discussions](https://github.com/tu-usuario/RadioMaker/discussions)
+- **Issues**: [github.com/ChristianDelMonte/RadioMaker_2/issues](https://github.com/ChristianDelMonte/RadioMaker_2/issues)
+- **Discusiones**: [github.com/ChristianDelMonte/RadioMaker_2/discussions](https://github.com/ChristianDelMonte/RadioMaker_2/discussions)
 - **Logs**: `%APPDATA%/RadioMaker/log/` (Windows) o
 `~/.config/RadioMaker/log/` (Linux/macOS).
 
