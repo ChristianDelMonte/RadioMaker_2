@@ -1,0 +1,71 @@
+# ─────────────────────────────────────────────────────────
+#  RadioMaker · .gitignore
+#  Excluye artefactos de compilación, IDE y sistema
+# ─────────────────────────────────────────────────────────
+
+# ═══ Artefactos de compilación .NET ═══
+bin/
+obj/
+publish/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ll]og/
+[Ll]ogs/
+*.user
+*.suo
+*.userprefs
+
+# También dentro de subcarpetas (por si acaso)
+**/bin/
+**/obj/
+**/publish/
+
+# ═══ Resultado de builds distribuibles ═══
+RadioMaker-linux/
+RadioMaker-windows-x64/
+RadioMaker-mac-arm64/
+RadioMaker-mac-x64/
+*.zip
+*.tar.gz
+*.7z
+
+# ═══ Visual Studio / VS Code / Rider ═══
+.vs/
+.vscode/
+.idea/
+*.DotSettings.user
+*.sln.docstates
+*.sln.ide/
+.vsconfig
+
+# ═══ Sistema operativo ═══
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# ═══ Logs y archivos temporales ═══
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# ═══ NuGet ═══
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# ═══ Datos de usuario locales (por si se copian al proyecto) ═══
+cartboard.rcb
+workspace.json
+profiles.json
+settings.json
+*.rmt
