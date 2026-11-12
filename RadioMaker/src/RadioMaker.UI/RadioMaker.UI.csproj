@@ -12,6 +12,7 @@
     <RuntimeIdentifiers>win-x64;linux-x64;osx-x64;osx-arm64</RuntimeIdentifiers>
     <!-- Icono del ejecutable (Windows) -->
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <!-- ═══════════════════════════════════════════════════════════════════ -->

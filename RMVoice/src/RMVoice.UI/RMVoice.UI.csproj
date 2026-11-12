@@ -9,10 +9,12 @@
     <RootNamespace>RMVoice.UI</RootNamespace>
     <AssemblyName>RMVoice</AssemblyName>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <Version>1.0.03</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RuntimeIdentifiers>win-x64;linux-x64;osx-x64;osx-arm64</RuntimeIdentifiers>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
