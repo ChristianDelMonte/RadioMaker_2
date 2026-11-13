@@ -84,7 +84,6 @@
     <PackageReference Include="ManagedBass" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Aac" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Ac3" Version="4.0.2" />
-    <PackageReference Include="ManagedBass.Aix" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Alac" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Ape" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Dsd" Version="4.0.2" />
@@ -93,10 +92,8 @@
     <PackageReference Include="ManagedBass.Hls" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Mix" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Mpc" Version="4.0.2" />
-    <PackageReference Include="ManagedBass.Ofr" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Opus" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Spx" Version="4.0.2" />
-    <PackageReference Include="ManagedBass.WA" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Wma" Version="4.0.2" />
     <PackageReference Include="ManagedBass.Wv" Version="4.0.2" />
   </ItemGroup>
@@ -116,13 +113,9 @@
       <RMVoiceCsproj>$(MSBuildThisFileDirectory)..\..\..\RMVoice\src\RMVoice.UI\RMVoice.UI.csproj</RMVoiceCsproj>
     </PropertyGroup>
 
-    <MSBuild Condition="Exists('$(RMVoiceCsproj)')"
-             Projects="$(RMVoiceCsproj)"
-             Targets="Build"
-             Properties="Configuration=$(Configuration)" />
+    <MSBuild Condition="Exists('$(RMVoiceCsproj)')" Projects="$(RMVoiceCsproj)" Targets="Build" Properties="Configuration=$(Configuration)" />
 
-    <Warning Condition="!Exists('$(RMVoiceCsproj)')"
-             Text="No se encontro el proyecto RMVoice en '$(RMVoiceCsproj)'. El Addon quedara vacio." />
+    <Warning Condition="!Exists('$(RMVoiceCsproj)')" Text="No se encontro el proyecto RMVoice en '$(RMVoiceCsproj)'. El Addon quedara vacio." />
   </Target>
 
   <!--
@@ -137,18 +130,12 @@
     </PropertyGroup>
 
     <ItemGroup Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe')">
-      <RMVoiceOutputFiles Include="$(RMVoiceOutputDir)**\*.*"
-                          Exclude="$(RMVoiceOutputDir)runtimes\**\bass*.*" />
+      <RMVoiceOutputFiles Include="$(RMVoiceOutputDir)**\*.*" Exclude="$(RMVoiceOutputDir)runtimes\**\bass*.*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(RMVoiceOutputFiles)"
-          DestinationFolder="$(RMVoiceAddonDir)%(RecursiveDir)"
-          SkipUnchangedFiles="true"
-          Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe')" />
+    <Copy SourceFiles="@(RMVoiceOutputFiles)" DestinationFolder="$(RMVoiceAddonDir)%(RecursiveDir)" SkipUnchangedFiles="true" Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe')" />
 
-    <Message Condition="!Exists('$(RMVoiceOutputDir)RMVoice.exe')"
-             Text="RMVoice no compilado todavia. Addons/RMVoice quedara vacio. Verifica que el proyecto RMVoice exista y compile."
-             Importance="high" />
+    <Message Condition="!Exists('$(RMVoiceOutputDir)RMVoice.exe')" Text="RMVoice no compilado todavia. Addons/RMVoice quedara vacio. Verifica que el proyecto RMVoice exista y compile." Importance="high" />
   </Target>
 
   <!-- ═══════════════════════════════════════════════════════════════════ -->
@@ -159,13 +146,9 @@
       <RMWaveCsproj>$(MSBuildThisFileDirectory)..\..\..\RMWave\src\RMWave.UI\RMWave.UI.csproj</RMWaveCsproj>
     </PropertyGroup>
 
-    <MSBuild Condition="Exists('$(RMWaveCsproj)')"
-             Projects="$(RMWaveCsproj)"
-             Targets="Build"
-             Properties="Configuration=$(Configuration)" />
+    <MSBuild Condition="Exists('$(RMWaveCsproj)')" Projects="$(RMWaveCsproj)" Targets="Build" Properties="Configuration=$(Configuration)" />
 
-    <Warning Condition="!Exists('$(RMWaveCsproj)')"
-             Text="No se encontro el proyecto RMWave en '$(RMWaveCsproj)'. El Addon quedara vacio." />
+    <Warning Condition="!Exists('$(RMWaveCsproj)')" Text="No se encontro el proyecto RMWave en '$(RMWaveCsproj)'. El Addon quedara vacio." />
   </Target>
 
   <Target Name="CopyRMWaveAddon" AfterTargets="Build">
@@ -176,17 +159,12 @@
 
     <!-- 1) Copiar TODO el output de RMWave (exe + dlls + assets + runtimes propios). -->
      <ItemGroup Condition="Exists('$(RMWaveOutputDir)RMWave.exe') OR Exists('$(RMWaveOutputDir)RMWave')">
-      <RMWaveOutputFiles Include="$(RMWaveOutputDir)**\*.*"
-                         Exclude="$(RMWaveOutputDir)runtimes\**\bass*.*" />
+      <RMWaveOutputFiles Include="$(RMWaveOutputDir)**\*.*" Exclude="$(RMWaveOutputDir)runtimes\**\bass*.*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(RMWaveOutputFiles)"
-          DestinationFolder="$(RMWaveAddonDir)%(RecursiveDir)"
-          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(RMWaveOutputFiles)" DestinationFolder="$(RMWaveAddonDir)%(RecursiveDir)" SkipUnchangedFiles="true" />
 
-    <Message Condition="!Exists('$(RMWaveOutputDir)RMWave.exe') AND !Exists('$(RMWaveOutputDir)RMWave')"
-             Text="RMWave no compilado todavia. Addons/RMWave quedara vacio."
-             Importance="high" />
+    <Message Condition="!Exists('$(RMWaveOutputDir)RMWave.exe') AND !Exists('$(RMWaveOutputDir)RMWave')" Text="RMWave no compilado todavia. Addons/RMWave quedara vacio." Importance="high" />
   </Target>
 
   <!--
@@ -195,10 +173,7 @@
     se copiarán automáticamente junto al ejecutable respetando la estructura.
   -->
 <ItemGroup>
-    <None Include="runtimes\**\native\*"
-          CopyToOutputDirectory="PreserveNewest"
-          CopyToPublishDirectory="PreserveNewest"
-          Link="runtimes\%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="runtimes\**\native\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Link="runtimes\%(RecursiveDir)%(Filename)%(Extension)" />
 </ItemGroup>
 
 </Project>

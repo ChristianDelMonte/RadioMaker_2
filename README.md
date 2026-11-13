@@ -429,9 +429,9 @@ colocarlas en `RadioMaker/src/RadioMaker.UI/runtimes/{rid}/native/`.
 ### Clonar los 3 repos
 
 ```bash
-git clone https://github.com/tu-usuario/RadioMaker.git
-git clone https://github.com/tu-usuario/RMVoice.git
-git clone https://github.com/tu-usuario/RMWave.git
+git clone https://github.com/ChristianDelMonte/RadioMaker_2/RadioMaker.git
+git clone https://github.com/ChristianDelMonte/RadioMaker_2/RMVoice.git
+git clone https://github.com/ChristianDelMonte/RadioMaker_2/RMWave.git
 ```
 
 Los 3 repos deben quedar como carpetas **hermanas** en el mismo directorio
@@ -553,16 +553,13 @@ Ducking / Fade.
 | **ManagedBass.Flac** | 4.0.2 | MIT | Decodificador FLAC |
 | **ManagedBass.Aac** | 4.0.2 | MIT | Decodificador AAC/M4A |
 | **ManagedBass.Ac3** | 4.0.2 | MIT | Decodificador AC-3 |
-| **ManagedBass.Aix** | 4.0.2 | MIT | Decodificador AIX |
 | **ManagedBass.Alac** | 4.0.2 | MIT | Decodificador ALAC |
 | **ManagedBass.Ape** | 4.0.2 | MIT | Decodificador Monkey's Audio |
 | **ManagedBass.Dsd** | 4.0.2 | MIT | Decodificador DSD |
 | **ManagedBass.Hls** | 4.0.2 | MIT | Streaming HLS |
 | **ManagedBass.Mpc** | 4.0.2 | MIT | Decodificador Musepack |
-| **ManagedBass.Ofr** | 4.0.2 | MIT | Decodificador OptimFROG |
 | **ManagedBass.Opus** | 4.0.2 | MIT | Decodificador Opus |
 | **ManagedBass.Spx** | 4.0.2 | MIT | Decodificador Speex |
-| **ManagedBass.WA** | 4.0.2 | MIT | Decodificador WavPack |
 | **ManagedBass.Wma** | 4.0.2 | MIT | Decodificador Windows Media |
 | **ManagedBass.Wv** | 4.0.2 | MIT | Decodificador WavPack |
 ⚙

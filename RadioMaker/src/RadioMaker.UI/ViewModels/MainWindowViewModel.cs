@@ -2048,114 +2048,140 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            // 1) Scheduler
-            var schedChannel = _playback.CurrentChannel;
-            if (schedChannel is not null && schedChannel.State == PlaybackState.Playing)
+            // 1) Scheduler (tanda o single file).
+            //    IMPORTANTE: gateamos por _currentPlaybackInfo y NO por
+            //    CurrentChannel. Las locuciones no tienen canal de audio
+            //    (CurrentChannel == null) pero sí están "Playing" en el engine.
+            //    El TandaTrackTitle ya viene con "Locución: Hora + minutos"
+            //    cuando corresponde (asignado en PlaybackEngine.PlayLocutionInTanda).
+            if (_currentPlaybackInfo.IsActive)
             {
                 var info = _currentPlaybackInfo;
-                var path = _playback.CurrentFilePath;
-                var tags = GetTagsCached(path);
-
-                string title;
-                string secondary;
-                string position;
+                var schedChannel = _playback.CurrentChannel;
 
                 if (info.IsTanda)
                 {
-                    title = !string.IsNullOrWhiteSpace(info.TandaTrackTitle)
+                    var title = !string.IsNullOrWhiteSpace(info.TandaTrackTitle)
                         ? info.TandaTrackTitle
-                        : ResolveDisplayTitle(tags, SafeFileName(path));
+                        : "Tanda";
 
-                    secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
-                        ? tags!.Performers
-                        : $"Tanda: {info.TandaNameText}";
+                    string secondary;
+                    if (schedChannel is not null)
+                    {
+                        // Es audio de tanda: podemos leer tags.
+                        var tags = GetTagsCached(_playback.CurrentFilePath);
+                        secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
+                            ? tags!.Performers
+                            : $"Tanda: {info.TandaNameText}";
+                    }
+                    else
+                    {
+                        // Es locución de tanda: sin archivo, sin tags.
+                        secondary = $"Tanda: {info.TandaNameText}";
+                    }
 
-                    position = info.TandaProgressText;
+                    NowPlayingTitle = title;
+                    NowPlayingArtist = secondary;
+                    NowPlayingPosition = info.TandaProgressText;
+                    NowPlayingChannel = schedChannel;
+                    IsNowPlayingActive = true;
+                    return;
                 }
-                else
-                {
-                    title = ResolveDisplayTitle(tags, SafeFileName(path));
 
-                    secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
+                // SingleFile: solo puede ser audio (las locuciones van por tanda).
+                if (schedChannel is not null && schedChannel.State == PlaybackState.Playing)
+                {
+                    var path = _playback.CurrentFilePath;
+                    var tags = GetTagsCached(path);
+
+                    NowPlayingTitle = ResolveDisplayTitle(tags, SafeFileName(path));
+                    NowPlayingArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
                         ? tags!.Performers
                         : (!string.IsNullOrWhiteSpace(info.SourceListName)
                             ? $"Programado: {info.SourceListName}"
                             : "Programado");
-
-                    position = string.Empty;
+                    NowPlayingPosition = string.Empty;
+                    NowPlayingChannel = schedChannel;
+                    IsNowPlayingActive = true;
+                    return;
                 }
-
-                NowPlayingTitle = title;
-                NowPlayingArtist = secondary;
-                NowPlayingPosition = position;
-                NowPlayingChannel = schedChannel;
-                IsNowPlayingActive = true;
-                return;
             }
 
-            // 2) Playlist (cualquier pestaña que este sonando)
-            // ── FASE B
+            // 2) Playlist (cualquier pestaña que este sonando).
+            //    Las locuciones sueltas en playlist también tienen
+            //    CurrentChannel == null pero IsPlayingNow == true.
             var activePl = GetActivePlaylistPlayer();
-            var plChannel = activePl?.CurrentChannel;
-            if (activePl is not null && plChannel is not null &&
-                plChannel.State == PlaybackState.Playing)
+            if (activePl is not null)
             {
-                var path = activePl.CurrentFilePath;
-                var tags = GetTagsCached(path);
                 var playlist = activePl.CurrentPlaylist;
                 int idx = activePl.CurrentIndex;
+                var plChannel = activePl.CurrentChannel;
 
-                string title = ResolveDisplayTitle(tags, SafeFileName(path));
-                string secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
-                    ? tags!.Performers
-                    : (playlist?.DisplayName ?? "Playlist");
+                bool hasChannel = plChannel is not null && plChannel.State == PlaybackState.Playing;
+                bool isLocution = plChannel is null && activePl.IsPlayingNow;
 
-                NowPlayingTitle = title;
-                NowPlayingArtist = secondary;
-                NowPlayingPosition = (playlist is not null && idx >= 0)
-                    ? $"Pista {idx + 1} de {playlist.Tracks.Count}"
-                    : string.Empty;
-                NowPlayingChannel = plChannel;
-                IsNowPlayingActive = true;
-                return;
+                if (hasChannel || isLocution)
+                {
+                    string title;
+                    string secondary;
+
+                    if (isLocution)
+                    {
+                        // Locución suelta en playlist: usar DisplayTitle del track.
+                        title = (playlist is not null && idx >= 0 && idx < playlist.Tracks.Count)
+                            ? playlist.Tracks[idx].DisplayTitle
+                            : "Locución";
+                        secondary = playlist?.DisplayName ?? "Playlist";
+                    }
+                    else
+                    {
+                        var path = activePl.CurrentFilePath;
+                        var tags = GetTagsCached(path);
+                        title = ResolveDisplayTitle(tags, SafeFileName(path));
+                        secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
+                            ? tags!.Performers
+                            : (playlist?.DisplayName ?? "Playlist");
+                    }
+
+                    NowPlayingTitle = title;
+                    NowPlayingArtist = secondary;
+                    NowPlayingPosition = (playlist is not null && idx >= 0)
+                        ? $"Pista {idx + 1} de {playlist.Tracks.Count}"
+                        : string.Empty;
+                    NowPlayingChannel = plChannel;
+                    IsNowPlayingActive = true;
+                    return;
+                }
             }
 
-            // 3) Cart (SOLO si no hay scheduler ni playlist activos).
-            //    El Cart nunca tiene prioridad sobre lo que "sale al aire":
-            //    programados, tandas y playlists siempre ganan. Solo se
-            //    muestra si es lo unico sonando.
-            //    Cubre el cart principal Y los carts extras.
+            // 3) Cart.
             var cartChannel = GetAnyActiveCartChannel();
             if (cartChannel is not null)
             {
                 var path = cartChannel.FilePath;
                 var tags = GetTagsCached(path);
 
-                string title = ResolveDisplayTitle(tags, SafeFileName(path));
-                string secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
+                NowPlayingTitle = ResolveDisplayTitle(tags, SafeFileName(path));
+                NowPlayingArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
                     ? tags!.Performers
                     : "Cart";
-
-                NowPlayingTitle = title;
-                NowPlayingArtist = secondary;
                 NowPlayingPosition = string.Empty;
                 NowPlayingChannel = cartChannel;
                 IsNowPlayingActive = true;
                 return;
             }
 
-            // 4) Nada sonando en ningun reproductor (ni manual).
+            // 4) Nada sonando.
             NowPlayingTitle = string.Empty;
             NowPlayingArtist = string.Empty;
             NowPlayingPosition = string.Empty;
             NowPlayingChannel = null;
             IsNowPlayingActive = false;
-            return;
         }
-        catch { }
-
-        // Actualizar el flag activo para el cambio de color del panel.
-        IsNowPlayingActive = !string.IsNullOrWhiteSpace(NowPlayingTitle);
+        catch
+        {
+            IsNowPlayingActive = !string.IsNullOrWhiteSpace(NowPlayingTitle);
+        }
     }
 
     /// <summary>
@@ -2170,23 +2196,30 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            // ═══════════════════════════════════════════════════════════
-            // 0) PRIORIDAD MAXIMA: si estamos DENTRO de una tanda y hay
-            //    tracks pendientes, el "siguiente" es el proximo track
-            //    de la misma tanda. Esto es lo que se salteaba antes y
-            //    hacia que apareciera la playlist suspendida en lugar del
-            //    track 2 de 7.
-            // ═══════════════════════════════════════════════════════════
-            var schedChannel = _playback.CurrentChannel;
-            bool schedulerActive = schedChannel is not null &&
-                                   schedChannel.State == PlaybackState.Playing;
+            // ═══════════════════════════════════════════════════════════════
+            // 0) PRIORIDAD MÁXIMA: si estamos DENTRO de una tanda (audio o
+            //    locución) y hay tracks pendientes, el "siguiente" es el
+            //    próximo track de la misma tanda.
+            //
+            //    NOTA: gateamos por _currentPlaybackInfo y NO por
+            //    CurrentChannel. Las locuciones no tienen canal de audio,
+            //    pero sí están "Playing" en el engine.
+            // ═══════════════════════════════════════════════════════════════
+            bool schedulerIsPlaying =
+                _currentPlaybackInfo.Kind == PlaybackStateKind.Playing ||
+                _currentPlaybackInfo.Kind == PlaybackStateKind.Suspended;
 
-            if (schedulerActive)
+            if (schedulerIsPlaying)
             {
                 var nextTanda = _playback.GetNextTandaTrackInfo();
                 if (nextTanda is not null)
                 {
-                    var tags = GetTagsCached(nextTanda.Value.FilePath);
+                    // Si el próximo track es locución, FilePath viene vacío.
+                    // No intentamos leer tags en ese caso.
+                    var nextPath = nextTanda.Value.FilePath;
+                    RadioMaker.Core.Tags.AudioTagInfo? tags = null;
+                    if (!string.IsNullOrWhiteSpace(nextPath))
+                        tags = GetTagsCached(nextPath);
 
                     NextTitle = ResolveDisplayTitle(tags, nextTanda.Value.Title);
 
@@ -2200,10 +2233,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 }
             }
 
-            // ═══════════════════════════════════════════════════════════
-            // 1) Cola del scheduler (items pendientes fuera de la tanda
-            //    actual: otros items que se dispararon mientras sonaba algo).
-            // ═══════════════════════════════════════════════════════════
+            // 1) Cola del scheduler (items pendientes fuera de la tanda actual).
             var queue = _playback.GetQueuedItems();
             if (queue.Count > 0)
             {
@@ -2222,10 +2252,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 return;
             }
 
-            // ═══════════════════════════════════════════════════════════
-            // 2) Suspendido del scheduler (por ejemplo, una playlist que
-            //    fue interrumpida y se va a reanudar al terminar).
-            // ═══════════════════════════════════════════════════════════
+            // 2) Suspendido del scheduler.
             var suspendedTitle = _playback.GetSuspendedItemTitle();
             if (!string.IsNullOrWhiteSpace(suspendedTitle))
             {
@@ -2246,15 +2273,16 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 return;
             }
 
-            // ═══════════════════════════════════════════════════════════
-            // 3) Proxima pista de la playlist activa.
-            // ── FASE B
-            // ═══════════════════════════════════════════════════════════
+            // 3) Próxima pista de la playlist activa.
             var activePl = GetActivePlaylistPlayer();
             var upcoming = activePl?.GetUpcomingTrackInfo();
             if (upcoming is not null)
             {
-                var tags = GetTagsCached(upcoming.Value.FilePath);
+                // Locuciones: FilePath vacío → no intentamos leer tags.
+                var nextPath = upcoming.Value.FilePath;
+                RadioMaker.Core.Tags.AudioTagInfo? tags = null;
+                if (!string.IsNullOrWhiteSpace(nextPath))
+                    tags = GetTagsCached(nextPath);
 
                 NextTitle = ResolveDisplayTitle(tags, upcoming.Value.Title);
 
@@ -2267,20 +2295,17 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 return;
             }
 
-            // ═══════════════════════════════════════════════════════════
-            // 4) Nada mas en el horizonte.
-            // ═══════════════════════════════════════════════════════════
+            // 4) Nada en el horizonte.
             NextTitle = "(sin proximo)";
             NextArtist = string.Empty;
             NextPosition = string.Empty;
             IsNextPlayingActive = false;
-            return;
         }
-        catch { }
-
-        // Actualizar el flag activo para el cambio de color del panel.
-        IsNextPlayingActive = !string.IsNullOrWhiteSpace(NextTitle)
-            && NextTitle != "(sin proximo)";
+        catch
+        {
+            IsNextPlayingActive = !string.IsNullOrWhiteSpace(NextTitle)
+                && NextTitle != "(sin proximo)";
+        }
     }
 
     /// <summary>
