@@ -9,6 +9,7 @@ using RadioMaker.Core.Playback;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Configuration;
 using RadioMaker.UI.Services;
+using RMVoice.Core.Services;
 using System.Collections.ObjectModel;
 
 namespace RadioMaker.UI.ViewModels;
@@ -35,6 +36,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     private readonly BusExclusivityCoordinator _coordinator;
     private readonly EmergencyWatchdogService _emergency;
     private readonly EmergencySettings _emergencySettings;
+
+    // Presentación inicial (onboarding). Null si ya se completó o no aplica.
+    private RadioMaker.UI.Demo.DemoService? _demoService;
 
     public BusExclusivityCoordinator Coordinator => _coordinator;
 
@@ -303,6 +307,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public BehaviorSettingsViewModel Behavior { get; }
     public EmergencyPanelViewModel Emergency { get; }
     public EmergencyWatchdogService EmergencyService => _emergency;
+    // Presentación inicial. Null si no aplica (DemoCompleted o manifest faltante).
+    public RadioMaker.UI.Demo.DemoViewModel? Demo { get; private set; }
     public bool IsEmergencyActive => _emergency.IsActive;
     public string EmergencyStatusText => _emergency.IsActive
         ? $"{_emergency.CurrentTrackTitle} — pista {_emergency.CurrentTrackIndex} de {_emergency.CurrentTrackTotal} en {_emergency.CurrentBusDisplayName}"
@@ -547,6 +553,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             // Cart principal + carts extras.
             var cart = GetAnyActiveCartChannel();
             if (cart is not null) return cart;
+
+            // ── Presentación inicial (onboarding): si no hay nada más
+            // sonando y la demo está activa, alimentar el VU meter con su
+            // canal. Prioridad más baja que el resto para no tapar audio
+            // real si por casualidad suenan en paralelo.
+            var demoCh = Demo?.GetCurrentChannel();
+            if (demoCh is not null) return demoCh;
 
             return null;
         }
@@ -1050,6 +1063,89 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             LastError = $"No se pudo iniciar el scheduler: {ex.Message}";
             _logService.Error("Scheduler", "No se pudo iniciar", ex);
         }
+
+        // Presentación inicial (solo en el primer arranque).
+        TryStartDemo();
+    }
+
+    /// <summary>
+    /// Arranca la presentación inicial si es el primer arranque del usuario.
+    /// Marca el estado como completado INMEDIATAMENTE para garantizar que se
+    /// vea exactamente una vez, incluso si el usuario cierra la app o crashea
+    /// durante la reproducción.
+    /// </summary>
+    private void TryStartDemo()
+    {
+        try
+        {
+            if (RadioMaker.UI.Demo.DemoStateStore.IsCompleted())
+                return;
+
+            RadioMaker.UI.Demo.DemoStateStore.MarkCompleted();
+
+            var demoService = new RadioMaker.UI.Demo.DemoService(_engine);
+            if (!demoService.TryLoad())
+            {
+                demoService.Dispose();
+                return;
+            }
+
+            _demoService = demoService;
+            Demo = new RadioMaker.UI.Demo.DemoViewModel(demoService);
+
+            // Cuando la demo se activa, arrancar los timers de VU/Spectrum
+            // para que el audio se refleje visualmente. Cuando termina,
+            // parar los timers solo si nada más está sonando.
+            Demo.PropertyChanged += OnDemoPropertyChanged;
+
+            // Si ya arrancó activa (caso normal), arrancar timers ya.
+            if (Demo.IsActive)
+            {
+                if (!_positionTimer.IsEnabled) _positionTimer.Start();
+                if (!_meterTimer.IsEnabled) _meterTimer.Start();
+                try { UpdateSpectrumChannel(); } catch { }
+            }
+
+            OnPropertyChanged(nameof(Demo));
+        }
+        catch (Exception ex)
+        {
+            _logService.Warning("DEMO", $"No se pudo iniciar la presentación: {ex.Message}");
+        }
+    }
+
+    private void OnDemoPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(RadioMaker.UI.Demo.DemoViewModel.IsActive))
+            return;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (Demo?.IsActive == true)
+            {
+                // Demo arrancó: asegurar timers + spectrum apuntando a la demo.
+                if (!_positionTimer.IsEnabled) _positionTimer.Start();
+                if (!_meterTimer.IsEnabled) _meterTimer.Start();
+                try { UpdateSpectrumChannel(); } catch { }
+            }
+            else
+            {
+                // Demo terminó: si no hay otra reproducción, parar timers
+                // y resetear el VU/spectrum.
+                if (_currentChannel is null &&
+                    _playback.CurrentChannel is null &&
+                    !AnyPlaylistPlayerPlaying() &&
+                    !AnyCartPlaying())
+                {
+                    _positionTimer.Stop();
+                    _meterTimer.Stop();
+                    ResetMeter();
+                }
+
+                // Reasignar el spectrum al canal que corresponda (o null).
+                try { UpdateSpectrumChannel(); } catch { }
+            }
+        });
     }
 
     private void InitializeEngine()
@@ -2540,6 +2636,19 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                         active = cart;
                         source = "CART";
                     }
+                    else
+                    {
+                        // ── Presentación inicial (onboarding): si no hay
+                        // nada más sonando, alimentar el Spectrum con el
+                        // canal de la demo. Prioridad más baja que todo
+                        // para no tapar audio real en paralelo.
+                        var demoCh = Demo?.GetCurrentChannel();
+                        if (demoCh is not null)
+                        {
+                            active = demoCh;
+                            source = "DEMO";
+                        }
+                    }
                 }
             }
         }
@@ -3516,6 +3625,16 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // ───── Dispose ───────────────────────────────────────────────────────
     public void Dispose()
     {
+        // Presentación inicial
+        try
+        {
+            if (Demo is not null)
+                Demo.PropertyChanged -= OnDemoPropertyChanged;
+        }
+        catch { }
+        try { Demo?.Dispose(); } catch { }
+        try { _demoService?.Dispose(); } catch { }
+
         try { _emergency?.Dispose(); } catch { }
         try { _tipTimer?.Stop(); } catch { }
 

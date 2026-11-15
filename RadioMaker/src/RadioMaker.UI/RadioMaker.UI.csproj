@@ -175,5 +175,12 @@
 <ItemGroup>
     <None Include="runtimes\**\native\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Link="runtimes\%(RecursiveDir)%(Filename)%(Extension)" />
 </ItemGroup>
+  <ItemGroup>
+    <!-- Presentación inicial: audios + manifest.
+         Se copian a bin/ y publish/ preservando la estructura relativa. -->
+    <None Update="Assets\demo\**\*"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 
 </Project>

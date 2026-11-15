@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "audios": [
+    { "file": "INTRO.mp3", "title": "Bienvenido a RadioMaker" }
+  ]
+}

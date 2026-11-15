@@ -1,0 +1,143 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:demo="clr-namespace:RadioMaker.UI.Demo"
+             x:Class="RadioMaker.UI.Demo.DemoOverlay"
+             x:DataType="demo:DemoViewModel">
+
+    <!-- Overlay NO bloqueante.
+         - Grid SIN Background: no captura clicks en el área vacía, la app
+           detrás sigue totalmente interactuable.
+         - NO usar IsHitTestVisible=False en el Grid: en Avalonia eso
+           deshabilita el hit-test de TODOS los hijos (a diferencia de WPF),
+           y por eso los botones del card dejaban de responder.
+         - BoxShadow eliminado: en algunos backends de Avalonia se renderiza
+           como rectángulo negro sólido en vez de un halo suave. Se reemplaza
+           por un border y un efecto más sutil sin blur. -->
+    <Grid>
+
+        <Border HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="0,0,20,20"
+                Width="400"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource Accent}"
+                BorderThickness="2"
+                CornerRadius="8"
+                Padding="16">
+
+            <StackPanel Spacing="12">
+
+                <!-- Header -->
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <materialIcons:MaterialIcon Kind="Headphones"
+                                                Width="26" Height="26"
+                                                Foreground="{DynamicResource Accent}"
+                                                VerticalAlignment="Center" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Presentación inicial"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource FgPrimary}" />
+                        <TextBlock Text="Conoce las funciones de RadioMaker"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource FgSecondary}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Título del audio actual -->
+                <Border Background="{DynamicResource BgTertiary}"
+                        BorderBrush="{DynamicResource BorderPrimary}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="10,8">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="REPRODUCIENDO"
+                                   FontSize="9"
+                                   FontWeight="Bold"
+                                   LetterSpacing="1"
+                                   Foreground="{DynamicResource FgMuted}" />
+                        <TextBlock Text="{Binding CurrentTitle}"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Progress bar -->
+                <ProgressBar Minimum="0" Maximum="1"
+                             Value="{Binding ProgressFraction}"
+                             Height="6"
+                             CornerRadius="3"
+                             Foreground="{DynamicResource Accent}"
+                             Background="{DynamicResource BgTertiary}" />
+
+                <!-- Contador de audios -->
+                <TextBlock FontSize="10"
+                           Foreground="{DynamicResource FgMuted}"
+                           HorizontalAlignment="Center">
+                    <Run Text="Audio " />
+                    <Run Text="{Binding CurrentIndex}" />
+                    <Run Text=" de " />
+                    <Run Text="{Binding TotalCount}" />
+                </TextBlock>
+
+                <!-- Error (solo visible si algo falla) -->
+                <Border Background="#FEE2E2"
+                        BorderBrush="#EF4444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="8,6"
+                        IsVisible="{Binding HasError}">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="#991B1B"
+                               FontSize="11"
+                               TextWrapping="Wrap" />
+                </Border>
+
+                <!-- Botones: Pausa (izquierda) · Saltar (derecha) -->
+                <StackPanel Orientation="Horizontal"
+                            Spacing="10"
+                            HorizontalAlignment="Center">
+
+                    <Button Command="{Binding PauseResumeCommand}"
+                            MinWidth="130"
+                            HorizontalContentAlignment="Center"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <materialIcons:MaterialIcon Kind="Pause"
+                                                        Width="14" Height="14"
+                                                        VerticalAlignment="Center"
+                                                        IsVisible="{Binding !IsPaused}" />
+                            <materialIcons:MaterialIcon Kind="Play"
+                                                        Width="14" Height="14"
+                                                        VerticalAlignment="Center"
+                                                        IsVisible="{Binding IsPaused}" />
+                            <TextBlock Text="Pausa"
+                                       VerticalAlignment="Center"
+                                       IsVisible="{Binding !IsPaused}" />
+                            <TextBlock Text="Reanudar"
+                                       VerticalAlignment="Center"
+                                       IsVisible="{Binding IsPaused}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding SkipCommand}"
+                            MinWidth="130"
+                            HorizontalContentAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            Background="{DynamicResource BgTertiary}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <materialIcons:MaterialIcon Kind="SkipNext"
+                                                        Width="14" Height="14"
+                                                        VerticalAlignment="Center" />
+                            <TextBlock Text="Saltar"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

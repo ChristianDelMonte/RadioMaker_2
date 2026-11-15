@@ -4,6 +4,7 @@
         xmlns:core="clr-namespace:RadioMaker.Core.Abstractions;assembly=RadioMaker.Core"
         xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:demo="clr-namespace:RadioMaker.UI.Demo"
         x:Class="RadioMaker.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="RMS Audio Player"
@@ -549,5 +550,11 @@
                     WindowDecorationProperties.ElementRole="ResizeSE" />
 
         </Grid>
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- OVERLAY DE PRESENTACIÓN INICIAL (no bloqueante)                 -->
+        <!-- Solo visible en el primer arranque del usuario.                 -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <demo:DemoOverlay DataContext="{Binding Demo}"
+                          IsVisible="{Binding IsActive}" />
     </Grid>
 </controls:CustomChromeWindow>
