@@ -80,6 +80,12 @@ public partial class MainWindow : Window
             {
                 vm.OpenSettingsRequested -= OnOpenSettingsRequested;
                 vm.OpenSettingsRequested += OnOpenSettingsRequested;
+
+                vm.OpenEmergencySettingsRequested -= OnOpenEmergencySettingsRequested;
+                vm.OpenEmergencySettingsRequested += OnOpenEmergencySettingsRequested;
+
+                vm.ConfirmStopEmergencyRequested -= OnConfirmStopEmergencyRequested;
+                vm.ConfirmStopEmergencyRequested += OnConfirmStopEmergencyRequested;
             }
         };
         // Doble clic sobre la barra de titulo -> maximizar/restaurar.
@@ -978,6 +984,82 @@ public partial class MainWindow : Window
     private async void OnOpenSettingsRequested(object? sender, string sectionKey)
     {
         await OpenUnifiedSettingsAsync(sectionKey);
+    }
+
+    private async void OnOpenEmergencySettingsRequested(object? sender, EventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel vm) return;
+
+        // Abrir la ventana de configuración directamente en la sección Emergencia.
+        await OpenUnifiedSettingsAsync("emergency");
+
+        // Al cerrar, el VM valida la config y arma si está OK.
+        vm.OnEmergencySettingsClosed();
+    }
+
+    private async void OnConfirmStopEmergencyRequested(object? sender, Action<bool> callback)
+    {
+        var result = await ShowConfirmationDialogAsync(
+            "Detener emergencia",
+            "La emergencia está sonando al aire. ¿Deseas detenerla?\n\n" +
+            "El watchdog quedará desactivado y el operador deberá reactivarlo manualmente.");
+
+        callback(result);
+    }
+
+    private async Task<bool> ShowConfirmationDialogAsync(string title, string message)
+    {
+        var result = false;
+
+        var dialog = new Window
+        {
+            Title = title,
+            Width = 480,
+            Height = 220,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false
+        };
+
+        var panel = new StackPanel
+        {
+            Margin = new Avalonia.Thickness(20),
+            Spacing = 16
+        };
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = message,
+            TextWrapping = Avalonia.Media.TextWrapping.Wrap
+        });
+
+        var buttons = new StackPanel
+        {
+            Orientation = Avalonia.Layout.Orientation.Horizontal,
+            Spacing = 12,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            Margin = new Avalonia.Thickness(0, 8, 0, 0)
+        };
+
+        var cancelBtn = new Button { Content = "Cancelar", MinWidth = 100 };
+        cancelBtn.Click += (_, _) => { result = false; dialog.Close(); };
+
+        var confirmBtn = new Button
+        {
+            Content = "Detener",
+            MinWidth = 100,
+            Background = Avalonia.Media.Brushes.DarkRed,
+            Foreground = Avalonia.Media.Brushes.White
+        };
+        confirmBtn.Click += (_, _) => { result = true; dialog.Close(); };
+
+        buttons.Children.Add(cancelBtn);
+        buttons.Children.Add(confirmBtn);
+        panel.Children.Add(buttons);
+
+        dialog.Content = panel;
+
+        await dialog.ShowDialog(this);
+        return result;
     }
 
     /// <summary>

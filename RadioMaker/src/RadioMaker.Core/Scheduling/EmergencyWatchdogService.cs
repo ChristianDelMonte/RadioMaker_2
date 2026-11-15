@@ -552,6 +552,66 @@ public sealed class EmergencyWatchdogService : IDisposable
         try { LogMessage?.Invoke(this, message); } catch { }
     }
 
+    /// <summary>
+    /// Devuelve true si la configuración de emergencia está completa y
+    /// puede armarse. Se valida:
+    ///   - Al menos una detección activa (no channels / silence).
+    ///   - Umbral de silencio válido (> 0 segundos).
+    ///   - Threshold dB en rango físico (-90 a -20).
+    ///   - Fuente válida según el modo:
+    ///       • Prearmed: el .rmf existe en disco.
+    ///       • Folder: la carpeta existe y tiene al menos 1 audio.
+    ///       • Hybrid: al menos uno de los dos.
+    /// </summary>
+    public bool IsConfigurationValid()
+    {
+        EmergencySettings s;
+        lock (_gate) s = _settings;
+
+        if (s is null) return false;
+
+        if (!s.DetectNoChannels && !s.DetectSilence) return false;
+        if (s.SilenceThresholdSeconds <= 0) return false;
+        if (s.ThresholdDb < -90.0 || s.ThresholdDb > -20.0) return false;
+
+        return s.Mode switch
+        {
+            EmergencySourceMode.Prearmed =>
+                !string.IsNullOrWhiteSpace(s.PrearmedPlaylistPath)
+                && File.Exists(s.PrearmedPlaylistPath),
+
+            EmergencySourceMode.Folder =>
+                IsValidEmergencyFolder(s.EmergencyFolder, s.IncludeSubfolders),
+
+            EmergencySourceMode.Hybrid =>
+                (!string.IsNullOrWhiteSpace(s.PrearmedPlaylistPath)
+                 && File.Exists(s.PrearmedPlaylistPath))
+                || IsValidEmergencyFolder(s.EmergencyFolder, s.IncludeSubfolders),
+
+            _ => false
+        };
+    }
+
+    private static bool IsValidEmergencyFolder(string folder, bool includeSub)
+    {
+        if (string.IsNullOrWhiteSpace(folder)) return false;
+        if (!Directory.Exists(folder)) return false;
+
+        try
+        {
+            var searchOpt = includeSub
+                ? SearchOption.AllDirectories
+                : SearchOption.TopDirectoryOnly;
+
+            return Directory.EnumerateFiles(folder, "*.*", searchOpt)
+                .Any(f => IsAudioExtension(f));
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public void Dispose()
     {
         if (_disposed) return;

@@ -10,7 +10,7 @@
             BorderBrush="{DynamicResource BorderPrimary}"
             BorderThickness="0,0,0,1"
             Padding="8,6">
-        <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,Auto,Auto,Auto,Auto"
+        <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto"
               ColumnSpacing="8">
 
             <!-- ═══════════════════════════════════════════════════════
@@ -248,7 +248,7 @@
             </Border>
 
             <!-- ═══════════════════════════════════════════════════════
-                 7) Ducking
+                 7) Ducking (boton micrófono)
                  ═══════════════════════════════════════════════════════ -->
             <Border Grid.Column="7"
                     Background="{DynamicResource BgTertiary}"
@@ -259,34 +259,61 @@
                     Height="66"
                     MinWidth="72"
                     VerticalAlignment="Center">
-                <StackPanel Orientation="Vertical"
-                            Spacing="4"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            ToolTip.Tip="Ducking por microfono">
-                    <TextBlock Text="DUCKING"
-                               FontSize="8"
-                               FontWeight="Bold"
-                               LetterSpacing="0.5"
-                               Foreground="{DynamicResource FgSecondary}"
-                               HorizontalAlignment="Center" />
-                    <ToggleSwitch IsChecked="{Binding Ducking.IsEnabled}"
-                                  OnContent=""
-                                  OffContent=""
-                                  HorizontalAlignment="Center"
-                                  MinWidth="0"
-                                  Padding="0">
-                        <ToggleSwitch.RenderTransform>
-                            <ScaleTransform ScaleX="0.75" ScaleY="0.75" />
-                        </ToggleSwitch.RenderTransform>
-                    </ToggleSwitch>
-                </StackPanel>
+                <Button Command="{Binding ToggleDuckingCommand}"
+                        Background="{Binding DuckingButtonBackground}"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        Width="48" Height="48"
+                        Padding="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="{Binding DuckingTooltip}">
+                    <Panel Width="24" Height="24">
+                        <materialIcons:MaterialIcon Kind="Microphone"
+                                                    Width="24" Height="24"
+                                                    Foreground="{Binding DuckingButtonForeground}"
+                                                    IsVisible="{Binding IsDuckingActive}" />
+                        <materialIcons:MaterialIcon Kind="MicrophoneOff"
+                                                    Width="24" Height="24"
+                                                    Foreground="{Binding DuckingButtonForeground}"
+                                                    IsVisible="{Binding !IsDuckingActive}" />
+                    </Panel>
+                </Button>
             </Border>
 
             <!-- ═══════════════════════════════════════════════════════
-                 8) Clima + boton de locucion de clima
+                 8) Emergencia (boton)
                  ═══════════════════════════════════════════════════════ -->
             <Border Grid.Column="8"
+                    Background="{DynamicResource BgTertiary}"
+                    BorderBrush="{DynamicResource BorderPrimary}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="6,4"
+                    Height="66"
+                    MinWidth="72"
+                    VerticalAlignment="Center">
+                <Button Command="{Binding ToggleEmergencyCommand}"
+                        Background="{Binding EmergencyButtonBackground}"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        Width="48" Height="48"
+                        Padding="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="{Binding EmergencyButtonTooltip}">
+                    <materialIcons:MaterialIcon Kind="AlarmLight"
+                                                Width="24" Height="24"
+                                                Foreground="{Binding EmergencyButtonForeground}" />
+                </Button>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 9) Clima + boton de locucion de clima
+                 ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Column="9"
                     Background="{DynamicResource BgTertiary}"
                     BorderBrush="{DynamicResource BorderPrimary}"
                     BorderThickness="1"

@@ -725,6 +725,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         // ===== EMERGENCIA =====
         _emergencySettings = EmergencySettingsStore.Load();
 
+        // P14: el estado "armado" SE PERSISTE entre sesiones. Si el operador
+        // dejó la emergencia activa al cerrar, al reabrir el watchdog arranca
+        // monitoreando automáticamente (útil para radios 24/7 con operador de
+        // guardia). El operador puede desarmar explícitamente desde la toolbar
+        // o desde Configuración → Emergencia.
+
         _emergency = new EmergencyWatchdogService(
             _engine,
             _coordinator,
@@ -738,15 +744,28 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         Emergency = new EmergencyPanelViewModel(_emergencySettings, _emergency);
         Emergency.SettingsChanged = (s) => _emergency.UpdateSettings(s);
 
+        Emergency.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(EmergencyPanelViewModel.IsEnabled))
+            {
+                OnPropertyChanged(nameof(IsEmergencyArmed));
+                OnPropertyChanged(nameof(EmergencyButtonBackground));
+                OnPropertyChanged(nameof(EmergencyButtonForeground));
+                OnPropertyChanged(nameof(EmergencyButtonTooltip));
+            }
+        };
+
         _emergency.EmergencyStarted += (_, _) => Dispatcher.UIThread.Post(() =>
         {
             OnPropertyChanged(nameof(IsEmergencyActive));
             OnPropertyChanged(nameof(EmergencyStatusText));
+            NotifyEmergencyButtonChanged();
         });
         _emergency.EmergencyStopped += (_, _) => Dispatcher.UIThread.Post(() =>
         {
             OnPropertyChanged(nameof(IsEmergencyActive));
             OnPropertyChanged(nameof(EmergencyStatusText));
+            NotifyEmergencyButtonChanged();
         });
         _emergency.NowPlayingChanged += (_, _) => Dispatcher.UIThread.Post(() =>
         {
@@ -754,7 +773,19 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         });
 
         Behavior.EmergencyPanel = Emergency;
+
         Ducking = new DuckingPanelViewModel(DuckingSettingsStore.Load(), engine);
+        Ducking.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(DuckingPanelViewModel.IsEnabled))
+            {
+                OnPropertyChanged(nameof(IsDuckingActive));
+                OnPropertyChanged(nameof(DuckingTooltip));
+                OnPropertyChanged(nameof(DuckingButtonBackground));
+                OnPropertyChanged(nameof(DuckingButtonForeground));
+            }
+        };
+
         Scheduler = new SchedulerPanelViewModel(_scheduler, _playback, _playlistPlayer);
         PlaybackLog = new PlaybackLogViewModel(_logService);
         Spectrum = new SpectrumPanelViewModel();
@@ -1815,7 +1846,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     [RelayCommand]
     private void StopEmergency()
     {
-        try { _emergency.StopEmergency(); } catch { }
+        // Reutiliza la misma lógica que el botón de la toolbar: detiene,
+        // desarma y persiste. No pide confirmación porque el botón "DETENER
+        // EMERGENCIA" del banner ya es una acción explícita del operador.
+        ApplyEmergencyStop();
     }
 
     [RelayCommand] private void Play()
@@ -3285,6 +3319,198 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         return null;
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  Ducking (botón de micrófono en la toolbar)
+    // ═════════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// True si el ducking por micrófono está activo. Bindea al botón de la
+    /// toolbar como estado y a las propiedades visuales (color/ícono/tooltip).
+    /// </summary>
+    public bool IsDuckingActive => Ducking.IsEnabled;
+
+    /// <summary>Tooltip dinámico del botón.</summary>
+    public string DuckingTooltip => IsDuckingActive
+        ? "Desactivar micrófono / ducking"
+        : "Activar micrófono / ducking";
+
+    /// <summary>Fondo del botón: rojo si activo, color base si inactivo.</summary>
+    public IBrush DuckingButtonBackground => IsDuckingActive
+        ? new SolidColorBrush(Color.Parse("#DC2626"))
+        : ResolveThemeBrush("BgPrimary") ?? new SolidColorBrush(Colors.Transparent);
+
+    /// <summary>Color del ícono: blanco si activo, color primario si inactivo.</summary>
+    public IBrush DuckingButtonForeground => IsDuckingActive
+        ? new SolidColorBrush(Colors.White)
+        : ResolveThemeBrush("FgPrimary") ?? new SolidColorBrush(Colors.Gray);
+
+    [RelayCommand]
+    private void ToggleDucking()
+    {
+        // El setter de IsEnabled en DuckingPanelViewModel ya se encarga de:
+        //   - Persistir en ducking.json
+        //   - Aplicar al IAudioEngine vía ApplyDuckingConfig
+        //   - Disparar OnPropertyChanged para que la UI se actualice
+        Ducking.IsEnabled = !Ducking.IsEnabled;
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  Emergencia (botón en la toolbar)
+    // ═════════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// True si el watchdog de emergencia está armado (esperando un silencio
+    /// prolongado para dispararse). NO significa que la emergencia esté
+    /// sonando ahora — eso es <see cref="IsEmergencyActive"/>.
+    /// </summary>
+    public bool IsEmergencyArmed => _emergencySettings.IsEnabled;
+
+    /// <summary>Tooltip dinámico según el estado del botón.</summary>
+    public string EmergencyButtonTooltip
+    {
+        get
+        {
+            if (IsEmergencyActive) return "EMERGENCIA ACTIVA - Click para detener";
+            if (IsEmergencyArmed) return "Desactivar emergencia";
+            return "Activar emergencia";
+        }
+    }
+
+    /// <summary>
+    /// Fondo del botón según 3 estados:
+    ///   - Disparado (IsEmergencyActive): rojo #DC2626
+    ///   - Armado: verde #16A34A
+    ///   - Apagado: color base del tema
+    /// </summary>
+    public IBrush EmergencyButtonBackground
+    {
+        get
+        {
+            if (IsEmergencyActive) return new SolidColorBrush(Color.Parse("#DC2626"));
+            if (IsEmergencyArmed) return new SolidColorBrush(Color.Parse("#16A34A"));
+            return ResolveThemeBrush("BgPrimary") ?? new SolidColorBrush(Colors.Transparent);
+        }
+    }
+
+    /// <summary>
+    /// Color del ícono: blanco cuando está armado o disparado (para
+    /// contrastar con el fondo rojo/verde), color primario si está apagado.
+    /// </summary>
+    public IBrush EmergencyButtonForeground
+    {
+        get
+        {
+            if (IsEmergencyActive || IsEmergencyArmed) return new SolidColorBrush(Colors.White);
+            return ResolveThemeBrush("FgPrimary") ?? new SolidColorBrush(Colors.Gray);
+        }
+    }
+
+    /// <summary>Evento que el code-behind usa para abrir Config → Emergencia.</summary>
+    public event EventHandler? OpenEmergencySettingsRequested;
+
+    /// <summary>
+    /// Evento que el code-behind usa para mostrar el diálogo de confirmación
+    /// al desarmar mientras la emergencia está sonando. El callback recibe
+    /// true si el usuario confirma detener, false si cancela.
+    /// </summary>
+    public event EventHandler<Action<bool>>? ConfirmStopEmergencyRequested;
+
+    [RelayCommand]
+    private void ToggleEmergency()
+    {
+        // Caso 1: emergencia sonando → pedir confirmación antes de detener.
+        if (IsEmergencyActive)
+        {
+            ConfirmStopEmergencyRequested?.Invoke(this, (confirmed) =>
+            {
+                if (confirmed) ApplyEmergencyStop();
+            });
+            return;
+        }
+
+        // Caso 2: armada → desarmar directamente (no hay audio sonando).
+        if (IsEmergencyArmed)
+        {
+            // Delegar TODO al setter del panel: modifica _settings,
+            // guarda en disco, dispara SettingsChanged y actualiza el
+            // watchdog. NO tocar _emergencySettings directamente para
+            // no romper el early-return del setter (ver ApplyEmergencyArm).
+            Emergency.IsEnabled = false;
+            NotifyEmergencyButtonChanged();
+            StatusMessage = "Emergencia desactivada.";
+            return;
+        }
+
+        // Caso 3: apagada → intentar armar.
+        if (!_emergency.IsConfigurationValid())
+        {
+            // Config incompleta: abrir ventana de configuración. El code-behind
+            // llamará a OnEmergencySettingsClosed() cuando el usuario cierre.
+            StatusMessage = "Configura la emergencia antes de activarla.";
+            OpenEmergencySettingsRequested?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        ApplyEmergencyArm();
+    }
+
+    /// <summary>
+    /// Llamado por el code-behind después de que el usuario cierra la ventana
+    /// de Configuración abierta desde el botón de emergencia.
+    ///
+    /// Si la configuración quedó válida, arma automáticamente. Si no, el
+    /// botón queda apagado y muestra un mensaje en la barra de estado.
+    /// </summary>
+    public void OnEmergencySettingsClosed()
+    {
+        if (_emergency.IsConfigurationValid())
+        {
+            ApplyEmergencyArm();
+        }
+        else
+        {
+            StatusMessage = "La configuración de emergencia sigue incompleta.";
+        }
+    }
+
+    /// <summary>
+    /// Detiene la emergencia y la desarma. Llamado desde el code-behind
+    /// tras confirmación del usuario, o desde el botón "DETENER" del banner.
+    /// </summary>
+    public void ApplyEmergencyStop()
+    {
+        try { _emergency.StopEmergency(); } catch { }
+
+        // Delegar el desarme al setter del panel (mismo motivo que
+        // ApplyEmergencyArm): garantiza que _emergency.UpdateSettings
+        // se ejecute y el watchdog quede correctamente desactivado.
+        Emergency.IsEnabled = false;
+
+        NotifyEmergencyButtonChanged();
+        StatusMessage = "Emergencia detenida y desactivada.";
+    }
+
+    private void ApplyEmergencyArm()
+    {
+        // NO tocar _emergencySettings.IsEnabled directamente.
+        // Si lo hacemos, el setter del panel ve el valor ya igual y hace
+        // early-return, saltándose Save() + SettingsChanged, que es lo que
+        // finalmente llama a _emergency.UpdateSettings y arranca el
+        // watchdog. Delegar TODO al setter es la única forma limpia.
+        Emergency.IsEnabled = true;
+
+        NotifyEmergencyButtonChanged();
+        StatusMessage = "Emergencia activada. Watchdog monitoreando el aire.";
+    }
+
+    private void NotifyEmergencyButtonChanged()
+    {
+        OnPropertyChanged(nameof(IsEmergencyArmed));
+        OnPropertyChanged(nameof(EmergencyButtonTooltip));
+        OnPropertyChanged(nameof(EmergencyButtonBackground));
+        OnPropertyChanged(nameof(EmergencyButtonForeground));
     }
 
     // ───── Dispose ───────────────────────────────────────────────────────
