@@ -1,5 +1,6 @@
 using ManagedBass;
 using ManagedBass.Enc;
+using ManagedBass.Fx;
 using ManagedBass.Mix;
 using RMWave.Core.Models;
 using System;
@@ -35,6 +36,48 @@ public sealed class TimelinePlayer : IDisposable
     private const int Channels = 2;
     private const int SchedulerIntervalMs = 15;
 
+    // ═════════════════════════════════════════════════════════════════════
+    //  EQ de 3 bandas (Bass / Mid / Treble) con bass_fx PeakEQ
+    // ═════════════════════════════════════════════════════════════════════
+
+    // Frecuencias centrales de cada banda.
+    private const float EqBassFreq = 100f;
+    private const float EqMidFreq = 1000f;
+    private const float EqTrebleFreq = 10000f;
+
+    // Ancho de banda (octavas) de cada campana. 2.5 es lo estándar para
+    // que las 3 bandas se solapen suavemente sin sonar "quirúrgico".
+    private const float EqBandwidth = 2.5f;
+
+    // Límites de ganancia por banda (dB). Coinciden con los knobs de la UI.
+    private const float EqMinGainDb = -12f;
+    private const float EqMaxGainDb = +12f;
+
+    // CHAN_ALL de bass_fx: aplica la banda a todos los canales del stream.
+    private const int EqChannelAll = -1;
+
+    /// <summary>
+    /// Replica exacta del struct nativo BASS_BFX_PEAKEQ de bass_fx.h.
+    /// Layout: 6 campos de 4 bytes = 24 bytes, sin padding.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    private struct BFX_PEAKEQ
+    {
+        public int lBand;
+        public float fBandwidth;
+        public float fQ;
+        public float fCenter;
+        public float fGain;
+        public int lChannel;
+    }
+
+    /// <summary>
+    /// true si bass_fx se cargó correctamente. Se chequea lazy la primera
+    /// vez que se intenta aplicar EQ. Si es false, los knobs de EQ no
+    /// tienen efecto (comportamiento degradado, sin romper el audio).
+    /// </summary>
+    private bool? _eqAvailable;
+
     private readonly bool _ownsBass;
     private readonly object _stateLock = new();
 
@@ -53,7 +96,9 @@ public sealed class TimelinePlayer : IDisposable
     }
 
     private readonly Dictionary<Guid, ActiveClip> _activeClips = new();
-    private readonly Dictionary<int, int[]> _eqFxHandles = new();
+    // Un solo handle de FX por stream (bass_fx usa el mismo handle para
+    // todas las bandas; se configuran con FXSetParameters una por una).
+    private readonly Dictionary<int, int> _eqFxHandles = new();
     private readonly HashSet<Guid> _failedClips = new();
 
     private Thread? _schedulerThread;
@@ -595,13 +640,14 @@ public sealed class TimelinePlayer : IDisposable
         {
             if (track == null) return;
 
-            track.EqBass = Math.Clamp(bass, -12f, 12f);
-            track.EqMid = Math.Clamp(mid, -12f, 12f);
-            track.EqTreble = Math.Clamp(treble, -12f, 12f);
+            track.EqBass = Math.Clamp(bass, EqMinGainDb, EqMaxGainDb);
+            track.EqMid = Math.Clamp(mid, EqMinGainDb, EqMaxGainDb);
+            track.EqTreble = Math.Clamp(treble, EqMinGainDb, EqMaxGainDb);
 
-            // ===== INTEGRACIÓN CON RADIOMAKER =====
-            // EQ deshabilitado: DXParamEQ no es multiplataforma. Se guardan los
-            // valores en el modelo (compat con RMWave UI) pero NO se aplican.
+            // Re-aplicar el EQ a todos los streams activos de esa pista.
+            // Si la pista no está sonando ahora, los valores quedan guardados
+            // en el modelo y se aplicarán cuando arranque el próximo clip.
+            ReapplyEqToActiveStreams(track);
         }
     }
 
@@ -769,6 +815,9 @@ public sealed class TimelinePlayer : IDisposable
             return 0;
         }
 
+        // Aplicar el EQ de 3 bandas al stream (si bass_fx está disponible).
+        // Se llama DESPUÉS de agregarlo al mixer, pero ANTES de empezar a
+        // sonar (el caller hace MixerAddChannel antes de Play).
         ApplyEqToStream(stream, track);
         return stream;
     }
@@ -845,27 +894,157 @@ public sealed class TimelinePlayer : IDisposable
         return finalVolume;
     }
 
-    // ==========================================
-    // EQ (DESHABILITADO — ver notas arriba)
-    // ==========================================
-
-    private void ApplyEqToStream(int streamHandle, ProjectTrack track)
+    /// <summary>
+    /// Aplica (o reemplaza) el EQ de 3 bandas al stream indicado, usando
+    /// los valores actuales de la pista. Si ya había un FX asociado al
+    /// stream, lo libera primero.
+    ///
+    /// Devuelve el handle del FX creado, o 0 si bass_fx no está disponible
+    /// o la creación falló. En ese caso el stream sigue funcionando sin EQ.
+    /// </summary>
+    private int ApplyEqToStream(int streamHandle, ProjectTrack track,
+                                Dictionary<int, int>? fxHandles = null)
     {
-        _ = streamHandle;
-        _ = track;
+        if (streamHandle == 0 || track == null) return 0;
+
+        var handles = fxHandles ?? _eqFxHandles;
+
+        // Si ya había un FX para este stream, liberarlo primero.
+        if (handles.TryGetValue(streamHandle, out var oldFx) && oldFx != 0)
+        {
+            try { Bass.ChannelRemoveFX(streamHandle, oldFx); } catch { }
+            handles.Remove(streamHandle);
+        }
+
+        if (!EnsureEqAvailable()) return 0;
+
+        int fxHandle;
+        try
+        {
+            fxHandle = Bass.ChannelSetFX(streamHandle, EffectType.PeakEQ, 0);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[EQ] ChannelSetFX exception: {ex.Message}");
+            return 0;
+        }
+
+        if (fxHandle == 0)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"[EQ] ChannelSetFX falló. BASS error: {Bass.LastError}");
+            return 0;
+        }
+
+        handles[streamHandle] = fxHandle;
+
+        // Configurar las 3 bandas.
+        ApplyEqBand(fxHandle, band: 0, EqBassFreq, track.EqBass);
+        ApplyEqBand(fxHandle, band: 1, EqMidFreq, track.EqMid);
+        ApplyEqBand(fxHandle, band: 2, EqTrebleFreq, track.EqTreble);
+
+        return fxHandle;
     }
 
-    private void SetEqParams(int fxHandle, float frequency, float gainDb)
+    /// <summary>
+    /// Aplica una banda del EQ con los parámetros nativos de BASS_FX.
+    /// </summary>
+    private void ApplyEqBand(int fxHandle, int band, float frequency, float gainDb)
     {
-        _ = fxHandle;
-        _ = frequency;
-        _ = gainDb;
+        if (fxHandle == 0) return;
+
+        var p = new BFX_PEAKEQ
+        {
+            lBand = band,
+            fBandwidth = EqBandwidth,
+            fQ = 0f,
+            fCenter = frequency,
+            fGain = Math.Clamp(gainDb, EqMinGainDb, EqMaxGainDb),
+            lChannel = EqChannelAll,
+        };
+
+        var gcHandle = GCHandle.Alloc(p, GCHandleType.Pinned);
+        try
+        {
+            Bass.FXSetParameters(fxHandle, gcHandle.AddrOfPinnedObject());
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[EQ] FXSetParameters exception: {ex.Message}");
+        }
+        finally
+        {
+            gcHandle.Free();
+        }
+    }
+
+    /// <summary>
+    /// Re-aplica el EQ a todos los clips activos de la pista indicada.
+    /// Se llama cuando el usuario mueve un knob de EQ en vivo.
+    ///
+    /// Si un clip no tiene FX todavía (porque se activó con EQ en bypass
+    /// por algún error), ApplyEqToStream lo va a crear en este momento.
+    /// </summary>
+    private void ReapplyEqToActiveStreams(ProjectTrack track)
+    {
+        if (!EnsureEqAvailable()) return;
+
+        foreach (var active in _activeClips.Values)
+        {
+            if (!ReferenceEquals(active.Track, track)) continue;
+            if (active.Stream == 0) continue;
+
+            // Si ya tiene FX, actualizar parámetros sin recrear.
+            if (_eqFxHandles.TryGetValue(active.Stream, out var fxHandle) && fxHandle != 0)
+            {
+                ApplyEqBand(fxHandle, 0, EqBassFreq, track.EqBass);
+                ApplyEqBand(fxHandle, 1, EqMidFreq, track.EqMid);
+                ApplyEqBand(fxHandle, 2, EqTrebleFreq, track.EqTreble);
+            }
+            else
+            {
+                ApplyEqToStream(active.Stream, track);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Chequea (una sola vez) si bass_fx está disponible. Si no, los
+    /// knobs de EQ no tienen efecto pero el audio sigue funcionando.
+    /// </summary>
+    private bool EnsureEqAvailable()
+    {
+        if (_eqAvailable.HasValue) return _eqAvailable.Value;
+
+        try
+        {
+            // BassFx.Version lanza excepción si la DLL nativa no está.
+            _ = BassFx.Version;
+            _eqAvailable = true;
+        }
+        catch
+        {
+            _eqAvailable = false;
+            System.Diagnostics.Debug.WriteLine(
+                "[EQ] bass_fx no disponible. Los knobs de EQ no tendrán efecto.");
+        }
+
+        return _eqAvailable.Value;
     }
 
     private void FreeClipStream(int streamHandle)
     {
         if (streamHandle == 0) return;
-        _eqFxHandles.Remove(streamHandle);
+
+        // Liberar el FX de EQ asociado (si lo hay). BASS StreamFree ya
+        // libera los FX automáticamente, pero lo hacemos explícito para
+        // evitar handles huérfanos en el dict.
+        if (_eqFxHandles.TryGetValue(streamHandle, out var fxHandle) && fxHandle != 0)
+        {
+            try { Bass.ChannelRemoveFX(streamHandle, fxHandle); } catch { }
+            _eqFxHandles.Remove(streamHandle);
+        }
+
         Bass.StreamFree(streamHandle);
     }
 
@@ -899,7 +1078,7 @@ public sealed class TimelinePlayer : IDisposable
             }
 
             var activeStreams = new Dictionary<Guid, int>();
-            var renderEqHandles = new Dictionary<int, int[]>();
+            var renderEqHandles = new Dictionary<int, int>();
             double duration = Project.Duration;
             int totalActivations = 0;
 
@@ -1015,7 +1194,7 @@ public sealed class TimelinePlayer : IDisposable
             }
 
             var activeStreams = new Dictionary<Guid, int>();
-            var renderEqHandles = new Dictionary<int, int[]>();
+            var renderEqHandles = new Dictionary<int, int>();
             double duration = Project.Duration;
             int totalActivations = 0;
 
@@ -1130,7 +1309,7 @@ public sealed class TimelinePlayer : IDisposable
             }
 
             var activeStreams = new Dictionary<Guid, int>();
-            var renderEqHandles = new Dictionary<int, int[]>();
+            var renderEqHandles = new Dictionary<int, int>();
             double rangeDuration = endTime - startTime;
             int totalActivations = 0;
 
@@ -1240,7 +1419,7 @@ public sealed class TimelinePlayer : IDisposable
             }
 
             var activeStreams = new Dictionary<Guid, int>();
-            var renderEqHandles = new Dictionary<int, int[]>();
+            var renderEqHandles = new Dictionary<int, int>();
             double rangeDuration = endTime - startTime;
             int encoder = 0;
             int totalActivations = 0;
@@ -1331,15 +1510,21 @@ public sealed class TimelinePlayer : IDisposable
         return success;
     }
 
-    private void FreeClipStreamOffline(int streamHandle, Dictionary<int, int[]> eqHandles)
+    private void FreeClipStreamOffline(int streamHandle, Dictionary<int, int> eqHandles)
     {
         if (streamHandle == 0) return;
-        eqHandles.Remove(streamHandle);
+
+        if (eqHandles.TryGetValue(streamHandle, out var fxHandle) && fxHandle != 0)
+        {
+            try { Bass.ChannelRemoveFX(streamHandle, fxHandle); } catch { }
+            eqHandles.Remove(streamHandle);
+        }
+
         Bass.StreamFree(streamHandle);
     }
 
     private int ActivateClipOffline(int mixerHandle, ProjectTrack track, AudioClip clip,
-                                    double time, Dictionary<int, int[]> eqHandles)
+                                    double time, Dictionary<int, int> eqHandles)
     {
         var stream = Bass.CreateStream(clip.FilePath, 0, 0, BassFlags.Decode | BassFlags.Float);
         if (stream == 0) stream = Bass.CreateStream(clip.FilePath, 0, 0, BassFlags.Decode);
@@ -1370,7 +1555,9 @@ public sealed class TimelinePlayer : IDisposable
             return 0;
         }
 
-        _ = eqHandles;
+        // Aplicar EQ también en render offline (el mix debe sonar igual
+        // que en playback en vivo). Si bass_fx no está, sigue sin EQ.
+        ApplyEqToStream(stream, track, eqHandles);
         return stream;
     }
 
