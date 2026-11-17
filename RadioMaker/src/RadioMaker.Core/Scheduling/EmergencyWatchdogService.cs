@@ -79,6 +79,9 @@ public sealed class EmergencyWatchdogService : IDisposable
     public int CurrentTrackTotal { get; private set; }
     public string CurrentBusDisplayName { get; private set; } = "";
 
+    /// <summary>Canales de audio activos de la playlist de emergencia.</summary>
+    public IEnumerable<IAudioChannel> GetActiveChannels() => _player.GetActiveChannels();
+
     public EmergencyWatchdogService(
         IAudioEngine engine,
         BusExclusivityCoordinator coordinator,

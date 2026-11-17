@@ -25,6 +25,7 @@ public sealed class AudioService : IDisposable
 
     // Serializa las locuciones: una sola a la vez.
     private readonly SemaphoreSlim _playLock = new(1, 1);
+    private int _stopGeneration;
 
     // TCS del segmento en curso (lo completa el callback o Stop).
     private TaskCompletionSource<bool>? _currentSegmentTcs;
@@ -187,21 +188,28 @@ public sealed class AudioService : IDisposable
         var list = segments.ToList();
         if (list.Count == 0) return;
 
+        int stopGeneration = Volatile.Read(ref _stopGeneration);
         // Esperar a que termine cualquier locución previa.
         await _playLock.WaitAsync(ct).ConfigureAwait(false);
 
         try
         {
+            if (Volatile.Read(ref _stopGeneration) != stopGeneration)
+                return;
+
             ApplyDeviceAndVolume(deviceIndex, volume);
 
             foreach (var segment in list)
             {
                 ct.ThrowIfCancellationRequested();
+                if (Volatile.Read(ref _stopGeneration) != stopGeneration)
+                    break;
 
                 if (!_streams.TryGetValue(segment.Kind, out var stream) || stream == 0)
                     continue;   // pista no cargada: saltar
 
-                await PlaySegmentAsync(segment, stream, ct).ConfigureAwait(false);
+                if (!await PlaySegmentAsync(segment, stream, ct).ConfigureAwait(false))
+                    break;
             }
         }
         finally
@@ -213,6 +221,7 @@ public sealed class AudioService : IDisposable
     /// <summary>Corta la locución en curso (si la hay). El bloqueo del llamador se completa.</summary>
     public void Stop()
     {
+        Interlocked.Increment(ref _stopGeneration);
         var tcs = Interlocked.Exchange(ref _currentSegmentTcs, null);
 
         lock (_gate)
@@ -238,7 +247,7 @@ public sealed class AudioService : IDisposable
     /// Reproduce un único segmento: programa el sync de fin, hace seek al inicio
     /// de la región, arranca, espera el fin, y DETIENE el canal.
     /// </summary>
-    private async Task PlaySegmentAsync(Segment segment, int stream, CancellationToken ct)
+    private async Task<bool> PlaySegmentAsync(Segment segment, int stream, CancellationToken ct)
     {
         var endBytes = Bass.ChannelSeconds2Bytes(stream, segment.Region.EndSeconds);
         var startBytes = Bass.ChannelSeconds2Bytes(stream, segment.Region.StartSeconds);
@@ -284,7 +293,7 @@ public sealed class AudioService : IDisposable
 
         try
         {
-            await tcs.Task.ConfigureAwait(false);
+            return await tcs.Task.ConfigureAwait(false);
         }
         finally
         {

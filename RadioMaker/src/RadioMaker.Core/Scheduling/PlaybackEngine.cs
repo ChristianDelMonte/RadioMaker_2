@@ -90,12 +90,15 @@ public sealed class PlaybackEngine : IDisposable
     private IAudioChannel? _mixChannel;
     private System.Threading.Timer? _mixTimer;
     private double _mixOriginalNormGainDb;
+    private CancellationTokenSource? _mixLocutionCts;
 
     // ───── Estado de tanda/playlist/bloque en curso (unificado) ──────────
 
     private Tanda? _currentTanda;
     private List<TandaTrack> _tandaQueue = new();
     private int _tandaIndex = 0;
+    private CancellationTokenSource? _tandaLocutionCts;
+    private bool _tandaLocutionPaused;
 
     private System.Threading.Timer? _tandaDelayTimer;
 
@@ -117,8 +120,8 @@ public sealed class PlaybackEngine : IDisposable
         public double DurationSeconds { get; init; }
 
         /// <summary>
-        /// Tanda "virtual" reconstruida si el item es de tipo Playlist o Block.
-        /// Para Tanda y SingleFile queda null y se usa Item.EmbeddedTanda.
+        /// Instancia activa de tanda conservada al suspender. Puede ser
+        /// virtual (Playlist/Block), cargada desde .tnd o embebida.
         /// </summary>
         public Tanda? VirtualTanda { get; init; }
     }
@@ -322,6 +325,12 @@ public sealed class PlaybackEngine : IDisposable
         {
             lock (_gate)
             {
+                if (_tandaLocutionCts is not null)
+                {
+                    _tandaLocutionPaused = true;
+                    CancelTandaLocution();
+                    return;
+                }
                 if (_currentChannel is null) return;
                 try
                 {
@@ -343,6 +352,13 @@ public sealed class PlaybackEngine : IDisposable
         {
             lock (_gate)
             {
+                if (_tandaLocutionPaused && _currentTanda is not null &&
+                    _tandaIndex >= 0 && _tandaIndex < _tandaQueue.Count)
+                {
+                    _tandaLocutionPaused = false;
+                    PlayLocutionInTanda(_tandaIndex, _tandaQueue[_tandaIndex]);
+                    return;
+                }
                 if (_currentChannel is null) return;
                 try
                 {
@@ -369,6 +385,9 @@ public sealed class PlaybackEngine : IDisposable
             lock (_gate)
             {
                 if (_currentChannel is null && _currentTanda is null) return;
+
+                CancelTandaLocution();
+                _tandaLocutionPaused = false;
 
                 StopProgressTimer();
                 StopTandaDelayTimer();
@@ -1205,7 +1224,7 @@ public sealed class PlaybackEngine : IDisposable
             if (resumeAtSeconds > 0.1)
             {
                 channel.Seek(TimeSpan.FromSeconds(resumeAtSeconds));
-                channel.Play();
+                channel.FadeIn(50, 1.0, preservePosition: true);
             }
             else if (_autoFadeEnabled && _autoFadeSeconds > 0.05)
             {
@@ -1342,7 +1361,7 @@ public sealed class PlaybackEngine : IDisposable
             if (resumeAtSeconds > 0.1)
             {
                 channel.Seek(TimeSpan.FromSeconds(resumeAtSeconds));
-                channel.Play();
+                channel.FadeIn(50, 1.0, preservePosition: true);
             }
             else if (_autoFadeEnabled && _autoFadeSeconds > 0.05 && index == 0)
             {
@@ -1622,15 +1641,16 @@ public sealed class PlaybackEngine : IDisposable
             $"Device: {deviceIndex} | " +
             $"Principal reducida a: {track.MixDuckLevel:P0}");
 
+        CancellationTokenSource? locutionCts = null;
         try
         {
             // Volumen pleno para locuciones (mismo fix que PlaylistPlayer:
             // MixVolumeDb fue diseñado para jingles de fondo, no para voz).
             float volumeLinear = 1.0f;
 
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(45));
-
-            await _locution.PlayAsync(track.MixLocutionCommand, deviceIndex, volumeLinear, cts.Token);
+            locutionCts = new CancellationTokenSource(TimeSpan.FromSeconds(45));
+            _mixLocutionCts = locutionCts;
+            await _locution.PlayAsync(track.MixLocutionCommand, deviceIndex, volumeLinear, locutionCts.Token);
         }
         catch (OperationCanceledException)
         {
@@ -1644,6 +1664,9 @@ public sealed class PlaybackEngine : IDisposable
         }
         finally
         {
+            if (ReferenceEquals(_mixLocutionCts, locutionCts))
+                _mixLocutionCts = null;
+            locutionCts?.Dispose();
             try
             {
                 mainChannel.SetNormalizationGain(_mixOriginalNormGainDb);
@@ -1713,6 +1736,10 @@ public sealed class PlaybackEngine : IDisposable
         double volumeLinear = Math.Pow(10.0, track.VolumeDb / 20.0);
         float volume = (float)Math.Clamp(volumeLinear, 0.0, 1.0);
 
+        _tandaLocutionPaused = false;
+        var locutionCts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+        _tandaLocutionCts = locutionCts;
+
         _scheduler.AddLog(SchedulerLogLevel.Info,
             $"'{currentTanda.DisplayName}': pista {index + 1}/{_tandaQueue.Count} — LOCUCIÓN: {track.DisplayTitle}.");
 
@@ -1729,7 +1756,7 @@ public sealed class PlaybackEngine : IDisposable
             TandaTrackCount: _tandaQueue.Count,
             TandaTrackTitle: track.DisplayTitle));
 
-        _ = RunLocutionInTandaAsync(index, track, deviceIndex, volume);
+        _ = RunLocutionInTandaAsync(index, track, deviceIndex, volume, locutionCts);
     }
 
     /// <summary>
@@ -1740,20 +1767,20 @@ public sealed class PlaybackEngine : IDisposable
         int index,
         TandaTrack track,
         int deviceIndex,
-        float volume)
+        float volume,
+        CancellationTokenSource cts)
     {
         try
         {
             if (_locution is not null && _locution.IsAvailable)
             {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
                 await _locution.PlayAsync(track.LocutionCommand, deviceIndex, volume, cts.Token);
             }
             else
             {
                 AppLogger.Warning("SCHEDULER PLAY",
                     "Locución solicitada pero RMVoice no está disponible. Se saltea.");
-                await Task.Delay(500);
+                await Task.Delay(500, cts.Token);
             }
         }
         catch (OperationCanceledException)
@@ -1766,6 +1793,12 @@ public sealed class PlaybackEngine : IDisposable
             AppLogger.Error("SCHEDULER PLAY",
                 $"Error reproduciendo locución '{track.DisplayTitle}': {ex.Message}", ex);
             // Igual avanzar para no dejar la tanda trabada.
+        }
+        finally
+        {
+            if (ReferenceEquals(_tandaLocutionCts, cts))
+                _tandaLocutionCts = null;
+            cts.Dispose();
         }
 
         _dispatch(() =>
@@ -1796,6 +1829,7 @@ public sealed class PlaybackEngine : IDisposable
 
     private void StopMixChannel()
     {
+        CancelMixLocution();
         if (_mixChannel is null) return;
 
         try
@@ -1806,6 +1840,24 @@ public sealed class PlaybackEngine : IDisposable
         }
         catch { }
         _mixChannel = null;
+    }
+
+    private void CancelMixLocution()
+    {
+        var cts = _mixLocutionCts;
+        _mixLocutionCts = null;
+        if (cts is null) return;
+        try { cts.Cancel(); } catch { }
+        _locution?.Stop();
+    }
+
+    private void CancelTandaLocution()
+    {
+        var cts = _tandaLocutionCts;
+        _tandaLocutionCts = null;
+        if (cts is null) return;
+        try { cts.Cancel(); } catch { }
+        _locution?.Stop();
     }
 
     private void RestoreMainVolume()
@@ -1917,6 +1969,11 @@ public sealed class PlaybackEngine : IDisposable
     {
         if (_currentItem is null) return;
 
+        // RMVoice no puede conservar la posición de una locución. Al reanudar
+        // la tanda se volverá a iniciar desde el comienzo de esta pista.
+        CancelTandaLocution();
+        _tandaLocutionPaused = false;
+
         try
         {
             double posSec = 0;
@@ -1932,13 +1989,9 @@ public sealed class PlaybackEngine : IDisposable
                 catch { }
             }
 
-            Tanda? virtualTanda = null;
-            if ((_currentItem.Kind == ScheduledItemKind.Playlist
-                 || _currentItem.Kind == ScheduledItemKind.Block)
-                && _currentTanda is not null)
-            {
-                virtualTanda = _currentTanda;
-            }
+            // Guardar siempre la tanda activa. Una tanda de tipo .tnd puede
+            // no estar embebida en ScheduledItem y debe sobrevivir la pausa.
+            Tanda? virtualTanda = _currentTanda;
 
             _suspended = new SuspendedState
             {
@@ -2058,6 +2111,8 @@ public sealed class PlaybackEngine : IDisposable
 
     private void StopCurrentPlaybackInternal(bool unmarkScheduler)
     {
+        CancelTandaLocution();
+        _tandaLocutionPaused = false;
         StopProgressTimer();
         StopTandaDelayTimer();
 

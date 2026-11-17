@@ -41,6 +41,10 @@ internal sealed class RmwChannel : IAudioChannel
 
     private bool _disposed;
     private bool _userStopped;
+    private int _endEventRaised;
+    private readonly object _fadeGate = new();
+    private Timer? _fadeOutCompletionTimer;
+    private Timer? _fadeOutPauseCompletionTimer;
 
     private Timer? _trimEndTimer;
     private Timer? _autoFadeOutTimer;
@@ -162,11 +166,19 @@ internal sealed class RmwChannel : IAudioChannel
     public bool Play()
     {
         if (_disposed) return false;
+        Interlocked.Exchange(ref _endEventRaised, 0);
         _userStopped = false;
 
         if (_trimStart > TimeSpan.Zero)
         {
             try { _player.Seek(_trimStart.TotalSeconds); } catch { }
+        }
+        else if (Duration > TimeSpan.Zero && Position >= Duration - TimeSpan.FromSeconds(0.05))
+        {
+            // TimelinePlayer.Play reinicia desde cero al llegar al final y
+            // recrea el mixer. Anticipar el seek evita aplicar el fade al
+            // handle antiguo justo antes de esa recreación.
+            try { _player.Seek(0); } catch { }
         }
 
         if (_autoFadeEnabled && _autoFadeSeconds > 0.05)
@@ -225,6 +237,8 @@ internal sealed class RmwChannel : IAudioChannel
     public bool Stop()
     {
         if (_disposed) return false;
+        bool wasActive = State is PlaybackState.Playing or PlaybackState.Paused or PlaybackState.Stalled;
+        CancelPendingFadeCompletions();
         _userStopped = true;
         StopTrimEndTimer();
         StopAutoFadeOutTimer();
@@ -232,13 +246,19 @@ internal sealed class RmwChannel : IAudioChannel
         try { _player.Stop(); } catch { }
         ApplyCombinedVolume();
         RaiseState(PlaybackState.Stopped);
+        if (wasActive) NotifyEnded(wasStoppedByUser: true);
         return true;
     }
 
     public bool Seek(TimeSpan position)
     {
         if (_disposed) return false;
-        try { _player.Seek(Math.Max(0, position.TotalSeconds)); return true; }
+        try
+        {
+            _player.Seek(Math.Max(0, position.TotalSeconds));
+            ApplyCombinedVolume();
+            return true;
+        }
         catch { return false; }
     }
 
@@ -307,7 +327,26 @@ internal sealed class RmwChannel : IAudioChannel
     public bool FadeIn(int durationMs = 1000, double targetVolume = 1.0, bool preservePosition = false)
     {
         if (_disposed) return false;
+        CancelPendingFadeCompletions();
         _userVolume = Math.Clamp(targetVolume, 0.0, 1.0);
+
+        bool needsStart = State != PlaybackState.Playing;
+        if (needsStart)
+            Interlocked.Exchange(ref _endEventRaised, 0);
+        if (needsStart)
+        {
+            // Play() reinicia el timeline si ya estaba al final. Hacer ese
+            // seek aquí fuerza cualquier recreación del mixer antes de
+            // capturar el handle sobre el que se programa el fade.
+            try
+            {
+                if (Duration > TimeSpan.Zero && Position >= Duration - TimeSpan.FromSeconds(0.05))
+                    _player.Seek(_trimStart.TotalSeconds);
+                else if (!preservePosition && _trimStart > TimeSpan.Zero)
+                    _player.Seek(_trimStart.TotalSeconds);
+            }
+            catch { }
+        }
 
         int h = _player.MixerHandle;
         if (h == 0) return false;
@@ -318,10 +357,8 @@ internal sealed class RmwChannel : IAudioChannel
             Bass.ChannelSetAttribute(h, ChannelAttribute.Volume, 0f);
             bool ok = Bass.ChannelSlideAttribute(h, ChannelAttribute.Volume, target, Math.Max(1, durationMs));
 
-            if (ok && State != PlaybackState.Playing)
+            if (ok && needsStart)
             {
-                if (!preservePosition && _trimStart > TimeSpan.Zero)
-                    _player.Seek(_trimStart.TotalSeconds);
                 ok = _player.Play() && ok;
                 if (ok) { StartTrimEndTimer(); StartAutoFadeOutTimer(); }
             }
@@ -343,18 +380,7 @@ internal sealed class RmwChannel : IAudioChannel
             bool ok = Bass.ChannelSlideAttribute(h, ChannelAttribute.Volume, 0f, Math.Max(1, durationMs));
             if (ok)
             {
-                _ = new Timer(_ =>
-                {
-                    if (_disposed) return;
-                    try
-                    {
-                        _player.Stop();
-                        ApplyCombinedVolume();
-                        RaiseState(PlaybackState.Stopped);
-                        try { onComplete?.Invoke(); } catch { }
-                    }
-                    catch { }
-                }, null, durationMs, Timeout.Infinite);
+                ScheduleFadeCompletion(pause: false, durationMs, onComplete);
             }
             return ok;
         }
@@ -372,18 +398,7 @@ internal sealed class RmwChannel : IAudioChannel
             bool ok = Bass.ChannelSlideAttribute(h, ChannelAttribute.Volume, 0f, Math.Max(1, durationMs));
             if (ok)
             {
-                _ = new Timer(_ =>
-                {
-                    if (_disposed) return;
-                    try
-                    {
-                        _player.Pause();
-                        ApplyCombinedVolume();
-                        RaiseState(PlaybackState.Paused);
-                        try { onComplete?.Invoke(); } catch { }
-                    }
-                    catch { }
-                }, null, durationMs, Timeout.Infinite);
+                ScheduleFadeCompletion(pause: true, durationMs, onComplete);
             }
             return ok;
         }
@@ -442,13 +457,63 @@ internal sealed class RmwChannel : IAudioChannel
                 if (Position >= effectiveEnd)
                 {
                     try { _player.Stop(); } catch { }
-                    RaiseState(PlaybackState.Ended);
-                    Ended?.Invoke(this, new ChannelEndedEventArgs { WasStoppedByUser = false });
+                    NotifyEnded(wasStoppedByUser: false);
                     StopTrimEndTimer();
                 }
             }
             catch { }
-        }, null, 100, 100);
+        }, null, 15, 15);
+    }
+
+    private void ScheduleFadeCompletion(bool pause, int durationMs, Action? onComplete)
+    {
+        lock (_fadeGate)
+        {
+            CancelPendingFadeCompletionsLocked();
+
+            Timer? timer = null;
+            timer = new Timer(_ =>
+            {
+                lock (_fadeGate)
+                {
+                    var current = pause ? _fadeOutPauseCompletionTimer : _fadeOutCompletionTimer;
+                    if (!ReferenceEquals(current, timer) || _disposed) return;
+
+                    if (pause) _fadeOutPauseCompletionTimer = null;
+                    else _fadeOutCompletionTimer = null;
+                    timer?.Dispose();
+
+                    try
+                    {
+                        if (pause) _player.Pause();
+                        else _player.Stop();
+
+                        ApplyCombinedVolume();
+                        RaiseState(pause ? PlaybackState.Paused : PlaybackState.Stopped);
+                        try { onComplete?.Invoke(); } catch { }
+                    }
+                    catch { }
+                }
+            }, null, Timeout.Infinite, Timeout.Infinite);
+
+            if (pause) _fadeOutPauseCompletionTimer = timer;
+            else _fadeOutCompletionTimer = timer;
+            timer.Change(Math.Max(1, durationMs), Timeout.Infinite);
+        }
+    }
+
+    private void CancelPendingFadeCompletions()
+    {
+        lock (_fadeGate)
+            CancelPendingFadeCompletionsLocked();
+    }
+
+    private void CancelPendingFadeCompletionsLocked()
+    {
+        try { _fadeOutCompletionTimer?.Dispose(); } catch { }
+        try { _fadeOutPauseCompletionTimer?.Dispose(); } catch { }
+        _fadeOutCompletionTimer = null;
+        _fadeOutPauseCompletionTimer = null;
     }
 
     private void StopTrimEndTimer()
@@ -524,7 +589,7 @@ internal sealed class RmwChannel : IAudioChannel
                 }
             }
             catch { }
-        }, null, 100, 100);
+        }, null, 15, 15);
     }
 
     private void StopNearEndTimer()
@@ -539,9 +604,18 @@ internal sealed class RmwChannel : IAudioChannel
         StopAutoFadeOutTimer();
         try
         {
-            RaiseState(PlaybackState.Ended);
-            Ended?.Invoke(this, new ChannelEndedEventArgs { WasStoppedByUser = _userStopped });
+            bool wasStoppedByUser = _userStopped;
+            _userStopped = false;
+            NotifyEnded(wasStoppedByUser);
         }
+        catch { }
+    }
+
+    private void NotifyEnded(bool wasStoppedByUser)
+    {
+        if (Interlocked.Exchange(ref _endEventRaised, 1) != 0) return;
+        RaiseState(PlaybackState.Ended);
+        try { Ended?.Invoke(this, new ChannelEndedEventArgs { WasStoppedByUser = wasStoppedByUser }); }
         catch { }
     }
 
@@ -555,6 +629,7 @@ internal sealed class RmwChannel : IAudioChannel
         if (_disposed) return;
         _disposed = true;
 
+        CancelPendingFadeCompletions();
         StopTrimEndTimer();
         StopAutoFadeOutTimer();
         StopNearEndTimer();

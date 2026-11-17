@@ -85,7 +85,8 @@ public sealed class BassEngine : IAudioEngine
     }
 
     public IAudioBus PrimaryBus =>
-        _buses.FirstOrDefault()
+        _buses.FirstOrDefault(b => b.IsPrimary)
+        ?? _buses.FirstOrDefault()
         ?? throw new InvalidOperationException("El motor no tiene buses. Llamaste a Initialize?");
 
     public BassEngine()
@@ -193,6 +194,7 @@ public sealed class BassEngine : IAudioEngine
                     deviceManager: this);
 
                 primary.Initialize();
+                primary.IsPrimary = true;
                 _buses.Add(primary);
             }
             else
@@ -209,6 +211,7 @@ public sealed class BassEngine : IAudioEngine
                             sampleRate: sampleRate,
                             deviceManager: this);
 
+                        bus.IsPrimary = cfg.IsPrimary;
                         bus.MasterVolume = cfg.MasterVolume;
                         bus.Initialize();
                         _buses.Add(bus);
@@ -219,6 +222,11 @@ public sealed class BassEngine : IAudioEngine
                     }
                 }
             }
+
+            // Si el bus primario configurado no pudo inicializarse, elegir
+            // como primario el primero que sí quedó disponible.
+            if (_buses.Count > 0 && !_buses.Any(b => b.IsPrimary))
+                _buses[0].IsPrimary = true;
 
             _duckingProcessor = new DuckingProcessor(OnDuckingGainChanged);
 
@@ -254,7 +262,7 @@ public sealed class BassEngine : IAudioEngine
 
             var bus = _buses.FirstOrDefault(b => b.Id == busId);
             if (bus is null) return false;
-            if (bus == _buses[0]) return false;
+            if (bus.IsPrimary || bus == PrimaryBus) return false;
 
             _buses.Remove(bus);
             bus.Dispose();
@@ -318,8 +326,31 @@ public sealed class BassEngine : IAudioEngine
             }
 
             // Ultimo bus que lo usaba — liberar el dispositivo.
-            _deviceRefCounts.Remove(resolvedIndex);
-            try { Bass.Free(); } catch { }
+            int previousDevice = -1;
+            try
+            {
+                previousDevice = Bass.CurrentDevice;
+                if (previousDevice != resolvedIndex)
+                    Bass.CurrentDevice = resolvedIndex;
+
+                Bass.Free();
+                _deviceRefCounts.Remove(resolvedIndex);
+            }
+            catch
+            {
+                // No liberar la referencia del diccionario si no se pudo
+                // seleccionar/liberar el dispositivo correcto.
+                _deviceRefCounts[resolvedIndex] = 1;
+            }
+            finally
+            {
+                try
+                {
+                    if (previousDevice >= 0 && Bass.CurrentDevice != previousDevice)
+                        Bass.CurrentDevice = previousDevice;
+                }
+                catch { }
+            }
         }
     }
 

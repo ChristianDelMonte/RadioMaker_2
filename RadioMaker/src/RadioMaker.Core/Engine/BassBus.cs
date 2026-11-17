@@ -42,6 +42,7 @@ internal sealed class BassBus : IAudioBus
     private int _testToneEndSyncHandle;
 
     public string Id { get; }
+    public bool IsPrimary { get; internal set; }
     public string DisplayName { get; set; }
     public int DeviceIndex => _requestedDeviceIndex;
     public int ResolvedDeviceIndex => _resolvedDeviceIndex;
@@ -287,7 +288,12 @@ internal sealed class BassBus : IAudioBus
                 }
             }
 
-            var channel = new BassChannel(handle, filePath, Id, _masterVolume);
+            var channel = new BassChannel(
+                handle,
+                filePath,
+                Id,
+                _masterVolume,
+                onDisposed: ch => { lock (_gate) _channels.Remove(ch); });
 
             // Aplicar el volumen global vigente al canal nuevo.
             try { channel.SetGlobalVolume(_deviceManager.GlobalVolume); } catch { }
@@ -335,11 +341,7 @@ internal sealed class BassBus : IAudioBus
             _testToneEndSyncHandle = Bass.ChannelSetSync(
                 handle, SyncFlags.End, 0L, _testToneEndSync, IntPtr.Zero);
 
-            // El beep de emergencia suena a volumen MAXIMO, independiente
-            // del masterVolume del bus. Es una alarma: tiene que escucharse
-            // por encima de cualquier musica, incluso si el operador bajo
-            // el fader del aire.
-            Bass.ChannelSetAttribute(handle, ChannelAttribute.Volume, 1.0f);
+            Bass.ChannelSetAttribute(handle, ChannelAttribute.Volume, (float)GetTestToneVolume());
             Bass.ChannelPlay(handle, false);
         }
     }
@@ -405,10 +407,9 @@ internal sealed class BassBus : IAudioBus
             _testToneEndSyncHandle = Bass.ChannelSetSync(
                 handle, SyncFlags.End, 0L, _testToneEndSync, IntPtr.Zero);
 
-            // El beep respeta el master volume del bus + el global volume
-            // del engine (a traves del factor de _masterVolume que ya
-            // incluye el global).
-            Bass.ChannelSetAttribute(handle, ChannelAttribute.Volume, (float)_masterVolume);
+            // La amplitud del pulso y los volúmenes del bus/engine se aplican
+            // como ganancias separadas.
+            Bass.ChannelSetAttribute(handle, ChannelAttribute.Volume, (float)GetTestToneVolume());
             Bass.ChannelPlay(handle, false);
 
             AppLogger.Debug("EMERGENCY",
@@ -438,7 +439,7 @@ internal sealed class BassBus : IAudioBus
             }
 
             if (_testToneStream != 0)
-                Bass.ChannelSetAttribute(_testToneStream, ChannelAttribute.Volume, (float)clamped);
+                Bass.ChannelSetAttribute(_testToneStream, ChannelAttribute.Volume, (float)GetTestToneVolume());
         }
     }
 
@@ -477,7 +478,23 @@ internal sealed class BassBus : IAudioBus
             try { ch.SetGlobalVolume(volume); }
             catch { }
         }
+
+        lock (_gate)
+        {
+            if (_testToneStream != 0)
+            {
+                try
+                {
+                    Bass.ChannelSetAttribute(
+                        _testToneStream, ChannelAttribute.Volume, (float)GetTestToneVolume());
+                }
+                catch { }
+            }
+        }
     }
+
+    private double GetTestToneVolume() =>
+        Math.Clamp(_masterVolume * _deviceManager.GlobalVolume, 0.0, 1.0);
 
     // ----------------------------------------------------------------- Helpers
 

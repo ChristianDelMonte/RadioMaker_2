@@ -129,13 +129,13 @@
       <RMVoiceAddonDir>$(OutDir)Addons\RMVoice\</RMVoiceAddonDir>
     </PropertyGroup>
 
-    <ItemGroup Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe')">
+    <ItemGroup Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe') OR Exists('$(RMVoiceOutputDir)RMVoice')">
       <RMVoiceOutputFiles Include="$(RMVoiceOutputDir)**\*.*" Exclude="$(RMVoiceOutputDir)runtimes\**\bass*.*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(RMVoiceOutputFiles)" DestinationFolder="$(RMVoiceAddonDir)%(RecursiveDir)" SkipUnchangedFiles="true" Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe')" />
+    <Copy SourceFiles="@(RMVoiceOutputFiles)" DestinationFolder="$(RMVoiceAddonDir)%(RecursiveDir)" SkipUnchangedFiles="true" Condition="Exists('$(RMVoiceOutputDir)RMVoice.exe') OR Exists('$(RMVoiceOutputDir)RMVoice')" />
 
-    <Message Condition="!Exists('$(RMVoiceOutputDir)RMVoice.exe')" Text="RMVoice no compilado todavia. Addons/RMVoice quedara vacio. Verifica que el proyecto RMVoice exista y compile." Importance="high" />
+    <Message Condition="!Exists('$(RMVoiceOutputDir)RMVoice.exe') AND !Exists('$(RMVoiceOutputDir)RMVoice')" Text="RMVoice no compilado todavia. Addons/RMVoice quedara vacio. Verifica que el proyecto RMVoice exista y compile." Importance="high" />
   </Target>
 
   <!-- ═══════════════════════════════════════════════════════════════════ -->

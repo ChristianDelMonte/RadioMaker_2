@@ -40,6 +40,7 @@ internal sealed class BassChannel : IAudioChannel
 
     private bool _disposed;
     private volatile bool _userStopped;
+    private int _endEventRaised;
     private volatile bool _endTrimReached;
     private volatile bool _autoFadeOutActive;
 
@@ -58,6 +59,7 @@ internal sealed class BassChannel : IAudioChannel
     private BassLevelMeter? _meter;
     private BassEqualizer? _equalizer;
     private BassSpectrum? _spectrum;
+    private readonly Action<BassChannel>? _onDisposed;
 
     public event EventHandler<ChannelEndedEventArgs>? Ended;
     public event EventHandler<PlaybackState>? StateChanged;
@@ -121,12 +123,18 @@ internal sealed class BassChannel : IAudioChannel
         }
     }
 
-    internal BassChannel(int handle, string filePath, string busId, double busVolume)
+    internal BassChannel(
+        int handle,
+        string filePath,
+        string busId,
+        double busVolume,
+        Action<BassChannel>? onDisposed = null)
     {
         Handle = handle;
         FilePath = filePath;
         BusId = busId;
         _busVolume = busVolume;
+        _onDisposed = onDisposed;
         _endSync = OnEndSync;
         _fadeOutSlideSync = OnFadeOutSlideCompleted;
         _fadeOutPauseSync = OnFadeOutPauseCompleted;
@@ -145,6 +153,7 @@ internal sealed class BassChannel : IAudioChannel
     public bool Play()
     {
         if (_disposed) return false;
+        Interlocked.Exchange(ref _endEventRaised, 0);
         _userStopped = false;
         _endTrimReached = false;
         _autoFadeOutActive = false;
@@ -210,6 +219,7 @@ internal sealed class BassChannel : IAudioChannel
     public bool Stop()
     {
         if (_disposed) return false;
+        bool wasActive = State is PlaybackState.Playing or PlaybackState.Paused or PlaybackState.Stalled;
         _userStopped = true;
         _endTrimReached = false;
         _autoFadeOutActive = false;
@@ -230,6 +240,7 @@ internal sealed class BassChannel : IAudioChannel
 
             ApplyCombinedVolume();
             RaiseState(PlaybackState.Stopped);
+            if (wasActive) NotifyEnded(wasStoppedByUser: true);
         }
         return ok;
     }
@@ -311,10 +322,7 @@ internal sealed class BassChannel : IAudioChannel
         _fadeOutCallback = () =>
         {
             if (!_endTrimReached)
-            {
-                RaiseState(PlaybackState.Ended);
-                Ended?.Invoke(this, new ChannelEndedEventArgs { WasStoppedByUser = false });
-            }
+                NotifyEnded(wasStoppedByUser: false);
         };
 
         if (_fadeOutSyncHandle != 0)
@@ -514,8 +522,7 @@ internal sealed class BassChannel : IAudioChannel
         }
         catch { }
 
-        RaiseState(PlaybackState.Ended);
-        Ended?.Invoke(this, new ChannelEndedEventArgs { WasStoppedByUser = false });
+        NotifyEnded(wasStoppedByUser: false);
     }
 
     public void SetCrossfade(double crossfadeSeconds)
@@ -697,13 +704,16 @@ internal sealed class BassChannel : IAudioChannel
 
         _userVolume = Math.Clamp(targetVolume, 0.0, 1.0);
         float target = (float)ComputeCombinedVolume();
+        bool needsStart = Bass.ChannelIsActive(Handle) != ManagedBass.PlaybackState.Playing;
+        if (needsStart)
+            Interlocked.Exchange(ref _endEventRaised, 0);
 
         Bass.ChannelSetAttribute(Handle, ChannelAttribute.Volume, 0f);
 
         bool ok = Bass.ChannelSlideAttribute(
             Handle, ChannelAttribute.Volume, target, Math.Max(1, durationMs));
 
-        if (ok && Bass.ChannelIsActive(Handle) != ManagedBass.PlaybackState.Playing)
+        if (ok && needsStart)
         {
             if (!preservePosition && _trimStart > TimeSpan.Zero)
             {
@@ -858,6 +868,7 @@ internal sealed class BassChannel : IAudioChannel
 
         try { _equalizer?.Dispose(); } catch { }
         try { Bass.StreamFree(Handle); } catch { }
+        try { _onDisposed?.Invoke(this); } catch { }
     }
 
     // ------------------------------------------------------------ Helpers
@@ -870,8 +881,15 @@ internal sealed class BassChannel : IAudioChannel
         bool userStopped = _userStopped;
         _userStopped = false;
 
-        RaiseState(PlaybackState.Ended);
-        Ended?.Invoke(this, new ChannelEndedEventArgs { WasStoppedByUser = userStopped });
+        NotifyEnded(userStopped);
+    }
+
+    private void NotifyEnded(bool wasStoppedByUser)
+    {
+        if (Interlocked.Exchange(ref _endEventRaised, 1) != 0) return;
+        try { RaiseState(PlaybackState.Ended); } catch { }
+        try { Ended?.Invoke(this, new ChannelEndedEventArgs { WasStoppedByUser = wasStoppedByUser }); }
+        catch { }
     }
 
     private void RaiseState(PlaybackState state) => StateChanged?.Invoke(this, state);

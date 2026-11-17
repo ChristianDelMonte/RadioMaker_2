@@ -14,6 +14,9 @@ public interface IAudioBus : IDisposable
     /// <summary>Identificador inmutable del bus.</summary>
     string Id { get; }
 
+    /// <summary>Indica si este es el bus predeterminado para reproducción sin ruta explícita.</summary>
+    bool IsPrimary => false;
+
     /// <summary>Nombre visible, editable en tiempo de ejecucion.</summary>
     string DisplayName { get; set; }
 

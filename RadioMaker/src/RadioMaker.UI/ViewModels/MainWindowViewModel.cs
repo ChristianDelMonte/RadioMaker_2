@@ -1079,9 +1079,19 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         try
         {
             if (RadioMaker.UI.Demo.DemoStateStore.IsCompleted())
+            {
+                _logService.Debug("DEMO", "Presentación ya completada, se saltea.");
                 return;
+            }
 
-            RadioMaker.UI.Demo.DemoStateStore.MarkCompleted();
+            // Marcar como completada INMEDIATAMENTE.
+            var marked = RadioMaker.UI.Demo.DemoStateStore.MarkCompleted();
+            if (!marked)
+            {
+                _logService.Warning("DEMO",
+                    "No se pudo guardar el estado de la demo. " +
+                    "Es posible que vuelva a aparecer la próxima vez.");
+            }
 
             var demoService = new RadioMaker.UI.Demo.DemoService(_engine);
             if (!demoService.TryLoad())
@@ -1092,13 +1102,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
             _demoService = demoService;
             Demo = new RadioMaker.UI.Demo.DemoViewModel(demoService);
-
-            // Cuando la demo se activa, arrancar los timers de VU/Spectrum
-            // para que el audio se refleje visualmente. Cuando termina,
-            // parar los timers solo si nada más está sonando.
             Demo.PropertyChanged += OnDemoPropertyChanged;
 
-            // Si ya arrancó activa (caso normal), arrancar timers ya.
             if (Demo.IsActive)
             {
                 if (!_positionTimer.IsEnabled) _positionTimer.Start();
@@ -1199,21 +1204,35 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         // 2) Canal del scheduler.
         try { list.AddRange(_playback.GetActiveChannels()); } catch { }
 
-        // 3) Canales de TODAS las playlists (una por pestaña).
+        // 3) Playlist principal.
+        try { list.AddRange(_playlistPlayer.GetActiveChannels()); } catch { }
+
+        // 4) Canales de playlists adicionales (una por pestaña).
         // ── FASE B
         foreach (var p in _playlistPlayers)
         {
             try { list.AddRange(p.GetActiveChannels()); } catch { }
         }
 
-        // 4) Canales de la botonera principal.
+        // 5) Canales de la botonera principal.
         try { list.AddRange(_cartPlayer.GetActiveChannels()); } catch { }
 
-        // 5) Canales de las botoneras extras.
+        // 6) Canales de las botoneras extras.
         foreach (var p in _extraCartPlayers)
         {
             try { list.AddRange(p.GetActiveChannels()); } catch { }
         }
+
+        // 7) Playlist interna del watchdog de emergencia.
+        try { list.AddRange(_emergency.GetActiveChannels()); } catch { }
+
+        // 8) Audio de la demo de bienvenida, si está reproduciendo.
+        try
+        {
+            var demoChannel = Demo?.GetCurrentChannel();
+            if (demoChannel is not null) list.Add(demoChannel);
+        }
+        catch { }
 
         return list;
     }
@@ -1846,23 +1865,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            // Reunir todos los canales activos.
-            var channels = new List<IAudioChannel?>();
-
-            // 1) Canal manual (boton "Examinar..." del panel central).
-            channels.Add(_currentChannel);
-
-            // 2) Canal del scheduler (PlaybackEngine).
-            try { channels.AddRange(_playback.GetActiveChannels()); } catch { }
-
-            // 3) Canales de la playlist (principal + mixado).
-            try { channels.AddRange(_playlistPlayer.GetActiveChannels()); } catch { }
-
-            // 4) Canales de la botonera (todos los botones sonando).
-            try { channels.AddRange(_cartPlayer.GetActiveChannels()); } catch { }
-
-            // Reaplicar la configuracion a todos.
-            _configurator.ReapplyToAll(channels);
+            // Usar el inventario común: incluye todas las playlists, carts,
+            // canales del scheduler y reproducciones auxiliares.
+            _configurator.ReapplyToAll(GetAllActiveChannels());
         }
         catch (Exception ex)
         {
@@ -2069,9 +2074,18 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             _positionTimer.Stop();
             _meterTimer.Stop();
-            Position = Duration;
-            PlaybackState = PlaybackState.Ended;
-            StatusMessage = e.WasStoppedByUser ? "Detenido por el usuario." : "Fin.";
+            if (e.WasStoppedByUser)
+            {
+                Position = TimeSpan.Zero;
+                PlaybackState = PlaybackState.Stopped;
+                StatusMessage = "Detenido por el usuario.";
+            }
+            else
+            {
+                Position = Duration;
+                PlaybackState = PlaybackState.Ended;
+                StatusMessage = "Fin.";
+            }
             RefreshCommandStates();
         });
     }

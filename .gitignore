@@ -69,3 +69,4 @@ workspace.json
 profiles.json
 settings.json
 *.rmt
+*.txt

@@ -1,4 +1,3 @@
-using ManagedBass;
 using RMVoice.Core;
 using RMVoice.Core.Models;
 using RadioMaker.Core.Logging;
@@ -127,34 +126,18 @@ public sealed class LocutionService : IDisposable
 
         try
         {
-            // Aseguramos que el CurrentDevice del hilo actual apunte al
-            // device objetivo, así si RMVoice crea streams nuevos van ahí.
-            // (ChannelSetDevice interno también lo hace, pero por las dudas.)
-            int previous = Bass.CurrentDevice;
-            try
+            var request = new AnnounceRequest
             {
-                if (deviceIndex >= 0 && previous != deviceIndex)
-                    Bass.CurrentDevice = deviceIndex;
+                Content = content,
+                DeviceIndex = deviceIndex,
+                Volume = Math.Clamp(volume, 0f, 1f)
+            };
 
-                var request = new AnnounceRequest
-                {
-                    Content = content,
-                    DeviceIndex = deviceIndex,
-                    Volume = Math.Clamp(volume, 0f, 1f)
-                };
-
-                await announcer.PlayAsync(request, ct).ConfigureAwait(false);
-                return true;
-            }
-            finally
-            {
-                try
-                {
-                    if (Bass.CurrentDevice != previous)
-                        Bass.CurrentDevice = previous;
-                }
-                catch { }
-            }
+            // RMVoice recibe el dispositivo explícitamente y lo aplica a sus
+            // streams. CurrentDevice es estado local al hilo y no debe
+            // mantenerse cambiado a través de un await.
+            await announcer.PlayAsync(request, ct).ConfigureAwait(false);
+            return true;
         }
         catch (OperationCanceledException)
         {

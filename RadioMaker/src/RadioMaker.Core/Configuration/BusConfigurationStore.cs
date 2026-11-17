@@ -39,8 +39,10 @@ public static class BusConfigurationStore
                 if (list is { Count: > 0 })
                 {
                     // Garantizar que exista exactamente un bus primario.
-                    if (!list.Any(b => b.IsPrimary))
-                        list[0].IsPrimary = true;
+                    int primaryIndex = list.FindIndex(b => b.IsPrimary);
+                    if (primaryIndex < 0) primaryIndex = 0;
+                    for (int i = 0; i < list.Count; i++)
+                        list[i].IsPrimary = i == primaryIndex;
 
                     return list;
                 }

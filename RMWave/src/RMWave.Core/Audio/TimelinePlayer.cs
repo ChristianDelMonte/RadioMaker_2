@@ -82,6 +82,7 @@ public sealed class TimelinePlayer : IDisposable
     private readonly object _stateLock = new();
 
     private int _mixer;
+    private int _deviceId = -1;
     private volatile bool _initialized;
     private volatile bool _isPlaying;
     private int _disposeState;
@@ -173,11 +174,8 @@ public sealed class TimelinePlayer : IDisposable
                 catch { return false; }
             }
 
-            _mixer = BassMix.CreateMixerStream(SampleRate, Channels,
-                BassFlags.Float | BassFlags.MixerNonStop);
-            if (_mixer == 0)
-                _mixer = BassMix.CreateMixerStream(SampleRate, Channels,
-                    BassFlags.Default | BassFlags.MixerNonStop);
+            _deviceId = Bass.CurrentDevice;
+            _mixer = CreateOutputMixer();
 
             if (_mixer == 0)
             {
@@ -221,11 +219,8 @@ public sealed class TimelinePlayer : IDisposable
                 return false;
             }
 
-            _mixer = BassMix.CreateMixerStream(SampleRate, Channels,
-                BassFlags.Float | BassFlags.MixerNonStop);
-            if (_mixer == 0)
-                _mixer = BassMix.CreateMixerStream(SampleRate, Channels,
-                    BassFlags.Default | BassFlags.MixerNonStop);
+            _deviceId = Bass.CurrentDevice;
+            _mixer = CreateOutputMixer();
 
             if (_mixer == 0) { Bass.Free(); _initialized = false; return false; }
 
@@ -268,11 +263,7 @@ public sealed class TimelinePlayer : IDisposable
 
             if (_initialized)
             {
-                _mixer = BassMix.CreateMixerStream(SampleRate, Channels,
-                    BassFlags.Float | BassFlags.MixerNonStop);
-                if (_mixer == 0)
-                    _mixer = BassMix.CreateMixerStream(SampleRate, Channels,
-                        BassFlags.Default | BassFlags.MixerNonStop);
+                _mixer = CreateOutputMixer();
             }
         }
     }
@@ -752,14 +743,37 @@ public sealed class TimelinePlayer : IDisposable
         if (_mixer != 0) { FreeClipStream(_mixer); _mixer = 0; }
         _seekOffset = seconds;
 
-        _mixer = BassMix.CreateMixerStream(SampleRate, Channels,
-            BassFlags.Float | BassFlags.MixerNonStop);
-        if (_mixer == 0)
-            _mixer = BassMix.CreateMixerStream(SampleRate, Channels,
-                BassFlags.Default | BassFlags.MixerNonStop);
+        _mixer = CreateOutputMixer();
 
         if (_mixer == 0) return;
         RebuildActiveClips(seconds);
+    }
+
+    /// <summary>
+    /// Crea el mixer de salida en el dispositivo con el que se inicializó
+    /// este player. BASS.CurrentDevice es local al hilo y las recreaciones
+    /// pueden ocurrir desde hilos distintos al que llamó Init().
+    /// </summary>
+    private int CreateOutputMixer()
+    {
+        int previousDevice = Bass.CurrentDevice;
+        try
+        {
+            if (_deviceId >= 0 && previousDevice != _deviceId)
+                Bass.CurrentDevice = _deviceId;
+
+            int mixer = BassMix.CreateMixerStream(SampleRate, Channels,
+                BassFlags.Float | BassFlags.MixerNonStop);
+            if (mixer == 0)
+                mixer = BassMix.CreateMixerStream(SampleRate, Channels,
+                    BassFlags.Default | BassFlags.MixerNonStop);
+            return mixer;
+        }
+        finally
+        {
+            if (Bass.CurrentDevice != previousDevice)
+                Bass.CurrentDevice = previousDevice;
+        }
     }
 
     private void RebuildActiveClips(double time)

@@ -1,50 +1,26 @@
 using System;
 using System.IO;
-using System.Text.Json;
 
 namespace RadioMaker.UI.Demo;
 
-/// <summary>
-/// Persistencia del estado de la presentación inicial.
-/// Archivo: %AppData%/RadioMaker/demo-state.json
-///
-/// Independiente de AppSettings (que vive en RMVoice.Core y maneja clima).
-/// Separar responsabilidades evita acoplar la UI de RadioMaker al modelo
-/// del motor de locuciones.
-/// </summary>
 public static class DemoStateStore
 {
-    private static readonly JsonSerializerOptions Options = new()
-    {
-        WriteIndented = true
-    };
-
     public static string ConfigPath { get; } = BuildPath();
 
     /// <summary>
-    /// True si el usuario ya completó la presentación inicial.
-    /// Default: false (primera vez).
+    /// True si ya se completó la presentación. Verifica la existencia
+    /// del archivo marcador (no su contenido): si el archivo existe,
+    /// la demo ya se mostró. Sin JSON, sin deserialización, sin riesgo
+    /// de errores de parseo.
     /// </summary>
-    public static bool IsCompleted()
-    {
-        try
-        {
-            if (!File.Exists(ConfigPath)) return false;
-            var json = File.ReadAllText(ConfigPath);
-            var state = JsonSerializer.Deserialize<DemoState>(json, Options);
-            return state?.Completed ?? false;
-        }
-        catch
-        {
-            return false;
-        }
-    }
+    public static bool IsCompleted() => File.Exists(ConfigPath);
 
     /// <summary>
-    /// Marca la demo como completada. Llamar al arrancarla (no al terminarla)
-    /// para garantizar que se vea exactamente una vez.
+    /// Marca como completada creando el archivo marcador.
+    /// Se llama al ARRANCAR la demo (no al terminar), garantizando que
+    /// se vea exactamente una vez incluso si el usuario cierra o crashea.
     /// </summary>
-    public static void MarkCompleted()
+    public static bool MarkCompleted()
     {
         try
         {
@@ -52,16 +28,17 @@ public static class DemoStateStore
             if (!string.IsNullOrEmpty(dir))
                 Directory.CreateDirectory(dir);
 
-            var state = new DemoState { Completed = true };
-            File.WriteAllText(ConfigPath, JsonSerializer.Serialize(state, Options));
+            File.WriteAllText(ConfigPath,
+                $"Demo completed at {DateTime.UtcNow:O}");
+            return true;
         }
         catch
         {
-            // Best-effort. Si falla, la demo vuelve a aparecer la próxima vez.
+            return false;
         }
     }
 
-    /// <summary>Borra el estado (para testing: permite volver a ver la demo).</summary>
+    /// <summary>Borra el archivo (para testing: permite volver a ver la demo).</summary>
     public static void Reset()
     {
         try
@@ -77,12 +54,6 @@ public static class DemoStateStore
         var root = Environment.GetFolderPath(
             Environment.SpecialFolder.ApplicationData,
             Environment.SpecialFolderOption.Create);
-        return Path.Combine(root, "RadioMaker", "demo-state.json");
-    }
-
-    private sealed class DemoState
-    {
-        public int Version { get; set; } = 1;
-        public bool Completed { get; set; }
+        return Path.Combine(root, "RadioMaker", "demo-completed.flag");
     }
 }

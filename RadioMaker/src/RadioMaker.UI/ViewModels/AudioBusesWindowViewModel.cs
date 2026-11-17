@@ -35,8 +35,7 @@ public sealed partial class AudioBusesWindowViewModel : ViewModelBase
         for (int i = 0; i < list.Count; i++)
         {
             var bus = list[i];
-            var isPrimary = i == 0;
-            var vm = new BusViewModel(bus, isPrimary, _engine.EnumerateDevices);
+            var vm = new BusViewModel(bus, bus.IsPrimary, _engine.EnumerateDevices);
             vm.RemoveRequested += OnRemoveRequested;
             Buses.Add(vm);
         }
@@ -105,7 +104,7 @@ public sealed partial class AudioBusesWindowViewModel : ViewModelBase
                 DisplayName = vm.DisplayName,
                 DeviceIndex = vm.SelectedDevice?.Index ?? -1,
                 MasterVolume = vm.MasterVolume,
-                IsPrimary = i == 0
+                IsPrimary = vm.IsPrimary
             });
         }
         return list;
