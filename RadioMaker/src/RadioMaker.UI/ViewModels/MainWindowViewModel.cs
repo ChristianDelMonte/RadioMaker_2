@@ -692,6 +692,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 catch { }
 
                 try { _cartPlayer?.ReapplyToMatchingChannels(filePath); } catch { }
+                foreach (var cart in _extraCartPlayers)
+                {
+                    try { cart.ReapplyToMatchingChannels(filePath); } catch { }
+                }
             });
         };
 
@@ -1491,6 +1495,19 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 }
                 break;
         }
+
+        // La playlist puede reanudarse después de que el Scheduler haya
+        // pasado a Idle y detenido los timers. Su evento Playing debe
+        // reactivarlos y volver a enlazar inmediatamente el canal del VU y
+        // del Spectrum.
+        if (state.Status == PlaylistPlayerStatus.Playing)
+        {
+            if (!_positionTimer.IsEnabled) _positionTimer.Start();
+            if (!_meterTimer.IsEnabled) _meterTimer.Start();
+        }
+
+        SyncPlaybackState();
+        try { UpdateSpectrumChannel(); } catch { }
     }
 
     private void OnCartButtonStateChanged(object? sender, CartButtonPlaybackEvent e)
@@ -1759,6 +1776,18 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         Dispatcher.UIThread.Post(() =>
         {
             HandlePlaylistCoexistence(sender as PlaylistPlayer, state);
+
+            // La transición Scheduler → Idle puede apagar ambos timers
+            // justo antes de que llegue la notificación de reanudación de
+            // la playlist. Reactivarlos desde su estado Playing evita que
+            // el VU quede congelado y fuerza la reconexión del Spectrum.
+            if (state.Status == PlaylistPlayerStatus.Playing)
+            {
+                if (!_positionTimer.IsEnabled) _positionTimer.Start();
+                if (!_meterTimer.IsEnabled) _meterTimer.Start();
+            }
+
+            try { UpdateSpectrumChannel(); } catch { }
             SyncPlaybackState();
         });
         UpdateTabLiveStates();
@@ -1868,6 +1897,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             // Usar el inventario común: incluye todas las playlists, carts,
             // canales del scheduler y reproducciones auxiliares.
             _configurator.ReapplyToAll(GetAllActiveChannels());
+
+            // Reaplicar configuración puede reemplazar la ganancia de
+            // normalización; restaurar el offset propio de cada botón cart.
+            try { _cartPlayer.ReapplyLiveVolumeOffsets(_configurator.IsAnalysisPending); } catch { }
+            foreach (var cart in _extraCartPlayers)
+            {
+                try { cart.ReapplyLiveVolumeOffsets(_configurator.IsAnalysisPending); } catch { }
+            }
         }
         catch (Exception ex)
         {
@@ -1964,6 +2001,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             StatusMessage = "Reproduciendo.";
             _logService.Info("Player", "Reproduciendo manual.");
             LastError = string.Empty;
+            SyncPlaybackState();
             RefreshCommandStates();
         }
         catch (Exception ex) { LastError = ex.Message; _logService.Error("Player", "Error en Play", ex); }
@@ -1977,6 +2015,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _positionTimer.Stop();
             _meterTimer.Stop();
             StatusMessage = "Pausado.";
+            SyncPlaybackState();
             RefreshCommandStates();
         }
         catch (Exception ex) { LastError = ex.Message; }
@@ -1992,6 +2031,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             Position = TimeSpan.Zero;
             ResetMeter();
             StatusMessage = "Detenido.";
+            SyncPlaybackState();
             RefreshCommandStates();
         }
         catch (Exception ex) { LastError = ex.Message; }
@@ -2027,6 +2067,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             StatusMessage = $"Cargado: {Path.GetFileName(filePath)}";
             _logService.Info("Player", $"Cargado: {Path.GetFileName(filePath)}");
             LastError = string.Empty;
+            SyncPlaybackState();
             RefreshCommandStates();
         }
         catch (Exception ex)
@@ -2086,13 +2127,18 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 PlaybackState = PlaybackState.Ended;
                 StatusMessage = "Fin.";
             }
+            SyncPlaybackState();
             RefreshCommandStates();
         });
     }
 
     private void OnChannelStateChanged(object? sender, PlaybackState state)
     {
-        Dispatcher.UIThread.Post(() => { PlaybackState = state; RefreshCommandStates(); });
+        Dispatcher.UIThread.Post(() =>
+        {
+            SyncPlaybackState();
+            RefreshCommandStates();
+        });
     }
 
     // ═════════════════════════════════════════════════════════════════════
@@ -2722,17 +2768,84 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            var activeState = ActiveChannel?.State ?? PlaybackState.Stopped;
+            bool anyPlaying = false;
+            bool anyPaused = false;
+            bool anyStalled = false;
 
-            // Solo override si estabamos en un estado "activo".
-            bool wasActive = PlaybackState == PlaybackState.Playing
-                             || PlaybackState == PlaybackState.Paused;
-
-            if (wasActive && PlaybackState != activeState)
+            // Revisar el estado real de todos los canales conocidos. Un
+            // canal manual cargado pero detenido no debe ocultar otra fuente
+            // que esté reproduciendo.
+            foreach (var channel in GetAllActiveChannels())
             {
-                PlaybackState = activeState;
-                RefreshCommandStates();
+                if (channel is null) continue;
+                try
+                {
+                    switch (channel.State)
+                    {
+                        case PlaybackState.Playing:
+                            anyPlaying = true;
+                            break;
+                        case PlaybackState.Paused:
+                            anyPaused = true;
+                            break;
+                        case PlaybackState.Stalled:
+                            anyStalled = true;
+                            break;
+                    }
+                }
+                catch { }
             }
+
+            // Algunas locuciones no exponen IAudioChannel. Consultar el
+            // estado lógico del Scheduler/Playlist y el servicio de voz.
+            if (_currentPlaybackInfo.Kind == PlaybackStateKind.Playing ||
+                _locution.IsPlaying)
+                anyPlaying = true;
+
+            var playlistPlayers = new List<PlaylistPlayer> { _playlistPlayer };
+            playlistPlayers.AddRange(_playlistPlayers);
+            foreach (var player in playlistPlayers)
+            {
+                try
+                {
+                    if (player.IsPlayingNow ||
+                        player.CurrentStatus is PlaylistPlayerStatus.Playing or PlaylistPlayerStatus.Delaying)
+                    {
+                        anyPlaying = true;
+                    }
+                    else if (player.CurrentStatus is PlaylistPlayerStatus.Paused or PlaylistPlayerStatus.PausedByScheduler)
+                        anyPaused = true;
+                }
+                catch { }
+            }
+
+            if (_currentPlaybackInfo.Kind == PlaybackStateKind.Suspended)
+                anyPaused = true;
+
+            try { anyPaused |= _cartPlayer.HasSuspendedChannels; } catch { }
+            foreach (var cart in _extraCartPlayers)
+            {
+                try { anyPaused |= cart.HasSuspendedChannels; } catch { }
+            }
+
+            // Si hay varias fuentes simultáneas, el estado audible tiene
+            // prioridad sobre otra fuente pausada/suspendida.
+            var resolved = anyPlaying
+                ? PlaybackState.Playing
+                : anyPaused
+                    ? PlaybackState.Paused
+                    : anyStalled
+                        ? PlaybackState.Stalled
+                        : PlaybackState.Stopped;
+
+            // Mantener el aviso de fin hasta que comience otra reproducción
+            // o el usuario detenga/cargue otro canal.
+            if (resolved == PlaybackState.Stopped && PlaybackState == PlaybackState.Ended)
+                return;
+
+            if (PlaybackState == resolved) return;
+            PlaybackState = resolved;
+            RefreshCommandStates();
         }
         catch { }
     }

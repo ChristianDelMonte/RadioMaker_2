@@ -362,7 +362,10 @@ internal sealed class BassChannel : IAudioChannel
         }
         catch { }
 
-        if (trimStart + trimEnd >= total)
+        // Si BASS todavía no conoce la duración, conservar el trim. Play()
+        // vuelve a intentar registrar el recorte final cuando la metadata
+        // ya está disponible.
+        if (total > TimeSpan.Zero && trimStart + trimEnd >= total)
         {
             try
             {

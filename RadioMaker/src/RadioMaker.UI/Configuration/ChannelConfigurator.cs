@@ -38,6 +38,9 @@ public sealed class ChannelConfigurator
 
     public Action<string>? AnalysisCompleted { get; set; }
 
+    public bool IsAnalysisPending(string filePath) =>
+        !string.IsNullOrWhiteSpace(filePath) && _pendingAnalysis.ContainsKey(filePath);
+
     public ChannelConfigurator(
         EqualizerSettings eqSettings,
         SilencePanelSettings silenceSettings,
@@ -119,8 +122,28 @@ public sealed class ChannelConfigurator
         //    analizar en background. Este es el unico caso que sigue siendo
         //    async. Con el Prewarm de la proxima pista (ya implementado),
         //    solo afecta al primer track de la sesion.
-        if (_pendingAnalysis.ContainsKey(filePath))
+        if (_pendingAnalysis.TryGetValue(filePath, out var pendingAnalysis))
+        {
+            // Un Prewarm puede estar analizando este archivo cuando empieza
+            // la primera reproducción. No bloquear el Play ni abandonar el
+            // canal: aplicar trim/norm al terminar el análisis.
+            _ = pendingAnalysis.ContinueWith(
+                _ =>
+                {
+                    if (!string.Equals(channel.FilePath, filePath, StringComparison.OrdinalIgnoreCase))
+                        return;
+                    if (!_cache.TryGetValue(filePath, out var ready))
+                        return;
+
+                    ApplyTrim(channel, ready.Silence, sourceCategory, fileName, logDetails: false);
+                    ApplyNormalization(channel, ready.Levels, sourceCategory, fileName, logDetails: false);
+                    try { AnalysisCompleted?.Invoke(filePath); } catch { }
+                },
+                CancellationToken.None,
+                TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
             return;
+        }
 
         var task = LoadOrAnalyzeInBackgroundAsync(channel, filePath, sourceCategory);
         _pendingAnalysis[filePath] = task;

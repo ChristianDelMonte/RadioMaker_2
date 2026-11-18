@@ -48,14 +48,16 @@ public class RecordingEngine : IDisposable
         // Se ejecuta en el hilo de grabación de BASS.
         _recordProc = (handle, buffer, length, user) =>
         {
-            if (_recordStream != null && length > 0)
+            if (length > 0)
             {
                 byte[] data = new byte[length];
                 Marshal.Copy(buffer, data, 0, length);
 
                 lock (_streamLock)
                 {
-                    _recordStream.Write(data, 0, length);
+                    // El stream puede liberarse entre callbacks; comprobarlo
+                    // dentro del mismo lock que protege su disposición.
+                    _recordStream?.Write(data, 0, length);
                 }
             }
             return true; // continuar grabando
@@ -148,9 +150,10 @@ public class RecordingEngine : IDisposable
         // Escribir el WAV al archivo.
         lock (_streamLock)
         {
-            if (_recordStream != null && _recordStream.Length > 0 && !string.IsNullOrEmpty(OutputFilePath))
+            if (_recordStream is { Length: > 0 } recordingStream &&
+                !string.IsNullOrEmpty(OutputFilePath))
             {
-                WriteWavFile(OutputFilePath);
+                WriteWavFile(OutputFilePath, recordingStream);
             }
         }
     }
@@ -159,11 +162,11 @@ public class RecordingEngine : IDisposable
     /// Escribe el buffer de grabación como un archivo WAV PCM 16-bit.
     /// Mismo formato que el ejemplo oficial rectest.c.
     /// </summary>
-    private void WriteWavFile(string path)
+    private void WriteWavFile(string path, MemoryStream recordingStream)
     {
         try
         {
-            int dataSize = (int)_recordStream.Length;
+            int dataSize = (int)recordingStream.Length;
             int byteRate = SampleRate * Channels * 2;
             short blockAlign = (short)(Channels * 2);
 
@@ -188,7 +191,7 @@ public class RecordingEngine : IDisposable
             // data chunk
             writer.Write(Encoding.ASCII.GetBytes("data"));
             writer.Write(dataSize);
-            writer.Write(_recordStream.ToArray());
+            writer.Write(recordingStream.ToArray());
         }
         catch (Exception ex)
         {

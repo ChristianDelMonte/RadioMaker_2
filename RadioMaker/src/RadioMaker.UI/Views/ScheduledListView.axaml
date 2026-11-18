@@ -178,9 +178,9 @@
                                         <MenuItem Header="Eliminar" Click="OnContextDeleteClick" />
                                     </ContextMenu>
                                 </Border.ContextMenu>
-                                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*,Auto,Auto">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*,Auto,Auto">
 
-                                    <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0"
+                                    <Border Grid.Row="0" Grid.RowSpan="4" Grid.Column="0"
                                             Background="{Binding PriorityColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
                                             Width="3" Margin="0,0,8,0"
                                             CornerRadius="2" />
@@ -224,13 +224,21 @@
                                                Margin="0,3,0,0" />
 
                                     <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                               Text="{Binding ScheduleSummaryText}"
+                                               FontSize="9"
+                                               FontFamily="Consolas"
+                                               Foreground="{DynamicResource AccentText}"
+                                               TextTrimming="CharacterEllipsis"
+                                               Margin="0,1,0,0" />
+
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
                                                Text="{Binding PathText}"
                                                FontSize="9"
                                                Foreground="{DynamicResource FgMuted}"
                                                TextTrimming="CharacterEllipsis"
                                                Margin="0,1,0,0" />
 
-                                    <StackPanel Grid.Row="0" Grid.RowSpan="3" Grid.Column="3"
+                                    <StackPanel Grid.Row="0" Grid.RowSpan="4" Grid.Column="3"
                                                 Classes="reorder-controls"
                                                 Orientation="Vertical"
                                                 Spacing="2"

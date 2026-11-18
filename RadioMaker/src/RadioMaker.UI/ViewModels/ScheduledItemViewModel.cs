@@ -296,6 +296,72 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         }
     }
 
+    /// <summary>
+    /// Resumen del horario configurado y de la próxima salida. La salida se
+    /// calcula entre todas las entradas habilitadas usando la hora local.
+    /// </summary>
+    public string ScheduleSummaryText
+    {
+        get
+        {
+            var activeEntries = Entries
+                .Where(e => e.IsEnabled && e.Source.Days is { Count: > 0 })
+                .ToList();
+            if (activeEntries.Count == 0) return "Sin horarios activos";
+
+            var dayNames = new Dictionary<DayOfWeek, string>
+            {
+                [DayOfWeek.Monday] = "Lun", [DayOfWeek.Tuesday] = "Mar",
+                [DayOfWeek.Wednesday] = "Mié", [DayOfWeek.Thursday] = "Jue",
+                [DayOfWeek.Friday] = "Vie", [DayOfWeek.Saturday] = "Sáb",
+                [DayOfWeek.Sunday] = "Dom"
+            };
+            var days = activeEntries
+                .SelectMany(e => e.Source.Days)
+                .Distinct()
+                .OrderBy(day => ((int)day + 6) % 7)
+                .Select(day => dayNames.GetValueOrDefault(day, day.ToString()));
+            var daysText = string.Join("/", days);
+
+            var now = DateTime.Now;
+            DateTime? next = null;
+            foreach (var entry in activeEntries)
+            {
+                foreach (var day in entry.Source.Days)
+                {
+                    for (var offset = 0; offset <= 7; offset++)
+                    {
+                        var date = now.Date.AddDays(offset);
+                        if (date.DayOfWeek != day) continue;
+
+                        var occurrence = date.AddHours(entry.Hour).AddMinutes(entry.Minute);
+                        if (occurrence <= now) continue;
+                        if (next is null || occurrence < next.Value) next = occurrence;
+                        break;
+                    }
+                }
+            }
+
+            if (next is null) return $"Días: {daysText}  ·  Sin próxima salida";
+
+            var duration = TotalDurationSeconds;
+            var endText = "--:--";
+            if (duration > 0.5)
+            {
+                var end = next.Value.AddSeconds(duration);
+                var dayOffset = (end.Date - next.Value.Date).Days;
+                endText = dayOffset > 0
+                    ? $"{end:HH:mm} (+{dayOffset}d)"
+                    : end.ToString("HH:mm");
+            }
+
+            return $"Días: {daysText}  ·  Sale: {next.Value:HH:mm}  ·  Fin: {endText}";
+        }
+    }
+
+    /// <summary>Refresca el texto horario cuando cambia el reloj.</summary>
+    public void RefreshScheduleDisplay() => OnPropertyChanged(nameof(ScheduleSummaryText));
+
     public string TandaName
     {
         get => _item.EmbeddedTanda?.Name ?? "Nueva Tanda";
@@ -1163,6 +1229,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
     private void OnEntryChanged(object? sender, EventArgs e)
     {
         OnPropertyChanged(nameof(EntriesSummary));
+        OnPropertyChanged(nameof(ScheduleSummaryText));
         NotifyChanged();
     }
 

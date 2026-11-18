@@ -43,6 +43,9 @@ public sealed class CartBoardPlayer : IDisposable
     /// <summary>Mapa buttonId -> canal actualmente sonando por ese boton.</summary>
     private readonly Dictionary<string, IAudioChannel> _activeChannels = new();
     private readonly Dictionary<string, IAudioChannel> _suspendedChannels = new();
+    // Volumen propio aplicado a cada botón, separado de la normalización.
+    private readonly Dictionary<string, double> _activeButtonVolumeDb = new();
+    private readonly Dictionary<string, double> _activeButtonBaseGainDb = new();
 
     // ───── Configuracion de crossfade ────────────────────────────────────
 
@@ -323,12 +326,12 @@ public sealed class CartBoardPlayer : IDisposable
                     try { ConfigureChannel?.Invoke(channel, button.FilePath, true); } catch { }
 
                     // Volumen adicional del boton.
+                    double baseNormalizationGainDb = channel.NormalizationGainDb;
                     if (Math.Abs(button.VolumeDb) > 0.01)
                     {
                         try
                         {
-                            double currentNorm = channel.NormalizationGainDb;
-                            channel.SetNormalizationGain(currentNorm + button.VolumeDb);
+                            channel.SetNormalizationGain(baseNormalizationGainDb + button.VolumeDb);
                         }
                         catch { }
                     }
@@ -350,6 +353,8 @@ public sealed class CartBoardPlayer : IDisposable
                 }
 
                 _activeChannels[button.Id] = channel;
+                _activeButtonVolumeDb[button.Id] = button.VolumeDb;
+                _activeButtonBaseGainDb[button.Id] = baseNormalizationGainDb;
 
                 RaiseStateChanged(button.Id, isPlaying: true);
                 }
@@ -404,12 +409,18 @@ public sealed class CartBoardPlayer : IDisposable
         {
             lock (_gate)
             {
-                if (!_activeChannels.TryGetValue(buttonId, out var ch)) return;
+                if (!_activeChannels.TryGetValue(buttonId, out var ch) &&
+                    !_suspendedChannels.TryGetValue(buttonId, out ch)) return;
                 if (ch is null) return;
 
                 try
                 {
-                    ch.SetNormalizationGain(volumeDb);
+                    double baseGainDb = _activeButtonBaseGainDb.TryGetValue(buttonId, out var configuredBase)
+                        ? configuredBase
+                        : ch.NormalizationGainDb - _activeButtonVolumeDb.GetValueOrDefault(buttonId);
+                    ch.SetNormalizationGain(baseGainDb + volumeDb);
+                    _activeButtonBaseGainDb[buttonId] = baseGainDb;
+                    _activeButtonVolumeDb[buttonId] = volumeDb;
                 }
                 catch { }
             }
@@ -437,14 +448,67 @@ public sealed class CartBoardPlayer : IDisposable
                     if (string.IsNullOrEmpty(chPath)) continue;
                     if (!string.Equals(chPath, filePath, StringComparison.OrdinalIgnoreCase)) continue;
 
-                    try
+                    var configure = ConfigureChannel;
+                    if (configure is not null)
                     {
-                        ConfigureChannel?.Invoke(ch, filePath, false);
+                        bool configured = false;
+                        try
+                        {
+                            configure.Invoke(ch, filePath, false);
+                            configured = true;
+                        }
+                        catch { }
+
+                        if (configured)
+                            _activeButtonBaseGainDb[kvp.Key] = ch.NormalizationGainDb;
                     }
-                    catch { }
+
+                    try { ApplyButtonVolumeOffset(kvp.Key, ch); } catch { }
                 }
             }
         });
+    }
+
+    /// <summary>
+    /// Restaura el volumen adicional de cada cart después de reaplicar
+    /// normalización global a todos los canales activos.
+    /// </summary>
+    public void ReapplyLiveVolumeOffsets(Func<string, bool>? isAnalysisPending = null)
+    {
+        _dispatch(() =>
+        {
+            lock (_gate)
+            {
+                foreach (var kvp in _activeChannels)
+                {
+                    if (isAnalysisPending?.Invoke(kvp.Value.FilePath ?? string.Empty) == true)
+                        continue;
+
+                    double currentGainDb = kvp.Value.NormalizationGainDb;
+                    double currentOffsetDb = _activeButtonVolumeDb.GetValueOrDefault(kvp.Key);
+                    double previouslyAppliedGainDb =
+                        _activeButtonBaseGainDb.GetValueOrDefault(kvp.Key, currentGainDb) + currentOffsetDb;
+
+                    // Si la configuración no llegó a cambiar el canal (o ya
+                    // se reaplicó desde AnalysisCompleted), conservar la base
+                    // conocida para no sumar dos veces el volumen del cart.
+                    if (Math.Abs(currentGainDb - previouslyAppliedGainDb) > 0.05)
+                        _activeButtonBaseGainDb[kvp.Key] = currentGainDb;
+
+                    ApplyButtonVolumeOffset(kvp.Key, kvp.Value);
+                }
+            }
+        });
+    }
+
+    private void ApplyButtonVolumeOffset(string buttonId, IAudioChannel channel)
+    {
+        if (_activeButtonVolumeDb.TryGetValue(buttonId, out var offsetDb) &&
+            Math.Abs(offsetDb) > 0.001)
+        {
+            var baseGainDb = _activeButtonBaseGainDb.GetValueOrDefault(buttonId, channel.NormalizationGainDb);
+            channel.SetNormalizationGain(baseGainDb + offsetDb);
+        }
     }
 
     // ───── Crossfade ─────────────────────────────────────────────────────
@@ -484,6 +548,8 @@ public sealed class CartBoardPlayer : IDisposable
                             {
                                 try { ch.Dispose(); } catch { }
                                 _activeChannels.Remove(id);
+                                _activeButtonVolumeDb.Remove(id);
+                                _activeButtonBaseGainDb.Remove(id);
                                 RaiseStateChanged(id, isPlaying: false);
                             }
                         }
@@ -498,6 +564,8 @@ public sealed class CartBoardPlayer : IDisposable
                     $"Fallo el fade-out del boton {id}: {ex.Message}");
                 try { ch.Stop(); ch.Dispose(); } catch { }
                 _activeChannels.Remove(id);
+                _activeButtonVolumeDb.Remove(id);
+                _activeButtonBaseGainDb.Remove(id);
                 RaiseStateChanged(id, isPlaying: false);
             }
         }
@@ -508,6 +576,9 @@ public sealed class CartBoardPlayer : IDisposable
     private void StopInternal(string buttonId)
     {
         if (string.IsNullOrEmpty(buttonId)) return;
+
+        _activeButtonVolumeDb.Remove(buttonId);
+        _activeButtonBaseGainDb.Remove(buttonId);
 
         // Chequear primero suspendidos (puede estar expropiado y pausado).
         if (_suspendedChannels.TryGetValue(buttonId, out var susp))
@@ -578,6 +649,8 @@ public sealed class CartBoardPlayer : IDisposable
                 try { susp.Dispose(); } catch { }
             }
             _suspendedChannels.Clear();
+            _activeButtonVolumeDb.Clear();
+            _activeButtonBaseGainDb.Clear();
 
             ReleaseBusInternal();
         }
@@ -652,10 +725,14 @@ public sealed class CartBoardPlayer : IDisposable
                         catch
                         {
                             try { ch.Dispose(); } catch { }
+                            _activeButtonVolumeDb.Remove(id);
+                            _activeButtonBaseGainDb.Remove(id);
                         }
                     }
                     else
                     {
+                        _activeButtonVolumeDb.Remove(id);
+                        _activeButtonBaseGainDb.Remove(id);
                         try { ch.FadeOut(ms, () => { try { ch.Dispose(); } catch { } }); }
                         catch { try { ch.Dispose(); } catch { } }
                     }
@@ -701,6 +778,8 @@ public sealed class CartBoardPlayer : IDisposable
                     catch
                     {
                         try { ch.Dispose(); } catch { }
+                        _activeButtonVolumeDb.Remove(id);
+                        _activeButtonBaseGainDb.Remove(id);
                     }
                 }
 

@@ -555,6 +555,6 @@
         <!-- Solo visible en el primer arranque del usuario.                 -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <demo:DemoOverlay DataContext="{Binding Demo}"
-                          IsVisible="{Binding IsActive}" />
+                          IsVisible="{Binding IsActive, FallbackValue=False}" />
     </Grid>
 </controls:CustomChromeWindow>

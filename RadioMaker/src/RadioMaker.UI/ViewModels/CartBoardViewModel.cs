@@ -363,6 +363,9 @@ public sealed partial class CartBoardViewModel : ViewModelBase
 
     private void OnButtonChanged(object? sender, EventArgs e)
     {
+        if (sender is CartButtonViewModel button)
+            _player?.SetLiveVolume(button.Source.Id, button.VolumeDb);
+
         IsDirty = true;
         RefreshSummary();
     }

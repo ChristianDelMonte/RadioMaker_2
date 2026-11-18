@@ -1,6 +1,7 @@
 using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.Core.Logging;
+using System.Threading;
 
 namespace RadioMaker.Core.Playback;
 
@@ -51,6 +52,7 @@ public sealed class PlaylistPlayer : IDisposable
     private IAudioBus? _targetBus;
     private PlaylistInterruptionBehavior _interruptionBehavior = PlaylistInterruptionBehavior.Continue;
     private bool _advanceOnResume = false;
+    private int _currentStatus = (int)PlaylistPlayerStatus.Stopped;
 
     /// <summary>
     /// Hook para aplicar EQ/Trim/Norm antes de cada Play.
@@ -207,6 +209,10 @@ public sealed class PlaylistPlayer : IDisposable
 
     /// <summary>Canal actualmente sonando (o null).</summary>
     public IAudioChannel? CurrentChannel => _currentChannel;
+
+    /// <summary>Último estado publicado por este reproductor.</summary>
+    public PlaylistPlayerStatus CurrentStatus =>
+        (PlaylistPlayerStatus)Volatile.Read(ref _currentStatus);
 
     /// <summary>
     /// Devuelve todos los canales activos del PlaylistPlayer: la pista
@@ -1501,6 +1507,7 @@ public sealed class PlaylistPlayer : IDisposable
 
     private void RaiseState(PlaylistPlayerState state)
     {
+        Volatile.Write(ref _currentStatus, (int)state.Status);
         try { StateChanged?.Invoke(this, state); } catch { }
     }
 

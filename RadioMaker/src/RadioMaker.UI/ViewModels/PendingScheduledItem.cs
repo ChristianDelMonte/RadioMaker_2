@@ -24,6 +24,19 @@ public sealed class PendingScheduledItem
 
     public string TimeText => NextFireTime.ToString("HH:mm:ss");
 
+    public string EndTimeText
+    {
+        get
+        {
+            if (DurationSeconds <= 0.5) return "";
+            var end = NextFireTime.AddSeconds(DurationSeconds);
+            var dayOffset = (end.Date - NextFireTime.Date).Days;
+            return dayOffset > 0
+                ? $"{end:HH:mm:ss} (+{dayOffset}d)"
+                : end.ToString("HH:mm:ss");
+        }
+    }
+
     public string KindText => Kind switch
     {
         ScheduledItemKind.Tanda => "TANDA",
@@ -57,4 +70,5 @@ public sealed class PendingScheduledItem
 
     public bool HasFile => !string.IsNullOrWhiteSpace(UnderlyingFile);
     public bool HasDuration => DurationSeconds > 0.5;
+    public bool HasEndTime => HasDuration;
 }

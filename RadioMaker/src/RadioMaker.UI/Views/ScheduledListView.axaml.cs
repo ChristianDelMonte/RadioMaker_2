@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Services;
@@ -12,9 +13,20 @@ namespace RadioMaker.UI.Views;
 
 public partial class ScheduledListView : UserControl
 {
+    private readonly DispatcherTimer _scheduleRefreshTimer;
+
     public ScheduledListView()
     {
         InitializeComponent();
+
+        _scheduleRefreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+        _scheduleRefreshTimer.Tick += (_, _) => RefreshScheduleDisplay();
+        AttachedToVisualTree += (_, _) =>
+        {
+            RefreshScheduleDisplay();
+            _scheduleRefreshTimer.Start();
+        };
+        DetachedFromVisualTree += (_, _) => _scheduleRefreshTimer.Stop();
 
         AddHandler(DragDrop.DragOverEvent, OnDragOverAny);
         AddHandler(DragDrop.DropEvent, OnDropAny);
@@ -22,6 +34,13 @@ public partial class ScheduledListView : UserControl
     }
 
     private ScheduledListViewModel? GetVm() => DataContext as ScheduledListViewModel;
+
+    private void RefreshScheduleDisplay()
+    {
+        if (GetVm() is not { } vm) return;
+        foreach (var item in vm.Items)
+            item.RefreshScheduleDisplay();
+    }
 
     private Window? GetOwnerWindow() => TopLevel.GetTopLevel(this) as Window;
 

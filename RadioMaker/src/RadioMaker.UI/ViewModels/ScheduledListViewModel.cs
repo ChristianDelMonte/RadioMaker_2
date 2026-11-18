@@ -817,6 +817,9 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
     private void OnItemChanged(object? sender, EventArgs e)
     {
+        if (sender is ScheduledItemViewModel item)
+            item.RefreshScheduleDisplay();
+
         IsDirty = true;
         RefreshSummary();
         OnPropertyChanged(nameof(CanPlayList));
