@@ -123,10 +123,7 @@ public sealed class EmergencyWatchdogService : IDisposable
             catch { }
         };
 
-        // NOTA: usamos TrackEnded en lugar de TrackCompleted. En el
-        // PlaylistPlayer actual, TrackCompleted nunca se dispara — el
-        // evento que sí fire cuando una pista termina naturalmente es
-        // TrackEnded. Bug latente que afectaba al beep de emergencia.
+        // El watchdog usa TrackEnded para reaccionar al fin natural de pista.
         _player.TrackEnded += OnTrackEnded;
         _player.StateChanged += OnPlayerStateChanged;
         _player.SessionEnded += OnSessionEnded;

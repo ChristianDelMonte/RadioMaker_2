@@ -126,7 +126,9 @@ public static class PlaylistGeneratorService
     }
 
     private static readonly ConcurrentDictionary<string, CachedInfo> _infoCache
-        = new(StringComparer.OrdinalIgnoreCase);
+        = new(OperatingSystem.IsWindows()
+            ? StringComparer.OrdinalIgnoreCase
+            : StringComparer.Ordinal);
 
     public static void ClearCache() => _infoCache.Clear();
 

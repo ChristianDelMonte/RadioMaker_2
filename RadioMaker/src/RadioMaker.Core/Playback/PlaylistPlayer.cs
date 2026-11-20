@@ -82,6 +82,7 @@ public sealed class PlaylistPlayer : IDisposable
     /// Se usa para cancelar la locución al pausar/detener/saltar.
     /// </summary>
     private CancellationTokenSource? _currentLocutionCts;
+    private CancellationTokenSource? _mixLocutionCts;
 
     /// <summary>
     /// True si la pausa actual fue provocada por el scheduler (no por
@@ -338,6 +339,10 @@ public sealed class PlaylistPlayer : IDisposable
                 }
 
                 if (_currentChannel is null) return;
+
+                // El mix de locución corre independientemente del canal de música.
+                // Al pausar manualmente también se debe detener.
+                CancelMixLocution();
 
                 try
                 {
@@ -747,6 +752,16 @@ public sealed class PlaylistPlayer : IDisposable
         try { cts.Cancel(); } catch { }
         try { _locution?.Stop(); } catch { }
         try { cts.Dispose(); } catch { }
+    }
+
+    private void CancelMixLocution()
+    {
+        var cts = _mixLocutionCts;
+        if (cts is null) return;
+
+        _mixLocutionCts = null;
+        try { cts.Cancel(); } catch { }
+        try { _locution?.Stop(); } catch { }
     }
 
     // ───── Avance entre pistas ───────────────────────────────────────────
@@ -1166,6 +1181,7 @@ public sealed class PlaylistPlayer : IDisposable
         CancelCurrentLocution();
         StopProgressTimer();
         StopMixTimer();
+        CancelMixLocution();
         StopMixChannel();
         _mixOriginalNormGainDb = 0;
 
@@ -1317,15 +1333,17 @@ public sealed class PlaylistPlayer : IDisposable
         int deviceIndex = ResolveCurrentBusDevice();
 
         // Guardar ganancia original + duck.
-        _mixOriginalNormGainDb = mainChannel.NormalizationGainDb;
+        var originalNormGainDb = mainChannel.NormalizationGainDb;
+        _mixOriginalNormGainDb = originalNormGainDb;
         double duckDb = 20.0 * Math.Log10(Math.Max(0.001, track.MixDuckLevel));
-        mainChannel.SetNormalizationGain(_mixOriginalNormGainDb + duckDb);
+        mainChannel.SetNormalizationGain(originalNormGainDb + duckDb);
 
         AppLogger.Info("PLAYLIST PLAY",
             $"LOCUCIÓN iniciada: {track.MixLocutionCommand} | " +
             $"Device: {deviceIndex} | " +
             $"Principal reducida a: {track.MixDuckLevel:P0}");
 
+        CancellationTokenSource? cts = null;
         try
         {
             // ===== FIX: volumen de locución en mix =====
@@ -1346,8 +1364,8 @@ public sealed class PlaylistPlayer : IDisposable
             volumeLinear = Math.Clamp(volumeLinear, 0f, 1f);
 
             // Timeout de seguridad: 45s por si algo se cuelga.
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(45));
-
+            cts = new CancellationTokenSource(TimeSpan.FromSeconds(45));
+            _mixLocutionCts = cts;
             await _locution.PlayAsync(track.MixLocutionCommand, deviceIndex, volumeLinear, cts.Token);
         }
         catch (OperationCanceledException)
@@ -1362,10 +1380,13 @@ public sealed class PlaylistPlayer : IDisposable
         }
         finally
         {
+            if (cts is not null && ReferenceEquals(_mixLocutionCts, cts))
+                _mixLocutionCts = null;
+            cts?.Dispose();
             // Restaurar volumen (best-effort; puede fallar si el canal ya se cerró).
             try
             {
-                mainChannel.SetNormalizationGain(_mixOriginalNormGainDb);
+                mainChannel.SetNormalizationGain(originalNormGainDb);
             }
             catch { }
 
@@ -1574,6 +1595,7 @@ public sealed class PlaylistPlayer : IDisposable
             lock (_gate)
             {
                 CancelCurrentLocution();
+                CancelMixLocution();
                 StopProgressTimer();
                 StopMixTimer();
                 StopMixChannel();

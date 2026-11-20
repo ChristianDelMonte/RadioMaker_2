@@ -3245,25 +3245,30 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
     private async Task<bool> SaveProjectInternal()
     {
-        var topLevel = TopLevel.GetTopLevel(this);
-        if (topLevel == null) return false;
-
-        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        string? path = _currentProjectPath;
+        if (string.IsNullOrWhiteSpace(path))
         {
-            Title = "Guardar proyecto RMWave",
-            DefaultExtension = "rmw",
-            FileTypeChoices = new[]
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel == null) return false;
+
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                new FilePickerFileType("Proyecto RMWave")
+                Title = "Guardar proyecto RMWave",
+                DefaultExtension = "rmw",
+                FileTypeChoices = new[]
                 {
-                    Patterns = new[] { "*.rmw" }
+                    new FilePickerFileType("Proyecto RMWave")
+                    {
+                        Patterns = new[] { "*.rmw" }
+                    }
                 }
-            }
-        });
+            });
 
-        if (file == null) return false;
+            if (file == null) return false;
 
-        var path = file.Path.LocalPath;
+            path = file.Path.LocalPath;
+        }
+
         if (string.IsNullOrWhiteSpace(path)) return false;
 
         try

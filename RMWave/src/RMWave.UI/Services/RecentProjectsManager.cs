@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Text.Json;
+using System.Diagnostics;
 
 namespace RMWave.UI;
 
@@ -16,8 +18,26 @@ public static class RecentProjectsManager
 {
     private const int MaxRecent = 8;
 
-    private static string FilePath =>
-        Path.Combine(AppContext.BaseDirectory, "rmwave_recent.json");
+    private static string FilePath
+    {
+        get
+        {
+            var dataRoot = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            return Path.Combine(dataRoot, "RadioMaker", "RMWave", "rmwave_recent.json");
+        }
+    }
+
+    private static string LegacyFilePath => Path.Combine(AppContext.BaseDirectory, "rmwave_recent.json");
+
+    private static StringComparison PathComparison => OperatingSystem.IsWindows()
+        ? StringComparison.OrdinalIgnoreCase
+        : StringComparison.Ordinal;
+
+    private static string NormalizePath(string path)
+    {
+        try { return Path.GetFullPath(path); }
+        catch { return path.Trim(); }
+    }
 
     public static List<RecentProjectEntry> RecentList { get; private set; } = new();
 
@@ -27,12 +47,14 @@ public static class RecentProjectsManager
     public static void AddProject(string path, string name)
     {
         // Quitar si ya existe (para moverlo al inicio).
-        RecentList.RemoveAll(e => e.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
+        var normalizedPath = NormalizePath(path);
+        RecentList.RemoveAll(e => !string.IsNullOrWhiteSpace(e.Path) &&
+            NormalizePath(e.Path).Equals(normalizedPath, PathComparison));
 
         // Agregar al inicio.
         RecentList.Insert(0, new RecentProjectEntry
         {
-            Path = path,
+            Path = normalizedPath,
             Name = name,
             LastOpened = DateTime.Now
         });
@@ -48,7 +70,9 @@ public static class RecentProjectsManager
     /// <summary>Quita un proyecto de la lista.</summary>
     public static void RemoveProject(string path)
     {
-        RecentList.RemoveAll(e => e.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
+        var normalizedPath = NormalizePath(path);
+        RecentList.RemoveAll(e => !string.IsNullOrWhiteSpace(e.Path) &&
+            NormalizePath(e.Path).Equals(normalizedPath, PathComparison));
         Save();
         ListChanged?.Invoke();
     }
@@ -65,15 +89,32 @@ public static class RecentProjectsManager
     {
         try
         {
-            if (File.Exists(FilePath))
+            var sourcePath = File.Exists(FilePath)
+                ? FilePath
+                : LegacyFilePath;
+            if (File.Exists(sourcePath))
             {
-                var json = File.ReadAllText(FilePath);
+                var json = File.ReadAllText(sourcePath);
                 var list = JsonSerializer.Deserialize<List<RecentProjectEntry>>(json);
                 if (list != null)
-                    RecentList = list;
+                    RecentList = list
+                        .Where(e => e is not null && !string.IsNullOrWhiteSpace(e.Path))
+                        .Select(e =>
+                        {
+                            e.Path = NormalizePath(e.Path);
+                            return e;
+                        })
+                        .Take(MaxRecent)
+                        .ToList();
+
+                if (!string.Equals(sourcePath, FilePath, PathComparison))
+                    Save();
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[RMWave RecentProjects] No se pudieron cargar recientes: {ex.Message}");
+        }
     }
 
     private static void Save()
@@ -81,8 +122,12 @@ public static class RecentProjectsManager
         try
         {
             var json = JsonSerializer.Serialize(RecentList, new JsonSerializerOptions { WriteIndented = true });
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
             File.WriteAllText(FilePath, json);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[RMWave RecentProjects] No se pudieron guardar recientes en '{FilePath}': {ex.Message}");
+        }
     }
 }

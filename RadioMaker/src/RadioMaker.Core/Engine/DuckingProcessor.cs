@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Threading;
 using ManagedBass;
 using RadioMaker.Core.Abstractions;
 
@@ -20,11 +21,8 @@ namespace RadioMaker.Core.Engine;
 /// El callback del microfono solo publica el ultimo nivel medido.
 ///
 /// Threading:
-///   - _currentMicLevel se escribe desde el hilo de BASS y se lee desde el timer.
-///     Es un double, atomicamente escribible en x64. No requiere lock.
-///   - _currentGainDb se lee desde el timer y desde propiedades publicas.
-///     Tambien es double, atomico en x64.
-///   - La maquina de estados del timer esta protegida con _timerLock.
+///   - _currentMicLevel y _currentGainDb cruzan hilos con accesos Interlocked.
+///   - _config y la maquina de estados del timer estan protegidas con _timerLock.
 /// </summary>
 internal sealed class DuckingProcessor : IDisposable
 {
@@ -43,6 +41,7 @@ internal sealed class DuckingProcessor : IDisposable
 
     // ───── Estado del timer de procesamiento ─────────────────────────────
     private readonly object _timerLock = new();
+    private readonly object _lifecycleLock = new();
     private System.Threading.Timer? _timer;
 
     private DuckingConfig _config = new();
@@ -63,17 +62,20 @@ internal sealed class DuckingProcessor : IDisposable
     {
         get
         {
-            double level = _currentMicLevel;
+            double level = Interlocked.CompareExchange(ref _currentMicLevel, 0.0, 0.0);
             if (level <= 1e-9) return -120.0;
             return 20.0 * Math.Log10(level);
         }
     }
 
     /// <summary>Ganancia de ducking actual (dB, siempre &lt;= 0).</summary>
-    public double CurrentGainDb => _currentGainDb;
+    public double CurrentGainDb => Interlocked.CompareExchange(ref _currentGainDb, 0.0, 0.0);
 
     /// <summary>Configuracion actual (copia).</summary>
-    public DuckingConfig Config => _config;
+    public DuckingConfig Config
+    {
+        get { lock (_timerLock) return _config.Clone(); }
+    }
 
     public DuckingProcessor(Action<double> onGainChanged)
     {
@@ -91,23 +93,35 @@ internal sealed class DuckingProcessor : IDisposable
     {
         if (config is null) return;
 
-        bool deviceChanged = !_micInitialized || config.MicDeviceIndex != _config.MicDeviceIndex;
+        lock (_lifecycleLock)
+            StartCore(config);
+    }
 
-        _config = config.Clone();
-        _enabled = config.IsEnabled;
+    private void StartCore(DuckingConfig config)
+    {
+        var appliedConfig = config.Clone();
+        bool deviceChanged;
+
+        // Publicar la copia bajo el mismo lock que usa el timer para leerla.
+        lock (_timerLock)
+        {
+            deviceChanged = !_micInitialized || appliedConfig.MicDeviceIndex != _config.MicDeviceIndex;
+            _config = appliedConfig;
+            _enabled = appliedConfig.IsEnabled;
+        }
 
         if (!_enabled)
         {
-            Stop();
+            StopCore();
             return;
         }
 
         if (deviceChanged)
         {
             StopMic();
-            if (!StartMic(_config.MicDeviceIndex))
+            if (!StartMic(appliedConfig.MicDeviceIndex))
             {
-                _enabled = false;
+                StopCore();
                 return;
             }
         }
@@ -119,18 +133,23 @@ internal sealed class DuckingProcessor : IDisposable
                 OnTimerTick, null, UpdateIntervalMs, UpdateIntervalMs);
         }
 
-        _onGainChanged(_currentGainDb);
+        _onGainChanged(CurrentGainDb);
     }
 
     /// <summary>Detiene el procesador y libera el microfono.</summary>
     public void Stop()
     {
-        _enabled = false;
-        _currentGainDb = 0.0;
-        _holdCounterMs = 0;
+        lock (_lifecycleLock)
+            StopCore();
+    }
 
+    private void StopCore()
+    {
         lock (_timerLock)
         {
+            _enabled = false;
+            Interlocked.Exchange(ref _currentGainDb, 0.0);
+            _holdCounterMs = 0;
             _timer?.Dispose();
             _timer = null;
         }
@@ -162,7 +181,7 @@ internal sealed class DuckingProcessor : IDisposable
             int handle = Bass.RecordStart(
                 MicFreq,
                 MicChannels,
-                BassFlags.Float | BassFlags.RecordAGC,
+                BassFlags.Float,
                 _recordProc,
                 IntPtr.Zero);
 
@@ -203,7 +222,7 @@ internal sealed class DuckingProcessor : IDisposable
         catch { }
 
         _micInitialized = false;
-        _currentMicLevel = 0.0;
+        Interlocked.Exchange(ref _currentMicLevel, 0.0);
     }
 
     private static int ResolveMicDeviceIndex(int requested)
@@ -267,7 +286,7 @@ internal sealed class DuckingProcessor : IDisposable
         }
 
         double rms = Math.Sqrt(sumSq / samplesCount);
-        _currentMicLevel = rms;
+        Interlocked.Exchange(ref _currentMicLevel, rms);
 
         return true; // continuar capturando
     }
@@ -281,13 +300,14 @@ internal sealed class DuckingProcessor : IDisposable
     /// </summary>
     private void OnTimerTick(object? state)
     {
-        if (!_enabled) return;
-
         double micDb;
         DuckingConfig cfg;
+        double gainDb;
 
         lock (_timerLock)
         {
+            if (!_enabled) return;
+
             cfg = _config;
             micDb = CurrentMicLevelDb;
 
@@ -319,10 +339,11 @@ internal sealed class DuckingProcessor : IDisposable
             }
 
             // Interpolar la ganancia actual hacia el target usando attack o release.
-            double diff = targetGainDb - _currentGainDb;
+            double currentGainDb = CurrentGainDb;
+            double diff = targetGainDb - currentGainDb;
             if (Math.Abs(diff) < 0.05)
             {
-                _currentGainDb = targetGainDb;
+                currentGainDb = targetGainDb;
             }
             else
             {
@@ -331,10 +352,15 @@ internal sealed class DuckingProcessor : IDisposable
                 if (rateMs <= 0) rateMs = 1;
 
                 double step = Math.Min(1.0, (double)UpdateIntervalMs / rateMs);
-                _currentGainDb += diff * step;
+                currentGainDb += diff * step;
             }
+
+            Interlocked.Exchange(ref _currentGainDb, currentGainDb);
+            gainDb = currentGainDb;
         }
 
-        _onGainChanged(_currentGainDb);
+        // No publicar un cálculo que haya quedado obsoleto por un Stop/Start.
+        if (_enabled && Math.Abs(CurrentGainDb - gainDb) < 0.0001)
+            _onGainChanged(gainDb);
     }
 }

@@ -1,5 +1,6 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Diagnostics;
 using RMVoice.Core.Models;
 
 namespace RMVoice.Core.Services;
@@ -39,8 +40,9 @@ public sealed class ProfileStore
             return JsonSerializer.Deserialize<List<VoiceProfile>>(json, JsonOptions)
                    ?? new List<VoiceProfile>();
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine($"[RMVoice Profiles] No se pudieron cargar perfiles desde '{_filePath}': {ex.Message}");
             return new List<VoiceProfile>();
         }
     }
@@ -55,9 +57,9 @@ public sealed class ProfileStore
 
             File.WriteAllText(_filePath, JsonSerializer.Serialize(profiles.ToList(), JsonOptions));
         }
-        catch
+        catch (Exception ex)
         {
-            // Silencioso: no queremos tumbar la app por no poder escribir el JSON.
+            Debug.WriteLine($"[RMVoice Profiles] No se pudieron guardar perfiles en '{_filePath}': {ex.Message}");
         }
     }
 }

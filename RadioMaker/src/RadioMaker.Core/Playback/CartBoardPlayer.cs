@@ -757,7 +757,7 @@ public sealed class CartBoardPlayer : IDisposable
                 if (_suspendedChannels.Count == 0) return;
 
                 var acquire = _coordinator.TryAcquire(
-                    e.BusId, _instanceId, ModuleRole.Cart, null!);
+                    e.BusId, _instanceId, ModuleRole.Cart, channel: null);
                 if (acquire.Denied) return;
                 _acquiredBusId = e.BusId;
 

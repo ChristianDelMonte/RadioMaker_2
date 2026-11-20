@@ -428,7 +428,15 @@ public sealed class PlaybackEngine : IDisposable
                 if (!string.IsNullOrEmpty(endedId))
                     _schedulerState.UnmarkPlaying(endedId);
 
-                if (_pendingQueue.Count > 0)
+                // Un ALTA que interrumpe una lista manual debe devolver primero
+                // el control al item suspendido; luego la lista sigue con su
+                // siguiente elemento en el orden original.
+                if (_isManualPlayInProgress && _suspended is not null &&
+                    !_pendingQueue.Any(p => p.Item.Priority == SchedulePriority.High))
+                {
+                    ResumeSuspended();
+                }
+                else if (_pendingQueue.Count > 0)
                 {
                     ProcessQueue();
                     if (_currentItem is null)
@@ -1494,7 +1502,12 @@ public sealed class PlaybackEngine : IDisposable
         _scheduler.AddLog(SchedulerLogLevel.Info, $"Termino '{title}'.");
 
         // Prioridad: primero cola, despues suspendido, despues Idle.
-        if (_pendingQueue.Count > 0)
+        if (_isManualPlayInProgress && _suspended is not null &&
+            !_pendingQueue.Any(p => p.Item.Priority == SchedulePriority.High))
+        {
+            ResumeSuspended();
+        }
+        else if (_pendingQueue.Count > 0)
         {
             ProcessQueue();
 
@@ -1939,7 +1952,12 @@ public sealed class PlaybackEngine : IDisposable
 
                 _scheduler.AddLog(SchedulerLogLevel.Info, $"Termino '{endedTitle}'.");
 
-                if (_pendingQueue.Count > 0)
+                if (_isManualPlayInProgress && _suspended is not null &&
+                    !_pendingQueue.Any(p => p.Item.Priority == SchedulePriority.High))
+                {
+                    ResumeSuspended();
+                }
+                else if (_pendingQueue.Count > 0)
                 {
                     ProcessQueue();
 
@@ -2269,6 +2287,15 @@ public sealed class PlaybackEngine : IDisposable
                     $"Scheduler expropiado del bus '{e.BusId}' por '{e.Role}'. " +
                     "Deteniendo reproduccion programada.");
                 StopCurrentPlaybackInternal(unmarkScheduler: true);
+                ClearQueue();
+                if (_suspended is not null && !string.IsNullOrEmpty(_suspended.Item.Id))
+                    _schedulerState.UnmarkPlaying(_suspended.Item.Id);
+                _suspended = null;
+                if (_isManualPlayInProgress)
+                {
+                    _isManualPlayInProgress = false;
+                    try { ManualPlayFinished?.Invoke(this, EventArgs.Empty); } catch { }
+                }
                 RaiseState(PlaybackStateInfo.Idle);
             }
         });

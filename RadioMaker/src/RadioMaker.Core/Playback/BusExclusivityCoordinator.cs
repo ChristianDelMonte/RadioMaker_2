@@ -45,7 +45,7 @@ public sealed class BusExclusivityCoordinator
         string busId,
         string ownerId,
         ModuleRole role,
-        IAudioChannel channel)
+        IAudioChannel? channel)
     {
         if (string.IsNullOrEmpty(busId))
             return BusAcquireResult.GrantedNoConflict;
@@ -270,7 +270,7 @@ public sealed class BusExclusivityCoordinator
         public string BusId { get; init; } = "";
         public string OwnerId { get; init; } = "";
         public ModuleRole Role { get; init; }
-        public IAudioChannel Channel { get; init; } = null!;
+        public IAudioChannel? Channel { get; init; }
         public ModulePriority Priority { get; init; }
     }
 
