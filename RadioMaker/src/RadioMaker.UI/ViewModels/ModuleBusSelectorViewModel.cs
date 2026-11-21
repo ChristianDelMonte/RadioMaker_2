@@ -6,7 +6,7 @@ using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel compartido por todos los selectores de bus por modulo.
 ///
 /// Cada modulo (Cart, Playlist, Scheduler, FileManager) tiene UNA instancia.
@@ -14,7 +14,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Cuando el servicio tiene UseGlobalBus = true, CanChangeBus = false y el
 /// selector queda deshabilitado mostrando el bus global.
-/// </summary>
+/// -------------
 public sealed partial class ModuleBusSelectorViewModel : ViewModelBase
 {
     private readonly ModuleRoutingService _service;

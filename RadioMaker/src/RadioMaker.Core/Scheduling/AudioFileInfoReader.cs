@@ -2,7 +2,7 @@ using ManagedBass;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Lee informacion basica de un archivo de audio sin mantener el stream abierto.
 ///
 /// Uso principal: obtener la duracion en segundos al agregar una pista a una
@@ -10,12 +10,12 @@ namespace RadioMaker.Core.Scheduling;
 ///
 /// Requiere que BASS este inicializado (cualquier dispositivo alcanza — el
 /// stream de decodificacion no toca hardware).
-/// </summary>
+/// -------------
 public static class AudioFileInfoReader
 {
-    /// <summary>
+    /// -------------
     /// Devuelve la duracion del archivo en segundos. Cero si no se puede leer.
-    /// </summary>
+    /// -------------
     public static double GetDurationSeconds(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return 0;
@@ -47,7 +47,7 @@ public static class AudioFileInfoReader
         }
     }
 
-    /// <summary>Formatea una duracion en segundos a "hh:mm:ss".</summary>
+    /// -------------Formatea una duracion en segundos a "hh:mm:ss".</summary>
     public static string FormatDuration(double totalSeconds)
     {
         if (totalSeconds <= 0) return "00:00:00";

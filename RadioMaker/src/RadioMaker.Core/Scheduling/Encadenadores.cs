@@ -27,7 +27,7 @@ public sealed class EncadenadorTrack
         : Title;
 }
 
-/// <summary>Lista independiente y configuración de una pestaña Encadenadores.</summary>
+/// -------------Lista independiente y configuración de una pestaña Encadenadores.</summary>
 public sealed class EncadenadoresSet
 {
     public int Version { get; set; } = 1;

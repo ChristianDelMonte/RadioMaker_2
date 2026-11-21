@@ -3,7 +3,7 @@ using RadioMaker.Core.Logging;
 
 namespace RadioMaker.Core.Playback;
 
-/// <summary>
+/// -------------
 /// Coordinador central de exclusividad de buses.
 ///
 /// MODELO DE Behavior (Phase 2B.1):
@@ -20,7 +20,7 @@ namespace RadioMaker.Core.Playback;
 ///   Esto evita la ambiguedad "el mismo expropiado puede querer cosas
 ///   distintas segun quien lo expropie". El comportamiento se define
 ///   por el lado del ganador.
-/// </summary>
+/// -------------
 public sealed class BusExclusivityCoordinator
 {
     private readonly object _gate = new();
@@ -174,9 +174,9 @@ public sealed class BusExclusivityCoordinator
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Resetea todas las politicas a los valores por defecto. Util para la UI.
-    /// </summary>
+    /// -------------
     public void ResetPoliciesToDefaults()
     {
         lock (_gate)

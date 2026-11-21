@@ -5,7 +5,7 @@ using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Servicio central de temas.
 ///
 /// Aplica la preferencia elegida por el usuario (System / Light / Dark) al
@@ -16,35 +16,35 @@ namespace RadioMaker.UI.Services;
 ///
 /// Cuando la preferencia es System, se suscribe a los cambios de tema del
 /// sistema operativo y los aplica automaticamente.
-/// </summary>
+/// -------------
 public static class ThemeService
 {
     private static ThemePreference _current = ThemePreference.System;
     private static bool _listeningSystem;
     private static bool _initialized;
 
-    /// <summary>Se dispara cuando cambia la preferencia (no cuando el SO cambia).</summary>
+    /// -------------Se dispara cuando cambia la preferencia (no cuando el SO cambia).</summary>
     public static event EventHandler<ThemePreference>? PreferenceChanged;
 
-    /// <summary>
+    /// -------------
     /// Se dispara cuando el ThemeVariant EFECTIVO cambia (por preferencia o
     /// por cambio de tema del SO). Los VMs suscritos deben refrescar sus
     /// propiedades de color.
-    /// </summary>
+    /// -------------
     public static event EventHandler? ThemeChanged;
 
-    /// <summary>Indica si el variant efectivo actual es Dark (o Light).</summary>
+    /// -------------Indica si el variant efectivo actual es Dark (o Light).</summary>
     public static bool IsDarkVariant => _lastAppliedVariant == ThemeVariant.Dark;
 
     private static ThemeVariant? _lastAppliedVariant;
 
-    /// <summary>Preferencia actual.</summary>
+    /// -------------Preferencia actual.</summary>
     public static ThemePreference Current => _current;
 
-    /// <summary>
+    /// -------------
     /// Inicializa el servicio: carga la preferencia guardada y la aplica.
     /// Llamar una sola vez al arrancar la app, antes de crear la MainWindow.
-    /// </summary>
+    /// -------------
     public static void Initialize()
     {
         if (_initialized) return;
@@ -55,10 +55,10 @@ public static class ThemeService
         StartSystemListener();
     }
 
-    /// <summary>
+    /// -------------
     /// Cambia la preferencia. Si es System, empieza a escuchar cambios del
     /// SO; si no, se deja de escuchar.
-    /// </summary>
+    /// -------------
     public static void SetPreference(ThemePreference pref)
     {
         if (_current == pref) return;
@@ -71,7 +71,7 @@ public static class ThemeService
         PreferenceChanged?.Invoke(null, pref);
     }
 
-    /// <summary>Fuerza la reaplicacion del variant actual (por si algo lo piso).</summary>
+    /// -------------Fuerza la reaplicacion del variant actual (por si algo lo piso).</summary>
     public static void Refresh()
     {
         ApplyVariant(_current);
@@ -102,10 +102,10 @@ public static class ThemeService
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Se suscribe al evento de cambio de tema del sistema operativo.
     /// Solo se activa cuando la preferencia es System.
-    /// </summary>
+    /// -------------
     private static void StartSystemListener()
     {
         var app = Application.Current;

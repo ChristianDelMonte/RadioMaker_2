@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace RMVoice.Core.Services;
 
-/// <summary>
+/// -------------
 /// Se asegura de que las DLLs nativas de BASS estén accesibles antes de que
 /// ManagedBass intente cargarlas.
 ///
@@ -21,17 +21,17 @@ namespace RMVoice.Core.Services;
 /// runtimes/{rid}/native/.
 ///
 /// Se ejecuta UNA vez por proceso. Idempotente.
-/// </summary>
+/// -------------
 public static class NativeLibraryLoader
 {
     private static readonly object Gate = new();
     private static bool _done;
     private static string? _lastDir;
 
-    /// <summary>
+    /// -------------
     /// Nombres de los assemblies de ManagedBass que hacen P/Invoke a las
     /// librerías nativas. Se registra el DllImportResolver en cada uno.
-    /// </summary>
+    /// -------------
     private static readonly string[] ManagedBassAssemblies = new[]
     {
         "ManagedBass",

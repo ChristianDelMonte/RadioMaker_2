@@ -5,10 +5,10 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Modulo de la aplicacion que puede tener su propio bus de salida.
 /// El FileManager esta reservado para futura funcionalidad de preescucha.
-/// </summary>
+/// -------------
 public enum AudioModuleKind
 {
     Cart = 0,
@@ -17,10 +17,10 @@ public enum AudioModuleKind
     FileManager = 3
 }
 
-/// <summary>
+/// -------------
 /// Estado persistente del routing de buses por modulo.
 /// Se guarda en %APPDATA%/RmsAudioPlayer/module-routing.json.
-/// </summary>
+/// -------------
 public sealed class ModuleRoutingState
 {
     public int Version { get; set; } = 1;
@@ -31,14 +31,14 @@ public sealed class ModuleRoutingState
     public string SchedulerBusId { get; set; } = "primary";
     public string FileManagerBusId { get; set; } = "primary";
 
-    /// <summary>
+    /// -------------
     /// ID del bus que se considera "AIRE" para el indicador visual.
     /// Vacio = default (el bus efectivo del Scheduler).
-    /// </summary>
+    /// -------------
     public string AirBusId { get; set; } = string.Empty;
 }
 
-/// <summary>
+/// -------------
 /// Servicio que decide que bus de salida usa cada modulo de la aplicacion.
 ///
 /// Modelo:
@@ -47,7 +47,7 @@ public sealed class ModuleRoutingState
 ///
 /// Los IDs se persisten. Si un bus referenciado ya no existe (fue eliminado
 /// desde la ventana de buses), GetEffectiveBus cae al GlobalBus.
-/// </summary>
+/// -------------
 public sealed class ModuleRoutingService
 {
     private readonly IAudioEngine _engine;
@@ -57,13 +57,13 @@ public sealed class ModuleRoutingService
     private IAudioBus _globalBus;
     private string _airBusId;
 
-    /// <summary>Cambio general: global o toggle de UseGlobalBus.</summary>
+    /// -------------Cambio general: global o toggle de UseGlobalBus.</summary>
     public event EventHandler? Changed;
 
-    /// <summary>Cambio especifico del bus de un modulo.</summary>
+    /// -------------Cambio especifico del bus de un modulo.</summary>
     public event EventHandler<AudioModuleKind>? ModuleBusChanged;
 
-    /// <summary>Se agrego o quito un bus de la lista del engine.</summary>
+    /// -------------Se agrego o quito un bus de la lista del engine.</summary>
     public event EventHandler? BusesListChanged;
 
     public bool UseGlobalBus => _useGlobalBus;
@@ -87,11 +87,11 @@ public sealed class ModuleRoutingService
         _airBusId = state.AirBusId ?? string.Empty;
     }
 
-    /// <summary>
+    /// -------------
     /// Bus efectivo para un modulo. Si UseGlobalBus esta activo, devuelve el
     /// global. Si no, resuelve el ID guardado del modulo. Si el ID no existe
     /// (bus eliminado), cae al global.
-    /// </summary>
+    /// -------------
     public IAudioBus GetEffectiveBus(AudioModuleKind kind)
     {
         if (_useGlobalBus) return _globalBus;
@@ -102,17 +102,17 @@ public sealed class ModuleRoutingService
         return _engine.GetBus(id) ?? _globalBus;
     }
 
-    /// <summary>
+    /// -------------
     /// ID configurado para un modulo, independientemente de si existe.
     /// Util para inicializar el ComboBox sin que se "corrija" solo.
-    /// </summary>
+    /// -------------
     public string GetConfiguredBusId(AudioModuleKind kind)
     {
         if (_useGlobalBus) return _globalBus.Id;
         return _busIds.TryGetValue(kind, out var id) ? id : _globalBus.Id;
     }
 
-    /// <summary>Cambia el bus de un modulo. Ignorado si UseGlobalBus esta activo.</summary>
+    /// -------------Cambia el bus de un modulo. Ignorado si UseGlobalBus esta activo.</summary>
     public void SetModuleBus(AudioModuleKind kind, IAudioBus? bus)
     {
         if (bus is null) return;
@@ -145,10 +145,10 @@ public sealed class ModuleRoutingService
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>
+    /// -------------
     /// ID del bus que se considera "AIRE" para el indicador visual.
     /// Si el valor persistido esta vacio, cae al bus efectivo del Scheduler.
-    /// </summary>
+    /// -------------
     public string AirBusId
     {
         get
@@ -167,10 +167,10 @@ public sealed class ModuleRoutingService
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Notifica que la lista de buses disponibles cambio (agregado / quitado).
     /// Los selectores de modulo refrescan sus combos.
-    /// </summary>
+    /// -------------
     public void NotifyBusesChanged()
     {
         BusesListChanged?.Invoke(this, EventArgs.Empty);
@@ -198,9 +198,9 @@ public sealed class ModuleRoutingService
     }
 }
 
-/// <summary>
+/// -------------
 /// Persistencia del module-routing.json.
-/// </summary>
+/// -------------
 public static class ModuleRoutingStateStore
 {
     private static readonly JsonSerializerOptions Options = new()

@@ -14,9 +14,9 @@ public partial class LogPanel : UserControl
 
     private PlaybackLogViewModel? GetVm() => DataContext as PlaybackLogViewModel;
 
-    /// <summary>
+    /// -------------
     /// Abre el dialogo modal de exportacion de log.
-    /// </summary>
+    /// -------------
     private async void OnExportClick(object? sender, RoutedEventArgs e)
     {
         var vm = GetVm();

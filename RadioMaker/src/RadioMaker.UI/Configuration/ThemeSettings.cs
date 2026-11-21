@@ -3,25 +3,25 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Preferencia de tema elegida por el usuario.
-/// </summary>
+/// -------------
 public enum ThemePreference
 {
-    /// <summary>Sigue el tema del sistema operativo (por defecto).</summary>
+    /// -------------Sigue el tema del sistema operativo (por defecto).</summary>
     System = 0,
 
-    /// <summary>Tema claro siempre.</summary>
+    /// -------------Tema claro siempre.</summary>
     Light = 1,
 
-    /// <summary>Tema oscuro siempre.</summary>
+    /// -------------Tema oscuro siempre.</summary>
     Dark = 2
 }
 
-/// <summary>
+/// -------------
 /// Persistencia de la preferencia de tema en
 /// %APPDATA%/RmsAudioPlayer/theme.json.
-/// </summary>
+/// -------------
 public static class ThemeSettingsStore
 {
     private static readonly JsonSerializerOptions Options = new()

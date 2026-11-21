@@ -2,7 +2,7 @@ using System.Threading;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Servicio que corre en un timer en background, evalua periodicamente
 /// todos los items programados y dispara el evento ItemTriggered cuando
 /// corresponde.
@@ -13,7 +13,7 @@ namespace RadioMaker.Core.Scheduling;
 ///      y evalua cada item con ScheduleEvaluator.
 ///   3. Si un item debe dispararse, NO esta ya reproduciendose, y no se
 ///      disparo recientemente, emite ItemTriggered + log.
-/// </summary>
+/// -------------
 public sealed class SchedulerService : IDisposable
 {
     public const int DefaultTickIntervalMs = 5000;
@@ -33,7 +33,7 @@ public sealed class SchedulerService : IDisposable
     public event EventHandler<SchedulerEventArgs>? ItemTriggered;
     public event EventHandler<SchedulerLogEntry>? LogAdded;
     public event EventHandler? StateChanged;
-    /// <summary>Se dispara cuando se reinicia el estado de disparos.</summary>
+    /// -------------Se dispara cuando se reinicia el estado de disparos.</summary>
     public event EventHandler? StateReset;
     // ───── Propiedades publicas ──────────────────────────────────────────
 
@@ -176,13 +176,13 @@ public sealed class SchedulerService : IDisposable
 
     // ───── API publica ───────────────────────────────────────────────────
 
-    /// <summary>Limpia el estado de disparo (util si el usuario quiere rearmar).</summary>
+    /// -------------Limpia el estado de disparo (util si el usuario quiere rearmar).</summary>
     public void ResetState()
     {
         _state.Clear();
         StateReset?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Fuerza la evaluacion inmediata sin esperar al siguiente tick.</summary>
+    /// -------------Fuerza la evaluacion inmediata sin esperar al siguiente tick.</summary>
     public void EvaluateNow() => OnTick(null);
 }

@@ -5,7 +5,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Implementacion de IEqualizer usando el addon bass_fx (BASS_FX_BFX_PEAKEQ).
 /// Cross-platform: Windows / Linux / macOS.
 ///
@@ -17,7 +17,7 @@ namespace RadioMaker.Core.Engine;
 /// Usamos un struct LOCAL con solo tipos primitivos para evitar el error
 /// "Object contains references" que da la clase PeakEQ del wrapper (que
 /// intenta pinnear una clase con referencias managed).
-/// </summary>
+/// -------------
 internal sealed class BassEqualizer : IEqualizer
 {
     private static readonly float[] DefaultFrequencies =
@@ -28,10 +28,10 @@ internal sealed class BassEqualizer : IEqualizer
     private const float DefaultBandwidth = 2.5f;
     private const int ChannelAll = -1;
 
-    /// <summary>
+    /// -------------
     /// Replica exacta del struct nativo BASS_BFX_PEAKEQ de bass_fx.h.
     /// Layout: 6 campos de 4 bytes = 24 bytes, sin padding.
-    /// </summary>
+    /// -------------
     [StructLayout(LayoutKind.Sequential)]
     private struct BfxPeakEq
     {

@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace RadioMaker.Core.Playback;
 
-/// <summary>
+/// -------------
 /// Motor de reproduccion de playlists.
 ///
 /// Es un singleton por aplicacion: solo puede sonar una playlist a la vez.
@@ -30,7 +30,7 @@ namespace RadioMaker.Core.Playback;
 ///   El BusExclusivityCoordinator se encarga de pausar esta playlist cuando
 ///   el scheduler arranca y de reanudarla cuando termina, a traves de los
 ///   eventos ChannelExpropriated / ChannelResumed.
-/// </summary>
+/// -------------
 public sealed class PlaylistPlayer : IDisposable
 {
     private readonly IAudioEngine _audioEngine;
@@ -55,21 +55,21 @@ public sealed class PlaylistPlayer : IDisposable
     private bool _advanceOnResume = false;
     private int _currentStatus = (int)PlaylistPlayerStatus.Stopped;
 
-    /// <summary>
+    /// -------------
     /// Hook para aplicar EQ/Trim/Norm antes de cada Play.
     /// Parametros: (canal, ruta del archivo, loguear detalles).
     /// Cuando logDetails es false, solo aplica la configuracion sin escribir
     /// en el log (evita duplicar entradas al reaplicar).
-    /// </summary>
+    /// -------------
     public Action<IAudioChannel, string, bool>? ConfigureChannel { get; set; }
 
-    /// <summary>
+    /// -------------
     /// Hook opcional para pre-calentar el analisis (silence + levels) de la
     /// proxima pista, mientras suena la actual. Esto reduce la race entre
     /// el analisis async y el Play: cuando la pista arranca, el analisis ya
     /// esta cacheado en memoria y el trim se aplica sincrono antes del Play.
     /// Se llama con el filePath de la proxima pista (o null si no hay).
-    /// </summary>
+    /// -------------
     public Action<string>? PrewarmFile { get; set; }
 
     // ───── Estado actual ─────────────────────────────────────────────────
@@ -78,32 +78,32 @@ public sealed class PlaylistPlayer : IDisposable
     private IAudioChannel? _currentChannel;
     private int _currentIndex = -1;
 
-    /// <summary>
+    /// -------------
     /// CTS de la locución en curso (si la pista actual es de tipo Locution).
     /// Se usa para cancelar la locución al pausar/detener/saltar.
-    /// </summary>
+    /// -------------
     private CancellationTokenSource? _currentLocutionCts;
     private CancellationTokenSource? _mixLocutionCts;
 
-    /// <summary>
+    /// -------------
     /// True si la pausa actual fue provocada por el scheduler (no por
     /// el usuario). Se usa para el indicador de pestañas.
-    /// </summary>
+    /// -------------
     private volatile bool _isPausedByCoordinator;
 
-    /// <summary>
+    /// -------------
     /// True si esta playlist esta pausada por el scheduler (interrumpida
     /// por un item ALTA) y todavia no fue reanudada.
-    /// </summary>
+    /// -------------
     public bool IsPausedByScheduler => _isPausedByCoordinator;
 
-    /// <summary>Cola de indices a reproducir (para shuffle). Vacia = orden secuencial.</summary>
+    /// -------------Cola de indices a reproducir (para shuffle). Vacia = orden secuencial.</summary>
     private readonly List<int> _shuffleQueue = new();
 
-    /// <summary>Indice actual dentro de la cola de shuffle (o -1 si no hay shuffle).</summary>
+    /// -------------Indice actual dentro de la cola de shuffle (o -1 si no hay shuffle).</summary>
     private int _shufflePosition = -1;
 
-    /// <summary>Posicion guardada al pausar.</summary>
+    /// -------------Posicion guardada al pausar.</summary>
     private double _pausedPositionSeconds = 0;
     private PlaylistTrack? _currentTrack;
 
@@ -123,13 +123,13 @@ public sealed class PlaylistPlayer : IDisposable
     // ───── Eventos ───────────────────────────────────────────────────────
 
     public event EventHandler<PlaylistPlayerState>? StateChanged;
-    /// <summary>Se dispara cuando una pista termina naturalmente (no por Stop/Next).</summary>
+    /// -------------Se dispara cuando una pista termina naturalmente (no por Stop/Next).</summary>
     public event EventHandler<int>? TrackEnded;
-    /// <summary>Se dispara cuando una pista termino naturalmente.</summary>
+    /// -------------Se dispara cuando una pista termino naturalmente.</summary>
     public event EventHandler<int>? TrackCompleted;
-    /// <summary>Se dispara cuando arranca una sesion nueva de reproduccion (Play).</summary>
+    /// -------------Se dispara cuando arranca una sesion nueva de reproduccion (Play).</summary>
     public event EventHandler? SessionStarted;
-    /// <summary>Se dispara cuando se detiene la reproduccion (Stop).</summary>
+    /// -------------Se dispara cuando se detiene la reproduccion (Stop).</summary>
     public event EventHandler? SessionEnded;
 
     // ───── Constructor ───────────────────────────────────────────────────
@@ -170,33 +170,33 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Bus de salida actual de esta playlist, o null si aun no se asigno.
     /// Se expone para que el MainWindowViewModel pueda consultarlo sin
     /// necesitar reflection sobre el campo privado _targetBus.
-    /// </summary>
+    /// -------------
     public IAudioBus? TargetBus
     {
         get { lock (_gate) return _targetBus; }
     }
 
-    /// <summary>
+    /// -------------
     /// Configura la duracion del crossfade entre pistas. 0 = transicion
     /// seca (sin solapamiento). Se debe llamar al arranque y cada vez que
     /// el usuario cambia el valor en la configuracion.
-    /// </summary>
+    /// -------------
     public void SetCrossfadeSeconds(double seconds)
     {
         lock (_gate) _crossfadeSeconds = Math.Max(0, seconds);
     }
 
-    /// <summary>Establece el comportamiento al ser interrumpido por un programado.</summary>
+    /// -------------Establece el comportamiento al ser interrumpido por un programado.</summary>
     public void SetInterruptionBehavior(PlaylistInterruptionBehavior behavior)
     {
         lock (_gate) _interruptionBehavior = behavior;
     }
 
-    /// <summary>Ruta del archivo que esta reproduciendo ahora (o vacio).</summary>
+    /// -------------Ruta del archivo que esta reproduciendo ahora (o vacio).</summary>
     public string CurrentFilePath { get; private set; } = string.Empty;
 
     public bool IsEncadenadorPlaying
@@ -224,11 +224,11 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Reaplica la configuracion al canal actual (EQ / Trim / Normalizacion).
     /// Se usa desde la UI cuando termina un analisis en background para el
     /// archivo que esta sonando.
-    /// </summary>
+    /// -------------
     public void ReapplyCurrentChannelConfig()
     {
         if (IsEncadenadorPlaying) return;
@@ -241,18 +241,18 @@ public sealed class PlaylistPlayer : IDisposable
         try { ConfigureChannel?.Invoke(ch, path, false); } catch { }
     }
 
-    /// <summary>Canal actualmente sonando (o null).</summary>
+    /// -------------Canal actualmente sonando (o null).</summary>
     public IAudioChannel? CurrentChannel => _currentChannel;
 
-    /// <summary>Último estado publicado por este reproductor.</summary>
+    /// -------------Último estado publicado por este reproductor.</summary>
     public PlaylistPlayerStatus CurrentStatus =>
         (PlaylistPlayerStatus)Volatile.Read(ref _currentStatus);
 
-    /// <summary>
+    /// -------------
     /// Devuelve todos los canales activos del PlaylistPlayer: la pista
     /// principal actual y el mixado si esta sonando.
     /// Se usa para propagar cambios de EQ/Trim/Norm a todos los canales vivos.
-    /// </summary>
+    /// -------------
     public IEnumerable<IAudioChannel> GetActiveChannels()
     {
         var list = new List<IAudioChannel>();
@@ -269,9 +269,9 @@ public sealed class PlaylistPlayer : IDisposable
         return list;
     }
 
-    /// <summary>
+    /// -------------
     /// True si hay una pista reproduciendose AHORA (no pausada, no detenida).
-    /// </summary>
+    /// -------------
     public bool IsPlayingNow
     {
         get
@@ -293,18 +293,18 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>Playlist que esta sonando (o null).</summary>
+    /// -------------Playlist que esta sonando (o null).</summary>
     public Playlist? CurrentPlaylist => _playlist;
 
-    /// <summary>Indice de la pista actual (0-based) o -1 si no hay.</summary>
+    /// -------------Indice de la pista actual (0-based) o -1 si no hay.</summary>
     public int CurrentIndex => _currentIndex;
 
     // ───── API publica ───────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Empieza a reproducir una playlist desde el indice indicado.
     /// Si ya habia una playlist sonando, se detiene.
-    /// </summary>
+    /// -------------
     public void Play(Playlist playlist, int startIndex = 0)
     {
         if (playlist is null) return;
@@ -344,7 +344,7 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>Pausa la reproduccion actual (puede reanudarse).</summary>
+    /// -------------Pausa la reproduccion actual (puede reanudarse).</summary>
     public void Pause()
     {
         _dispatch(() =>
@@ -401,7 +401,7 @@ public sealed class PlaylistPlayer : IDisposable
         });
     }
 
-    /// <summary>Reanuda desde la posicion guardada.</summary>
+    /// -------------Reanuda desde la posicion guardada.</summary>
     public void Resume()
     {
         _dispatch(() =>
@@ -432,7 +432,7 @@ public sealed class PlaylistPlayer : IDisposable
         });
     }
 
-    /// <summary>Detiene la reproduccion completamente.</summary>
+    /// -------------Detiene la reproduccion completamente.</summary>
     public void Stop()
     {
         _dispatch(() =>
@@ -453,7 +453,7 @@ public sealed class PlaylistPlayer : IDisposable
         });
     }
 
-    /// <summary>Salta a la pista siguiente (o se detiene si era la ultima en modo Once).</summary>
+    /// -------------Salta a la pista siguiente (o se detiene si era la ultima en modo Once).</summary>
     public void Next()
     {
         _dispatch(() =>
@@ -467,7 +467,7 @@ public sealed class PlaylistPlayer : IDisposable
         });
     }
 
-    /// <summary>Salta a la pista anterior.</summary>
+    /// -------------Salta a la pista anterior.</summary>
     public void Prev()
     {
         _dispatch(() =>
@@ -481,7 +481,7 @@ public sealed class PlaylistPlayer : IDisposable
         });
     }
 
-    /// <summary>True si hay una playlist sonando o pausada.</summary>
+    /// -------------True si hay una playlist sonando o pausada.</summary>
     public bool IsActive
     {
         get
@@ -673,11 +673,11 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Reproduce una pista de tipo Locución. No carga canal de audio; en
     /// su lugar dispara el comando via LocutionService y avanza a la
     /// siguiente pista cuando termina.
-    /// </summary>
+    /// -------------
     private void PlayLocutionTrack(int index, PlaylistTrack track)
     {
         StopProgressTimer();
@@ -714,9 +714,9 @@ public sealed class PlaylistPlayer : IDisposable
         _ = RunLocutionAndAdvanceAsync(index, track, deviceIndex, volume, cts);
     }
 
-    /// <summary>
+    /// -------------
     /// Ejecuta la locución y, al terminar, avanza a la siguiente pista.
-    /// </summary>
+    /// -------------
     private async Task RunLocutionAndAdvanceAsync(
         int index,
         PlaylistTrack track,
@@ -778,9 +778,9 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Cancela la locución en curso (si hay). No dispara avance.
-    /// </summary>
+    /// -------------
     private void CancelCurrentLocution()
     {
         var cts = _currentLocutionCts;
@@ -1152,12 +1152,12 @@ public sealed class PlaylistPlayer : IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Avanza a la proxima pista.
     /// <paramref name="auto"/> = true si es por fin natural de la pista,
     /// false si es por Next() manual. En modo Loop, al final vuelve al inicio.
     /// En modo Once, al final se detiene (tanto para auto como manual).
-    /// </summary>
+    /// -------------
     private void AdvanceToNext(bool auto)
     {
         if (_playlist is null) return;
@@ -1251,10 +1251,10 @@ public sealed class PlaylistPlayer : IDisposable
         return -1;
     }
 
-    /// <summary>
+    /// -------------
     /// Version "peek" de GetNextIndex: devuelve el indice de la proxima
     /// pista SIN modificar el estado de reproduccion (no avanza el shuffle).
-    /// </summary>
+    /// -------------
     private int PeekNextIndex()
     {
         if (_playlist is null) return -1;
@@ -1275,10 +1275,10 @@ public sealed class PlaylistPlayer : IDisposable
         return -1;
     }
 
-    /// <summary>
+    /// -------------
     /// Info de la proxima pista a reproducir (sin reproducirla). Null si
     /// no hay siguiente (fin de la lista, modo Once sin Loop, o sin playlist).
-    /// </summary>
+    /// -------------
     public (int Index, int Total, string Title, string FilePath)? GetUpcomingTrackInfo()
     {
         lock (_gate)
@@ -1297,7 +1297,7 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Calcula el indice de la proxima pista a partir de un indice explicitamente
     /// indicado, en lugar de _currentIndex. Se usa durante el salteo de pistas
     /// invalidas: en ese momento _currentIndex todavia apunta a la pista anterior
@@ -1306,7 +1306,7 @@ public sealed class PlaylistPlayer : IDisposable
     /// Sin este helper, GetNextIndex() devolveria el mismo indice que estamos
     /// intentando reproducir y el chequeo "next == index" detendria la playlist
     /// entera en lugar de saltear la pista faltante.
-    /// </summary>
+    /// -------------
     private int GetNextIndexFrom(int currentAttempted)
     {
         if (_playlist is null) return -1;
@@ -1472,10 +1472,10 @@ public sealed class PlaylistPlayer : IDisposable
         _mixTimer = null;
     }
 
-    /// <summary>
+    /// -------------
     /// Punto de entrada del mixado: deriva a audio o a locución según
     /// el tipo configurado en la pista.
-    /// </summary>
+    /// -------------
     private void StartMixPlayback()
     {
         var track = _currentTrack;
@@ -1527,7 +1527,7 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Ejecuta una locución de RMVoice como mixado intermedio.
     ///   - Baja el volumen de la pista principal al MixDuckLevel.
     ///   - Dispara la locución en el MISMO device del bus.
@@ -1535,7 +1535,7 @@ public sealed class PlaylistPlayer : IDisposable
     ///
     /// Si RMVoice no está disponible, no se hace nada (y se loguea un warning).
     /// Si la locución falla o tarda demasiado, se restaura el volumen igual.
-    /// </summary>
+    /// -------------
     private async Task StartLocutionMixAsync(PlaylistTrack track, IAudioChannel mainChannel)
     {
         if (_locution is null || !_locution.IsAvailable)
@@ -1612,11 +1612,11 @@ public sealed class PlaylistPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el índice REAL de BASS del bus actual (resuelto de -1 a default).
     /// Es el device al que se manda la locución para que suene por el mismo
     /// canal que la playlist.
-    /// </summary>
+    /// -------------
     private int ResolveCurrentBusDevice()
     {
         try

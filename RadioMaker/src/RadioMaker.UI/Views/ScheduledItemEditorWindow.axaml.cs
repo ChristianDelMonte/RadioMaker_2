@@ -5,15 +5,24 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Controls;
+using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
 
 public partial class ScheduledItemEditorWindow : CustomChromeWindow
 {
+    private readonly IReadOnlyCollection<string> _supportedAudioExtensions;
+
     public ScheduledItemEditorWindow()
+        : this(null)
+    {
+    }
+
+    public ScheduledItemEditorWindow(IEnumerable<string>? supportedAudioExtensions)
     {
         InitializeComponent();
+        _supportedAudioExtensions = supportedAudioExtensions?.ToArray() ?? Array.Empty<string>();
 
         AddHandler(DragDrop.DragOverEvent, OnDragOverAny);
         AddHandler(DragDrop.DropEvent, OnDropAny);
@@ -238,13 +247,7 @@ public partial class ScheduledItemEditorWindow : CustomChromeWindow
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return null;
 
-        var audioTypes = new FilePickerFileType("Archivos de audio")
-        {
-            Patterns = new[]
-            {
-                "*.mp3", "*.ogg", "*.wav", "*.flac", "*.m4a", "*.aac", "*.opus", "*.wv"
-            }
-        };
+        var audioTypes = AudioFilePickerHelper.CreateAudioFileType(_supportedAudioExtensions);
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {

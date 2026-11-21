@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Code-behind del File Manager.
-/// </summary>
+/// -------------
 public partial class FileSystemBrowserView : UserControl
 {
     public FileSystemBrowserView()
@@ -20,11 +20,11 @@ public partial class FileSystemBrowserView : UserControl
 
     private FileSystemBrowserViewModel? GetVm() => DataContext as FileSystemBrowserViewModel;
 
-    /// <summary>
+    /// -------------
     /// Nodo del arbol que el usuario clickeo con el boton derecho por
     /// ultima vez. Se usa desde los handlers del ContextMenu para saber
     /// sobre que carpeta operar.
-    /// </summary>
+    /// -------------
     private FileSystemNodeViewModel? _lastClickedNode;
 
     // ─────────────────────────────────────────────────────────────────────

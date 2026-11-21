@@ -11,7 +11,7 @@ using RadioMaker.UI.Views;
 
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Code-behind de la botonera.
 ///
 /// Interaccion:
@@ -33,14 +33,14 @@ namespace RadioMaker.UI.Views;
 ///
 ///   Los handlers se registran con handledEventsToo: true por las dudas
 ///   de que algun hijo marque el evento como handled.
-/// </summary>
+/// -------------
 public partial class CartBoardView : UserControl
 {
-    /// <summary>
+    /// -------------
     /// Ultimo boton sobre el que el drag estaba posicionado. Se usa para
     /// apagar el highlight del boton anterior cuando el cursor se mueve a
     /// otro boton o sale del control.
-    /// </summary>
+    /// -------------
     private CartButtonViewModel? _lastDragOverButton;
 
     public CartBoardView()
@@ -210,7 +210,10 @@ public partial class CartBoardView : UserControl
         if (owner is null) return;
 
         var editorVm = new CartButtonEditorViewModel(buttonVm);
-        var win = new CartButtonEditorWindow { DataContext = editorVm };
+        var supportedAudioExtensions = owner.DataContext is MainWindowViewModel mainVm
+            ? mainVm.SupportedExtensions
+            : null;
+        var win = new CartButtonEditorWindow(supportedAudioExtensions) { DataContext = editorVm };
 
         var result = await win.ShowDialog<bool>(owner);
 
@@ -291,12 +294,12 @@ public partial class CartBoardView : UserControl
         e.Handled = true;
     }
 
-    /// <summary>
+    /// -------------
     /// Actualiza el highlight de drag:
     ///   - Si el boton es el mismo que ya estaba destacado: no hace nada.
     ///   - Si es distinto: apaga el anterior y enciende el nuevo.
     ///   - Si es null (espacio vacio): apaga el anterior.
-    /// </summary>
+    /// -------------
     private void UpdateDragOverHighlight(CartButtonViewModel? buttonVm)
     {
         if (ReferenceEquals(buttonVm, _lastDragOverButton)) return;
@@ -310,7 +313,7 @@ public partial class CartBoardView : UserControl
         _lastDragOverButton = buttonVm;
     }
 
-    /// <summary>Apaga cualquier highlight de drag activo.</summary>
+    /// -------------Apaga cualquier highlight de drag activo.</summary>
     private void ClearDragOver()
     {
         if (_lastDragOverButton is not null)
@@ -320,11 +323,11 @@ public partial class CartBoardView : UserControl
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Cursor de drop: acepta si el data transfer contiene al menos un
     /// archivo de audio. Cualquier otra cosa (proyectos nativos, texto,
     /// nada) se rechaza.
-    /// </summary>
+    /// -------------
     private static bool HasAudioData(IDataTransfer? data)
     {
         var path = ExtractFirstFilePath(data);
@@ -357,10 +360,10 @@ public partial class CartBoardView : UserControl
         return null;
     }
 
-    /// <summary>
+    /// -------------
     /// True si el path es un archivo de audio reproducible.
     /// Rechaza explicitamente los proyectos nativos de RadioMaker.
-    /// </summary>
+    /// -------------
     private static bool IsAudioPath(string? path)
     {
         if (string.IsNullOrWhiteSpace(path)) return false;

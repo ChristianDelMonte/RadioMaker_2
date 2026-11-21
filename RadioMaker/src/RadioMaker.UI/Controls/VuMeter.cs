@@ -11,7 +11,7 @@ namespace RadioMaker.UI.Controls;
 public enum VuMeterStyle { Console, LedSegments, Minimal }
 public enum VuMeterOrientation { Vertical, Horizontal }
 
-/// <summary>
+/// -------------
 /// Control de VU meter personalizable: 3 estilos, 2 orientaciones, todo bindable.
 ///
 /// El color de fondo (BackgroundColor) es theme-aware cuando NO se setea
@@ -20,7 +20,7 @@ public enum VuMeterOrientation { Vertical, Horizontal }
 ///   - Light: #C8E0E8 (barra clara, para fondo claro).
 ///
 /// Si el usuario setea BackgroundColor en XAML, se respeta y no se adapta.
-/// </summary>
+/// -------------
 public sealed class VuMeter : Control
 {
     public static readonly StyledProperty<VuMeterStyle> StyleProperty =
@@ -134,11 +134,11 @@ public sealed class VuMeter : Control
         Dispatcher.UIThread.Post(InvalidateVisual);
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el color de fondo efectivo de las barras.
     /// Si el usuario lo seteo explicitamente, se respeta.
     /// Si no, se elige segun el tema.
-    /// </summary>
+    /// -------------
     private Color GetEffectiveBackground()
     {
         if (IsSet(BackgroundColorProperty))
@@ -149,9 +149,9 @@ public sealed class VuMeter : Control
             : Color.Parse("#C8E0E8");
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el color efectivo del texto de la escala.
-    /// </summary>
+    /// -------------
     private Color GetEffectiveScaleText()
     {
         if (IsSet(ScaleTextColorProperty))

@@ -3,9 +3,9 @@ using ManagedBass;
 // (namespace renombrado — ver nota en BassEngine.cs)
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Excepción que encapsula un error devuelto por la librería nativa BASS.
-/// </summary>
+/// -------------
 public sealed class BassEngineException : Exception
 {
     public Errors ErrorCode { get; }

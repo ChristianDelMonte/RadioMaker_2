@@ -4,9 +4,9 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Convierte un PlaylistGeneratorOrder a su etiqueta legible en español.
-/// </summary>
+/// -------------
 public sealed class PlaylistGeneratorOrderLabelConverter : IValueConverter
 {
     public static readonly PlaylistGeneratorOrderLabelConverter Instance = new();

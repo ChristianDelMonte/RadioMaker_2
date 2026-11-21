@@ -8,9 +8,9 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Item de preview del generador.
-/// </summary>
+/// -------------
 public sealed class PlaylistGeneratorPreviewItem
 {
     public int Index { get; init; }
@@ -29,18 +29,18 @@ public sealed class PlaylistGeneratorPreviewItem
     public bool HasSubtitle => !string.IsNullOrWhiteSpace(Subtitle);
 }
 
-/// <summary>
+/// -------------
 /// ViewModel del modal "Generar playlist automaticamente".
-/// </summary>
+/// -------------
 public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
 {
     private CancellationTokenSource? _cts;
 
-    /// <summary>Evita que los cambios automaticos limpien el preview cuando
+    /// -------------Evita que los cambios automaticos limpien el preview cuando
     /// estamos aplicando un preset (todo cambia a la vez).</summary>
     private bool _suppressAutoClear;
 
-    /// <summary>Evita que la asignacion programatica de SelectedPreset
+    /// -------------Evita que la asignacion programatica de SelectedPreset
     /// dispare el reapply del preset en loop.</summary>
     private bool _suppressPresetApply;
 
@@ -55,9 +55,9 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
     [ObservableProperty] private string? _currentPresetPath;
     [ObservableProperty] private string _currentPresetName = string.Empty;
 
-    /// <summary>
+    /// -------------
     /// Lista de presets recientes para el combo. Se carga al construir el VM.
-    /// </summary>
+    /// -------------
     public ObservableCollection<PresetHistoryEntry> AvailablePresets { get; } = new();
 
     [ObservableProperty] private PresetHistoryEntry? _selectedPreset;
@@ -233,10 +233,10 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
 
     // ───── API publica para el code-behind (file pickers) ───────────────
 
-    /// <summary>
+    /// -------------
     /// Aplica un preset cargado desde un archivo. Actualiza el historial
     /// y marca el preset como actual.
-    /// </summary>
+    /// -------------
     public void LoadPresetFromPath(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return;
@@ -269,9 +269,9 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         StatusMessage = $"Preset '{preset.DisplayName}' aplicado.";
     }
 
-    /// <summary>
+    /// -------------
     /// Guarda la configuracion actual como un nuevo preset.
-    /// </summary>
+    /// -------------
     public bool SavePresetAs(string path, string presetName)
     {
         if (string.IsNullOrWhiteSpace(path))
@@ -316,9 +316,9 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Sobrescribe el preset actual con la configuracion vigente.
-    /// </summary>
+    /// -------------
     public bool SaveCurrentPreset()
     {
         if (string.IsNullOrEmpty(CurrentPresetPath))
@@ -330,7 +330,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         return SavePresetAs(CurrentPresetPath, CurrentPresetName);
     }
 
-    /// <summary>Resetea todo el formulario a valores por defecto.</summary>
+    /// -------------Resetea todo el formulario a valores por defecto.</summary>
     [RelayCommand]
     private void NewPreset()
     {
@@ -372,7 +372,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         StatusMessage = "Preset nuevo. Configura las opciones.";
     }
 
-    /// <summary>Quita el preset seleccionado del historial (no borra el archivo).</summary>
+    /// -------------Quita el preset seleccionado del historial (no borra el archivo).</summary>
     [RelayCommand]
     private void RemoveFromHistory(PresetHistoryEntry? entry)
     {
@@ -499,11 +499,11 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
             AvailablePresets.Add(e);
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica las opciones de un preset al VM. Marca _suppressAutoClear
     /// durante toda la aplicacion para no disparar el ClearPreview en
     /// cada cambio de propiedad.
-    /// </summary>
+    /// -------------
     private void ApplyOptions(PlaylistGeneratorOptions options, string presetName, string presetPath)
     {
         if (options is null) return;
@@ -554,9 +554,9 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasCurrentPreset));
     }
 
-    /// <summary>
+    /// -------------
     /// Construye un preset con la configuracion vigente del VM.
-    /// </summary>
+    /// -------------
     private PlaylistGeneratorPreset BuildPreset(string presetName)
     {
         return new PlaylistGeneratorPreset

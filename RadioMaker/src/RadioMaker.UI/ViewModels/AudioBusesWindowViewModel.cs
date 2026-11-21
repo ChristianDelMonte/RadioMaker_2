@@ -5,10 +5,10 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel de la ventana de configuración de buses.
 /// Permite ver, agregar, eliminar y editar los buses de audio de la aplicación.
-/// </summary>
+/// -------------
 public sealed partial class AudioBusesWindowViewModel : ViewModelBase
 {
     private readonly IAudioEngine _engine;
@@ -18,7 +18,7 @@ public sealed partial class AudioBusesWindowViewModel : ViewModelBase
 
     public ObservableCollection<BusViewModel> Buses { get; } = new();
 
-    /// <summary>Se dispara cuando el usuario confirma/cierra con cambios aplicables.</summary>
+    /// -------------Se dispara cuando el usuario confirma/cierra con cambios aplicables.</summary>
     public event EventHandler? BusesChanged;
 
     public AudioBusesWindowViewModel(IAudioEngine engine)
@@ -91,7 +91,7 @@ public sealed partial class AudioBusesWindowViewModel : ViewModelBase
         StatusMessage = "Lista de dispositivos actualizada.";
     }
 
-    /// <summary>Genera la lista de configuración serializable a partir del estado actual.</summary>
+    /// -------------Genera la lista de configuración serializable a partir del estado actual.</summary>
     public IReadOnlyList<AudioBusConfig> ToConfigs()
     {
         var list = new List<AudioBusConfig>();

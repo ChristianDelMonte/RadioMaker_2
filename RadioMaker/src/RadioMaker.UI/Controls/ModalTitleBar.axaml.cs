@@ -4,7 +4,7 @@ using Avalonia.Interactivity;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Barra de titulo compacta para ventanas modales. Muestra un icono
 /// generico, el titulo de la ventana y un unico boton "Cerrar".
 ///
@@ -14,10 +14,10 @@ namespace RadioMaker.UI.Controls;
 ///
 /// El arrastre de la ventana lo maneja Avalonia automaticamente a traves
 /// de WindowDecorationProperties.ElementRole="TitleBar".
-/// </summary>
+/// -------------
 public partial class ModalTitleBar : UserControl
 {
-    /// <summary>Titulo a mostrar en la barra.</summary>
+    /// -------------Titulo a mostrar en la barra.</summary>
     public static readonly StyledProperty<string> WindowTitleProperty =
         AvaloniaProperty.Register<ModalTitleBar, string>(nameof(WindowTitle), string.Empty);
 

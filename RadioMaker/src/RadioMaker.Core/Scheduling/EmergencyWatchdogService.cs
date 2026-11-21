@@ -10,7 +10,7 @@ using RadioMaker.Core.Playback;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Watchdog de emergencia: detecta silencio prolongado en el bus de AIRE
 /// y dispara automaticamente una playlist de emergencia hasta que el
 /// operador la detenga manualmente.
@@ -30,7 +30,7 @@ namespace RadioMaker.Core.Scheduling;
 ///   • Emite beep cada N tracks (via bus.PlayTestTone).
 ///
 /// Detencion: solo con StopEmergency() (boton del operador).
-/// </summary>
+/// -------------
 public sealed class EmergencyWatchdogService : IDisposable
 {
     private readonly IAudioEngine _engine;
@@ -48,29 +48,29 @@ public sealed class EmergencyWatchdogService : IDisposable
     private bool _active;
     private bool _disposed;
 
-    /// <summary>
+    /// -------------
     /// Segundos de espera antes del primer beep tras activarse la emergencia.
     /// Suficiente para que el fade-in del primer track termine y el operador
     /// escuche el beep con claridad sobre la musica.
-    /// </summary>
+    /// -------------
     private const int FirstBeepDelaySeconds = 8;
 
     public event EventHandler? EmergencyStarted;
     public event EventHandler? EmergencyStopped;
     public event EventHandler<string>? LogMessage;
 
-    /// <summary>
+    /// -------------
     /// Se dispara cuando cambia la pista en reproduccion (transicion entre
     /// tracks de emergencia, o al iniciar la emergencia por primera vez).
     /// Los ViewModels lo usan para re-notificar sus propiedades derivadas
     /// (LiveStatusText, EmergencyStatusText).
-    /// </summary>
+    /// -------------
     public event EventHandler? NowPlayingChanged;
 
-    /// <summary>
+    /// -------------
     /// Hook opcional para aplicar EQ/Trim/Norm a los tracks de emergencia.
     /// Se setea desde MainWindowViewModel.
-    /// </summary>
+    /// -------------
     public Action<IAudioChannel, string, bool>? ConfigureChannel { get; set; }
 
     public bool IsActive { get { lock (_gate) return _active; } }
@@ -79,7 +79,7 @@ public sealed class EmergencyWatchdogService : IDisposable
     public int CurrentTrackTotal { get; private set; }
     public string CurrentBusDisplayName { get; private set; } = "";
 
-    /// <summary>Canales de audio activos de la playlist de emergencia.</summary>
+    /// -------------Canales de audio activos de la playlist de emergencia.</summary>
     public IEnumerable<IAudioChannel> GetActiveChannels() => _player.GetActiveChannels();
 
     public EmergencyWatchdogService(
@@ -156,10 +156,10 @@ public sealed class EmergencyWatchdogService : IDisposable
         FireEmergency("manual");
     }
 
-    /// <summary>
+    /// -------------
     /// Reproduce el beep manualmente para testear la configuracion.
     /// No dispara emergencia, solo el sonido.
-    /// </summary>
+    /// -------------
     public void TestBeepNow()
     {
         EmergencySettings snapshot;
@@ -552,7 +552,7 @@ public sealed class EmergencyWatchdogService : IDisposable
         try { LogMessage?.Invoke(this, message); } catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve true si la configuración de emergencia está completa y
     /// puede armarse. Se valida:
     ///   - Al menos una detección activa (no channels / silence).
@@ -562,7 +562,7 @@ public sealed class EmergencyWatchdogService : IDisposable
     ///       • Prearmed: el .rmf existe en disco.
     ///       • Folder: la carpeta existe y tiene al menos 1 audio.
     ///       • Hybrid: al menos uno de los dos.
-    /// </summary>
+    /// -------------
     public bool IsConfigurationValid()
     {
         EmergencySettings s;

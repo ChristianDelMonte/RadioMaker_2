@@ -4,7 +4,7 @@ using TagFile = TagLib.File;
 
 namespace RadioMaker.Core.Tags;
 
-/// <summary>
+/// -------------
 /// Escritor de TAGs de archivos de audio usando TagLib#.
 ///
 /// IMPORTANTE:
@@ -17,23 +17,23 @@ namespace RadioMaker.Core.Tags;
 ///   2. new AudioTagEdit(info)   -> editor
 ///   3. Usuario modifica los campos
 ///   4. AudioTagWriter.Write(path, edit) -> guarda cambios
-/// </summary>
+/// -------------
 public static class AudioTagWriter
 {
-    /// <summary>
+    /// -------------
     /// Resultado de una operacion de escritura.
-    /// </summary>
+    /// -------------
     public sealed record WriteResult(bool Success, string? ErrorMessage)
     {
         public static readonly WriteResult Ok = new(true, null);
         public static WriteResult Fail(string message) => new(false, message);
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica los cambios al archivo. Sobrescribe los campos no vacios
     /// (excepto los que sean 0 en Year/Track/Disc, que se interpretan
     /// como "no cambiar").
-    /// </summary>
+    /// -------------
     public static WriteResult Write(string filePath, AudioTagEdit edit)
     {
         if (string.IsNullOrWhiteSpace(filePath))

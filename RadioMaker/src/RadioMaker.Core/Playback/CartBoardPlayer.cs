@@ -4,7 +4,7 @@ using RadioMaker.Core.Logging;
 
 namespace RadioMaker.Core.Playback;
 
-/// <summary>
+/// -------------
 /// Reproductor de la botonera (Modulo 3B).
 ///
 /// A diferencia del PlaylistPlayer (que es secuencial y exclusivo), la
@@ -27,7 +27,7 @@ namespace RadioMaker.Core.Playback;
 /// Integracion con el resto:
 ///   - ConfigureChannel hook: aplica EQ/Trim/Norm automaticos a cada boton.
 ///   - Un bus de salida configurable (por defecto el primario).
-/// </summary>
+/// -------------
 public sealed class CartBoardPlayer : IDisposable
 {
     private readonly IAudioEngine _audioEngine;
@@ -40,7 +40,7 @@ public sealed class CartBoardPlayer : IDisposable
 
     private IAudioBus? _targetBus;
 
-    /// <summary>Mapa buttonId -> canal actualmente sonando por ese boton.</summary>
+    /// -------------Mapa buttonId -> canal actualmente sonando por ese boton.</summary>
     private readonly Dictionary<string, IAudioChannel> _activeChannels = new();
     private readonly Dictionary<string, IAudioChannel> _suspendedChannels = new();
     // Volumen propio aplicado a cada botón, separado de la normalización.
@@ -52,10 +52,10 @@ public sealed class CartBoardPlayer : IDisposable
     private bool _isCrossfadeEnabled;
     private int _crossfadeDurationMs = 500;
 
-    /// <summary>
+    /// -------------
     /// Cuando esta activo, al disparar un cart mientras suena otro se hace
     /// un crossfade (fade-out del actual + fade-in del nuevo).
-    /// </summary>
+    /// -------------
     public bool IsCrossfadeEnabled
     {
         get => _isCrossfadeEnabled;
@@ -76,10 +76,10 @@ public sealed class CartBoardPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Duracion del crossfade en milisegundos. Default: 500 ms.
     /// Valores muy chicos (menos de 100 ms) pueden sonar bruscos.
-    /// </summary>
+    /// -------------
     public int CrossfadeDurationMs
     {
         get => _crossfadeDurationMs;
@@ -90,21 +90,21 @@ public sealed class CartBoardPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Hook para aplicar EQ/Trim/Norm antes de cada Play.
     /// Parametros: (canal, ruta del archivo, loguear detalles).
-    /// </summary>
+    /// -------------
     public Action<IAudioChannel, string, bool>? ConfigureChannel { get; set; }
 
     // ───── Eventos ───────────────────────────────────────────────────────
 
-    /// <summary>Se dispara cuando un boton empieza o deja de sonar.</summary>
+    /// -------------Se dispara cuando un boton empieza o deja de sonar.</summary>
     public event EventHandler<CartButtonPlaybackEvent>? ButtonStateChanged;
-    /// <summary>
+    /// -------------
     /// Se dispara cuando cambia IsCrossfadeEnabled (por ejemplo, porque
     /// el usuario lo activo desde el panel de configuracion).
     /// Las VMs se suscriben para refrescar su propia copia del estado.
-    /// </summary>
+    /// -------------
     public event EventHandler? CrossfadeStateChanged;
 
     // ───── Constructor ───────────────────────────────────────────────────
@@ -171,12 +171,12 @@ public sealed class CartBoardPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// True si hay canales suspendidos por el coordinator (AutoResume).
     /// Un cart suspendido esta pausado, no reproduciendo. La pestaña que
     /// lo contiene debe mostrar el indicador de "pausado" (naranja) en
     /// lugar del indicador de "al aire" (rojo).
-    /// </summary>
+    /// -------------
     public bool HasSuspendedChannels
     {
         get
@@ -239,7 +239,7 @@ public sealed class CartBoardPlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Arranca la reproduccion del boton en un canal propio.
     ///
     /// Si el modo crossfade esta activo y hay otros botones sonando, se
@@ -247,7 +247,7 @@ public sealed class CartBoardPlayer : IDisposable
     ///
     /// Si el crossfade esta desactivado, el nuevo canal se suma a los que
     /// ya estan sonando (comportamiento clasico).
-    /// </summary>
+    /// -------------
     public void Play(CartButton button)
     {
         if (button is null) return;
@@ -368,7 +368,7 @@ public sealed class CartBoardPlayer : IDisposable
         });
     }
 
-    /// <summary>Detiene la reproduccion del boton indicado.</summary>
+    /// -------------Detiene la reproduccion del boton indicado.</summary>
     public void Stop(CartButton button)
     {
         if (button is null) return;
@@ -383,7 +383,7 @@ public sealed class CartBoardPlayer : IDisposable
         });
     }
 
-    /// <summary>Detiene todos los botones activos.</summary>
+    /// -------------Detiene todos los botones activos.</summary>
     public void StopAll()
     {
         _dispatch(() =>
@@ -399,10 +399,10 @@ public sealed class CartBoardPlayer : IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Ajusta el volumen de un boton que esta sonando. Si no esta sonando,
     /// el cambio se aplicara la proxima vez que se reproduzca.
-    /// </summary>
+    /// -------------
     public void SetLiveVolume(string buttonId, double volumeDb)
     {
         _dispatch(() =>
@@ -427,10 +427,10 @@ public sealed class CartBoardPlayer : IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Reaplica la configuracion (EQ/Trim/Norm) SOLO a los canales activos
     /// cuyo archivo coincide con <paramref name="filePath"/>.
-    /// </summary>
+    /// -------------
     public void ReapplyToMatchingChannels(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return;
@@ -469,10 +469,10 @@ public sealed class CartBoardPlayer : IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Restaura el volumen adicional de cada cart después de reaplicar
     /// normalización global a todos los canales activos.
-    /// </summary>
+    /// -------------
     public void ReapplyLiveVolumeOffsets(Func<string, bool>? isAnalysisPending = null)
     {
         _dispatch(() =>
@@ -513,14 +513,14 @@ public sealed class CartBoardPlayer : IDisposable
 
     // ───── Crossfade ─────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Hace fade-out de todos los canales activos EXCEPTO el que se va a
     /// reemplazar (que ya fue detenido antes de llamar a este metodo).
     ///
     /// El canal sigue en el diccionario mientras dura el fade; cuando el
     /// fade termina, se dispone y se quita del diccionario. Esto evita
     /// que dos disparos muy seguidos dejen canales "zombie".
-    /// </summary>
+    /// -------------
     private void FadeOutAllExcept(string keepButtonId, int fadeMs)
     {
         foreach (var kvp in _activeChannels.ToList())
@@ -792,7 +792,7 @@ public sealed class CartBoardPlayer : IDisposable
     }
 }
 
-/// <summary>
+/// -------------
 /// Argumentos del evento ButtonStateChanged del CartBoardPlayer.
-/// </summary>
+/// -------------
 public sealed record CartButtonPlaybackEvent(string ButtonId, bool IsPlaying);

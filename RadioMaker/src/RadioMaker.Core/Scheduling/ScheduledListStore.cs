@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Persistencia de listas de programados en archivos .rms (JSON).
 ///
 /// Formato: JSON legible con todas las propiedades del modelo ScheduledList.
 /// Los enums de prioridad se serializan como string ("Low", "High") para
 /// que el archivo sea legible a mano si el usuario quiere editarlo.
-/// </summary>
+/// -------------
 public static class ScheduledListStore
 {
     public const string FileExtension = ".rms";
@@ -23,7 +23,7 @@ public static class ScheduledListStore
 
     // ───── Save ──────────────────────────────────────────────────────────
 
-    /// <summary>Guarda la lista en el path indicado. Anade la extension si falta.</summary>
+    /// -------------Guarda la lista en el path indicado. Anade la extension si falta.</summary>
     public static void Save(ScheduledList list, string path)
     {
         if (list is null) throw new ArgumentNullException(nameof(list));
@@ -44,7 +44,7 @@ public static class ScheduledListStore
 
     // ───── Load ──────────────────────────────────────────────────────────
 
-    /// <summary>Carga una lista desde un archivo .rms. Devuelve null si falla.</summary>
+    /// -------------Carga una lista desde un archivo .rms. Devuelve null si falla.</summary>
     public static ScheduledList? Load(string path)
     {
         try
@@ -79,7 +79,7 @@ public static class ScheduledListStore
 
     // ───── Validation ────────────────────────────────────────────────────
 
-    /// <summary>Valida que un archivo sea una lista .rms legible.</summary>
+    /// -------------Valida que un archivo sea una lista .rms legible.</summary>
     public static bool IsValidFile(string path)
     {
         try

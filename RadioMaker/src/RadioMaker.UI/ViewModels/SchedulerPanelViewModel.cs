@@ -10,11 +10,11 @@ using System.Collections.ObjectModel;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de control del scheduler.
 /// Ademas de gestionar el scheduler, muestra el estado de reproduccion
 /// actual que viene del PlaybackEngine.
-/// </summary>
+/// -------------
 public sealed partial class SchedulerPanelViewModel : ViewModelBase
 {
     private readonly SchedulerService _service;
@@ -32,25 +32,25 @@ public sealed partial class SchedulerPanelViewModel : ViewModelBase
 
     public ObservableCollection<SchedulerLogEntry> LogEntries { get; } = new();
 
-    /// <summary>
+    /// -------------
     /// Items programados que estan en cola esperando su turno de
     /// reproduccion (porque otro item esta sonando). Se ordenan por
     /// prioridad (ALTA primero) y luego por orden de llegada.
-    /// </summary>
+    /// -------------
     public ObservableCollection<QueuedItemViewModel> QueuedItems { get; } = new();
 
     // ───── Estado de reproduccion (viene del PlaybackEngine) ────────────
     [ObservableProperty] private PlaybackStateInfo _playbackState = PlaybackStateInfo.Idle;
     
-    /// <summary>Estado de la playlist (independiente del scheduler).</summary>
+    /// -------------Estado de la playlist (independiente del scheduler).</summary>
     [ObservableProperty] private PlaylistPlayerState _playlistState = PlaylistPlayerState.Stopped;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Registry del scheduler. Necesario para que EventsPanelViewModel
     /// consulte las listas activas y calcule los pendientes.
-    /// </summary>
+    /// -------------
     public ScheduledListRegistry Registry => _service.Registry;
 
     public string RegisteredText => $"{RegisteredListCount} lista(s) registrada(s)";
@@ -62,23 +62,23 @@ public sealed partial class SchedulerPanelViewModel : ViewModelBase
 
     // ───── Panel de reproduccion actual (scheduler O playlist) ──────────
 
-    /// <summary>True si el scheduler esta reproduciendo algo ahora.</summary>
+    /// -------------True si el scheduler esta reproduciendo algo ahora.</summary>
     public bool IsSchedulerActive => PlaybackState.IsActive;
 
-    /// <summary>True si la playlist esta sonando (reproduciendo o pausada).</summary>
+    /// -------------True si la playlist esta sonando (reproduciendo o pausada).</summary>
     public bool IsPlaylistActive => PlaylistState.IsActive;
 
-    /// <summary>True si la playlist fue pausada por un programado.</summary>
+    /// -------------True si la playlist fue pausada por un programado.</summary>
     public bool IsPlaylistSuspended =>
         PlaylistState.Status == PlaylistPlayerStatus.PausedByScheduler;
 
-    /// <summary>
+    /// -------------
     /// True cuando no hay scheduler activo pero SI hay playlist sonando.
     /// En ese caso el panel de reproduccion muestra la info de la playlist.
-    /// </summary>
+    /// -------------
     public bool ShowPlaylistPanel => !IsSchedulerActive && IsPlaylistActive;
 
-    /// <summary>True cuando no hay nada sonando en ningun lado.</summary>
+    /// -------------True cuando no hay nada sonando en ningun lado.</summary>
     public bool ShowEmptyState => !IsSchedulerActive && !IsPlaylistActive;
 
     // Textos del panel de playlist (para reusar el mismo layout)
@@ -131,11 +131,11 @@ public sealed partial class SchedulerPanelViewModel : ViewModelBase
         _queueRefreshTimer.Start();
     }
 
-    /// <summary>
+    /// -------------
     /// Sincroniza la coleccion observable de QueuedItems con el estado
     /// actual del PlaybackEngine. Solo agrega/quita los que cambiaron
     /// para no regenerar la UI en cada tick.
-    /// </summary>
+    /// -------------
     private void RefreshQueue()
     {
         if (_playback is null) return;
@@ -181,10 +181,10 @@ public sealed partial class SchedulerPanelViewModel : ViewModelBase
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Si la playlist esta pausada por un programado, agrega un item virtual
     /// al final de la cola para informarlo. Si ya no esta suspendida, lo quita.
-    /// </summary>
+    /// -------------
     private void SincronizarPlaylistEnCola()
     {
         bool suspended = IsPlaylistSuspended;
@@ -390,9 +390,9 @@ public sealed partial class SchedulerPanelViewModel : ViewModelBase
     }
 }
 
-/// <summary>
+/// -------------
 /// Representa un item programado que esta en cola esperando su turno.
-/// </summary>
+/// -------------
 public sealed class QueuedItemViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     private string _title = string.Empty;
@@ -412,13 +412,13 @@ public sealed class QueuedItemViewModel : CommunityToolkit.Mvvm.ComponentModel.O
 
     public RadioMaker.Core.Scheduling.SchedulePriority Priority { get; init; }
 
-    /// <summary>True si el item es una tanda (multiples pistas).</summary>
+    /// -------------True si el item es una tanda (multiples pistas).</summary>
     public bool IsTanda { get; init; }
 
-    /// <summary>Cantidad de pistas si es una tanda.</summary>
+    /// -------------Cantidad de pistas si es una tanda.</summary>
     public int TandaTrackCount { get; init; }
 
-    /// <summary>True si este item representa a la playlist que fue pausada.</summary>
+    /// -------------True si este item representa a la playlist que fue pausada.</summary>
     public bool IsSuspendedPlaylist { get; init; }
 
     public string PriorityText => IsSuspendedPlaylist

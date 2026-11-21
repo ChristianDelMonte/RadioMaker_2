@@ -4,17 +4,17 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Wrapper de UI sobre <see cref="TandaTrack"/>.
 /// Al cambiar el FilePath lee la duracion del archivo automaticamente.
-/// </summary>
+/// -------------
 public sealed partial class TandaTrackViewModel : ViewModelBase
 {
     private readonly TandaTrack _track;
 
     public TandaTrack Source => _track;
 
-    /// <summary>Se dispara cuando cambia cualquier propiedad relevante.</summary>
+    /// -------------Se dispara cuando cambia cualquier propiedad relevante.</summary>
     public event EventHandler? Changed;
 
     // ───── Propiedades observables ───────────────────────────────────────

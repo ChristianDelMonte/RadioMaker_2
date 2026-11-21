@@ -5,9 +5,9 @@ using RMVoice.Core.Models;
 
 namespace RMVoice.Core.Services;
 
-/// <summary>
+/// -------------
 /// Persiste la lista de perfiles de voz en un JSON dentro de AppData.
-/// </summary>
+/// -------------
 public sealed class ProfileStore
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -18,10 +18,10 @@ public sealed class ProfileStore
 
     private readonly string _filePath;
 
-    /// <summary>Crea un store apuntando a <c>%AppData%/RMVoice/profiles.json</c>.</summary>
+    /// -------------Crea un store apuntando a <c>%AppData%/RMVoice/profiles.json</c>.
     public ProfileStore() : this(EnginePaths.DefaultProfilesPath()) { }
 
-    /// <summary>Crea un store apuntando a una ruta arbitraria.</summary>
+    /// -------------Crea un store apuntando a una ruta arbitraria.
     public ProfileStore(string filePath)
     {
         _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));

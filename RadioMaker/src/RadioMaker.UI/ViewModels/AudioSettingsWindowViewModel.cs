@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de configuracion unificado.
 ///
 /// Layout: barra lateral con secciones a la izquierda + contenido a la
@@ -25,7 +25,7 @@ namespace RadioMaker.UI.ViewModels;
 /// Los cambios se aplican en vivo sobre los mismos objetos que usa el
 /// MainWindowViewModel, asi que no hay boton "Aplicar". La unica excepcion
 /// es la config de buses, que se persiste al cerrar la ventana.
-/// </summary>
+/// -------------
 public sealed class AudioSettingsWindowViewModel : ViewModelBase
 {
     // ───── Paneles individuales (referencias directas) ───────────────────
@@ -42,7 +42,7 @@ public sealed class AudioSettingsWindowViewModel : ViewModelBase
     public BehaviorSettingsViewModel BehaviorPanel { get; }
     public EmergencyPanelViewModel EmergencyPanel { get; }
 
-    /// <summary>Referencia al VM principal (para el ruteo).</summary>
+    /// -------------Referencia al VM principal (para el ruteo).</summary>
     public MainWindowViewModel? Main { get; }
 
     // ───── Navegacion ────────────────────────────────────────────────────
@@ -115,7 +115,7 @@ public sealed class AudioSettingsWindowViewModel : ViewModelBase
         SelectedSection = Sections.FirstOrDefault();
     }
 
-    /// <summary>Selecciona una seccion por su clave (util para abrir la ventana en una seccion concreta).</summary>
+    /// -------------Selecciona una seccion por su clave (util para abrir la ventana en una seccion concreta).</summary>
     public void SelectSection(string key)
     {
         var s = Sections.FirstOrDefault(x => x.Key == key);

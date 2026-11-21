@@ -4,7 +4,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Configuration;
 
-/// <summary>
+/// -------------
 /// Persiste la configuración de buses (nombre, dispositivo, volumen master)
 /// en un archivo JSON bajo el directorio de datos del usuario.
 ///
@@ -12,7 +12,7 @@ namespace RadioMaker.Core.Configuration;
 ///   • Windows: %APPDATA%\RmsAudioPlayer\buses.json
 ///   • macOS:   ~/Library/Application Support/RmsAudioPlayer/buses.json
 ///   • Linux:   ~/.config/RmsAudioPlayer/buses.json
-/// </summary>
+/// -------------
 public static class BusConfigurationStore
 {
     private static readonly JsonSerializerOptions Options = new()
@@ -21,13 +21,13 @@ public static class BusConfigurationStore
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    /// <summary>Ruta completa del archivo de configuración.</summary>
+    /// -------------Ruta completa del archivo de configuración.</summary>
     public static string ConfigPath { get; } = BuildConfigPath();
 
-    /// <summary>
+    /// -------------
     /// Carga la configuración de buses. Si el archivo no existe devuelve una
     /// lista con un único bus primario apuntando al dispositivo por defecto.
-    /// </summary>
+    /// -------------
     public static IReadOnlyList<AudioBusConfig> Load()
     {
         try
@@ -66,7 +66,7 @@ public static class BusConfigurationStore
         };
     }
 
-    /// <summary>Guarda la configuración de buses en disco.</summary>
+    /// -------------Guarda la configuración de buses en disco.</summary>
     public static void Save(IEnumerable<AudioBusConfig> buses)
     {
         var dir = Path.GetDirectoryName(ConfigPath);

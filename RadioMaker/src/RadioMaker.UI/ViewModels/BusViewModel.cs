@@ -5,9 +5,9 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel de un Bus individual, usado dentro de la ventana de configuración.
-/// </summary>
+/// -------------
 public sealed partial class BusViewModel : ViewModelBase
 {
     private readonly IAudioBus _bus;

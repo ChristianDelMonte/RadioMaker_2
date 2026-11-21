@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace RMWave.Core.Audio;
 
-/// <summary>
+/// -------------
 /// Reproductor/mezclador multipista de proyectos .rmw.
 ///
 /// Dos modos de uso:
@@ -29,7 +29,7 @@ namespace RMWave.Core.Audio;
 /// El EQ de 3 bandas (DXParamEQ) quedó deshabilitado porque no es
 /// multiplataforma (solo Windows). Se reemplazará por BASS_FX_BFX_PEAKEQ
 /// en una próxima iteración.
-/// </summary>
+/// -------------
 public sealed class TimelinePlayer : IDisposable
 {
     private const int SampleRate = 44100;
@@ -56,10 +56,10 @@ public sealed class TimelinePlayer : IDisposable
     // CHAN_ALL de bass_fx: aplica la banda a todos los canales del stream.
     private const int EqChannelAll = -1;
 
-    /// <summary>
+    /// -------------
     /// Replica exacta del struct nativo BASS_BFX_PEAKEQ de bass_fx.h.
     /// Layout: 6 campos de 4 bytes = 24 bytes, sin padding.
-    /// </summary>
+    /// -------------
     [StructLayout(LayoutKind.Sequential)]
     private struct BFX_PEAKEQ
     {
@@ -71,11 +71,11 @@ public sealed class TimelinePlayer : IDisposable
         public int lChannel;
     }
 
-    /// <summary>
+    /// -------------
     /// true si bass_fx se cargó correctamente. Se chequea lazy la primera
     /// vez que se intenta aplicar EQ. Si es false, los knobs de EQ no
     /// tienen efecto (comportamiento degradado, sin romper el audio).
-    /// </summary>
+    /// -------------
     private bool? _eqAvailable;
 
     private readonly bool _ownsBass;
@@ -112,15 +112,15 @@ public sealed class TimelinePlayer : IDisposable
     public double DurationSeconds => Project.Duration;
 
     // ===== INTEGRACIÓN CON RADIOMAKER =====
-    /// <summary>
+    /// -------------
     /// Handle del mixer de BASS. El host puede usarlo para ChannelGetLevel / FFT.
     /// IMPORTANTE: el handle PUEDE cambiar tras Play/Stop/Seek.
-    /// </summary>
+    /// -------------
     public int MixerHandle => _mixer;
 
-    /// <summary>
+    /// -------------
     /// Volumen master del canal (0.0 .. 4.0 lineal, donde 1.0 = sin cambio).
-    /// </summary>
+    /// -------------
     public void SetMasterVolume(float volume)
     {
         if (_mixer == 0) return;
@@ -128,9 +128,9 @@ public sealed class TimelinePlayer : IDisposable
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Helper de volumen en dB.
-    /// </summary>
+    /// -------------
     public void SetMasterGainDb(double gainDb)
     {
         if (_mixer == 0) return;
@@ -749,11 +749,11 @@ public sealed class TimelinePlayer : IDisposable
         RebuildActiveClips(seconds);
     }
 
-    /// <summary>
+    /// -------------
     /// Crea el mixer de salida en el dispositivo con el que se inicializó
     /// este player. BASS.CurrentDevice es local al hilo y las recreaciones
     /// pueden ocurrir desde hilos distintos al que llamó Init().
-    /// </summary>
+    /// -------------
     private int CreateOutputMixer()
     {
         int previousDevice = Bass.CurrentDevice;
@@ -908,14 +908,14 @@ public sealed class TimelinePlayer : IDisposable
         return finalVolume;
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica (o reemplaza) el EQ de 3 bandas al stream indicado, usando
     /// los valores actuales de la pista. Si ya había un FX asociado al
     /// stream, lo libera primero.
     ///
     /// Devuelve el handle del FX creado, o 0 si bass_fx no está disponible
     /// o la creación falló. En ese caso el stream sigue funcionando sin EQ.
-    /// </summary>
+    /// -------------
     private int ApplyEqToStream(int streamHandle, ProjectTrack track,
                                 Dictionary<int, int>? fxHandles = null)
     {
@@ -960,9 +960,9 @@ public sealed class TimelinePlayer : IDisposable
         return fxHandle;
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica una banda del EQ con los parámetros nativos de BASS_FX.
-    /// </summary>
+    /// -------------
     private void ApplyEqBand(int fxHandle, int band, float frequency, float gainDb)
     {
         if (fxHandle == 0) return;
@@ -992,13 +992,13 @@ public sealed class TimelinePlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Re-aplica el EQ a todos los clips activos de la pista indicada.
     /// Se llama cuando el usuario mueve un knob de EQ en vivo.
     ///
     /// Si un clip no tiene FX todavía (porque se activó con EQ en bypass
     /// por algún error), ApplyEqToStream lo va a crear en este momento.
-    /// </summary>
+    /// -------------
     private void ReapplyEqToActiveStreams(ProjectTrack track)
     {
         if (!EnsureEqAvailable()) return;
@@ -1022,10 +1022,10 @@ public sealed class TimelinePlayer : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Chequea (una sola vez) si bass_fx está disponible. Si no, los
     /// knobs de EQ no tienen efecto pero el audio sigue funcionando.
-    /// </summary>
+    /// -------------
     private bool EnsureEqAvailable()
     {
         if (_eqAvailable.HasValue) return _eqAvailable.Value;

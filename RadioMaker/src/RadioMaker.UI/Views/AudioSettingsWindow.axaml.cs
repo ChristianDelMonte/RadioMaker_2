@@ -6,12 +6,12 @@ using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Code-behind del panel de configuracion unificado.
 ///
 /// Hereda de CustomChromeWindow para tener la barra de titulo personalizada
 /// en Windows/macOS y la nativa en Linux.
-/// </summary>
+/// -------------
 public partial class AudioSettingsWindow : CustomChromeWindow
 {
     public AudioSettingsWindow()

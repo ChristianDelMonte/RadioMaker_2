@@ -1,6 +1,6 @@
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Persistencia de drafts de las pestañas de Notas.
 ///
 /// Cada pestaña de Notas tiene un <c>DraftId</c> unico (GUID) que se usa
@@ -10,13 +10,13 @@ namespace RadioMaker.UI.Services;
 /// El draft siempre refleja el estado ACTUAL del editor, haya sido guardado
 /// a un archivo o no. Al restaurar el workspace, el draft tiene prioridad
 /// sobre el archivo .txt guardado, porque representa la sesion mas reciente.
-/// </summary>
+/// -------------
 public static class NotesDraftStore
 {
-    /// <summary>Carpeta donde viven todos los drafts.</summary>
+    /// -------------Carpeta donde viven todos los drafts.</summary>
     public static string DraftsFolder { get; } = BuildFolderPath();
 
-    /// <summary>Ruta completa del draft para un DraftId.</summary>
+    /// -------------Ruta completa del draft para un DraftId.</summary>
     public static string GetDraftPath(string draftId)
     {
         if (string.IsNullOrWhiteSpace(draftId))
@@ -24,9 +24,9 @@ public static class NotesDraftStore
         return Path.Combine(DraftsFolder, draftId + ".txt");
     }
 
-    /// <summary>
+    /// -------------
     /// Carga el contenido del draft. Devuelve null si no existe o si falla.
-    /// </summary>
+    /// -------------
     public static string? LoadDraft(string draftId)
     {
         try
@@ -38,11 +38,11 @@ public static class NotesDraftStore
         catch { return null; }
     }
 
-    /// <summary>
+    /// -------------
     /// Guarda (o sobreescribe) el draft. Acepta content null (lo trata como
     /// cadena vacia), porque en algunos flujos el Text del editor puede
     /// llegar null durante la inicializacion.
-    /// </summary>
+    /// -------------
     public static void SaveDraft(string draftId, string? content)
     {
         if (string.IsNullOrWhiteSpace(draftId)) return;
@@ -55,7 +55,7 @@ public static class NotesDraftStore
         catch { }
     }
 
-    /// <summary>Borra el draft si existe.</summary>
+    /// -------------Borra el draft si existe.</summary>
     public static void DeleteDraft(string draftId)
     {
         try

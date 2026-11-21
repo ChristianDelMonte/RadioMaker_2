@@ -5,7 +5,7 @@ using System.Threading.Channels;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Motor de reproduccion programada. Soporta items SingleFile, Tanda,
 /// Playlist y Block.
 ///
@@ -38,7 +38,7 @@ namespace RadioMaker.Core.Scheduling;
 ///   El engine expone un hook ConfigureChannel que la UI puede setear.
 ///   Antes de cada Play, se llama al hook para que aplique EQ, Trim y
 ///   Normalizacion segun las settings del usuario.
-/// </summary>
+/// -------------
 public sealed class PlaybackEngine : IDisposable
 {
     private readonly IAudioEngine _audioEngine;
@@ -57,25 +57,25 @@ public sealed class PlaybackEngine : IDisposable
     private bool _autoFadeEnabled;
     private double _autoFadeSeconds = 2.0;
 
-    /// <summary>
+    /// -------------
     /// Hook opcional llamado antes de cada Play.
     /// Parametros: (canal, ruta del archivo, loguear detalles).
     /// Cuando logDetails es false, solo aplica la configuracion sin escribir
     /// en el log (evita duplicar entradas al reaplicar).
-    /// </summary>
+    /// -------------
     public Action<IAudioChannel, string, bool>? ConfigureChannel { get; set; }
 
-    /// <summary>
+    /// -------------
     /// Hook opcional para pre-calentar el analisis de la proxima pista de
     /// una tanda/playlist/bloque. Igual que el de PlaylistPlayer.
-    /// </summary>
+    /// -------------
     public Action<string>? PrewarmFile { get; set; }
 
-    /// <summary>
+    /// -------------
     /// Hook opcional llamado cuando la UI termina un analisis en background.
     /// La UI comprueba si el archivo analizado es el que esta sonando y
     /// reaplica los ajustes en vivo.
-    /// </summary>
+    /// -------------
     public Func<string>? CurrentFilePathProvider { get; set; }
 
     // ───── Estado de reproduccion actual ─────────────────────────────────
@@ -124,10 +124,10 @@ public sealed class PlaybackEngine : IDisposable
         public double PositionSeconds { get; init; }
         public double DurationSeconds { get; init; }
 
-        /// <summary>
+        /// -------------
         /// Instancia activa de tanda conservada al suspender. Puede ser
         /// virtual (Playlist/Block), cargada desde .tnd o embebida.
-        /// </summary>
+        /// -------------
         public Tanda? VirtualTanda { get; init; }
     }
 
@@ -140,25 +140,25 @@ public sealed class PlaybackEngine : IDisposable
 
     private readonly List<PendingItem> _pendingQueue = new();
     private const int MaxQueueSize = 500;
-    /// <summary>
+    /// -------------
     /// True mientras hay un Play manual (iniciado con PlayList()) en curso.
     /// Se limpia SOLO cuando la cola manual termina o cuando se detiene.
-    /// </summary>
+    /// -------------
     private bool _isManualPlayInProgress;
 
     // ───── Eventos ───────────────────────────────────────────────────────
 
     public event EventHandler<PlaybackStateInfo>? StateChanged;
-    /// <summary>
+    /// -------------
     /// Se dispara cuando un Play manual (iniciado con PlayList) termina
     /// naturalmente o es detenido. NO se dispara por disparos del scheduler.
-    /// </summary>
+    /// -------------
     public event EventHandler? ManualPlayFinished;
 
-    /// <summary>
+    /// -------------
     /// True si el Play manual iniciado con PlayList() sigue en curso
     /// (incluye estados de suspension por un programado ALTA).
-    /// </summary>
+    /// -------------
     public bool IsManualPlayInProgress => _isManualPlayInProgress;
 
     // ───── Constructor ───────────────────────────────────────────────────
@@ -241,11 +241,11 @@ public sealed class PlaybackEngine : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// ID del item que esta sonando AHORA en el motor (o null si no hay).
     /// Se usa para que la UI identifique qué pestaña de Programados esta
     /// al aire.
-    /// </summary>
+    /// -------------
     public string? CurrentItemId
     {
         get
@@ -254,10 +254,10 @@ public sealed class PlaybackEngine : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// ID del item suspendido (pausado por un ALTA, o por coexistencia).
     /// Null si no hay suspendido.
-    /// </summary>
+    /// -------------
     public string? SuspendedItemId
     {
         get
@@ -359,11 +359,11 @@ public sealed class PlaybackEngine : IDisposable
     // TRANSPORTE: Pause / Resume / Next
     // =====================================================================
 
-    /// <summary>
+    /// -------------
     /// Pausa el item que está sonando ahora (SingleFile, Tanda, Playlist o Block).
     /// No afecta la cola pendiente ni lo suspendido. No-op si no hay nada sonando
     /// o si ya está pausado.
-    /// </summary>
+    /// -------------
     public void Pause()
     {
         _dispatch(() =>
@@ -389,10 +389,10 @@ public sealed class PlaybackEngine : IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Reanuda el item que fue pausado con <see cref="Pause"/>.
     /// No-op si no hay nada pausado.
-    /// </summary>
+    /// -------------
     public void Resume()
     {
         _dispatch(() =>
@@ -419,14 +419,14 @@ public sealed class PlaybackEngine : IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Salta al siguiente item. Si el item actual es una tanda, salta al siguiente
     /// track de la tanda. Si era el último track, o si era un SingleFile, pasa al
     /// siguiente item de la cola (o reanuda el suspendido, o termina).
     ///
     /// Es equivalente a "fin natural del item actual", pero sin esperar el
     /// transcurso del audio.
-    /// </summary>
+    /// -------------
     public void Next()
     {
         _dispatch(() =>
@@ -507,11 +507,11 @@ public sealed class PlaybackEngine : IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Retrocede al track anterior si estamos dentro de una tanda/playlist/bloque.
     /// Si ya estamos en el primer track (o es un SingleFile), reinicia el item
     /// actual desde el segundo 0 (comportamiento estándar de reproductores).
-    /// </summary>
+    /// -------------
     public void Previous()
     {
         _dispatch(() =>
@@ -576,7 +576,7 @@ public sealed class PlaybackEngine : IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Inicia la reproduccion MANUAL de una lista de items programados.
     ///
     /// A diferencia del disparo por scheduler:
@@ -591,7 +591,7 @@ public sealed class PlaybackEngine : IDisposable
     /// maneja el engine con la logica de prioridad/suspension).
     ///
     /// Llamar desde el hilo de UI: internamente usa el dispatcher.
-    /// </summary>
+    /// -------------
     /// <returns>Cantidad de items que se encolaron (0 si nada).</returns>
     public int PlayList(IReadOnlyList<ScheduledItem> items, string listName)
     {
@@ -968,11 +968,11 @@ public sealed class PlaybackEngine : IDisposable
 
     // ───── Reproduccion de un item de tipo Block ─────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Arranca un item de tipo Block. El bloque se "aplana" a una tanda
     /// virtual concatenando el contenido de todos sus items en orden.
     /// Despues se reusa el flujo normal de tanda (mixados incluidos).
-    /// </summary>
+    /// -------------
     private void StartBlockItem(ScheduledItem item, string listName)
     {
         var block = item.EmbeddedBlock;
@@ -1028,10 +1028,10 @@ public sealed class PlaybackEngine : IDisposable
         PlayTandaTrack(0, resumeAtSeconds: 0);
     }
 
-    /// <summary>
+    /// -------------
     /// Convierte las pistas habilitadas de una Playlist en una Tanda
     /// "virtual" que se puede pasar al flujo normal de tanda.
-    /// </summary>
+    /// -------------
     private static Tanda ConvertPlaylistToTanda(Playlist playlist)
     {
         var tanda = new Tanda
@@ -1095,7 +1095,7 @@ public sealed class PlaybackEngine : IDisposable
         return tanda;
     }
 
-    /// <summary>
+    /// -------------
     /// Aplana un Bloque a una Tanda virtual concatenando el contenido de
     /// todos sus items en el orden en que estan definidos.
     ///
@@ -1109,7 +1109,7 @@ public sealed class PlaybackEngine : IDisposable
     /// Los items que no se pueden cargar (archivo faltante, .rmf corrupto,
     /// etc) se SALTEAN con un warning en el log para no romper la reproduccion
     /// del resto del bloque.
-    /// </summary>
+    /// -------------
     private Tanda ConvertBlockToTanda(ScheduledBlock block)
     {
         var tanda = new Tanda
@@ -1619,10 +1619,10 @@ public sealed class PlaybackEngine : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Termina la reproduccion actual y notifica al UI. Si habia un Play
     /// manual en curso, limpia el flag y emite ManualPlayFinished.
-    /// </summary>
+    /// -------------
     private void FinishPlayback()
     {
         if (_isManualPlayInProgress)
@@ -1718,10 +1718,10 @@ public sealed class PlaybackEngine : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Ejecuta una locución de RMVoice como mixado intermedio de una pista
     /// de tanda. Equivalente a PlaylistPlayer.StartLocutionMixAsync.
-    /// </summary>
+    /// -------------
     private async Task StartLocutionMixAsync(TandaTrack track, IAudioChannel mainChannel)
     {
         if (_locution is null || !_locution.IsAvailable)
@@ -1780,10 +1780,10 @@ public sealed class PlaybackEngine : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el índice REAL de BASS del bus actual. Es el device al que
     /// se manda la locución para que suene por el mismo canal que la pista.
-    /// </summary>
+    /// -------------
     private int ResolveCurrentBusDevice()
     {
         try
@@ -1797,12 +1797,12 @@ public sealed class PlaybackEngine : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Reproduce una locución como pista principal de una tanda virtual.
     /// Adaptación de PlaylistPlayer.PlayLocutionTrack para TandaTrack.
     /// No carga canal de audio: dispara el comando de RMVoice async y,
     /// al terminar, avanza a la siguiente pista.
-    /// </summary>
+    /// -------------
     private void PlayLocutionInTanda(int index, TandaTrack track)
     {
         var currentTanda = _currentTanda;
@@ -1861,10 +1861,10 @@ public sealed class PlaybackEngine : IDisposable
         _ = RunLocutionInTandaAsync(index, track, deviceIndex, volume, locutionCts);
     }
 
-    /// <summary>
+    /// -------------
     /// Ejecuta la locución async y, al terminar, avanza a la siguiente
     /// pista de la tanda.
-    /// </summary>
+    /// -------------
     private async Task RunLocutionInTandaAsync(
         int index,
         TandaTrack track,

@@ -8,10 +8,10 @@ using PlaybackState = RadioMaker.Core.Abstractions.PlaybackState;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// IAudioChannel sobre un TimelinePlayer del Core de RMWave.
 /// Permite reproducir un .rmw como si fuera un archivo de audio en RadioMaker.
-/// </summary>
+/// -------------
 internal sealed class RmwChannel : IAudioChannel
 {
     private readonly TimelinePlayer _player;

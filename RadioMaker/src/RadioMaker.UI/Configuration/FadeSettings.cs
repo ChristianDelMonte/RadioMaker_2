@@ -3,41 +3,41 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Configuracion persistente del fade automatico (para audio general) y
 /// del crossfade entre carts (para la botonera).
-/// </summary>
+/// -------------
 public sealed partial class FadeSettings : ObservableObject
 {
     // ───── Auto-fade general ─────────────────────────────────────────────
 
-    /// <summary>Si true, todo audio aplica fade-in y fade-out automatico.</summary>
+    /// -------------Si true, todo audio aplica fade-in y fade-out automatico.</summary>
     [ObservableProperty] private bool _isEnabled = false;
 
-    /// <summary>Duracion del fade en segundos (aplica al inicio y al final).</summary>
+    /// -------------Duracion del fade en segundos (aplica al inicio y al final).</summary>
     [ObservableProperty] private double _seconds = 2.0;
 
     // ───── Crossfade entre carts (botonera) ─────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Si true, al disparar un cart mientras suena otro se hace fade-out
     /// del que suena y fade-in del nuevo (crossfade).
     /// Si false, los carts se superponen (comportamiento clasico).
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _cartCrossfadeEnabled = false;
 
-    /// <summary>
+    /// -------------
     /// Duracion del crossfade entre carts, en segundos. Default 0.5 s.
     /// Valores muy chicos (menos de 0.1 s) pueden sonar bruscos.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private double _cartCrossfadeSeconds = 0.5;
 
     // ───── Helpers ───────────────────────────────────────────────────────
 
-    /// <summary>Crossfade en milisegundos (conversion practica).</summary>
+    /// -------------Crossfade en milisegundos (conversion practica).</summary>
     public int CartCrossfadeMs => (int)Math.Round(CartCrossfadeSeconds * 1000.0);
 
-    /// <summary>Texto con formato "X.X s".</summary>
+    /// -------------Texto con formato "X.X s".</summary>
     public string CartCrossfadeSecondsText => $"{CartCrossfadeSeconds:F1} s";
 }
 

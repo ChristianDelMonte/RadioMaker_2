@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace RMVoice.Core.Services;
 
-/// <summary>
+/// -------------
 /// Motor de reproducción basado en ManagedBass.
 ///
 /// Reglas de diseño:
@@ -15,7 +15,7 @@ namespace RMVoice.Core.Services;
 ///    (Sin esto, el canal sigue reproduciendo más allá del fin de la región.)
 ///  • El device y el volumen se aplican a cada stream ANTES de cada segmento.
 ///  • Si el servicio no es dueño de BASS, NO llama a Init/Free.
-/// </summary>
+/// -------------
 public sealed class AudioService : IDisposable
 {
     private readonly SyncProcedure _endSyncProc;
@@ -65,27 +65,27 @@ public sealed class AudioService : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// <c>true</c>  → este servicio es dueño de BASS (Init/Free).
     /// <c>false</c> → el host (RadioMaker) ya lo inicializó.
-    /// </summary>
+    /// -------------
     public bool OwnsBass { get; }
 
     public bool IsInitialized => _initialized;
 
-    /// <summary>True si al menos una pista está cargada.</summary>
+    /// -------------True si al menos una pista está cargada.
     public bool IsReady => _streams.Values.Any(h => h != 0);
 
-    /// <summary>True si hay una locución reproduciéndose ahora mismo.</summary>
+    /// -------------True si hay una locución reproduciéndose ahora mismo.
     public bool IsPlaying => _playLock.CurrentCount == 0;
 
-    /// <summary>Handle BASS del segmento de voz actual, o cero si no hay audio activo.</summary>
+    /// -------------Handle BASS del segmento de voz actual, o cero si no hay audio activo.
     public int CurrentStreamHandle => Volatile.Read(ref _currentStreamHandle);
 
-    /// <summary>Dispositivo por defecto (se usa cuando el request no especifica uno).</summary>
+    /// -------------Dispositivo por defecto (se usa cuando el request no especifica uno).
     public int DefaultDevice { get; set; } = -1;
 
-    /// <summary>Volumen global del Engine (0.0 – 1.0).</summary>
+    /// -------------Volumen global del Engine (0.0 – 1.0).
     public float Volume
     {
         get => _volume;
@@ -179,10 +179,10 @@ public sealed class AudioService : IDisposable
     //  Reproducción por cola de segmentos
     // ---------------------------------------------------------------------
 
-    /// <summary>
+    /// -------------
     /// Reproduce los segmentos en orden. Devuelve cuando el último segmento terminó.
     /// Si ya hay otra locución en curso, espera su turno.
-    /// </summary>
+    /// -------------
     public async Task PlaySequenceAsync(
         IEnumerable<Segment> segments,
         int deviceIndex,
@@ -223,7 +223,7 @@ public sealed class AudioService : IDisposable
         }
     }
 
-    /// <summary>Corta la locución en curso (si la hay). El bloqueo del llamador se completa.</summary>
+    /// -------------Corta la locución en curso (si la hay). El bloqueo del llamador se completa.
     public void Stop()
     {
         Interlocked.Increment(ref _stopGeneration);
@@ -249,10 +249,10 @@ public sealed class AudioService : IDisposable
         tcs?.TrySetResult(false);
     }
 
-    /// <summary>
+    /// -------------
     /// Reproduce un único segmento: programa el sync de fin, hace seek al inicio
     /// de la región, arranca, espera el fin, y DETIENE el canal.
-    /// </summary>
+    /// -------------
     private async Task<bool> PlaySegmentAsync(Segment segment, int stream, CancellationToken ct)
     {
         var endBytes = Bass.ChannelSeconds2Bytes(stream, segment.Region.EndSeconds);
@@ -313,10 +313,10 @@ public sealed class AudioService : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Callback de fin de región. Corre en el hilo interno de BASS.
     /// NO llamar a funciones de BASS aquí: solo completar el TCS.
-    /// </summary>
+    /// -------------
     private void OnEndSync(int handle, int channel, int data, IntPtr user)
     {
         var tcs = Interlocked.Exchange(ref _currentSegmentTcs, null);

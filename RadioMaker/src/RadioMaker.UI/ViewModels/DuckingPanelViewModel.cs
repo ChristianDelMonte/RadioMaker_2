@@ -7,14 +7,14 @@ using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de ducking automatico.
 ///
 /// Responsabilidades:
 ///   - Exponer la configuracion al usuario (device, umbral, reduccion, etc).
 ///   - Aplicarla al engine cuando cambia algo.
 ///   - Refrescar periodicamente los niveles actuales (microfono y ganancia aplicada).
-/// </summary>
+/// -------------
 public sealed partial class DuckingPanelViewModel : ViewModelBase
 {
     private readonly DuckingSettings _settings;
@@ -120,10 +120,10 @@ public sealed partial class DuckingPanelViewModel : ViewModelBase
         : $"{CurrentMicLevelDb:F1} dB";
     public string CurrentGainText => $"{CurrentGainDb:F1} dB";
 
-    /// <summary>Indica si el micrófono esta captando voz por encima del umbral.</summary>
+    /// -------------Indica si el micrófono esta captando voz por encima del umbral.</summary>
     public bool IsVoiceDetected => CurrentMicLevelDb > ThresholdDb;
 
-    /// <summary>Indica si la atenuacion esta activa (ganancia < -0.5 dB).</summary>
+    /// -------------Indica si la atenuacion esta activa (ganancia < -0.5 dB).</summary>
     public bool IsDuckingActive => CurrentGainDb < -0.5;
 
     // ───── Constructor ───────────────────────────────────────────────────

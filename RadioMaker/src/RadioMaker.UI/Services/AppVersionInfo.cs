@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Expone la info de version de la aplicacion, leida del ensamblado en
 /// tiempo de ejecucion. Los valores se generan automaticamente en cada
 /// compilacion desde el .csproj (ver RadioMaker.UI.csproj):
@@ -15,29 +15,29 @@ namespace RadioMaker.UI.Services;
 ///       - HHmm      = hora UTC del build
 ///
 /// Ejemplo: 2.01.261011.1530 = v2.01 compilada el 11/10/2026 a las 15:30 UTC.
-/// </summary>
+/// -------------
 public static class AppVersionInfo
 {
     private static readonly Lazy<VersionData> _data = new(LoadVersionData);
 
     // ───── API publica ───────────────────────────────────────────────────
 
-    /// <summary>Version completa como string: "2.01.261011.1530".</summary>
+    /// -------------Version completa como string: "2.01.261011.1530".</summary>
     public static string Version => _data.Value.VersionString;
 
-    /// <summary>Version corta (mayor.menor): "2.01".</summary>
+    /// -------------Version corta (mayor.menor): "2.01".</summary>
     public static string ShortVersion => _data.Value.ShortVersion;
 
-    /// <summary>Texto listo para mostrar en el titulo: "Version 2.01.261011.1530".</summary>
+    /// -------------Texto listo para mostrar en el titulo: "Version 2.01.261011.1530".</summary>
     public static string VersionText => $"Version {Version}";
 
-    /// <summary>Fecha de compilacion en formato local (dd-MM-yyyy HH:mm).</summary>
+    /// -------------Fecha de compilacion en formato local (dd-MM-yyyy HH:mm).</summary>
     public static string BuildDateTimeText => _data.Value.BuildDateText;
 
-    /// <summary>Texto de compilacion para la barra de titulo: "Compilacion 11-10-2026 15:30".</summary>
+    /// -------------Texto de compilacion para la barra de titulo: "Compilacion 11-10-2026 15:30".</summary>
     public static string BuildText => $"Compilacion {BuildDateTimeText}";
 
-    /// <summary>Texto de plataforma: ".NET 8 · Windows 10.0.19045".</summary>
+    /// -------------Texto de plataforma: ".NET 8 · Windows 10.0.19045".</summary>
     public static string PlatformText
     {
         get
@@ -48,9 +48,9 @@ public static class AppVersionInfo
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Fecha de compilacion como DateTime (UTC). Util para debug.
-    /// </summary>
+    /// -------------
     public static DateTime BuildDateTimeUtc => _data.Value.BuildDateTimeUtc;
 
     // ───── Internals ─────────────────────────────────────────────────────
@@ -146,9 +146,9 @@ public static class AppVersionInfo
         };
     }
 
-    /// <summary>
+    /// -------------
     /// Parsea YYMMDD + HHmm (ambos en UTC) a DateTime.
-    /// </summary>
+    /// -------------
     private static bool TryParseBuildDate(string yyMMdd, string hhmm, out DateTime result)
     {
         result = DateTime.MinValue;

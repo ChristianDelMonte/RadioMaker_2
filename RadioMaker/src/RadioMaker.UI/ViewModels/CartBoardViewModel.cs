@@ -7,23 +7,23 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel de la botonera (Modulo 3B).
 ///
 /// FASE C: cada pestaña de Cart tiene su propio CartBoardPlayer y su
 /// propio SimpleBusSelectorViewModel. El bus elegido por el usuario se
 /// persiste en el .rcb (OutputBusId) y se restaura al abrir el archivo.
-/// </summary>
+/// -------------
 public sealed partial class CartBoardViewModel : ViewModelBase
 {
     private readonly CartBoard _board;
     private readonly CartBoardPlayer? _player;
 
-    /// <summary>
+    /// -------------
     /// Func que devuelve el bus "del modulo Cart" (el default). Se usa
     /// como fallback cuando el .rcb no tiene OutputBusId o cuando el bus
     /// guardado ya no existe. Lo inyecta el MainWindowViewModel.
-    /// </summary>
+    /// -------------
     private readonly Func<IAudioBus?>? _defaultBusProvider;
 
     private string? _currentFilePath;
@@ -34,10 +34,10 @@ public sealed partial class CartBoardViewModel : ViewModelBase
     [ObservableProperty] private CartButtonViewModel? _selectedButton;
 
     // ───── Selector de bus de salida ─────────────────────────────────────
-    /// <summary>
+    /// -------------
     /// Selector de bus propio de esta botonera. Se inyecta desde el
     /// MainWindowViewModel via AttachBusSelector.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private SimpleBusSelectorViewModel? _busSelector;
 
     // ───── Estado de la botonera ─────────────────────────────────────────
@@ -110,13 +110,13 @@ public sealed partial class CartBoardViewModel : ViewModelBase
 
     // ───── Attach del selector de bus ────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Conecta el selector de bus a esta botonera. Se llama desde el
     /// MainWindowViewModel despues de crear el VM.
     ///
     /// Suscribe el callback de cambio de bus y aplica el bus inicial
     /// (guardado en el .rcb o el del modulo Cart).
-    /// </summary>
+    /// -------------
     public void AttachBusSelector(SimpleBusSelectorViewModel selector)
     {
         if (selector is null) return;
@@ -144,13 +144,13 @@ public sealed partial class CartBoardViewModel : ViewModelBase
         StatusMessage = $"Bus de salida: {bus.DisplayName}";
     }
 
-    /// <summary>
+    /// -------------
     /// Restaura el bus de salida a partir del modelo persistido:
     ///   1. Si OutputBusId tiene un bus valido, lo selecciona.
     ///   2. Si esta vacio o el bus ya no existe, cae al bus del modulo Cart.
     ///
     /// No marca la pestaña como dirty.
-    /// </summary>
+    /// -------------
     private void RestoreBusFromModel()
     {
         if (BusSelector is null) return;

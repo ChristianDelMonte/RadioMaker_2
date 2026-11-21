@@ -6,7 +6,7 @@ using RadioMaker.Core.Logging;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de log de reproduccion.
 ///
 /// Muestra en vivo las entradas emitidas por el LogService, con:
@@ -15,7 +15,7 @@ namespace RadioMaker.UI.ViewModels;
 ///   - Contador por nivel.
 ///   - Boton para limpiar.
 ///   - Boton para exportar (via dialogo modal).
-/// </summary>
+/// -------------
 public sealed partial class PlaybackLogViewModel : ViewModelBase
 {
     private readonly LogService _logService;
@@ -23,7 +23,7 @@ public sealed partial class PlaybackLogViewModel : ViewModelBase
 
     // ───── Colecciones ───────────────────────────────────────────────────
 
-    /// <summary>Entradas visibles en el panel (aplicando los filtros activos).</summary>
+    /// -------------Entradas visibles en el panel (aplicando los filtros activos).</summary>
     public ObservableCollection<LogEntry> Entries { get; } = new();
 
     // ───── Filtros ───────────────────────────────────────────────────────
@@ -55,20 +55,20 @@ public sealed partial class PlaybackLogViewModel : ViewModelBase
 
     // ───── API para exportacion ──────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Devuelve TODAS las entradas del LogService (sin aplicar filtros),
     /// ordenadas de mas reciente a mas antigua.
     /// Se usa desde el dialogo de exportacion cuando se elige "todo el log".
-    /// </summary>
+    /// -------------
     public IReadOnlyList<LogEntry> GetAllEntries()
     {
         return _logService.GetSnapshot(int.MaxValue);
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve solo las entradas filtradas actualmente (las visibles en el panel).
     /// Se usa desde el dialogo de exportacion cuando se elige "solo lo filtrado".
-    /// </summary>
+    /// -------------
     public IReadOnlyList<LogEntry> GetFilteredEntries()
     {
         return Entries.ToList();

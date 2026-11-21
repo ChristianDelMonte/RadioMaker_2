@@ -17,7 +17,7 @@ using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Code-behind de la ventana principal.
 ///
 /// Contiene TODOS los handlers referenciados por MainWindow.axaml:
@@ -29,7 +29,7 @@ namespace RadioMaker.UI.Views;
 /// Los comandos de reproduccion (Play/Pause/Stop) llegan desde la toolbar
 /// via binding directo al MainWindowViewModel, no pasan por aca.
 /// El toggle de Ducking tambien esta bindeado directo al VM.
-/// </summary>
+/// -------------
 public partial class MainWindow : Window
 {
     // Indices de las pestañas del TabControl "CenterTabs" del modulo 3.
@@ -412,10 +412,10 @@ public partial class MainWindow : Window
     // Helpers
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// Abre el dialogo nativo de seleccion de archivo y devuelve la ruta
     /// elegida, o null si el usuario cancelo.
-    /// </summary>
+    /// -------------
     private async Task<string?> PickFileAsync(string title, string typeName, string[] patterns)
     {
         var topLevel = TopLevel.GetTopLevel(this);
@@ -437,10 +437,10 @@ public partial class MainWindow : Window
         return files[0].TryGetLocalPath();
     }
 
-    /// <summary>
+    /// -------------
     /// Guarda un CartBoard. Si no tiene archivo asignado, abre el dialogo
     /// de "Guardar como...".
-    /// </summary>
+    /// -------------
     private static async Task SaveCartAsync(
         CartBoardViewModel cart,
         TopLevel topLevel,
@@ -497,10 +497,10 @@ public partial class MainWindow : Window
         await EditSelectedScheduledItemAsync(ScheduledItemKind.Playlist, "Playlist");
     }
 
-    /// <summary>
+    /// -------------
     /// Abre el editor del item seleccionado en la pestaña de Programados
     /// activa, validando que sea del tipo esperado.
-    /// </summary>
+    /// -------------
     private async Task EditSelectedScheduledItemAsync(ScheduledItemKind expectedKind, string label)
     {
         if (DataContext is not MainWindowViewModel vm) return;
@@ -509,7 +509,7 @@ public partial class MainWindow : Window
         if (list.SelectedItem.Kind != expectedKind) return;
 
         var editorVm = new ScheduledItemEditorViewModel(list.SelectedItem);
-        var win = new ScheduledItemEditorWindow { DataContext = editorVm };
+        var win = new ScheduledItemEditorWindow(vm.SupportedExtensions) { DataContext = editorVm };
 
         var ok = await win.ShowDialog<bool>(this);
 
@@ -619,11 +619,11 @@ public partial class MainWindow : Window
     private void OnMenuLaunchRMCast(object? sender, RoutedEventArgs e)
         => LaunchComplement("RMCast", "RM Cast");
 
-    /// <summary>
+    /// -------------
     /// Busca y lanza un complemento externo. Busca el ejecutable en varias
     /// ubicaciones posibles (con subcarpeta "Complementos" en español o
     /// ingles, o en el mismo directorio que RadioMaker.exe).
-    /// </summary>
+    /// -------------
     private void LaunchComplement(string baseName, string displayName)
     {
         if (DataContext is not MainWindowViewModel vm) return;
@@ -729,10 +729,10 @@ public partial class MainWindow : Window
     // Helpers: apertura de archivo de audio
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// Abre el dialogo nativo y carga el archivo elegido en el bus activo.
     /// Reemplaza al antiguo OnBrowseClick del AXAML previo.
-    /// </summary>
+    /// -------------
     private async Task OpenAudioFileAsync()
     {
         if (DataContext is not MainWindowViewModel vm) return;
@@ -1062,9 +1062,9 @@ public partial class MainWindow : Window
         return result;
     }
 
-    /// <summary>
+    /// -------------
     /// Alterna entre maximizado y restaurado.
-    /// </summary>
+    /// -------------
     private void ToggleMaximize()
     {
         if (WindowState == WindowState.Maximized)
@@ -1082,13 +1082,13 @@ public partial class MainWindow : Window
         return clean.Trim();
     }
 
-    /// <summary>
+    /// -------------
     /// Abre la ventana unificada de configuracion, opcionalmente posicionada
     /// en una seccion concreta (por ejemplo "buses", "vumeter" o "plugins").
     ///
     /// Al cerrar, recarga la lista de buses del MainWindowViewModel por si
     /// el usuario agrego/elimino/edito algun bus desde la seccion "Buses".
-    /// </summary>
+    /// -------------
     private async Task OpenUnifiedSettingsAsync(string initialSectionKey)
     {
         if (DataContext is not MainWindowViewModel vm) return;

@@ -1,6 +1,6 @@
 namespace RadioMaker.Core.Abstractions;
 
-/// <summary>
+/// -------------
 /// Resultado del analisis de niveles de un archivo de audio.
 ///
 /// Contiene el PEAK maximo y el RMS promedio del archivo completo,
@@ -11,24 +11,24 @@ namespace RadioMaker.Core.Abstractions;
 /// La ganancia sugerida depende del modo de normalizacion deseado:
 ///   - Modo Peak: GainDb = TargetPeakDb - PeakDb
 ///   - Modo Rms:  GainDb = TargetRmsDb  - RmsDb   (limitado por el peak)
-/// </summary>
+/// -------------
 public sealed record NormalizationResult(
-    /// <summary>true si el analisis se ejecuto. false si el archivo no se analizo todavia.</summary>
+    /// -------------true si el analisis se ejecuto. false si el archivo no se analizo todavia.</summary>
     bool IsAnalyzed,
 
-    /// <summary>Duracion total del archivo.</summary>
+    /// -------------Duracion total del archivo.</summary>
     TimeSpan TotalDuration,
 
-    /// <summary>Peak maximo del archivo en dBFS. Tipicamente entre -60 y 0.</summary>
+    /// -------------Peak maximo del archivo en dBFS. Tipicamente entre -60 y 0.</summary>
     double PeakDb,
 
-    /// <summary>RMS promedio del archivo en dBFS. Tipicamente entre -40 y -10.</summary>
+    /// -------------RMS promedio del archivo en dBFS. Tipicamente entre -40 y -10.</summary>
     double RmsDb,
 
-    /// <summary>Cantidad total de samples procesados (informativo).</summary>
+    /// -------------Cantidad total de samples procesados (informativo).</summary>
     long SampleCount)
 {
-    /// <summary>Resultado "vacio" - usado antes de analizar.</summary>
+    /// -------------Resultado "vacio" - usado antes de analizar.</summary>
     public static readonly NormalizationResult NotAnalyzed = new(
         IsAnalyzed: false,
         TotalDuration: TimeSpan.Zero,
@@ -36,17 +36,17 @@ public sealed record NormalizationResult(
         RmsDb: -120.0,
         SampleCount: 0);
 
-    /// <summary>
+    /// -------------
     /// Factor de cresta: diferencia entre peak y RMS.
     /// Un valor alto (> 15 dB) indica audio muy dinamico (clasico, jazz).
     /// Un valor bajo (&lt; 8 dB) indica audio muy comprimido (pop, EDM).
-    /// </summary>
+    /// -------------
     public double CrestFactorDb => PeakDb - RmsDb;
 
-    /// <summary>
+    /// -------------
     /// Calcula la ganancia (en dB) necesaria para alcanzar un target
     /// segun el modo elegido. Aplica limitaciones para evitar clipping.
-    /// </summary>
+    /// -------------
     /// <param name="mode">Estrategia de normalizacion.</param>
     /// <param name="targetDb">Target en dBFS (ej: -1 para peak, -16 para RMS).</param>
     /// <param name="maxPeakDb">Techo maximo de peak permitido (ej: -0.5 dBFS).</param>

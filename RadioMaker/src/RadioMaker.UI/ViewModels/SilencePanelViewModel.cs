@@ -5,21 +5,21 @@ using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de analisis de silencios.
 ///
 /// El analisis corre AUTOMATICAMENTE al cargar cada archivo (no hay
 /// boton "Analizar"). Los resultados se cachean en el ChannelConfigurator
 /// para las reproducciones siguientes.
-/// </summary>
+/// -------------
 public sealed partial class SilencePanelViewModel : ViewModelBase
 {
     private readonly SilencePanelSettings _settings;
     private IAudioChannel? _channel;
-    /// <summary>
+    /// -------------
     /// Se dispara cuando el usuario cambia el umbral, activa/desactiva el
     /// auto-trim o modifica algun parametro de analisis.
-    /// </summary>
+    /// -------------
     public event EventHandler? SettingsChanged;
 
     // ───── Configuracion ─────────────────────────────────────────────────
@@ -136,10 +136,10 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
 
     // ───── Attach ────────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Vincula el panel a un canal. SIEMPRE dispara el analisis automatico
     /// (ya no hay boton manual).
-    /// </summary>
+    /// -------------
     public void AttachToChannel(IAudioChannel? channel)
     {
         _channel = channel;

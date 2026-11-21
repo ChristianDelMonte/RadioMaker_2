@@ -7,19 +7,19 @@ public static class DemoStateStore
 {
     public static string ConfigPath { get; } = BuildPath();
 
-    /// <summary>
+    /// -------------
     /// True si ya se completó la presentación. Verifica la existencia
     /// del archivo marcador (no su contenido): si el archivo existe,
     /// la demo ya se mostró. Sin JSON, sin deserialización, sin riesgo
     /// de errores de parseo.
-    /// </summary>
+    /// -------------
     public static bool IsCompleted() => File.Exists(ConfigPath);
 
-    /// <summary>
+    /// -------------
     /// Marca como completada creando el archivo marcador.
     /// Se llama al ARRANCAR la demo (no al terminar), garantizando que
     /// se vea exactamente una vez incluso si el usuario cierra o crashea.
-    /// </summary>
+    /// -------------
     public static bool MarkCompleted()
     {
         try
@@ -38,7 +38,7 @@ public static class DemoStateStore
         }
     }
 
-    /// <summary>Borra el archivo (para testing: permite volver a ver la demo).</summary>
+    /// -------------Borra el archivo (para testing: permite volver a ver la demo).</summary>
     public static void Reset()
     {
         try

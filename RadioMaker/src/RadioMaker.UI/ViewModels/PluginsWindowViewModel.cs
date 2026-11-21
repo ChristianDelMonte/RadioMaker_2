@@ -3,11 +3,11 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel de la ventana "Plugins de formato".
 /// Muestra el estado de cada addon cargado y los formatos soportados
 /// agrupados por origen (nativo BASS + cada plugin cargado).
-/// </summary>
+/// -------------
 public sealed class PluginsWindowViewModel : ViewModelBase
 {
     public ObservableCollection<PluginInfoViewModel> Plugins { get; } = new();
@@ -31,7 +31,7 @@ public sealed class PluginsWindowViewModel : ViewModelBase
         SummaryText = $"{loaded} de {total} plugins cargados correctamente.";
     }
 
-    /// <summary>Constructor sin engine para el diseñador de XAML.</summary>
+    /// -------------Constructor sin engine para el diseñador de XAML.</summary>
     public PluginsWindowViewModel()
     {
         SummaryText = "0 de 0 plugins cargados.";
@@ -67,10 +67,10 @@ public sealed class PluginsWindowViewModel : ViewModelBase
     }
 }
 
-/// <summary>
+/// -------------
 /// Representa una linea del panel "Formatos soportados actualmente":
 /// el nombre del origen (nativo o plugin) y las extensiones que aporta.
-/// </summary>
+/// -------------
 public sealed class FormatGroupViewModel
 {
     public string Name { get; }

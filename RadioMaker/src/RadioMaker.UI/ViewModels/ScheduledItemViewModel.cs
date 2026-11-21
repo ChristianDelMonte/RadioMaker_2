@@ -108,7 +108,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
     public bool HasNoBlockItems => !HasBlockItems;
 
     // ===== INTEGRACIÓN RMWave =====
-    /// <summary>True si el FilePath del item es un .rmw.</summary>
+    /// -------------True si el FilePath del item es un .rmw.</summary>
     public bool IsRmwProject =>
         !string.IsNullOrWhiteSpace(FilePath)
         && FilePath.EndsWith(".rmw", StringComparison.OrdinalIgnoreCase);
@@ -296,10 +296,10 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Resumen del horario configurado y de la próxima salida. La salida se
     /// calcula entre todas las entradas habilitadas usando la hora local.
-    /// </summary>
+    /// -------------
     public string ScheduleSummaryText
     {
         get
@@ -359,7 +359,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>Refresca el texto horario cuando cambia el reloj.</summary>
+    /// -------------Refresca el texto horario cuando cambia el reloj.</summary>
     public void RefreshScheduleDisplay() => OnPropertyChanged(nameof(ScheduleSummaryText));
 
     public string TandaName
@@ -1255,11 +1255,11 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
 
     // ───── API para drag & drop desde el explorador ─────────────────────
 
-    /// <summary>
+    /// -------------
     /// Clasifica una extension en un ScheduledItemKind.
     /// Devuelve null si la extension no es compatible con un programado
     /// (por ejemplo .rms o .rcb, que no se pueden anidar).
-    /// </summary>
+    /// -------------
     public static ScheduledItemKind? DetectKindFromExtension(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
@@ -1283,7 +1283,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         return ScheduledItemKind.SingleFile;
     }
 
-    /// <summary>
+    /// -------------
     /// Asigna un archivo al item respetando el tipo actual:
     ///   - Si es Playlist y el archivo es .rmf    -> asigna al FilePath.
     ///   - Si es Tanda    y el archivo es .tnd    -> asigna al FilePath.
@@ -1292,7 +1292,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
     ///   - Si el archivo es .rms/.rcb, no hace nada.
     ///
     /// Devuelve true si algo se asigno.
-    /// </summary>
+    /// -------------
     public bool AssignFileFromPath(string path)
     {
         var detected = DetectKindFromExtension(path);
@@ -1330,12 +1330,12 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         return true;
     }
 
-    /// <summary>
+    /// -------------
     /// Agrega un item nuevo al bloque (si Kind == Block) a partir de un
     /// path. El tipo del BlockItem se infiere de la extension.
     ///
     /// Devuelve true si se agrego.
-    /// </summary>
+    /// -------------
     public bool AddBlockItemFromPath(string path)
     {
         if (Kind != ScheduledItemKind.Block) return false;

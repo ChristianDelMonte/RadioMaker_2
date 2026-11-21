@@ -8,12 +8,12 @@ using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Code-behind del editor de notas.
 ///
 /// Maneja los dialogos nativos de abrir/guardar archivos .txt. La logica
 /// de edicion y autosave vive en el <see cref="NotesEditorViewModel"/>.
-/// </summary>
+/// -------------
 public partial class NotesEditorView : UserControl
 {
     public NotesEditorView()

@@ -7,7 +7,7 @@ using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Dialogo modal de exportacion de log.
 ///
 /// Uso:
@@ -15,7 +15,7 @@ namespace RadioMaker.UI.Views;
 ///     var win = new LogExportDialog { DataContext = vm };
 ///     var ok = await win.ShowDialog<bool>(owner);
 ///     // si ok == true, la exportacion se completo con exito.
-/// </summary>
+/// -------------
 public partial class LogExportDialog : CustomChromeWindow
 {
     public LogExportDialog()

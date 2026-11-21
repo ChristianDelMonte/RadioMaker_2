@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Persistencia de la botonera (.rcb / JSON).
 ///
 /// Al cargar una botonera guardada con un tamano de grilla distinto al
@@ -11,12 +11,12 @@ namespace RadioMaker.Core.Scheduling;
 /// se aplica una MIGRACION automatica que preserva los botones con archivo
 /// asignado, compactandolos en la nueva grilla y descartando los vacios
 /// sobrantes.
-/// </summary>
+/// -------------
 public static class CartBoardStore
 {
     public const string FileExtension = ".rcb";
 
-    /// <summary>Tamano de grilla actual por defecto (4 filas x 6 columnas = 24).</summary>
+    /// -------------Tamano de grilla actual por defecto (4 filas x 6 columnas = 24).</summary>
     public const int DefaultRows = 4;
     public const int DefaultColumns = 6;
 
@@ -76,7 +76,7 @@ public static class CartBoardStore
 
     // ───── Migracion ─────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Detecta si el tamano de grilla guardado es distinto al actual
     /// (DefaultRows x DefaultColumns) y, si es asi, aplica una migracion
     /// que conserva todos los botones con archivo, compactandolos en la
@@ -90,7 +90,7 @@ public static class CartBoardStore
     ///   3. Los botones vacios sobrantes se descartan.
     ///   4. Si la migracion provoca perdida de botones asignados, no se
     ///      aplica (para no destruir datos del usuario).
-    /// </summary>
+    /// -------------
     private static void MigrateIfNeeded(CartBoard board)
     {
         // Solo migramos si el tamano cambio.
@@ -135,16 +135,16 @@ public static class CartBoardStore
 
     // ───── Path por defecto ──────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Ruta de la botonera por defecto en el directorio de datos del usuario.
     /// Se usa cuando la app arranca sin un .rcb cargado explicitamente.
-    /// </summary>
+    /// -------------
     public static string DefaultPath { get; } = BuildDefaultPath();
 
-    /// <summary>
+    /// -------------
     /// Carga la botonera por defecto. Si no existe, crea una nueva
     /// (con el tamano actual por defecto) y la guarda en disco.
-    /// </summary>
+    /// -------------
     public static CartBoard LoadOrCreateDefault()
     {
         var loaded = Load(DefaultPath);

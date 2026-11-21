@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del contenido de una pestaña Playlist.
 ///
 /// Ademas de editar la playlist (agregar/quitar/mover pistas, guardar,
@@ -18,18 +18,18 @@ namespace RadioMaker.UI.ViewModels;
 /// playlist puede sonar a la vez. Si esta pestaña no es la que esta sonando,
 /// los botones de transporte reflejan el estado global (Play deshabilitado,
 /// por ejemplo).
-/// </summary>
+/// -------------
 public sealed partial class PlaylistEditorViewModel : ViewModelBase
 {
     private Playlist _playlist;
     private string? _currentFilePath;
     private readonly PlaylistPlayer? _player;
 
-    /// <summary>
+    /// -------------
     /// Func que devuelve el bus "del aire" (el del modulo Scheduler).
     /// Se usa como default al crear la pestaña y como fallback cuando el
     /// bus persistido en el .rmf ya no existe. Lo inyecta el TabHost.
-    /// </summary>
+    /// -------------
     private readonly Func<IAudioBus?>? _schedulerBusProvider;
 
     // ───── Estado ────────────────────────────────────────────────────────
@@ -42,13 +42,13 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     [ObservableProperty] private string _statusMessage = "Playlist lista. Agrega pistas o abri un archivo.";
     [ObservableProperty] private PlaylistTrackViewModel? _selectedTrack;
 
-    /// <summary>
+    /// -------------
     /// Selector de bus de salida de esta playlist. Es un SimpleBusSelector:
     /// cada pestaña tiene su propio bus, sin depender del routing global.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private SimpleBusSelectorViewModel? _busSelector;
 
-    /// <summary>Estado de reproduccion de ESTA playlist (viene del player).</summary>
+    /// -------------Estado de reproduccion de ESTA playlist (viene del player).</summary>
     [ObservableProperty] private PlaylistPlayerState _playerState = PlaylistPlayerState.Stopped;
     public ObservableCollection<PlaylistTrackViewModel> Tracks { get; } = new();
 
@@ -57,11 +57,11 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Reproductor de esta pestaña. Se expone publicamente para que el
     /// MainWindowViewModel pueda consultar su estado y liberarlo al cerrar
     /// la pestaña, sin necesidad de reflection.
-    /// </summary>
+    /// -------------
     public PlaylistPlayer? Player => _player;
 
     public string TitleWithDirty => IsDirty ? PlaylistName + " *" : PlaylistName;
@@ -88,28 +88,28 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
     // ───── Totalizador de duracion ───────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Duracion total (en segundos) de las pistas HABILITADAS.
     /// Las pistas deshabilitadas no suman porque no se van a reproducir.
-    /// </summary>
+    /// -------------
     public double TotalDurationSeconds =>
         Tracks.Where(t => t.IsEnabled).Sum(t => t.DurationSeconds);
 
-    /// <summary>
+    /// -------------
     /// Cantidad de pistas habilitadas cuya duracion todavia no se analizo
     /// (DurationSeconds == 0 pero tienen un archivo asignado). Se usa para
     /// avisar al usuario que el total puede ser incompleto.
-    /// </summary>
+    /// -------------
     public int UnanalyzedEnabledCount =>
         Tracks.Count(t => t.IsEnabled
                           && t.DurationSeconds <= 0.5
                           && !string.IsNullOrWhiteSpace(t.FilePath));
 
-    /// <summary>
+    /// -------------
     /// Texto del total con formato HH:MM:SS.
     /// Si hay pistas habilitadas sin analizar, agrega " (+N sin analizar)"
     /// para no mentir con un numero incompleto.
-    /// </summary>
+    /// -------------
     public string TotalDurationText
     {
         get
@@ -126,7 +126,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
     // ───── Propiedades de transporte ─────────────────────────────────────
 
-    /// <summary>True si esta playlist en particular es la que esta sonando.</summary>
+    /// -------------True si esta playlist en particular es la que esta sonando.</summary>
     public bool IsThisPlaylistPlaying =>
         _player is not null && ReferenceEquals(_player.CurrentPlaylist, _playlist);
 
@@ -451,14 +451,14 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         return vm;
     }
 
-    /// <summary>
+    /// -------------
     /// Reemplaza las pistas actuales por las generadas automaticamente.
     /// Se usa desde el modal del generador (boton Aceptar).
     ///
     /// - Limpia todas las pistas actuales y sus suscripciones.
     /// - Agrega nuevas pistas SIN mixado (el usuario las edita despues).
     /// - Marca la playlist como dirty.
-    /// </summary>
+    /// -------------
     public void ReplaceTracksFromGenerator(IReadOnlyList<string> filePaths)
     {
         if (filePaths is null || filePaths.Count == 0) return;
@@ -531,13 +531,13 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         return true;
     }
 
-    /// <summary>
+    /// -------------
     /// Restaura el bus de salida a partir del modelo persistido:
     ///   1. Si OutputBusId tiene un bus valido, lo selecciona.
     ///   2. Si esta vacio o el bus ya no existe, cae al bus del Scheduler.
     ///
     /// No marca la pestaña como dirty (usa seleccion silenciosa).
-    /// </summary>
+    /// -------------
     private void RestoreBusFromModel()
     {
         if (BusSelector is null) return;
@@ -570,11 +570,11 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         ApplyBusToPlayer(BusSelector.SelectedBus);
     }
 
-    /// <summary>
+    /// -------------
     /// Conecta el selector de bus. Lo llama el TabHost despues de crear
     /// el editor, para que el editor pueda escuchar los cambios del bus
     /// y persistirlos en el modelo.
-    /// </summary>
+    /// -------------
     public void AttachBusSelector(SimpleBusSelectorViewModel selector)
     {
         if (selector is null) return;
@@ -604,9 +604,9 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         StatusMessage = $"Bus de salida: {bus.DisplayName}";
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica el bus al player de esta pestaña.
-    /// </summary>
+    /// -------------
     private void ApplyBusToPlayer(IAudioBus? bus)
     {
         try { _player?.SetBus(bus); } catch { }

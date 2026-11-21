@@ -5,7 +5,7 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del contenido de una pestaña Tanda.
 ///
 /// Edita UNA sola tanda completa (nombre, notas, pistas) y permite
@@ -13,7 +13,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Se diferencia de un item Tanda dentro de un ScheduledList en que este
 /// es un editor dedicado (no esta asociado a un horario programado).
-/// </summary>
+/// -------------
 public sealed partial class TandaEditorViewModel : ViewModelBase
 {
     private Tanda _tanda;
@@ -29,7 +29,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
 
     public ObservableCollection<TandaTrackViewModel> Tracks { get; } = new();
 
-    /// <summary>Se dispara cuando cambia el titulo logico de la pestaña.</summary>
+    /// -------------Se dispara cuando cambia el titulo logico de la pestaña.</summary>
     public event EventHandler<string>? TitleChanged;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
@@ -134,7 +134,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
         IsDirty = true;
     }
 
-    /// <summary>Agrega una pista a partir de un archivo (util para drag&drop futuro).</summary>
+    /// -------------Agrega una pista a partir de un archivo (util para drag&drop futuro).</summary>
     public TandaTrackViewModel AddTrackFromFile(string filePath)
     {
         var track = new TandaTrack

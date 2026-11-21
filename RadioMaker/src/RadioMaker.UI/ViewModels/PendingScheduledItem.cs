@@ -3,10 +3,10 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Item pendiente de disparar en el panel de Eventos.
 /// Una linea por (item programado + entrada de horario activa).
-/// </summary>
+/// -------------
 public sealed class PendingScheduledItem
 {
     public DateTime NextFireTime { get; init; }
@@ -19,7 +19,7 @@ public sealed class PendingScheduledItem
     public SchedulePriority Priority { get; init; }
     public double DurationSeconds { get; init; }
 
-    /// <summary>Indice 1-based dentro del dia.</summary>
+    /// -------------Indice 1-based dentro del dia.</summary>
     public int DayIndex { get; set; }
 
     public string TimeText => NextFireTime.ToString("HH:mm:ss");

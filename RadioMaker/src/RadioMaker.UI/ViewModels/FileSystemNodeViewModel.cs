@@ -5,47 +5,47 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Nodo del arbol de directorios del File Manager.
 ///
 /// Carga lazy: los hijos se enumeran la primera vez que el nodo se expande
 /// o cuando alguien llama explicitamente a EnsureChildrenLoadedAsync.
 /// La tarea de carga se cachea para que multiples llamadas concurrentes
 /// compartan el mismo trabajo (y para poder esperarla).
-/// </summary>
+/// -------------
 public sealed partial class FileSystemNodeViewModel : ViewModelBase
 {
-    /// <summary>Ruta absoluta del directorio representado por este nodo.</summary>
+    /// -------------Ruta absoluta del directorio representado por este nodo.</summary>
     public string FullPath { get; }
 
-    /// <summary>Nombre visible (solo el nombre de la carpeta, no la ruta completa).</summary>
+    /// -------------Nombre visible (solo el nombre de la carpeta, no la ruta completa).</summary>
     public string DisplayName { get; }
 
-    /// <summary>Hijos del nodo. Se cargan lazy.</summary>
+    /// -------------Hijos del nodo. Se cargan lazy.</summary>
     public ObservableCollection<FileSystemNodeViewModel> Children { get; } = new();
 
-    /// <summary>Indica si el nodo esta expandido en el TreeView.</summary>
+    /// -------------Indica si el nodo esta expandido en el TreeView.</summary>
     [ObservableProperty] private bool _isExpanded;
 
-    /// <summary>Indica si el nodo esta seleccionado en el TreeView.</summary>
+    /// -------------Indica si el nodo esta seleccionado en el TreeView.</summary>
     [ObservableProperty] private bool _isSelected;
     
-    /// <summary>
+    /// -------------
     /// Indica si esta carpeta esta en la lista de favoritos del usuario.
     /// Se actualiza cuando cambia el registry de favoritos.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _isFavorite;
 
-    /// <summary>Tarea de carga de hijos, cacheada. Null hasta la primera llamada.</summary>
+    /// -------------Tarea de carga de hijos, cacheada. Null hasta la primera llamada.</summary>
     private Task? _loadTask;
 
-    /// <summary>Gate para evitar race conditions en la creacion de _loadTask.</summary>
+    /// -------------Gate para evitar race conditions en la creacion de _loadTask.</summary>
     private readonly object _loadGate = new();
 
-    /// <summary>Icono (por ahora string, mas adelante podria ser un Path de vector).</summary>
+    /// -------------Icono (por ahora string, mas adelante podria ser un Path de vector).</summary>
     public string Icon { get; }
 
-    /// <summary>Evento para notificar al padre que se selecciono un directorio.</summary>
+    /// -------------Evento para notificar al padre que se selecciono un directorio.</summary>
     public event EventHandler<FileSystemNodeViewModel>? Selected;
 
     // ───── Constructor ───────────────────────────────────────────────────
@@ -59,10 +59,10 @@ public sealed partial class FileSystemNodeViewModel : ViewModelBase
 
     // ───── Carga lazy (awaitable) ────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Garantiza que los hijos esten cargados y devuelve el Task para
     /// poder esperarlo. Llamadas concurrentes comparten el mismo Task.
-    /// </summary>
+    /// -------------
     public Task EnsureChildrenLoadedAsync()
     {
         lock (_loadGate)
@@ -72,10 +72,10 @@ public sealed partial class FileSystemNodeViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Enumeracion real de subdirectorios. Corre en background la parte
     /// pesada (I/O) y agrega los hijos en el hilo original.
-    /// </summary>
+    /// -------------
     private async Task LoadChildrenInternalAsync()
     {
         List<string> dirs;
@@ -115,10 +115,10 @@ public sealed partial class FileSystemNodeViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Fuerza la recarga de hijos (por ejemplo si cambio el contenido).
     /// La proxima llamada a EnsureChildrenLoadedAsync vuelve a enumerar.
-    /// </summary>
+    /// -------------
     public void Refresh()
     {
         lock (_loadGate)
@@ -146,11 +146,11 @@ public sealed partial class FileSystemNodeViewModel : ViewModelBase
 
     // ───── Factory para raices del sistema ───────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Crea los nodos raiz del sistema de archivos.
     /// En Windows: las unidades locales y montajes (C:\, D:\, etc).
     /// En Linux/macOS: la raiz "/" mas los volumenes tipicos.
-    /// </summary>
+    /// -------------
     public static List<FileSystemNodeViewModel> CreateRootNodes()
     {
         var roots = new List<FileSystemNodeViewModel>();

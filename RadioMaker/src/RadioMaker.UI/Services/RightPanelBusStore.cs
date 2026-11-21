@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Persistencia del bus de salida seleccionado en el panel derecho:
 ///   - Un bus para el explorador de archivos (pestaña fija).
 ///   - Un bus por cada favorito abierto como pestaña (indexado por FavoriteId).
 ///
 /// Guarda en %APPDATA%/RmsAudioPlayer/right-panel-buses.json.
-/// </summary>
+/// -------------
 public static class RightPanelBusStore
 {
     private static readonly object _gate = new();
@@ -21,7 +21,7 @@ public static class RightPanelBusStore
 
     public static string ConfigPath { get; } = BuildPath();
 
-    /// <summary>Bus seleccionado para el explorador de archivos (Id o vacío).</summary>
+    /// -------------Bus seleccionado para el explorador de archivos (Id o vacío).</summary>
     public static string GetExplorerBusId()
     {
         lock (_gate)
@@ -42,7 +42,7 @@ public static class RightPanelBusStore
         }
     }
 
-    /// <summary>Bus seleccionado para un favorito concreto (Id o vacío).</summary>
+    /// -------------Bus seleccionado para un favorito concreto (Id o vacío).</summary>
     public static string GetFavoriteBusId(string favoriteId)
     {
         if (string.IsNullOrEmpty(favoriteId)) return string.Empty;
@@ -68,7 +68,7 @@ public static class RightPanelBusStore
         }
     }
 
-    /// <summary>Limpia el bus guardado de un favorito (por ejemplo si se quita de favoritos).</summary>
+    /// -------------Limpia el bus guardado de un favorito (por ejemplo si se quita de favoritos).</summary>
     public static void RemoveFavoriteBusId(string favoriteId)
     {
         if (string.IsNullOrEmpty(favoriteId)) return;

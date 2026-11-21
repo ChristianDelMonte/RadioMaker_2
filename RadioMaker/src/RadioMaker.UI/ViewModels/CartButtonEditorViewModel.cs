@@ -2,13 +2,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del editor de un boton de la botonera.
 ///
 /// Trabaja sobre un SNAPSHOT de los valores del boton original. Los cambios
 /// se aplican solo cuando se llama a ApplyToTarget (boton Guardar). Si el
 /// usuario cancela, no se toca nada.
-/// </summary>
+/// -------------
 public sealed partial class CartButtonEditorViewModel : ViewModelBase
 {
     private readonly CartButtonViewModel _target;
@@ -37,7 +37,7 @@ public sealed partial class CartButtonEditorViewModel : ViewModelBase
             ? $"+{VolumeDb:F1} dB"
             : $"{VolumeDb:F1} dB";
 
-    /// <summary>Colores rapidos predefinidos para el picker.</summary>
+    /// -------------Colores rapidos predefinidos para el picker.</summary>
     public string[] QuickColors { get; } = new[]
     {
         "#2A3050",  // azul oscuro (default)
@@ -69,10 +69,10 @@ public sealed partial class CartButtonEditorViewModel : ViewModelBase
 
     // ───── Aplicacion al boton original ──────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Copia los valores del editor al boton original.
     /// Se llama cuando el usuario confirma.
-    /// </summary>
+    /// -------------
     public void ApplyToTarget()
     {
         _target.FilePath = FilePath ?? string.Empty;
@@ -87,14 +87,14 @@ public sealed partial class CartButtonEditorViewModel : ViewModelBase
 
     // ───── Comandos auxiliares ───────────────────────────────────────────
 
-    /// <summary>Aplica un color rapido al editor (no al target todavia).</summary>
+    /// -------------Aplica un color rapido al editor (no al target todavia).</summary>
     public void SetQuickColor(string color)
     {
         if (!string.IsNullOrWhiteSpace(color))
             Color = color;
     }
 
-    /// <summary>Limpia el archivo y el label.</summary>
+    /// -------------Limpia el archivo y el label.</summary>
     public void ClearFile()
     {
         FilePath = string.Empty;

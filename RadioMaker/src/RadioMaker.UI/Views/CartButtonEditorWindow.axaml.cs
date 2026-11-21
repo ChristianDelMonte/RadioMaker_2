@@ -2,15 +2,24 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using RadioMaker.UI.Controls;
+using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
 
 public partial class CartButtonEditorWindow : CustomChromeWindow
 {
+    private readonly FilePickerFileType _audioFileType;
+
     public CartButtonEditorWindow()
+        : this(null)
+    {
+    }
+
+    public CartButtonEditorWindow(IEnumerable<string>? supportedAudioExtensions)
     {
         InitializeComponent();
+        _audioFileType = AudioFilePickerHelper.CreateAudioFileType(supportedAudioExtensions);
     }
 
     private CartButtonEditorViewModel? GetVm() => DataContext as CartButtonEditorViewModel;
@@ -49,19 +58,11 @@ public partial class CartButtonEditorWindow : CustomChromeWindow
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var audioTypes = new FilePickerFileType("Archivos de audio")
-        {
-            Patterns = new[]
-            {
-                "*.mp3", "*.ogg", "*.wav", "*.flac", "*.m4a", "*.aac", "*.opus", "*.wv"
-            }
-        };
-
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Seleccionar archivo para el boton",
             AllowMultiple = false,
-            FileTypeFilter = new[] { audioTypes, FilePickerFileTypes.All }
+            FileTypeFilter = new[] { _audioFileType, FilePickerFileTypes.All }
         });
 
         if (files.Count == 0) return;

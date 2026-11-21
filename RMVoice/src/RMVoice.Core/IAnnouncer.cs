@@ -2,16 +2,16 @@ using RMVoice.Core.Models;
 
 namespace RMVoice.Core;
 
-/// <summary>
+/// -------------
 /// Fachada pública del motor de locución.
-/// </summary>
+/// -------------
 public interface IAnnouncer : IDisposable
 {
     // ----------------------------- Estado -----------------------------
 
     bool IsInitialized { get; }
     bool IsPlaying { get; }
-    /// <summary>Handle BASS del segmento de locución que suena actualmente, o cero.</summary>
+    /// -------------Handle BASS del segmento de locución que suena actualmente, o cero.
     int CurrentStreamHandle { get; }
 
     int DefaultDevice { get; set; }
@@ -26,14 +26,14 @@ public interface IAnnouncer : IDisposable
 
     void Initialize();
 
-    /// <summary>Vuelve a leer <c>profiles.json</c> desde disco.</summary>
+    /// -------------Vuelve a leer <c>profiles.json</c> desde disco.
     void ReloadProfiles();
 
-    /// <summary>
+    /// -------------
     /// Recarga el perfil activo desde disco sin cambiar de perfil.
     /// Útil cuando el usuario editó las tablas de regiones y quiere que el
     /// Engine las use sin reiniciar.
-    /// </summary>
+    /// -------------
     void ReloadActiveProfile();
 
     // -------------------------- Reproducción --------------------------

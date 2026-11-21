@@ -4,7 +4,7 @@ using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel de la seccion "Comportamiento" del panel de configuracion.
 ///
 /// Contiene las opciones globales que afectan como se comporta el sistema
@@ -12,22 +12,22 @@ namespace RadioMaker.UI.ViewModels;
 /// para <see cref="PlaylistInterruptionBehavior"/>: cuando cambia, notifica
 /// al host via <see cref="BehaviorChanged"/> para que aplique el cambio a
 /// TODOS los players de playlist (legacy + FASE B).
-/// </summary>
+/// -------------
 public sealed class BehaviorSettingsViewModel : ViewModelBase
 {
     private readonly InterruptionBehaviorSettings _settings;
 
-    /// <summary>
+    /// -------------
     /// Callback que el MainWindowViewModel setea para aplicar el cambio a
     /// todos los players de playlist. Se invoca cada vez que el usuario
     /// cambia el combo en la UI.
-    /// </summary>
+    /// -------------
     public Action<PlaylistInterruptionBehavior>? BehaviorChanged { get; set; }
 
-    /// <summary>
+    /// -------------
     /// Panel de configuracion de emergencia. Se inyecta desde
     /// MainWindowViewModel. Puede ser null en tests.
-    /// </summary>
+    /// -------------
     public EmergencyPanelViewModel? EmergencyPanel { get; set; }
 
     public BehaviorSettingsViewModel()

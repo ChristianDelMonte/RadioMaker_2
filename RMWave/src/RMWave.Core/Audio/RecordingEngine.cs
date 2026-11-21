@@ -7,9 +7,9 @@ using System.Text;
 
 namespace RMWave.Core.Audio;
 
-/// <summary>
+/// -------------
 /// Información de un dispositivo de grabación disponible.
-/// </summary>
+/// -------------
 public class RecordingDeviceInfo
 {
     public int Id { get; set; }
@@ -20,10 +20,10 @@ public class RecordingDeviceInfo
         IsLoopback ? $"Loopback: {Name}" : Name;
 }
 
-/// <summary>
+/// -------------
 /// Motor de grabación de audio usando BASS Record.
 /// Graba en memoria y escribe WAV al detener (como el ejemplo oficial rectest.c).
-/// </summary>
+/// -------------
 public class RecordingEngine : IDisposable
 {
     private int _recordChannel = 0;
@@ -64,9 +64,9 @@ public class RecordingEngine : IDisposable
         };
     }
 
-    /// <summary>
+    /// -------------
     /// Enumera todos los dispositivos de grabación disponibles.
-    /// </summary>
+    /// -------------
     public static List<RecordingDeviceInfo> GetRecordingDevices()
     {
         var devices = new List<RecordingDeviceInfo>();
@@ -84,10 +84,10 @@ public class RecordingEngine : IDisposable
         return devices;
     }
 
-    /// <summary>
+    /// -------------
     /// Inicializa un dispositivo de grabación.
     /// Libera el dispositivo anterior si había uno.
-    /// </summary>
+    /// -------------
     public bool InitDevice(int deviceId)
     {
         if (IsRecording)
@@ -103,9 +103,9 @@ public class RecordingEngine : IDisposable
         return _deviceInitialized;
     }
 
-    /// <summary>
+    /// -------------
     /// Inicia la grabación en memoria.
-    /// </summary>
+    /// -------------
     public bool StartRecording(int sampleRate, int channels, string outputPath)
     {
         if (!_deviceInitialized) return false;
@@ -133,9 +133,9 @@ public class RecordingEngine : IDisposable
         return true;
     }
 
-    /// <summary>
+    /// -------------
     /// Detiene la grabación y escribe el archivo WAV.
-    /// </summary>
+    /// -------------
     public void StopRecording()
     {
         if (_recordChannel != 0)
@@ -158,10 +158,10 @@ public class RecordingEngine : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Escribe el buffer de grabación como un archivo WAV PCM 16-bit.
     /// Mismo formato que el ejemplo oficial rectest.c.
-    /// </summary>
+    /// -------------
     private void WriteWavFile(string path, MemoryStream recordingStream)
     {
         try
@@ -199,10 +199,10 @@ public class RecordingEngine : IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Obtiene el nivel actual de la grabación (0..1).
     /// Usa el mismo método que el ejemplo AudioLevelMonitor de RadioBot.
-    /// </summary>
+    /// -------------
     public float GetRecordingLevel()
     {
         if (_recordChannel == 0) return 0;
@@ -223,9 +223,9 @@ public class RecordingEngine : IDisposable
         return 0;
     }
 
-    /// <summary>
+    /// -------------
     /// Obtiene la duración grabada hasta el momento (en segundos).
-    /// </summary>
+    /// -------------
     public double GetRecordedDuration()
     {
         long length;

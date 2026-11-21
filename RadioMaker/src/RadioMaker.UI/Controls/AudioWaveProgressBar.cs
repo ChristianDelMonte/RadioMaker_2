@@ -6,7 +6,7 @@ using Avalonia.Threading;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Barra de progreso vertical que simula una onda de audio.
 ///
 /// Layout:
@@ -19,7 +19,7 @@ namespace RadioMaker.UI.Controls;
 ///
 /// La animacion corre con un DispatcherTimer a ~20 fps (50 ms). Se activa
 /// solo cuando el control esta en el arbol visual (AttachedToVisualTree).
-/// </summary>
+/// -------------
 public sealed class AudioWaveProgressBar : Control
 {
     // ───── Propiedades bindables ─────────────────────────────────────────

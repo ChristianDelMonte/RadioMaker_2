@@ -1,6 +1,6 @@
 namespace RadioMaker.Core.Tags;
 
-/// <summary>
+/// -------------
 /// Modelo editable de TAGs de un archivo de audio.
 /// Se usa junto con <see cref="AudioTagWriter"/> para modificar los
 /// metadatos de un archivo.
@@ -8,20 +8,20 @@ namespace RadioMaker.Core.Tags;
 /// Se separa de <see cref="AudioTagInfo"/> porque este ultimo incluye
 /// campos derivados (duracion, bitrate, sample rate, canales) que no
 /// se escriben, sino que se leen del archivo.
-/// </summary>
+/// -------------
 public sealed class AudioTagEdit
 {
     public string Title { get; set; } = string.Empty;
 
-    /// <summary>Multiples artistas separados por "; " en la UI. Al escribir, se dividen.</summary>
+    /// -------------Multiples artistas separados por "; " en la UI. Al escribir, se dividen.</summary>
     public string Performers { get; set; } = string.Empty;
 
     public string Album { get; set; } = string.Empty;
 
-    /// <summary>Multiples album artists separados por "; ".</summary>
+    /// -------------Multiples album artists separados por "; ".</summary>
     public string AlbumArtists { get; set; } = string.Empty;
 
-    /// <summary>Multiples generos separados por "; ".</summary>
+    /// -------------Multiples generos separados por "; ".</summary>
     public string Genres { get; set; } = string.Empty;
 
     public int Year { get; set; }
@@ -34,7 +34,7 @@ public sealed class AudioTagEdit
 
     public AudioTagEdit() { }
 
-    /// <summary>Crea un AudioTagEdit a partir de un AudioTagInfo leido.</summary>
+    /// -------------Crea un AudioTagEdit a partir de un AudioTagInfo leido.</summary>
     public AudioTagEdit(AudioTagInfo info)
     {
         Title = info.Title;
@@ -48,7 +48,7 @@ public sealed class AudioTagEdit
         Comment = info.Comment;
     }
 
-    /// <summary>Divide una cadena "A; B; C" en un array, ignorando vacios.</summary>
+    /// -------------Divide una cadena "A; B; C" en un array, ignorando vacios.</summary>
     internal static string[] SplitMultiValue(string value)
     {
         if (string.IsNullOrWhiteSpace(value)) return Array.Empty<string>();

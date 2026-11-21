@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del contenedor de pestañas.
 ///
 /// Ahora es multi-zona: cada instancia sabe en que zona vive (Left, Center,
@@ -22,7 +22,7 @@ namespace RadioMaker.UI.ViewModels;
 /// FASE B: las pestañas de Playlist ahora tienen su propio PlaylistPlayer
 /// y su propio bus de salida (SimpleBusSelector). Se crean a traves de la
 /// factory <see cref="PlaylistEditorFactory"/> que provee el MainWindowViewModel.
-/// </summary>
+/// -------------
 public sealed partial class TabHostViewModel : ViewModelBase
 {
     // ───── Dependencias ──────────────────────────────────────────────────
@@ -36,19 +36,19 @@ public sealed partial class TabHostViewModel : ViewModelBase
     private readonly EncadenadoresRegistry? _encadenadoresRegistry;
 
     // ── FASE B: factory y cleanup de players de playlist ─────────────────
-    /// <summary>
+    /// -------------
     /// Factory que crea un nuevo PlaylistEditorViewModel con su propio
     /// PlaylistPlayer y SimpleBusSelector. La provee MainWindowViewModel.
-    /// </summary>
+    /// -------------
     public Func<PlaylistEditorViewModel>? PlaylistEditorFactory { get; init; }
 
-    /// <summary>
+    /// -------------
     /// Callback para liberar los recursos de una pestaña de playlist
     /// cerrada (detener el player, desuscribir, etc).
-    /// </summary>
+    /// -------------
     public Action<PlaylistEditorViewModel>? PlaylistEditorDisposer { get; init; }
 
-    /// <summary>Indica si la ScheduledList pre-existente ya fue consumida.</summary>
+    /// -------------Indica si la ScheduledList pre-existente ya fue consumida.</summary>
     private bool _scheduledListConsumed;
 
     // ───── Zona ──────────────────────────────────────────────────────────
@@ -1021,7 +1021,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
     // APERTURA DE PROYECTOS NATIVOS POR DRAG & DROP
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// Abre un proyecto nativo de RadioMaker (.rms / .tnd / .rmf / .rcb)
     /// en una pestaña NUEVA de esta zona.
     ///
@@ -1038,7 +1038,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
     ///   - Right: NO abre pestañas nativas (solo favoritos).
     ///
     /// Devuelve true si se abrio la pestaña.
-    /// </summary>
+    /// -------------
     public bool OpenNativeProjectInNewTab(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return false;

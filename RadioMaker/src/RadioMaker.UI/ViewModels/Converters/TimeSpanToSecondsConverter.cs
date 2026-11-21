@@ -3,9 +3,9 @@ using Avalonia.Data.Converters;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Convierte un <see cref="TimeSpan"/> a segundos (double) para usar en Sliders/ProgressBars.
-/// </summary>
+/// -------------
 public sealed class TimeSpanToSecondsConverter : IValueConverter
 {
     public static readonly TimeSpanToSecondsConverter Instance = new();

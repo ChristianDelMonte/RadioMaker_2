@@ -2,10 +2,10 @@ using System.Text.Json;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Persistencia del volumen master global de la aplicacion en
 /// %APPDATA%/RmsAudioPlayer/volume.json.
-/// </summary>
+/// -------------
 public static class VolumeSettingsStore
 {
     private static readonly JsonSerializerOptions Options = new()
@@ -15,7 +15,7 @@ public static class VolumeSettingsStore
 
     public static string ConfigPath { get; } = BuildPath();
 
-    /// <summary>Carga el volumen guardado. Devuelve 1.0 si no existe o falla.</summary>
+    /// -------------Carga el volumen guardado. Devuelve 1.0 si no existe o falla.</summary>
     public static double Load()
     {
         try

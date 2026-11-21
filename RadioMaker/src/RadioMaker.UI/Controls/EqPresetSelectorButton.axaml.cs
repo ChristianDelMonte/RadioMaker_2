@@ -3,7 +3,7 @@ using Avalonia.Controls.Primitives;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Selector compacto del preset del ecualizador. Muestra un icono, el
 /// nombre del preset activo y una flechita; al hacer click abre un flyout
 /// con la lista de presets (fabrica + personalizados).
@@ -12,7 +12,7 @@ namespace RadioMaker.UI.Controls;
 ///
 /// Igual que BusSelectorButton, el Flyout vive en un top-level aparte y no
 /// hereda el DataContext, por lo que lo propagamos manualmente.
-/// </summary>
+/// -------------
 public partial class EqPresetSelectorButton : UserControl
 {
     public EqPresetSelectorButton()

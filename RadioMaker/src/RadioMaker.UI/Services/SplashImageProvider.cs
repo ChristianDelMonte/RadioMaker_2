@@ -4,7 +4,7 @@ using Avalonia.Platform;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Provee una imagen splash aleatoria entre varias opciones.
 ///
 /// La eleccion se hace UNA vez, cuando la clase se inicializa (la primera
@@ -17,16 +17,16 @@ namespace RadioMaker.UI.Services;
 /// Uso:
 ///     var bitmap = SplashImageProvider.CurrentBitmap; // Bitmap listo para usar
 ///     var uri    = SplashImageProvider.CurrentUri;    // "avares://.../Assets/splash.png"
-/// </summary>
+/// -------------
 public static class SplashImageProvider
 {
-    /// <summary>
+    /// -------------
     /// Lista de imagenes disponibles (rutas relativas a la raiz del proyecto,
     /// tal como estan en la carpeta Assets/).
     ///
     /// Para agregar una imagen nueva, simplemente agregala a esta lista
     /// y ponela en Assets/.
-    /// </summary>
+    /// -------------
     private static readonly string[] AvailableImages =
     {
         "/Assets/splash.png",
@@ -39,10 +39,10 @@ public static class SplashImageProvider
     private static string? _currentUri;
     private static Bitmap? _currentBitmap;
 
-    /// <summary>
+    /// -------------
     /// Ruta relativa al recurso de la imagen elegida para esta sesion.
     /// Se elige la primera vez que se accede.
-    /// </summary>
+    /// -------------
     public static string CurrentUri
     {
         get
@@ -52,10 +52,10 @@ public static class SplashImageProvider
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Bitmap ya cargado de la imagen elegida.
     /// Se carga UNA vez y se reutiliza en toda la sesion.
-    /// </summary>
+    /// -------------
     public static Bitmap? CurrentBitmap
     {
         get
@@ -65,10 +65,10 @@ public static class SplashImageProvider
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Fuerza una nueva eleccion aleatoria. Util para tests o para
     /// previsualizar las imagenes.
-    /// </summary>
+    /// -------------
     public static void Reroll()
     {
         lock (Gate)
@@ -100,10 +100,10 @@ public static class SplashImageProvider
         return AvailableImages[idx];
     }
 
-    /// <summary>
+    /// -------------
     /// Carga un Bitmap desde una ruta de asset de Avalonia ("/Assets/...").
     /// Devuelve null si el archivo no existe o falla la carga.
-    /// </summary>
+    /// -------------
     private static Bitmap? TryLoadBitmap(string relativePath)
     {
         try

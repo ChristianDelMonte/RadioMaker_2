@@ -1,6 +1,6 @@
 namespace RadioMaker.Core.Logging;
 
-/// <summary>
+/// -------------
 /// Punto de acceso global al LogService de la aplicacion.
 ///
 /// Cualquier modulo (AudioCore, UI, reproductores, scheduler) puede escribir
@@ -9,15 +9,15 @@ namespace RadioMaker.Core.Logging;
 ///
 /// Es un singleton, creado la primera vez que se accede. Su ciclo de vida
 /// dura toda la ejecucion de la app.
-/// </summary>
+/// -------------
 public static class AppLogger
 {
     private static readonly LogService _service = new();
 
-    /// <summary>
+    /// -------------
     /// Instancia compartida del LogService. La UI la usa para suscribirse
     /// a las entradas y mostrar el log en vivo.
-    /// </summary>
+    /// -------------
     public static LogService Service => _service;
 
     // ───── Conveniencia ──────────────────────────────────────────────────

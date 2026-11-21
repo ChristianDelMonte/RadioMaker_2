@@ -2,10 +2,10 @@ using System.Globalization;
 
 namespace RMVoice.Core.Models;
 
-/// <summary>
+/// -------------
 /// Una ubicación geográfica devuelta por la API de geocodificación de Open-Meteo.
 /// Es un DTO serializable en las settings de la app.
-/// </summary>
+/// -------------
 public sealed class WeatherLocation
 {
     public string Name { get; set; } = "";

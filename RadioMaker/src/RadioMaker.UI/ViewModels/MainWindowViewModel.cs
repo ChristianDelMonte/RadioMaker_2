@@ -44,38 +44,38 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public BusExclusivityCoordinator Coordinator => _coordinator;
     public EncadenadoresRegistry Encadenadores => _encadenadoresRegistry;
 
-    /// <summary>
+    /// -------------
     /// Motor de audio compartido. Expuesto publicamente para evitar
     /// reflection en la UI (por ejemplo en MainWindow.axaml.cs).
-    /// </summary>
+    /// -------------
     public IAudioEngine AudioEngine => _engine;
 
     // ───── Locución (RMVoice engine) ─────────────────────────────────────
-    /// <summary>
+    /// -------------
     /// Servicio de locución de RMVoice. Se inicializa despues del motor
     /// de audio. Si RMVoice no esta disponible, queda en modo "no op" y
     /// la app sigue funcionando normalmente.
-    /// </summary>
+    /// -------------
     private readonly LocutionService _locution;
 
-    /// <summary>Configuracion persistente del sistema de locución.</summary>
+    /// -------------Configuracion persistente del sistema de locución.</summary>
     private readonly LocutionSettings _locutionSettings;
 
     // ───── Carpetas favoritas (panel derecho) ────────────────────────────
-    /// <summary>
+    /// -------------
     /// Registry central de carpetas favoritas. Se usa desde el panel
     /// derecho (menu "+") y desde el context menu del arbol del explorador.
-    /// </summary>
+    /// -------------
     public FavoriteFolderRegistry FavoriteFolders { get; }
 
     // ───── Routing de buses por modulo ───────────────────────────────────
     private readonly ModuleRoutingService _routing;
 
     // ===== INTEGRACIÓN EXCLUSIVIDAD =====
-    /// <summary>
+    /// -------------
     /// Acceso público al servicio de ruteo (para que la UI de configuración
     /// pueda modificar el AirBusId).
-    /// </summary>
+    /// -------------
     public ModuleRoutingService Routing => _routing;
 
     public ModuleBusSelectorViewModel BusSelectorCart { get; }
@@ -83,10 +83,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public ModuleBusSelectorViewModel BusSelectorScheduler { get; }
     public ModuleBusSelectorViewModel BusSelectorFileManager { get; }
 
-    /// <summary>
+    /// -------------
     /// Toggle del modo "un solo bus para todo". Bindea al panel de
     /// configuracion de audio y a la toolbar.
-    /// </summary>
+    /// -------------
     public bool UseGlobalBus
     {
         get => _routing?.UseGlobalBus ?? true;
@@ -106,10 +106,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // ───── Archivo / reproduccion ────────────────────────────────────────
     [ObservableProperty] private string _currentFilePath = string.Empty;
     [ObservableProperty] private string _statusMessage = "Listo.";
-    /// <summary>Tip de ayuda actual mostrado en la barra de estado inferior.</summary>
+    /// -------------Tip de ayuda actual mostrado en la barra de estado inferior.</summary>
     [ObservableProperty] private AppTip _currentTip = AppTips.GetRandom();
 
-    /// <summary>Índice del tip actual (para avanzar secuencialmente).</summary>
+    /// -------------Índice del tip actual (para avanzar secuencialmente).</summary>
     private int _tipIndex;
     [ObservableProperty] private string _lastError = string.Empty;
     [ObservableProperty] private PlaybackState _playbackState = PlaybackState.Stopped;
@@ -119,90 +119,90 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     // ───── Info de la barra de titulo ────────────────────────────────────
 
-    /// <summary>Nombre de la aplicacion que se muestra en la barra de titulo.</summary>
+    /// -------------Nombre de la aplicacion que se muestra en la barra de titulo.</summary>
     public string AppName => "RadioMaker";
 
-    /// <summary>Version de la aplicacion (auto-generada en cada build).</summary>
+    /// -------------Version de la aplicacion (auto-generada en cada build).</summary>
     public string AppVersionText => Services.AppVersionInfo.VersionText;
 
-    /// <summary>Fecha de compilacion (auto-generada en cada build).</summary>
+    /// -------------Fecha de compilacion (auto-generada en cada build).</summary>
     public string AppBuildText => Services.AppVersionInfo.BuildText;
 
-    /// <summary>Eslogan de la aplicacion.</summary>
+    /// -------------Eslogan de la aplicacion.</summary>
     public string AppSlogan => "Forever FREE Radio Automation Software!";
 
     // ───── Indicador "AL AIRE" ───────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// True si hay algo reproduciendo en el bus del Scheduler.
-    /// </summary>
+    /// -------------
     public bool IsAlAire => _isAlAire;
 
-    /// <summary>Fondo del panel "AL AIRE" (rojo translucido o transparente).</summary>
+    /// -------------Fondo del panel "AL AIRE" (rojo translucido o transparente).</summary>
     public IBrush AlAireBackground => _isAlAire
         ? new SolidColorBrush(Color.Parse("#33EF4444"))   // rojo translucido
         : new SolidColorBrush(Colors.Transparent);
 
-    /// <summary>Borde del panel "AL AIRE".</summary>
+    /// -------------Borde del panel "AL AIRE".</summary>
     public IBrush AlAireBorderBrush => _isAlAire
         ? new SolidColorBrush(Color.Parse("#EF4444"))
         : (ResolveThemeBrush("BorderPrimary") ?? new SolidColorBrush(Color.Parse("#2A2A35")));
 
-    /// <summary>Color del LED indicador.</summary>
+    /// -------------Color del LED indicador.</summary>
     public IBrush AlAireLedColor => _isAlAire
         ? new SolidColorBrush(Color.Parse("#EF4444"))     // rojo brillante
         : new SolidColorBrush(Color.Parse("#6B7280"));    // gris apagado
 
-    /// <summary>Color del texto del indicador.</summary>
+    /// -------------Color del texto del indicador.</summary>
     public IBrush AlAireTextColor => _isAlAire
         ? new SolidColorBrush(Color.Parse("#EF4444"))
         : (ResolveThemeBrush("FgMuted") ?? new SolidColorBrush(Color.Parse("#6B7280")));
 
-    /// <summary>Texto del indicador.</summary>
+    /// -------------Texto del indicador.</summary>
     public string AlAireText => _isAlAire ? "AL AIRE" : "FUERA DEL AIRE";
 
 
     // ───── Panel superior informativo ────────────────────────────────────
 
-    /// <summary>Titulo del audio en reproduccion (scheduler o playlist).</summary>
+    /// -------------Titulo del audio en reproduccion (scheduler o playlist).</summary>
     [ObservableProperty] private string _nowPlayingTitle = string.Empty;
 
-    /// <summary>Artista u origen del audio en reproduccion.</summary>
+    /// -------------Artista u origen del audio en reproduccion.</summary>
     [ObservableProperty] private string _nowPlayingArtist = string.Empty;
 
-    /// <summary>
+    /// -------------
     /// Canal activo del panel "En reproduccion" (scheduler > playlist > cart).
     /// Es el canal del que se obtiene el FFT para el mini visualizador.
     /// Se actualiza desde RefreshNowPlayingPanel.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private IAudioChannel? _nowPlayingChannel;
 
-    /// <summary>Espectro mostrado en el mini visualizador, incluso para locuciones RMVoice.</summary>
+    /// -------------Espectro mostrado en el mini visualizador, incluso para locuciones RMVoice.</summary>
     public IAudioSpectrum? NowPlayingSpectrum =>
         (_locution.IsPlaying ? _locution.CurrentSpectrum : null) ?? NowPlayingChannel?.Spectrum;
 
-    /// <summary>
+    /// -------------
     /// True si el panel "En reproduccion" tiene contenido (hay algo sonando
     /// en scheduler o playlist). Controla el color cyan activo del panel.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _isNowPlayingActive;
 
-    /// <summary>
+    /// -------------
     /// True si el panel "Siguiente" tiene contenido real (no es "(sin proximo)").
     /// Controla el color cyan activo del panel.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _isNextPlayingActive;
 
-    /// <summary>Posicion dentro de la lista (ej: "Pista 3 de 8") o vacio.</summary>
+    /// -------------Posicion dentro de la lista (ej: "Pista 3 de 8") o vacio.</summary>
     [ObservableProperty] private string _nowPlayingPosition = string.Empty;
 
-    /// <summary>Titulo del proximo item a reproducir, o "(sin proximo)".</summary>
+    /// -------------Titulo del proximo item a reproducir, o "(sin proximo)".</summary>
     [ObservableProperty] private string _nextTitle = "(sin proximo)";
 
-    /// <summary>Artista u origen del proximo item.</summary>
+    /// -------------Artista u origen del proximo item.</summary>
     [ObservableProperty] private string _nextArtist = string.Empty;
 
-    /// <summary>Posicion del proximo item.</summary>
+    /// -------------Posicion del proximo item.</summary>
     [ObservableProperty] private string _nextPosition = string.Empty;
 
     // ───── Brushes de los paneles "En reproduccion" / "Siguiente" ────────
@@ -212,62 +212,62 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // no cuando cambia el tema. Notificamos estas propiedades desde el
     // handler de ThemeService.ThemeChanged para que se actualicen en vivo.
 
-    /// <summary>Fondo del panel "En reproduccion".</summary>
+    /// -------------Fondo del panel "En reproduccion".</summary>
     public IBrush NowPlayingPanelBackground =>
         ResolveThemeBrush(IsNowPlayingActive ? "PanelLedActiveBg" : "PanelLedInactiveBg");
 
-    /// <summary>Borde del panel "En reproduccion".</summary>
+    /// -------------Borde del panel "En reproduccion".</summary>
     public IBrush NowPlayingPanelBorderBrush =>
         ResolveThemeBrush(IsNowPlayingActive ? "AccentSoft" : "BorderPrimary");
 
-    /// <summary>Color de texto del panel "En reproduccion".</summary>
+    /// -------------Color de texto del panel "En reproduccion".</summary>
     public IBrush NowPlayingPanelForeground =>
         ResolveThemeBrush(IsNowPlayingActive ? "LedActive" : "LedInactive");
 
-    /// <summary>Fondo del panel "Siguiente".</summary>
+    /// -------------Fondo del panel "Siguiente".</summary>
     public IBrush NextPlayingPanelBackground =>
         ResolveThemeBrush(IsNextPlayingActive ? "PanelLedActiveBg" : "PanelLedInactiveBg");
 
-    /// <summary>Borde del panel "Siguiente".</summary>
+    /// -------------Borde del panel "Siguiente".</summary>
     public IBrush NextPlayingPanelBorderBrush =>
         ResolveThemeBrush(IsNextPlayingActive ? "AccentSoft" : "BorderPrimary");
 
-    /// <summary>Color de texto del panel "Siguiente".</summary>
+    /// -------------Color de texto del panel "Siguiente".</summary>
     public IBrush NextPlayingPanelForeground =>
         ResolveThemeBrush(IsNextPlayingActive ? "LedActive" : "LedInactive");
 
-    /// <summary>
+    /// -------------
     /// Fondo del panel que contiene el VU meter. Theme-aware: casi negro
     /// en modo oscuro, cyan claro en modo claro. Se usa como Background
     /// del Border que envuelve el VuMeter en TopInfoPanel.
-    /// </summary>
+    /// -------------
     public IBrush VuPanelBackground => new SolidColorBrush(
         ThemeService.IsDarkVariant
             ? Color.Parse("#0A0A0C")
             : Color.Parse("#D0EEF5"));
 
-    /// <summary>
+    /// -------------
     /// True si hay algun audio reproduciendose ahora mismo en cualquier
     /// modulo (scheduler, playlist, cart o canal manual). Controla el
     /// encendido/apagado del LED de tiempo.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _isAnyAudioPlaying;
 
-    /// <summary>Tiempo transcurrido del audio actual (formato HH:MM:SS).</summary>
+    /// -------------Tiempo transcurrido del audio actual (formato HH:MM:SS).</summary>
     [ObservableProperty] private string _elapsedText = "00:00:00";
 
-    /// <summary>Tiempo restante del audio actual (formato -HH:MM:SS).</summary>
+    /// -------------Tiempo restante del audio actual (formato -HH:MM:SS).</summary>
     [ObservableProperty] private string _remainingText = "-00:00:00";
 
-    /// <summary>Fecha actual (formato DD-MM-YY, compatible con el LED).</summary>
+    /// -------------Fecha actual (formato DD-MM-YY, compatible con el LED).</summary>
     [ObservableProperty] private string _dateText = "00-00-00";
 
-    /// <summary>Hora actual (formato HH:MM:SS).</summary>
+    /// -------------Hora actual (formato HH:MM:SS).</summary>
     [ObservableProperty] private string _timeText = "00:00:00";
 
-    /// <summary>Localidad o provincia para el panel de clima.</summary>
+    /// -------------Localidad o provincia para el panel de clima.</summary>
     [ObservableProperty] private string _weatherLocation = "—";
-    /// <summary>Info del clima (temperatura / humedad).</summary>
+    /// -------------Info del clima (temperatura / humedad).</summary>
     [ObservableProperty] private string _weatherInfo = "—";
 
     // ───── Niveles VU ────────────────────────────────────────────────────
@@ -281,19 +281,19 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     // ───── Locución (RMVoice) ────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Servicio de locución de RMVoice. La UI lo usa para:
     ///   - Consultar si esta disponible (habilitar/deshabilitar opciones).
     ///   - Disparar locuciones a demanda (botones rapidos).
     ///   - Refrescar el clima cada X minutos.
     ///   - Leer el ultimo snapshot de clima para mostrarlo en el panel.
-    /// </summary>
+    /// -------------
     public LocutionService Locution => _locution;
 
-    /// <summary>
+    /// -------------
     /// True si RMVoice esta cargado e inicializado. La UI usa esto para
     /// habilitar/deshabilitar las opciones de locución.
-    /// </summary>
+    /// -------------
     public bool IsLocutionAvailable => _locution.IsAvailable;
 
     // ───── Paneles hijos ─────────────────────────────────────────────────
@@ -301,9 +301,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public EqualizerSettings EqSettings { get; }
     public SilencePanelSettings SilenceSettings { get; }
     public NormalizationSettings NormSettings { get; }
-    /// <summary>
+    /// -------------
     /// Panel del clima + botones de locución. Se muestra en el TopInfoPanel.
-    /// </summary>
+    /// -------------
     public LocutionPanelViewModel LocutionPanel { get; }
 
     public EqualizerPanelViewModel Equalizer { get; }
@@ -330,14 +330,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public CartBoardViewModel CartBoard { get; }
     public FileSystemBrowserViewModel FileBrowser { get; }
 
-    /// <summary>Lista de players de carts extras, para poder disponerlos al cerrar.</summary>
+    /// -------------Lista de players de carts extras, para poder disponerlos al cerrar.</summary>
     private readonly List<CartBoardPlayer> _extraCartPlayers = new();
 
-    /// <summary>
+    /// -------------
     /// Lista de players de playlist activos (uno por pestaña). Se usan
     /// para poder aplicar cambios de config en vivo y liberar al cerrar
     /// la pestaña. (FASE B)
-    /// </summary>
+    /// -------------
     private readonly List<PlaylistPlayer> _playlistPlayers = new();
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
@@ -347,10 +347,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     // ───── Pestaña activa y qué se puede guardar ────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Pestaña activa del ultimo TabHost que recibio foco. Puede ser null
     /// si no hay ninguna pestaña seleccionada.
-    /// </summary>
+    /// -------------
     public TabItemViewModel? ActiveTab => _lastActiveTabHost?.SelectedTab;
 
     public bool CanSaveTanda => ActiveTab?.Content is TandaEditorViewModel;
@@ -359,10 +359,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public bool CanSaveCart => ActiveTab?.Content is CartBoardViewModel;
     public bool CanSaveNotes => ActiveTab?.Content is NotesEditorViewModel;
 
-    /// <summary>
+    /// -------------
     /// Notifica todas las propiedades relacionadas con la pestaña activa.
     /// Se llama cuando cambia la seleccion en cualquier TabHost.
-    /// </summary>
+    /// -------------
     private void NotifyActiveTabChanged()
     {
         OnPropertyChanged(nameof(ActiveTab));
@@ -381,10 +381,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanEditAudioTags));
     }
 
-    /// <summary>
+    /// -------------
     /// Cambia la suscripcion al VM de contenido del tab activo. Se llama
     /// cada vez que cambia la pestaña seleccionada en cualquier TabHost.
-    /// </summary>
+    /// -------------
     private void SwitchActiveContent(TabItemViewModel? tab)
     {
         if (_activeContentVm is not null)
@@ -416,34 +416,34 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     // ───── Propiedades de "Editar" ───────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// True si la pestaña activa es un Programado con un item de tipo Bloque
     /// seleccionado. Habilita "Editar > Bloque...".
-    /// </summary>
+    /// -------------
     public bool CanEditBlock =>
         ActiveTab?.Content is ScheduledListViewModel list
         && list.SelectedItem?.Kind == ScheduledItemKind.Block;
 
-    /// <summary>
+    /// -------------
     /// True si la pestaña activa es un Programado con un item de tipo Tanda
     /// seleccionado. Habilita "Editar > Tanda...".
-    /// </summary>
+    /// -------------
     public bool CanEditTandaItem =>
         ActiveTab?.Content is ScheduledListViewModel list
         && list.SelectedItem?.Kind == ScheduledItemKind.Tanda;
 
-    /// <summary>
+    /// -------------
     /// True si la pestaña activa es un Programado con un item de tipo Playlist
     /// seleccionado. Habilita "Editar > Playlist...".
-    /// </summary>
+    /// -------------
     public bool CanEditPlaylistItem =>
         ActiveTab?.Content is ScheduledListViewModel list
         && list.SelectedItem?.Kind == ScheduledItemKind.Playlist;
 
-    /// <summary>
+    /// -------------
     /// True si hay un archivo de audio seleccionado en la pestaña activa
     /// Habilita "Editar tags...".
-    /// </summary>
+    /// -------------
     public bool CanEditAudioTags
     {
         get
@@ -461,10 +461,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve la ruta del archivo de audio seleccionado en la pestaña
     /// activa, o null si no hay ninguno. Excluye el File Manager.
-    /// </summary>
+    /// -------------
     public string? GetSelectedAudioFilePath()
     {
         // Programados: item SingleFile seleccionado.
@@ -505,19 +505,19 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         _ => PlaybackState.ToString()
     };
 
-    /// <summary>
+    /// -------------
     /// Indica si el tema efectivo actual es oscuro. Se usa para elegir
     /// el icono del boton rapido de tema (sol cuando esta oscuro, luna
     /// cuando esta claro).
-    /// </summary>
+    /// -------------
     public bool IsDarkTheme => ThemeService.IsDarkVariant;
     public bool IsLightTheme => !ThemeService.IsDarkVariant;
     public bool IsLinuxPlatform => OperatingSystem.IsLinux();
 
-    /// <summary>
+    /// -------------
     /// Indica si la ventana principal esta maximizada. Se usa para elegir
     /// el icono del boton maximizar/restaurar en la barra de titulo.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _isMaximized;
 
     public bool HasError => !string.IsNullOrEmpty(LastError);
@@ -529,18 +529,18 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public bool CanStop => HasFile && PlaybackState != PlaybackState.Stopped;
     public bool HasBuses => Buses.Count > 0;
 
-    /// <summary>
+    /// -------------
     /// Ultimo TabHost que recibio foco (cambio su SelectedTab). Se usa
     /// para saber cual es la "pestaña activa" cuando el menu Guardar
     /// tiene que decidir que opcion habilitar.
-    /// </summary>
+    /// -------------
     private TabHostViewModel? _lastActiveTabHost;
 
-    /// <summary>
+    /// -------------
     /// VM de contenido del tab activo. Nos suscribimos a su PropertyChanged
     /// para detectar cambios de seleccion internos (SelectedItem, SelectedTrack,
     /// SelectedButton) y refrescar las propiedades de los menus Editar/Guardar.
-    /// </summary>
+    /// -------------
     private System.ComponentModel.INotifyPropertyChanged? _activeContentVm;
 
     private bool _suppressBusSelectionHook;
@@ -571,11 +571,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el primer canal activo entre el cart principal y todos
     /// los carts extras (botoneras adicionales). Devuelve null si
     /// ninguno esta reproduciendo.
-    /// </summary>
+    /// -------------
     private IAudioChannel? GetAnyActiveCartChannel()
     {
         try
@@ -600,9 +600,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return null;
     }
 
-    /// <summary>
+    /// -------------
     /// True si el cart principal o algun cart extra esta reproduciendo.
-    /// </summary>
+    /// -------------
     private bool AnyCartPlaying()
     {
         try { if (_cartPlayer.HasAnyPlaying) return true; } catch { }
@@ -1083,12 +1083,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         TryStartDemo();
     }
 
-    /// <summary>
+    /// -------------
     /// Arranca la presentación inicial si es el primer arranque del usuario.
     /// Marca el estado como completado INMEDIATAMENTE para garantizar que se
     /// vea exactamente una vez, incluso si el usuario cierra la app o crashea
     /// durante la reproducción.
-    /// </summary>
+    /// -------------
     private void TryStartDemo()
     {
         try
@@ -1223,11 +1223,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve TODOS los canales activos de la app (de todos los
     /// reproductores). Se usa para el ducking de locuciones disparadas
     /// desde el panel de clima/hora.
-    /// </summary>
+    /// -------------
     private IEnumerable<IAudioChannel> GetAllActiveChannels()
     {
         var list = new List<IAudioChannel>();
@@ -1276,11 +1276,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return list;
     }
 
-    /// <summary>
+    /// -------------
     /// Inicializa el servicio de locución de RMVoice. Es seguro llamarlo
     /// aunque RMVoice no esté disponible: en ese caso, deja el servicio
     /// en modo "no op" y sigue sin afectar a la app.
-    /// </summary>
+    /// -------------
     private void InitializeLocution()
     {
         try
@@ -1630,11 +1630,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Crea un CartBoard extra con su propio CartBoardPlayer independiente.
     /// El nuevo cart arranca vacio (sin archivo). Si el usuario lo quiere
     /// persistir, tiene que guardarlo con "Guardar como...".
-    /// </summary>
+    /// -------------
     private CartBoardViewModel CreateExtraCartBoard()
     {
         var player = new CartBoardPlayer(
@@ -1675,10 +1675,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return vm;
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el bus del modulo Cart (el default de las botoneras).
     /// Si el routing no esta disponible, cae al primario.
-    /// </summary>
+    /// -------------
     private IAudioBus? GetCartDefaultBus()
     {
         try
@@ -1691,7 +1691,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         try { return _engine.PrimaryBus; } catch { return null; }
     }
 
-    /// <summary>
+    /// -------------
     /// Crea un nuevo editor de playlist con su PROPIO PlaylistPlayer y su
     /// PROPIO SimpleBusSelector. Se llama cada vez que se abre una nueva
     /// pestaña de playlist.
@@ -1699,7 +1699,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// El bus inicial es el del modulo Scheduler (el "aire"). Si la
     /// playlist tiene un OutputBusId persistido, se restaura al cargar
     /// el archivo. (FASE B)
-    /// </summary>
+    /// -------------
     private PlaylistEditorViewModel CreatePlaylistEditorForTab()
     {
         // 1) Crear un player nuevo.
@@ -1766,9 +1766,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return vm;
     }
 
-    /// <summary>
+    /// -------------
     /// Libera los recursos de un editor de playlist al cerrar su pestaña.
-    /// </summary>
+    /// -------------
     private void DisposePlaylistEditor(PlaylistEditorViewModel vm)
     {
         if (vm is null) return;
@@ -1792,10 +1792,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el bus del modulo Scheduler (el "aire"). Si no hay
     /// routing disponible, cae al primario.
-    /// </summary>
+    /// -------------
     private IAudioBus? GetSchedulerBus()
     {
         try
@@ -1808,10 +1808,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         try { return _engine.PrimaryBus; } catch { return null; }
     }
 
-    /// <summary>
+    /// -------------
     /// Handler comun a todos los players de playlist. Se usa para
     /// coordinar la coexistencia con el Scheduler.
-    /// </summary>
+    /// -------------
     private void OnAnyPlaylistPlayerStateChanged(object? sender, PlaylistPlayerState state)
     {
         Dispatcher.UIThread.Post(() =>
@@ -1878,9 +1878,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return false;
     }
 
-    /// <summary>
+    /// -------------
     /// Libera los recursos de un CartBoard extra al cerrar su pestaña.
-    /// </summary>
+    /// -------------
     private void DisposeExtraCartBoard(CartBoardViewModel cartVm)
     {
         try
@@ -1898,11 +1898,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         // Esta limpieza individual es best-effort por ahora.
     }
 
-    /// <summary>
+    /// -------------
     /// Detiene toda la reproduccion en curso: botones del cart, playlist
     /// activa, scheduler y canal manual. Se invoca desde el menu
     /// "Reproduccion -> Detener todo".
-    /// </summary>
+    /// -------------
     public void StopAllPlayback()
     {
         try { _cartPlayer.StopAll(); } catch { }
@@ -1923,14 +1923,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         RefreshCommandStates();
     }
 
-    /// <summary>
+    /// -------------
     /// Handler comun para los cambios de configuracion de EQ, Trim y
     /// Normalizacion. Reune todos los canales activos de los 4 reproductores
     /// (manual, scheduler, playlist, cart) y les reaplica la configuracion.
     ///
     /// Esto resuelve el bug donde cambiar el EQ no tenia efecto sobre audio
     /// que estaba sonando desde el cart, el scheduler o una playlist.
-    /// </summary>
+    /// -------------
     private void OnProcessingSettingsChanged(object? sender, EventArgs e)
     {
         try
@@ -1963,12 +1963,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica el estado y la duracion del crossfade al cart player
     /// principal y a todos los cart players extras (botoneras adicionales).
     /// Se llama al arrancar y cada vez que el usuario cambia el valor en
     /// el panel de configuracion.
-    /// </summary>
+    /// -------------
     private void ApplyCrossfadeToCartPlayers()
     {
         bool enabled = Fade.CartCrossfadeEnabled;
@@ -1984,11 +1984,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Propaga el comportamiento de interrupcion a TODOS los players de
     /// playlist (legacy + FASE B). Se llama cuando el usuario cambia la
     /// setting en el panel de Scheduler.
-    /// </summary>
+    /// -------------
     private void ApplyInterruptionBehaviorToAllPlaylistPlayers(PlaylistInterruptionBehavior behavior)
     {
         // Legacy player
@@ -2003,7 +2003,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     // ───── Comandos ──────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Alterna el tema entre claro y oscuro.
     ///
     /// Reglas:
@@ -2011,7 +2011,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     ///   - Si esta en Light explicito -> pasa a Dark explicito.
     ///   - Si esta en System -> pasa al opuesto del tema efectivo actual
     ///     (si el SO esta en oscuro, pasa a Light explicito).
-    /// </summary>
+    /// -------------
     [RelayCommand]
     private void ToggleTheme()
     {
@@ -2186,7 +2186,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // Panel superior: LED de tiempo + fecha/hora
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// Actualiza el LED de tiempo (transcurrido / restante) y el LED de
     /// fecha/hora. Se ejecuta cada 500ms sin importar el estado de la app.
     ///
@@ -2197,7 +2197,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     ///   4. Canal manual (boton "Examinar")
     ///
     /// Se elige el primero que este REPRODUCIENDO (no pausado, no detenido).
-    /// </summary>
+    /// -------------
     private void RefreshTopPanel()
     {
         // 1) Fecha y hora actuales.
@@ -2260,10 +2260,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         CurrentTip = AppTips.GetByIndex(_tipIndex);
     }
 
-    /// <summary>
+    /// -------------
     /// Salta manualmente al siguiente tip (útil para debug o para que el
     /// operador pueda pedir otro tip si el actual no le interesa).
-    /// </summary>
+    /// -------------
     [RelayCommand]
     private void SkipTip() => AdvanceTip();
 
@@ -2271,11 +2271,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // Panel "En reproduccion" y "Siguiente"
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// Actualiza las propiedades NowPlaying* con la info del canal activo
     /// segun la prioridad scheduler > playlist. Cart y canal manual no
     /// participan de este panel.
-    /// </summary>
+    /// -------------
     private void RefreshNowPlayingPanel()
     {
         try
@@ -2426,14 +2426,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Actualiza las propiedades Next* con el proximo item a reproducir.
     /// Orden de prioridad:
     ///   1. Cola del scheduler (items pendientes).
     ///   2. Item suspendido del scheduler (que se va a reanudar).
     ///   3. Proxima pista de la playlist.
     ///   4. "(sin proximo)".
-    /// </summary>
+    /// -------------
     private void RefreshNextPlayingPanel()
     {
         try
@@ -2578,10 +2578,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el nombre del archivo sin extension, con un fallback seguro
     /// si el path es vacio o invalido.
-    /// </summary>
+    /// -------------
     private static string SafeFileName(string? path)
     {
         if (string.IsNullOrWhiteSpace(path)) return string.Empty;
@@ -2596,7 +2596,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Resuelve el titulo a mostrar para un audio, aplicando la cadena
     /// de fallbacks:
     ///   1. Title del TAG (si esta cargado y no vacio).
@@ -2605,7 +2605,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// Nota: NO usamos "tags?.DisplayTitle ?? fallback" porque DisplayTitle
     /// devuelve string vacio cuando el Title esta vacio (no null), y el
     /// operador ?? solo captura null. Este helper cubre ambos casos.
-    /// </summary>
+    /// -------------
     private static string ResolveDisplayTitle(
         RadioMaker.Core.Tags.AudioTagInfo? tags,
         string? fallback)
@@ -2616,10 +2616,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return fallback ?? string.Empty;
     }
 
-    /// <summary>
+    /// -------------
     /// Lee los TAGs del path con un cache de 1 entrada. Si el path no cambio
     /// desde la ultima lectura, devuelve el cacheado sin tocar el disco.
-    /// </summary>
+    /// -------------
     private RadioMaker.Core.Tags.AudioTagInfo? GetTagsCached(string? path)
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
@@ -2642,11 +2642,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el canal que debe usarse para el LED de tiempo, aplicando
     /// la prioridad: scheduler > playlist > cart > manual. Devuelve null
     /// si ninguno esta reproduciendo.
-    /// </summary>
+    /// -------------
     private IAudioChannel? GetPriorityChannel()
     {
         try
@@ -2674,10 +2674,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return null;
     }
 
-    /// <summary>
+    /// -------------
     /// Formatea un TimeSpan como HH:MM:SS para el LED (2 digitos por campo,
     /// horas sin limite superior).
-    /// </summary>
+    /// -------------
     private static string FormatLedTime(TimeSpan ts)
     {
         if (ts < TimeSpan.Zero) ts = TimeSpan.Zero;
@@ -2726,11 +2726,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(PositionText));
     }
 
-    /// <summary>
+    /// -------------
     /// Determina cual es el canal activo ahora y lo propaga al panel Spectrum
     /// si cambio respecto al tick anterior. Tambien detecta la etiqueta de
     /// origen (MANUAL / CART / SCHEDULER / PLAYLIST).
-    /// </summary>
+    /// -------------
     private void UpdateSpectrumChannel()
     {
         if (_locution.IsPlaying && _locution.CurrentSpectrum is { } locutionSpectrum)
@@ -2836,7 +2836,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         VuClip = false;
     }
 
-    /// <summary>
+    /// -------------
     /// Sincroniza el field PlaybackState con el estado REAL del canal activo.
     /// Se llama desde los handlers de cambio de estado y desde los timers,
     /// para que el status bar refleje lo que realmente esta pasando en
@@ -2847,7 +2847,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     ///   • Si el canal activo cambio de estado → reflejar ese estado.
     ///   • Si estaba en Ended/Error/Stopped → no tocar (respeta el mensaje
     ///     transitorio de "Fin de reproduccion").
-    /// </summary>
+    /// -------------
     private void SyncPlaybackState()
     {
         try
@@ -2949,11 +2949,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private PlaybackStateKind _lastPlaybackEngineKind = PlaybackStateKind.Idle;
 
-    /// <summary>
+    /// -------------
     /// True si hay algo reproduciendo en el bus del Scheduler (el "aire").
     /// Se actualiza en UpdateTabLiveStates y alimenta el indicador visual
     /// "AL AIRE" del menu principal.
-    /// </summary>
+    /// -------------
     private bool _isAlAire;
 
     // Estado actual de los reproductores (para el panel "En reproduccion" / "Siguiente").
@@ -2980,11 +2980,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // Routing de buses por modulo
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// Recalcula el bus efectivo de cada modulo y lo aplica al reproductor
     /// correspondiente. Se llama al arrancar, al cambiar el modo global, al
     /// cambiar el bus global, y al agregar/quitar buses.
-    /// </summary>
+    /// -------------
     private void ApplyRoutingToPlayers()
     {
         try { _playback.SetBus(_routing.GetEffectiveBus(AudioModuleKind.Scheduler)); } catch { }
@@ -2995,10 +2995,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         // (via GetCartDefaultBus / GetSchedulerBus).
     }
 
-    /// <summary>
+    /// -------------
     /// Handler de cambios generales del routing (toggle global, cambio de
     /// bus global). Reaplica todo.
-    /// </summary>
+    /// -------------
     private void OnRoutingChanged(object? sender, EventArgs e)
     {
         Dispatcher.UIThread.Post(() =>
@@ -3015,10 +3015,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         });
     }
 
-    /// <summary>
+    /// -------------
     /// Handler de cambio especifico del bus de un modulo. Solo reaplica
     /// ese modulo, no los otros.
-    /// </summary>
+    /// -------------
     private void OnModuleBusChanged(object? sender, AudioModuleKind kind)
     {
         Dispatcher.UIThread.Post(() =>
@@ -3076,11 +3076,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     // ───── Workspace (persistencia de pestañas) ──────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Guarda el estado del workspace: recolecta las entradas de las
     /// zonas izquierda y central, y las persiste junto con el indice
     /// activo de cada zona.
-    /// </summary>
+    /// -------------
     public void SaveWorkspace()
     {
         try
@@ -3128,7 +3128,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Guarda TODAS las botoneras (la principal y las extras) en su
     /// archivo .rcb correspondiente. Se llama desde SaveWorkspace al
     /// cerrar la app para no perder cambios sin guardar.
@@ -3136,7 +3136,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// Las botoneras que nunca fueron guardadas en un .rcb (extras
     /// nuevas) se guardan en la ruta por defecto SOLO si tienen algun
     /// boton con archivo asignado. Asi no generamos archivos .rcb basura.
-    /// </summary>
+    /// -------------
     private void SaveAllCartBoards()
     {
         // Botonera principal: siempre se guarda, aunque este vacia. Su
@@ -3170,10 +3170,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Restaura el workspace: reparte las entradas entre las zonas segun
     /// su campo Zone, y reaplica el indice activo de cada zona.
-    /// </summary>
+    /// -------------
     public void RestoreWorkspace()
     {
         var state = WorkspaceStateStore.Load();
@@ -3252,11 +3252,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return 0;
     }
 
-    /// <summary>
+    /// -------------
     /// Resuelve un brush del tema actual a partir de una clave de recurso.
     /// Devuelve un brush transparente si la clave no existe o si no hay
     /// Application activa.
-    /// </summary>
+    /// -------------
     private static IBrush ResolveThemeBrush(string key)
     {
         try
@@ -3286,10 +3286,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return new SolidColorBrush(Colors.Transparent);
     }
 
-    /// <summary>
+    /// -------------
     /// Abre la ventana de configuracion en la seccion "Datos climaticos".
     /// Se dispara desde el menu contextual del panel de clima.
-    /// </summary>
+    /// -------------
     private void OpenSettingsFromPanel()
     {
         try
@@ -3302,9 +3302,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Lanza RMVoice.exe si esta presente en Addons/RMVoice/.
-    /// </summary>
+    /// -------------
     private void LaunchRMVoiceUI()
     {
         try
@@ -3365,17 +3365,17 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Evento que el code-behind usa para abrir la ventana de configuracion
     /// en una seccion concreta.
-    /// </summary>
+    /// -------------
     public event EventHandler<string>? OpenSettingsRequested;
 
-    /// <summary>
+    /// -------------
     /// Devuelve el PlaylistPlayer que este REALMENTE reproduciendo. Si
     /// ninguno esta reproduciendo, devuelve el primero con una playlist
     /// cargada (pausado o preparado). (FASE B)
-    /// </summary>
+    /// -------------
     private PlaylistPlayer? GetActivePlaylistPlayer()
     {
         // Primera pasada: buscar uno que este PLAYING NOW.
@@ -3402,7 +3402,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return null;
     }
 
-    /// <summary>
+    /// -------------
     /// Recalcula el estado "al aire" de todas las pestañas de los 3
     /// TabHosts, y actualiza el indicador visual (circulo rojo/amarillo).
     ///
@@ -3413,7 +3413,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     ///                  bus del Scheduler. PausedByScheduler si fue pausada
     ///                  por el scheduler.
     ///   - Tanda:       Live si el TandaName coincide con el del engine.
-    /// </summary>
+    /// -------------
     private void UpdateTabLiveStates()
     {
         try
@@ -3435,11 +3435,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Determina si hay algo reproduciendo en el bus del Scheduler:
     ///   - El PlaybackEngine reproduciendo cualquier item.
     ///   - O una playlist reproduciendo en el bus del Scheduler.
-    /// </summary>
+    /// -------------
     private void UpdateAlAireIndicator()
     {
         bool alAire = false;
@@ -3605,11 +3605,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         return TabLiveState.None;
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el primer canal de playlist activo (el que esta sonando
     /// ahora). Prioriza los que estan reproduciendo por sobre los pausados.
     /// (FASE B)
-    /// </summary>
+    /// -------------
     private IAudioChannel? GetAnyPlaylistChannel()
     {
         // Primera pasada: buscar uno que este PLAYING.
@@ -3644,23 +3644,23 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     //  Ducking (botón de micrófono en la toolbar)
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// True si el ducking por micrófono está activo. Bindea al botón de la
     /// toolbar como estado y a las propiedades visuales (color/ícono/tooltip).
-    /// </summary>
+    /// -------------
     public bool IsDuckingActive => Ducking.IsEnabled;
 
-    /// <summary>Tooltip dinámico del botón.</summary>
+    /// -------------Tooltip dinámico del botón.</summary>
     public string DuckingTooltip => IsDuckingActive
         ? "Desactivar micrófono / ducking"
         : "Activar micrófono / ducking";
 
-    /// <summary>Fondo del botón: rojo si activo, color base si inactivo.</summary>
+    /// -------------Fondo del botón: rojo si activo, color base si inactivo.</summary>
     public IBrush DuckingButtonBackground => IsDuckingActive
         ? new SolidColorBrush(Color.Parse("#DC2626"))
         : ResolveThemeBrush("BgPrimary") ?? new SolidColorBrush(Colors.Transparent);
 
-    /// <summary>Color del ícono: blanco si activo, color primario si inactivo.</summary>
+    /// -------------Color del ícono: blanco si activo, color primario si inactivo.</summary>
     public IBrush DuckingButtonForeground => IsDuckingActive
         ? new SolidColorBrush(Colors.White)
         : ResolveThemeBrush("FgPrimary") ?? new SolidColorBrush(Colors.Gray);
@@ -3679,14 +3679,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     //  Emergencia (botón en la toolbar)
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// True si el watchdog de emergencia está armado (esperando un silencio
     /// prolongado para dispararse). NO significa que la emergencia esté
     /// sonando ahora — eso es <see cref="IsEmergencyActive"/>.
-    /// </summary>
+    /// -------------
     public bool IsEmergencyArmed => _emergencySettings.IsEnabled;
 
-    /// <summary>Tooltip dinámico según el estado del botón.</summary>
+    /// -------------Tooltip dinámico según el estado del botón.</summary>
     public string EmergencyButtonTooltip
     {
         get
@@ -3697,12 +3697,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Fondo del botón según 3 estados:
     ///   - Disparado (IsEmergencyActive): rojo #DC2626
     ///   - Armado: verde #16A34A
     ///   - Apagado: color base del tema
-    /// </summary>
+    /// -------------
     public IBrush EmergencyButtonBackground
     {
         get
@@ -3713,10 +3713,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Color del ícono: blanco cuando está armado o disparado (para
     /// contrastar con el fondo rojo/verde), color primario si está apagado.
-    /// </summary>
+    /// -------------
     public IBrush EmergencyButtonForeground
     {
         get
@@ -3726,14 +3726,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>Evento que el code-behind usa para abrir Config → Emergencia.</summary>
+    /// -------------Evento que el code-behind usa para abrir Config → Emergencia.</summary>
     public event EventHandler? OpenEmergencySettingsRequested;
 
-    /// <summary>
+    /// -------------
     /// Evento que el code-behind usa para mostrar el diálogo de confirmación
     /// al desarmar mientras la emergencia está sonando. El callback recibe
     /// true si el usuario confirma detener, false si cancela.
-    /// </summary>
+    /// -------------
     public event EventHandler<Action<bool>>? ConfirmStopEmergencyRequested;
 
     [RelayCommand]
@@ -3775,13 +3775,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         ApplyEmergencyArm();
     }
 
-    /// <summary>
+    /// -------------
     /// Llamado por el code-behind después de que el usuario cierra la ventana
     /// de Configuración abierta desde el botón de emergencia.
     ///
     /// Si la configuración quedó válida, arma automáticamente. Si no, el
     /// botón queda apagado y muestra un mensaje en la barra de estado.
-    /// </summary>
+    /// -------------
     public void OnEmergencySettingsClosed()
     {
         if (_emergency.IsConfigurationValid())
@@ -3794,10 +3794,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Detiene la emergencia y la desarma. Llamado desde el code-behind
     /// tras confirmación del usuario, o desde el botón "DETENER" del banner.
-    /// </summary>
+    /// -------------
     public void ApplyEmergencyStop()
     {
         try { _emergency.StopEmergency(); } catch { }

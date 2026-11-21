@@ -4,7 +4,7 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del editor de notas (texto plano).
 ///
 /// Persistencia:
@@ -16,14 +16,14 @@ namespace RadioMaker.UI.ViewModels;
 /// Al restaurar el workspace:
 ///   - Si hay draft -> se carga el draft.
 ///   - Si no hay draft pero hay archivo -> se carga el archivo.
-/// </summary>
+/// -------------
 public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherTimer _autosaveTimer;
     private bool _suppressDirtyMark;
     private bool _disposed;
 
-    /// <summary>Identificador estable del draft asociado a esta pestaña.</summary>
+    /// -------------Identificador estable del draft asociado a esta pestaña.</summary>
     public string DraftId { get; }
 
     // ───── Estado ────────────────────────────────────────────────────────
@@ -33,12 +33,12 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _isDirty;
     [ObservableProperty] private string _statusMessage = string.Empty;
 
-    /// <summary>Se dispara cuando cambia el titulo visible (archivo cargado/guardado).</summary>
+    /// -------------Se dispara cuando cambia el titulo visible (archivo cargado/guardado).</summary>
     public event EventHandler? TitleChanged;
 
     public bool HasFilePath => !string.IsNullOrEmpty(LoadedFilePath);
 
-    /// <summary>Nombre a mostrar en la pestaña.</summary>
+    /// -------------Nombre a mostrar en la pestaña.</summary>
     public string DisplayName
     {
         get
@@ -117,7 +117,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
 
     // ───── Operaciones de archivo ────────────────────────────────────────
 
-    /// <summary>Carga un archivo .txt en este editor. Devuelve true si funciono.</summary>
+    /// -------------Carga un archivo .txt en este editor. Devuelve true si funciono.</summary>
     public bool OpenFile(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return false;
@@ -149,14 +149,14 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>Guarda en el archivo actual. Si no hay archivo, no hace nada.</summary>
+    /// -------------Guarda en el archivo actual. Si no hay archivo, no hace nada.</summary>
     public bool Save()
     {
         if (string.IsNullOrEmpty(LoadedFilePath)) return false;
         return SaveTo(LoadedFilePath);
     }
 
-    /// <summary>Guarda el contenido en la ruta indicada.</summary>
+    /// -------------Guarda el contenido en la ruta indicada.</summary>
     public bool SaveTo(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return false;
@@ -187,7 +187,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>Limpia el editor para empezar una nota nueva.</summary>
+    /// -------------Limpia el editor para empezar una nota nueva.</summary>
     public void NewDocument()
     {
         _suppressDirtyMark = true;

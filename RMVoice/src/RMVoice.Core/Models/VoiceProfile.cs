@@ -2,10 +2,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RMVoice.Core.Models;
 
-/// <summary>
+/// -------------
 /// Conjunto de archivos que definen una "voz" del reloj:
 /// 4 audios (hora, minuto, temperatura, humedad) y sus 4 tablas de regiones.
-/// </summary>
+/// -------------
 public sealed class VoiceProfile : ObservableObject
 {
     private string _name = "Nuevo perfil";
@@ -28,14 +28,14 @@ public sealed class VoiceProfile : ObservableObject
         set => SetProperty(ref _name, value);
     }
 
-    /// <summary>Código de idioma: "es", "en", "fr", ...</summary>
+    /// -------------Código de idioma: "es", "en", "fr", ...
     public string Language
     {
         get => _language;
         set => SetProperty(ref _language, value);
     }
 
-    /// <summary>"M", "F", "—"</summary>
+    /// -------------"M", "F", "—"
     public string Gender
     {
         get => _gender;

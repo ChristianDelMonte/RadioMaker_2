@@ -4,7 +4,7 @@ using ManagedBass;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Genera una secuencia de N pulsos senoidales con gaps de silencio.
 /// Se usa para el beep de emergencia.
 ///
@@ -12,7 +12,7 @@ namespace RadioMaker.Core.Engine;
 /// desincronizarse si BASS entrega buffers de tamaño variable), calculamos
 /// el indice global del frame desde el inicio del stream y derivamos
 /// isInPulse con un modulo. Sin estado interno fragil.
-/// </summary>
+/// -------------
 internal sealed class PulseSequenceGenerator
 {
     private readonly StreamProcedure _procedure;

@@ -2,9 +2,9 @@ using System.Globalization;
 
 namespace RMVoice.Core.Services;
 
-/// <summary>
+/// -------------
 /// Conversión entre el formato "HH:MM:SS.f" de las tablas de regiones y segundos (double).
-/// </summary>
+/// -------------
 public static class TimeFormat
 {
     public static double Parse(string text)

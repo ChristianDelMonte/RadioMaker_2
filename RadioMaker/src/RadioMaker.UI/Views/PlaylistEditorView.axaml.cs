@@ -9,11 +9,11 @@ using RadioMaker.UI.ViewModels;
 using RadioMaker.UI.Services;
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Code-behind del editor de playlists. Maneja los dialogos nativos de
 /// archivos .rmf, M3U/M3U8 y PLS, mas la seleccion de archivos de audio
 /// y mixados de cada pista.
-/// </summary>
+/// -------------
 public partial class PlaylistEditorView : UserControl
 {
     public PlaylistEditorView()
@@ -111,6 +111,37 @@ public partial class PlaylistEditorView : UserControl
         _ = OpenTrackEditorAsync(vm.SelectedTrack);
     }
 
+    private async void OnContextEditTagsClick(object? sender, RoutedEventArgs e)
+    {
+        var vm = GetVm();
+        var track = vm?.SelectedTrack;
+        if (track is null || !track.IsAudioItem || string.IsNullOrWhiteSpace(track.FilePath)) return;
+
+        if (!File.Exists(track.FilePath))
+        {
+            vm!.StatusMessage = $"Archivo no encontrado: {Path.GetFileName(track.FilePath)}";
+            return;
+        }
+
+        try
+        {
+            var fileVm = new AudioFileViewModel(track.FilePath);
+            await fileVm.LoadTagsAsync();
+
+            var editorVm = new AudioTagEditorViewModel(fileVm);
+            var win = new AudioTagEditorWindow { DataContext = editorVm };
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            if (owner is null) return;
+
+            if (await win.ShowDialog<bool>(owner))
+                vm!.StatusMessage = $"Tags guardados: {Path.GetFileName(track.FilePath)}";
+        }
+        catch (Exception ex)
+        {
+            vm!.StatusMessage = $"Error al editar tags: {ex.Message}";
+        }
+    }
+
     private void OnContextEditInRMWaveClick(object? sender, RoutedEventArgs e)
     {
         var vm = GetVm();
@@ -146,7 +177,10 @@ public partial class PlaylistEditorView : UserControl
         if (owner is null) return;
 
         var editorVm = new PlaylistTrackEditorViewModel(trackVm);
-        var win = new PlaylistTrackEditorWindow { DataContext = editorVm };
+        var supportedExtensions = (TopLevel.GetTopLevel(this) as Window)?.DataContext is MainWindowViewModel mainVm
+            ? mainVm.SupportedExtensions
+            : null;
+        var win = new PlaylistTrackEditorWindow(supportedExtensions) { DataContext = editorVm };
 
         var result = await win.ShowDialog<bool>(owner);
 
@@ -394,13 +428,8 @@ public partial class PlaylistEditorView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return null;
 
-        var audioTypes = new FilePickerFileType("Archivos de audio")
-        {
-            Patterns = new[]
-            {
-                "*.mp3", "*.ogg", "*.wav", "*.flac", "*.m4a", "*.aac", "*.opus", "*.wv"
-            }
-        };
+        var audioTypes = AudioFilePickerHelper.CreateAudioFileType(
+            AudioFilePickerHelper.GetSupportedExtensions(this));
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {

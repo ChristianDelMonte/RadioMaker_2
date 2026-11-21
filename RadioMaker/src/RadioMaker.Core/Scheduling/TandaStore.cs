@@ -3,14 +3,14 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Persistencia de tandas en archivos .tnd (JSON).
 ///
 /// Formato: JSON legible con las propiedades del modelo Tanda.
 /// El archivo .tnd puede:
 ///   - Guardarse/abrirse independientemente desde el menu Tanda.
 ///   - Incrustarse dentro de un item programado en un .rms.
-/// </summary>
+/// -------------
 public static class TandaStore
 {
     public const string FileExtension = ".tnd";
@@ -24,7 +24,7 @@ public static class TandaStore
 
     // ───── Save ──────────────────────────────────────────────────────────
 
-    /// <summary>Guarda la tanda en el path indicado. Anade la extension si falta.</summary>
+    /// -------------Guarda la tanda en el path indicado. Anade la extension si falta.</summary>
     public static void Save(Tanda tanda, string path)
     {
         if (tanda is null) throw new ArgumentNullException(nameof(tanda));
@@ -45,7 +45,7 @@ public static class TandaStore
 
     // ───── Load ──────────────────────────────────────────────────────────
 
-    /// <summary>Carga una tanda desde un archivo .tnd. Devuelve null si falla.</summary>
+    /// -------------Carga una tanda desde un archivo .tnd. Devuelve null si falla.</summary>
     public static Tanda? Load(string path)
     {
         try
@@ -72,14 +72,14 @@ public static class TandaStore
 
     // ───── Serialization helpers ─────────────────────────────────────────
 
-    /// <summary>Serializa una tanda a string JSON. Util para incrustarla en un .rms.</summary>
+    /// -------------Serializa una tanda a string JSON. Util para incrustarla en un .rms.</summary>
     public static string SerializeToString(Tanda tanda)
     {
         if (tanda is null) throw new ArgumentNullException(nameof(tanda));
         return JsonSerializer.Serialize(tanda, Options);
     }
 
-    /// <summary>Deserializa una tanda desde un string JSON.</summary>
+    /// -------------Deserializa una tanda desde un string JSON.</summary>
     public static Tanda? DeserializeFromString(string json)
     {
         try
@@ -97,7 +97,7 @@ public static class TandaStore
 
     // ───── Validation ────────────────────────────────────────────────────
 
-    /// <summary>Valida que un archivo sea una tanda .tnd legible.</summary>
+    /// -------------Valida que un archivo sea una tanda .tnd legible.</summary>
     public static bool IsValidFile(string path)
     {
         try

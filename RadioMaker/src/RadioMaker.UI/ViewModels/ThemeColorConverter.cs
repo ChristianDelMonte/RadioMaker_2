@@ -5,7 +5,7 @@ using Avalonia.Media;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Converter que toma el valor devuelto por las propiedades de color de los
 /// VMs y lo traduce a un IBrush del tema actual.
 ///
@@ -19,7 +19,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Si la clave no se encuentra y no es un hex valido, devuelve un brush
 /// transparente para no romper el render.
-/// </summary>
+/// -------------
 public sealed class ThemeColorConverter : IValueConverter
 {
     public static readonly ThemeColorConverter Instance = new();

@@ -51,7 +51,8 @@
                            Margin="8,6,8,3" />
                 <ListBox Grid.Row="1" ItemsSource="{Binding Tracks}"
                          SelectedItem="{Binding SelectedTrack, Mode=TwoWay}"
-                         Background="Transparent" BorderThickness="0">
+                         Background="Transparent" BorderThickness="0"
+                         DoubleTapped="OnTrackDoubleTapped">
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="0" />
@@ -75,7 +76,17 @@
                         <DataTemplate x:DataType="vm:EncadenadorTrackViewModel">
                             <Border Padding="8,6,8,8"
                                     BorderBrush="{DynamicResource BorderSubtle}"
-                                    BorderThickness="0,0,0,1">
+                                    BorderThickness="0,0,0,1"
+                                    Background="Transparent"
+                                    PointerPressed="OnTrackPointerPressed">
+                                <Border.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Editar..." Click="OnContextEditClick" />
+                                        <MenuItem Header="Editar Tags..."
+                                                  IsEnabled="{Binding FilePath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}"
+                                                  Click="OnContextEditTagsClick" />
+                                    </ContextMenu>
+                                </Border.ContextMenu>
                                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
                                     <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0"
                                             Background="{DynamicResource AccentSoft}"

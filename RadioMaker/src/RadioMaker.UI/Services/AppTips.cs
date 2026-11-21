@@ -3,17 +3,17 @@ using Material.Icons;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Un tip de ayuda que se muestra en la barra de estado inferior.
-/// </summary>
+/// -------------
 public sealed record AppTip(MaterialIconKind Icon, string Message);
 
-/// <summary>
+/// -------------
 /// Lista central de tips de ayuda. Se rotan cada 90 segundos en la barra
 /// de estado para que el operador vaya descubriendo funcionalidades.
 ///
 /// Para agregar un tip nuevo: agregar una línea al array <see cref="Tips"/>.
-/// </summary>
+/// -------------
 public static class AppTips
 {
     private static readonly AppTip[] Tips =
@@ -83,7 +83,7 @@ public static class AppTips
 
     public static int Count => Tips.Length;
 
-    /// <summary>Tip por índice (con wrap-around).</summary>
+    /// -------------Tip por índice (con wrap-around).</summary>
     public static AppTip GetByIndex(int index)
     {
         if (Tips.Length == 0)
@@ -92,7 +92,7 @@ public static class AppTips
         return Tips[i];
     }
 
-    /// <summary>Tip aleatorio.</summary>
+    /// -------------Tip aleatorio.</summary>
     public static AppTip GetRandom()
     {
         if (Tips.Length == 0)

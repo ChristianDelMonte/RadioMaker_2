@@ -11,11 +11,11 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
     private readonly EqualizerSettings _settings;
     private IAudioChannel? _channel;
     private bool _suppressApply;
-    /// <summary>
+    /// -------------
     /// Se dispara cuando el usuario cambia alguna banda, activa/desactiva el EQ,
     /// cambia de preset o resetea. Se usa para propagar los cambios a TODOS
     /// los canales activos de la app (manual, scheduler, playlist, cart).
-    /// </summary>
+    /// -------------
     public event EventHandler? SettingsChanged;
 
     public ObservableCollection<EqBandViewModel> Bands { get; } = new();

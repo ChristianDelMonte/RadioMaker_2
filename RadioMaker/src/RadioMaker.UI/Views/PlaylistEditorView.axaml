@@ -198,6 +198,10 @@
                                 <Border.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Editar..." Click="OnContextEditClick" />
+                                        <MenuItem Header="Editar Tags..."
+                                                  IsVisible="{Binding IsAudioItem}"
+                                                  IsEnabled="{Binding FilePath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}"
+                                                  Click="OnContextEditTagsClick" />
                                         <Separator />
                                         <MenuItem Header="Editar en RMWave..."
                                                   Click="OnContextEditInRMWaveClick"

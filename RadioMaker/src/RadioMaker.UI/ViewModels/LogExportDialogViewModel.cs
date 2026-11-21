@@ -4,7 +4,7 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del dialogo de exportacion de log.
 ///
 /// Permite elegir:
@@ -13,7 +13,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Cuando el usuario presiona "Exportar...", la ventana usa este VM para
 /// abrir el dialogo nativo de guardar y delegar la exportacion a LogExporter.
-/// </summary>
+/// -------------
 public sealed partial class LogExportDialogViewModel : ViewModelBase
 {
     private readonly IReadOnlyList<LogEntry> _allEntries;
@@ -21,13 +21,13 @@ public sealed partial class LogExportDialogViewModel : ViewModelBase
 
     // ───── Estado observable ─────────────────────────────────────────────
 
-    /// <summary>Formato seleccionado.</summary>
+    /// -------------Formato seleccionado.</summary>
     [ObservableProperty] private LogExportFormat _format = LogExportFormat.Txt;
 
-    /// <summary>True = exportar todo el log. False = solo lo filtrado.</summary>
+    /// -------------True = exportar todo el log. False = solo lo filtrado.</summary>
     [ObservableProperty] private bool _exportAll = true;
 
-    /// <summary>Nombre sugerido para el archivo (sin extension).</summary>
+    /// -------------Nombre sugerido para el archivo (sin extension).</summary>
     [ObservableProperty] private string _fileName = string.Empty;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
@@ -40,13 +40,13 @@ public sealed partial class LogExportDialogViewModel : ViewModelBase
 
     public bool HasFiltered => FilteredCount > 0;
 
-    /// <summary>Filtro del dialogo de guardar (ej: "*.txt").</summary>
+    /// -------------Filtro del dialogo de guardar (ej: "*.txt").</summary>
     public string FilePickerPattern => LogExporter.GetFilePickerPattern(Format);
 
-    /// <summary>Extension final del archivo (sin punto).</summary>
+    /// -------------Extension final del archivo (sin punto).</summary>
     public string Extension => LogExporter.GetExtension(Format).TrimStart('.');
 
-    /// <summary>Entradas a exportar segun el alcance seleccionado.</summary>
+    /// -------------Entradas a exportar segun el alcance seleccionado.</summary>
     public IReadOnlyList<LogEntry> EntriesToExport =>
         ExportAll ? _allEntries : _filteredEntries;
 

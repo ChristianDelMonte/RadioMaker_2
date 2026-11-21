@@ -10,17 +10,17 @@ using System.IO;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Code-behind del TabHost.
 ///
 /// Ademas de la interaccion con pestañas (seleccionar, renombrar), soporta:
 ///   - Drop de archivos (audio = agregar a la pestaña, proyecto = nueva pestaña).
 ///   - Scroll horizontal por botones cuando hay overflow.
 ///   - Auto-scroll a la pestaña seleccionada si quedo fuera de vista.
-/// </summary>
+/// -------------
 public partial class TabHost : UserControl
 {
-    /// <summary>Cantidad de pixeles que se desplaza por cada click en los botones.</summary>
+    /// -------------Cantidad de pixeles que se desplaza por cada click en los botones.</summary>
     private const double ScrollStepPx = 240.0;
 
     public TabHost()
@@ -79,10 +79,10 @@ public partial class TabHost : UserControl
         UpdateScrollButtonsVisibility();
     }
 
-    /// <summary>
+    /// -------------
     /// Muestra/oculta los botones de scroll segun haya overflow o no.
     /// Habilita/deshabilita cada uno segun se pueda avanzar en esa direccion.
-    /// </summary>
+    /// -------------
     private void UpdateScrollButtonsVisibility()
     {
         var sv = this.FindControl<ScrollViewer>("TabsScrollViewer");
@@ -125,10 +125,10 @@ public partial class TabHost : UserControl
         Dispatcher.UIThread.Post(() => ScrollToTab(selectedTab), DispatcherPriority.Background);
     }
 
-    /// <summary>
+    /// -------------
     /// Hace scroll para que la pestaña indicada quede visible dentro del
     /// ScrollViewer.
-    /// </summary>
+    /// -------------
     private void ScrollToTab(TabItemViewModel tab)
     {
         var sv = this.FindControl<ScrollViewer>("TabsScrollViewer");

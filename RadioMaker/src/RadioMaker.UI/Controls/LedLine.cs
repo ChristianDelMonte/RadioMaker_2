@@ -9,7 +9,7 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Control que dibuja una linea de texto como display de 7 segmentos.
 /// Soporta digitos 0-9, dos puntos (:), guion (-), punto (.) y espacio.
 ///
@@ -21,7 +21,7 @@ namespace RadioMaker.UI.Controls;
 ///   - Light: segmentos encendidos negros, fondo cyan claro.
 ///
 /// Se puede sobreescribir con OnBrush/OffBrush/InactiveBrush.
-/// </summary>
+/// -------------
 public sealed class LedLine : Control
 {
     public static readonly StyledProperty<string> TextProperty =

@@ -1,6 +1,6 @@
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Evaluador de horarios: determina si un ScheduledItem debe dispararse
 /// en un momento dado.
 ///
@@ -16,15 +16,15 @@ namespace RadioMaker.Core.Scheduling;
 ///   reloj avanza justo entre 2 ticks, se admite una ventana de dos minutos
 ///   desde la hora programada, también al cruzar medianoche.
 ///   El SchedulerState se encarga de evitar disparos duplicados.
-/// </summary>
+/// -------------
 public static class ScheduleEvaluator
 {
-    /// <summary>
+    /// -------------
     /// Devuelve true si el item debe dispararse en <paramref name="now"/>.
     ///
     /// <paramref name="now"/> es la hora LOCAL (no UTC) porque los horarios
     /// programados por el usuario se interpretan en su zona horaria.
-    /// </summary>
+    /// -------------
     public static bool ShouldFire(ScheduledItem item, DateTime now)
     {
         if (item is null) return false;

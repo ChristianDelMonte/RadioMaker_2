@@ -5,9 +5,9 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Configuracion persistente del panel de ducking por microfono.
-/// </summary>
+/// -------------
 public sealed partial class DuckingSettings : ObservableObject
 {
     [ObservableProperty] private bool _isEnabled = false;
@@ -18,7 +18,7 @@ public sealed partial class DuckingSettings : ObservableObject
     [ObservableProperty] private int _attackMs = 80;
     [ObservableProperty] private int _releaseMs = 600;
 
-    /// <summary>Convierte esta configuracion al modelo del AudioCore.</summary>
+    /// -------------Convierte esta configuracion al modelo del AudioCore.</summary>
     public DuckingConfig ToConfig() => new()
     {
         IsEnabled = IsEnabled,

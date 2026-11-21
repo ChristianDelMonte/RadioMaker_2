@@ -2,10 +2,10 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Wrapper de UI sobre FormatPluginInfo para mostrar el estado del plugin
 /// con colores e indicadores visuales.
-/// </summary>
+/// -------------
 public sealed class PluginInfoViewModel
 {
     public string Name { get; }

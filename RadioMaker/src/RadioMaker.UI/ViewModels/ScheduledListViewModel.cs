@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del contenido de la pestaña Programados.
 ///
 /// Soporta items de cuatro tipos:
@@ -20,7 +20,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Reordenamiento: los items se pueden reordenar con los comandos
 /// MoveItemUpCommand / MoveItemDownCommand.
-/// </summary>
+/// -------------
 public sealed partial class ScheduledListViewModel : ViewModelBase
 {
     private readonly ScheduledList _list;
@@ -51,10 +51,10 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
     public int PlaylistItemCount => Items.Count(i => i.Kind == ScheduledItemKind.Playlist);
     public int BlockCount => Items.Count(i => i.Kind == ScheduledItemKind.Block);
 
-    /// <summary>
+    /// -------------
     /// Se dispara cuando cambia IsEnabled. El TabHost lo usa para sincronizar
     /// el estado con el ScheduledListRegistry.
-    /// </summary>
+    /// -------------
     public event EventHandler? RegistryStateChanged;
 
     public bool HasItems => Items.Count > 0;
@@ -91,24 +91,24 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
     // ───── Play manual ───────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// True si este VM inicio un Play manual y el engine todavia lo esta
     /// reproduciendo (o pausado, o suspendido por un programado ALTA).
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _isManualPlaying;
 
-    /// <summary>
+    /// -------------
     /// Texto de estado del Play manual: "Reproduciendo item 3 de 12" o vacio.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private string _manualPlaybackStatus = string.Empty;
 
-    /// <summary>
+    /// -------------
     /// True si la lista de ESTA pestaña es la que está sonando ahora
     /// (o la que tiene un item suspendido que se va a reanudar).
     ///
     /// Es la base para habilitar los botones de transporte: las otras
     /// pestañas de Programados abiertas deben mostrarlos deshabilitados.
-    /// </summary>
+    /// -------------
     public bool IsThisListActive
     {
         get
@@ -127,44 +127,44 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         }
     }
 
-    /// <summary>Se puede pausar: esta lista está activa y el canal está Playing.</summary>
+    /// -------------Se puede pausar: esta lista está activa y el canal está Playing.</summary>
     public bool CanPausePlayback =>
         IsThisListActive
         && _playback?.CurrentChannel?.State == RadioMaker.Core.Abstractions.PlaybackState.Playing;
 
-    /// <summary>Se puede reanudar: esta lista está activa y el canal está Paused.</summary>
+    /// -------------Se puede reanudar: esta lista está activa y el canal está Paused.</summary>
     public bool CanResumePlayback =>
         IsThisListActive
         && _playback?.CurrentChannel?.State == RadioMaker.Core.Abstractions.PlaybackState.Paused;
 
-    /// <summary>Se puede retroceder: esta lista está activa.</summary>
+    /// -------------Se puede retroceder: esta lista está activa.</summary>
     public bool CanPrevPlayback => IsThisListActive;
 
-    /// <summary>Se puede saltar al siguiente: esta lista está activa.</summary>
+    /// -------------Se puede saltar al siguiente: esta lista está activa.</summary>
     public bool CanNextPlayback => IsThisListActive;
 
-    /// <summary>Se puede detener: esta lista está activa.</summary>
+    /// -------------Se puede detener: esta lista está activa.</summary>
     public bool CanStopThisList => IsThisListActive;
 
-    /// <summary>
+    /// -------------
     /// Texto a mostrar en la barra de status. Prioriza el estado del
     /// Play manual cuando esta lista está activa; sino el StatusMessage normal.
-    /// </summary>
+    /// -------------
     public string DisplayStatusMessage =>
         !string.IsNullOrWhiteSpace(ManualPlaybackStatus)
             ? ManualPlaybackStatus
             : StatusMessage;
 
-    /// <summary>
+    /// -------------
     /// True si se puede iniciar un Play manual: hay engine y hay items
     /// habilitados.
-    /// </summary>
+    /// -------------
     public bool CanPlayList =>
         _playback is not null
         && Items.Any(i => i.IsEnabled)
         && !IsThisListActive;
 
-    /// <summary>Label del boton Play cuando ya esta en curso.</summary>
+    /// -------------Label del boton Play cuando ya esta en curso.</summary>
     public string PlayButtonTooltip =>
         IsManualPlaying
             ? "Reproduciendo esta lista..."
@@ -371,11 +371,11 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         IsDirty = true;
     }
 
-    /// <summary>
+    /// -------------
     /// Inicia la reproduccion manual de toda la lista: reproduce los items
     /// habilitados en orden, sin esperar horarios, hasta terminar.
     /// Detiene lo que este sonando en este momento.
-    /// </summary>
+    /// -------------
     [RelayCommand]
     private void PlayList()
     {
@@ -431,10 +431,10 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Detiene la reproduccion manual en curso. No afecta items disparados
     /// por el scheduler.
-    /// </summary>
+    /// -------------
     [RelayCommand]
     private void StopPlayback()
     {
@@ -520,10 +520,10 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         OnPropertyChanged(nameof(DisplayStatusMessage));
     }
 
-    /// <summary>
+    /// -------------
     /// El engine notifica que un Play manual termino (naturalmente o por
     /// StopAll). Recien aca apagamos IsManualPlaying.
-    /// </summary>
+    /// -------------
     private void OnManualPlayFinished(object? sender, EventArgs e)
     {
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
@@ -547,7 +547,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
     // ───── Drag & drop / agregado por path ──────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Agrega un item nuevo a la lista a partir de un path soltado.
     /// El tipo se infiere de la extension:
     ///   - .rmf  -> nuevo item Playlist (con el .rmf como FilePath).
@@ -555,7 +555,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
     ///   - audio -> nuevo item SingleFile.
     ///   - .rms / .rcb -> se ignora (no son anidables).
     /// Devuelve el item creado, o null si no se pudo.
-    /// </summary>
+    /// -------------
     public ScheduledItemViewModel? AddItemFromPath(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
@@ -589,10 +589,10 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         return AddItemInternal(item, $"Agregado desde explorador: {Path.GetFileName(path)}");
     }
 
-    /// <summary>
+    /// -------------
     /// Agrega un archivo individual como item nuevo (usado desde drag&drop
     /// del navegador interno). Delega en AddItemFromPath.
-    /// </summary>
+    /// -------------
     public ScheduledItemViewModel AddFileAsItem(string filePath)
     {
         return AddItemFromPath(filePath) ?? AddItemInternal(
@@ -736,11 +736,11 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
     public ScheduledList GetInternalList() => _list;
 
-    /// <summary>
+    /// -------------
     /// Devuelve true si esta lista contiene un item con el Id indicado.
     /// Se usa para identificar si esta pestaña es la que esta sonando
     /// en el motor de reproduccion.
-    /// </summary>
+    /// -------------
     public bool ContainsItem(string? itemId)
     {
         if (string.IsNullOrEmpty(itemId)) return false;

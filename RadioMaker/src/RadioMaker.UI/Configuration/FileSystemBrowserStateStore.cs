@@ -2,21 +2,21 @@ using System.Text.Json;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Estado persistente del Explorador de archivos.
-/// </summary>
+/// -------------
 public sealed class FileSystemBrowserState
 {
     public int Version { get; set; } = 1;
 
-    /// <summary>Ultima carpeta navegada. Vacio si nunca se navego.</summary>
+    /// -------------Ultima carpeta navegada. Vacio si nunca se navego.</summary>
     public string LastFolder { get; set; } = string.Empty;
 }
 
-/// <summary>
+/// -------------
 /// Persistencia del estado del Explorador de archivos en
 /// %APPDATA%/RmsAudioPlayer/filesystem-browser.json.
-/// </summary>
+/// -------------
 public static class FileSystemBrowserStateStore
 {
     private static readonly JsonSerializerOptions Options = new()

@@ -5,20 +5,20 @@ using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de normalizacion.
 ///
 /// El analisis de peak/RMS corre AUTOMATICAMENTE al cargar cada archivo
 /// (no hay boton "Analizar").
-/// </summary>
+/// -------------
 public sealed partial class NormalizationPanelViewModel : ViewModelBase
 {
     private readonly NormalizationSettings _settings;
     private IAudioChannel? _channel;
-    /// <summary>
+    /// -------------
     /// Se dispara cuando el usuario cambia el modo, el target,
     /// activa/desactiva la normalizacion.
-    /// </summary>
+    /// -------------
     public event EventHandler? SettingsChanged;
 
     public NormalizationMode[] AvailableModes { get; } =

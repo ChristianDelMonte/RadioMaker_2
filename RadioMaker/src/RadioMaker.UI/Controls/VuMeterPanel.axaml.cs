@@ -4,7 +4,7 @@ using Avalonia;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Panel de configuracion del VU meter (integrado en la ventana unificada
 /// de configuracion).
 ///
@@ -13,7 +13,7 @@ namespace RadioMaker.UI.Controls;
 /// CPU cuando el usuario esta en otra seccion de la ventana, arrancamos el
 /// timer SOLO cuando el panel entra al arbol visual, y lo paramos cuando
 /// sale (cambio de seccion o cierre de la ventana).
-/// </summary>
+/// -------------
 public partial class VuMeterPanel : UserControl
 {
     public VuMeterPanel()

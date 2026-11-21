@@ -5,9 +5,9 @@ using RadioMaker.Core.Tags;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Tipo de archivo que puede aparecer en el explorador.
-/// </summary>
+/// -------------
 public enum AudioFileKind
 {
     Audio = 0,
@@ -17,7 +17,7 @@ public enum AudioFileKind
     CartBoard = 4
 }
 
-/// <summary>
+/// -------------
 /// Representa un archivo en la lista del File Manager.
 ///
 /// Puede ser un archivo de audio (mp3, flac, etc) o un proyecto nativo
@@ -29,38 +29,38 @@ public enum AudioFileKind
 /// leen on-demand mediante LoadTagsAsync cuando el usuario lo selecciona
 /// o cuando el listado esta listo. Para archivos de proyecto, los TAGs
 /// no aplican.
-/// </summary>
+/// -------------
 public sealed partial class AudioFileViewModel : ViewModelBase
 {
-    /// <summary>Ruta absoluta del archivo.</summary>
+    /// -------------Ruta absoluta del archivo.</summary>
     public string FullPath { get; }
 
-    /// <summary>Nombre del archivo con extension.</summary>
+    /// -------------Nombre del archivo con extension.</summary>
     public string FileName { get; }
 
-    /// <summary>Extension en minusculas (.mp3, .flac, .rmf, etc).</summary>
+    /// -------------Extension en minusculas (.mp3, .flac, .rmf, etc).</summary>
     public string Extension { get; }
 
-    /// <summary>Tamaño en bytes.</summary>
+    /// -------------Tamaño en bytes.</summary>
     public long SizeBytes { get; }
 
-    /// <summary>Fecha de ultima modificacion.</summary>
+    /// -------------Fecha de ultima modificacion.</summary>
     public DateTime LastModified { get; }
 
-    /// <summary>Tipo detectado por la extension.</summary>
+    /// -------------Tipo detectado por la extension.</summary>
     public AudioFileKind Kind { get; }
 
-    /// <summary>True si es un archivo de audio reproducible.</summary>
+    /// -------------True si es un archivo de audio reproducible.</summary>
     public bool IsAudio => Kind == AudioFileKind.Audio;
 
-    /// <summary>
+    /// -------------
     /// True si es un proyecto nativo de RadioMaker (.rmf / .tnd / .rms / .rcb).
     /// Los proyectos no se reproducen directamente desde el explorador; se
     /// arrastran a la pestaña que corresponda.
-    /// </summary>
+    /// -------------
     public bool IsNativeProject => !IsAudio;
 
-    /// <summary>Etiqueta del tipo (vacia para audios).</summary>
+    /// -------------Etiqueta del tipo (vacia para audios).</summary>
     public string KindText => Kind switch
     {
         AudioFileKind.Playlist => "PLAYLIST",
@@ -70,7 +70,7 @@ public sealed partial class AudioFileViewModel : ViewModelBase
         _ => string.Empty
     };
 
-    /// <summary>Color de la etiqueta del tipo (clave de recurso).</summary>
+    /// -------------Color de la etiqueta del tipo (clave de recurso).</summary>
     public string KindColor => Kind switch
     {
         AudioFileKind.Playlist => "Success",
@@ -264,10 +264,10 @@ public sealed partial class AudioFileViewModel : ViewModelBase
 
     // ───── Carga de TAGs (lazy) ──────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Lee los TAGs del archivo en background. Idempotente.
     /// Para archivos de proyecto, no hace I/O: los TAGs no aplican.
-    /// </summary>
+    /// -------------
     public async Task LoadTagsAsync()
     {
         if (_tagsLoaded) return;

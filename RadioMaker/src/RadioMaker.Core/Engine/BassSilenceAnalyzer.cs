@@ -4,7 +4,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Analiza silencios de un archivo de audio decodificandolo en memoria,
 /// SIN reproducirlo.
 ///
@@ -22,7 +22,7 @@ namespace RadioMaker.Core.Engine;
 ///
 /// IMPORTANTE: este metodo es SINCRONICO y puede tardar varios segundos en
 /// archivos largos. SIEMPRE se debe llamar desde un hilo secundario (Task.Run).
-/// </summary>
+/// -------------
 internal static class BassSilenceAnalyzer
 {
     public static SilenceAnalysisResult Analyze(

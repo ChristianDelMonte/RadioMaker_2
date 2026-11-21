@@ -3,17 +3,17 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Wrapper de UI sobre <see cref="ScheduleEntry"/>.
 /// Un wrapper por cada entrada de horario dentro de un item programado.
-/// </summary>
+/// -------------
 public sealed partial class ScheduleEntryViewModel : ViewModelBase
 {
     private readonly ScheduleEntry _entry;
 
     public ScheduleEntry Source => _entry;
 
-    /// <summary>Se dispara cuando cambia cualquier propiedad relevante.</summary>
+    /// -------------Se dispara cuando cambia cualquier propiedad relevante.</summary>
     public event EventHandler? Changed;
 
     [ObservableProperty] private int _hour;
@@ -53,7 +53,7 @@ public sealed partial class ScheduleEntryViewModel : ViewModelBase
         _sunday = entry.Days.Contains(DayOfWeek.Sunday);
     }
 
-    /// <summary>Copia el estado del VM al modelo subyacente.</summary>
+    /// -------------Copia el estado del VM al modelo subyacente.</summary>
     public void ApplyToModel()
     {
         _entry.Hour = Math.Clamp(Hour, 0, 23);

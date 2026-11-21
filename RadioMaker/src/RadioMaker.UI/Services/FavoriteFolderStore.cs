@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Persistencia de carpetas favoritas en
 /// %APPDATA%/RmsAudioPlayer/favorite-folders.json.
-/// </summary>
+/// -------------
 public static class FavoriteFolderStore
 {
     private static readonly JsonSerializerOptions Options = new()
@@ -63,7 +63,7 @@ public static class FavoriteFolderStore
         return Path.Combine(root, "RadioMaker", "favorite-folders.json");
     }
 
-    /// <summary>Estructura de archivo para permitir versionado futuro.</summary>
+    /// -------------Estructura de archivo para permitir versionado futuro.</summary>
     private sealed class FavoritesFile
     {
         public int Version { get; set; } = 1;

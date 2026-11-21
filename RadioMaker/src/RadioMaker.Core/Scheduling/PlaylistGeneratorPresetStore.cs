@@ -3,12 +3,12 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Persistencia de presets del generador en archivos .rpg (JSON).
 ///
 /// El formato es autocontenido: todo el preset (metadata + opciones)
 /// vive en un unico archivo .rpg.
-/// </summary>
+/// -------------
 public static class PlaylistGeneratorPresetStore
 {
     public const string FileExtension = ".rpg";

@@ -4,13 +4,13 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Fila editable de la tabla de politicas de exclusividad para un modulo.
 /// Ahora expone tambien <see cref="Behavior"/>.
 ///
 /// Recordar el modelo: <see cref="Behavior"/> describe COMO TRATA este
 /// modulo al expropiado cuando lo saca del bus (no como quiere ser tratado).
-/// </summary>
+/// -------------
 public sealed partial class ModulePolicyItemViewModel : ViewModelBase
 {
     private readonly ModuleExclusivityPolicy _policy;

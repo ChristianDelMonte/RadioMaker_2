@@ -3,21 +3,21 @@ using RadioMaker.Core.Playback;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Tipo de contenido del mixado intermedio.
-/// </summary>
+/// -------------
 public enum MixContentType
 {
     Audio = 0,
     Locution = 1
 }
 
-/// <summary>
+/// -------------
 /// Tipo de ítem de la playlist:
 ///   - Audio: un archivo de audio reproducible.
 ///   - Locution: un comando de locución ejecutado por RMVoice
 ///     (hora, clima, hora+clima).
-/// </summary>
+/// -------------
 public enum PlaylistItemKind
 {
     Audio = 0,
@@ -28,20 +28,20 @@ public sealed class PlaylistTrack
 {
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
 
-    /// <summary>
+    /// -------------
     /// Tipo de ítem. Los .rmf viejos no tienen este campo → default Audio
     /// (retrocompatibilidad).
-    /// </summary>
+    /// -------------
     public PlaylistItemKind ItemKind { get; set; } = PlaylistItemKind.Audio;
 
-    /// <summary>
+    /// -------------
     /// Ruta del archivo de audio. Solo aplica cuando ItemKind == Audio.
-    /// </summary>
+    /// -------------
     public string FilePath { get; set; } = string.Empty;
 
-    /// <summary>
+    /// -------------
     /// Comando de locución. Solo aplica cuando ItemKind == Locution.
-    /// </summary>
+    /// -------------
     public LocutionCommand LocutionCommand { get; set; } = LocutionCommand.HourAndMinute;
 
     public string Title { get; set; } = string.Empty;
@@ -49,11 +49,11 @@ public sealed class PlaylistTrack
     public double VolumeDb { get; set; } = 0.0;
     public double DurationSeconds { get; set; } = 0.0;
 
-    /// <summary>
+    /// -------------
     /// Duracion estimada de una locucion (en segundos). Se usa para el
     /// calculo del total de la playlist, porque la duracion real solo se
     /// conoce cuando el engine la reproduce. No afecta la reproduccion.
-    /// </summary>
+    /// -------------
     public double EstimatedDurationSeconds { get; set; } = 5.0;
 
     // ───── Mixado intermedio ─────────────────────────────────────────────
@@ -75,9 +75,9 @@ public sealed class PlaylistTrack
     [JsonIgnore]
     public bool IsLocutionItem => ItemKind == PlaylistItemKind.Locution;
 
-    /// <summary>
+    /// -------------
     /// Titulo a mostrar en la UI. Para locuciones, describe el comando.
-    /// </summary>
+    /// -------------
     [JsonIgnore]
     public string DisplayTitle
     {
@@ -106,9 +106,9 @@ public sealed class PlaylistTrack
         }
     }
 
-    /// <summary>
+    /// -------------
     /// True si el item tiene mixado configurado. No aplica a locuciones.
-    /// </summary>
+    /// -------------
     [JsonIgnore]
     public bool HasMix
     {

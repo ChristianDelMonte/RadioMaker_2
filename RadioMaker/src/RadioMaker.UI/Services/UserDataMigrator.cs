@@ -2,7 +2,7 @@ using System.IO;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Migra los datos de la carpeta vieja (%APPDATA%/RmsAudioPlayer) a la
 /// nueva (%APPDATA%/RadioMaker) la primera vez que se arranca despues
 /// del renombrado de la app.
@@ -15,16 +15,16 @@ namespace RadioMaker.UI.Services;
 ///
 /// Se llama desde Program.Main() ANTES de cualquier otro Load, para que
 /// todos los Store encuentren sus archivos ya migrados.
-/// </summary>
+/// -------------
 public static class UserDataMigrator
 {
     private const string OldFolderName = "RmsAudioPlayer";
     private const string NewFolderName = "RadioMaker";
 
-    /// <summary>
+    /// -------------
     /// Ejecuta la migracion si corresponde. Es idempotente: correrlo
     /// varias veces no hace dano.
-    /// </summary>
+    /// -------------
     public static void MigrateIfNeeded()
     {
         try

@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Panel de Eventos: muestra los items programados pendientes de disparar
 /// (agrupados por dia) y un log compacto abajo.
 ///
@@ -20,7 +20,7 @@ namespace RadioMaker.UI.ViewModels;
 /// (el switch de cada pestaña de Programados controla si participa o no).
 ///
 /// Se refresca cada 2 segundos o cuando cambia el registry.
-/// </summary>
+/// -------------
 public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherTimer _refreshTimer;
@@ -28,10 +28,10 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
 
     public SchedulerPanelViewModel? Scheduler { get; }
 
-    /// <summary>Grupos de items pendientes por dia.</summary>
+    /// -------------Grupos de items pendientes por dia.</summary>
     public ObservableCollection<PendingDayGroup> PendingGroups { get; } = new();
 
-    /// <summary>Log del scheduler (bindea directo al del SchedulerPanelViewModel).</summary>
+    /// -------------Log del scheduler (bindea directo al del SchedulerPanelViewModel).</summary>
     public ObservableCollection<SchedulerLogEntry> LogEntries
         => Scheduler?.LogEntries ?? EmptyLog;
 
@@ -156,10 +156,10 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
 
     // ───── Refresh ───────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Recalcula los items pendientes a partir del registry. Incluye solo
     /// ScheduledLists habilitadas + items habilitados + entries habilitadas.
-    /// </summary>
+    /// -------------
     private void RefreshPending()
     {
         if (_disposed) return;
@@ -261,10 +261,10 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
 
     // ───── Helpers de calculo ────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Devuelve la proxima ocurrencia de una entrada de horario a partir de
     /// <paramref name="now"/>. Null si la entrada no tiene dias.
-    /// </summary>
+    /// -------------
     private static DateTime? ComputeNextOccurrence(ScheduleEntry entry, DateTime now)
     {
         if (entry.Days is null || entry.Days.Count == 0) return null;

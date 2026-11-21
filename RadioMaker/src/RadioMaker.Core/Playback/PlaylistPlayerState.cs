@@ -1,33 +1,33 @@
 namespace RadioMaker.Core.Playback;
 
-/// <summary>
+/// -------------
 /// Estado en el que puede estar un PlaylistPlayer.
-/// </summary>
+/// -------------
 public enum PlaylistPlayerStatus
 {
-    /// <summary>Sin nada reproduciendo.</summary>
+    /// -------------Sin nada reproduciendo.</summary>
     Stopped = 0,
 
-    /// <summary>Reproduciendo una pista de la playlist.</summary>
+    /// -------------Reproduciendo una pista de la playlist.</summary>
     Playing = 1,
 
-    /// <summary>Pausa manual (el usuario apreto Pause).</summary>
+    /// -------------Pausa manual (el usuario apreto Pause).</summary>
     Paused = 2,
 
-    /// <summary>Pausa automatica por un programado del scheduler.</summary>
+    /// -------------Pausa automatica por un programado del scheduler.</summary>
     PausedByScheduler = 3,
 
-    /// <summary>Esperando el delay entre pistas (de una pista con delay).</summary>
+    /// -------------Esperando el delay entre pistas (de una pista con delay).</summary>
     Delaying = 4,
 
-    /// <summary>Error durante la reproduccion.</summary>
+    /// -------------Error durante la reproduccion.</summary>
     Error = 5
 }
 
-/// <summary>
+/// -------------
 /// Snapshot del estado de reproduccion de una playlist.
 /// La UI lo usa para mostrar el estado actual, la pista en curso, progreso, etc.
-/// </summary>
+/// -------------
 public sealed record PlaylistPlayerState(
     PlaylistPlayerStatus Status,
     string PlaylistName,
@@ -38,7 +38,7 @@ public sealed record PlaylistPlayerState(
     double DurationSeconds,
     string? ErrorMessage)
 {
-    /// <summary>Estado inicial (nada reproduciendo).</summary>
+    /// -------------Estado inicial (nada reproduciendo).</summary>
     public static readonly PlaylistPlayerState Stopped = new(
         PlaylistPlayerStatus.Stopped,
         string.Empty,

@@ -1,6 +1,6 @@
 namespace RadioMaker.Core.Logging;
 
-/// <summary>
+/// -------------
 /// Servicio central de log de la aplicacion.
 ///
 /// Los modulos (AudioCore, UI, scheduler, reproductores) escriben entradas
@@ -17,7 +17,7 @@ namespace RadioMaker.Core.Logging;
 ///
 /// Thread-safe: los metodos se pueden llamar desde cualquier hilo
 /// (incluyendo los hilos internos de BASS).
-/// </summary>
+/// -------------
 public sealed class LogService : IDisposable
 {
     private const int MaxEntries = 2000;
@@ -31,13 +31,13 @@ public sealed class LogService : IDisposable
     private StreamWriter? _fileWriter;
     private string? _currentLogDate;
 
-    /// <summary>Carpeta donde se guardan los archivos de log.</summary>
+    /// -------------Carpeta donde se guardan los archivos de log.</summary>
     public static string LogFolder { get; } = BuildLogFolderPath();
 
-    /// <summary>Ruta completa del archivo de log actual (o null si aun no se creo).</summary>
+    /// -------------Ruta completa del archivo de log actual (o null si aun no se creo).</summary>
     public string? CurrentLogFilePath { get; private set; }
 
-    /// <summary>Se dispara cuando se agrega una nueva entrada.</summary>
+    /// -------------Se dispara cuando se agrega una nueva entrada.</summary>
     public event EventHandler<LogEntry>? EntryAdded;
 
     // ───── Escritura ─────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ public sealed class LogService : IDisposable
 
     // ───── Lectura ───────────────────────────────────────────────────────
 
-    /// <summary>Snapshot de las ultimas N entradas (mas recientes primero).</summary>
+    /// -------------Snapshot de las ultimas N entradas (mas recientes primero).</summary>
     public IReadOnlyList<LogEntry> GetSnapshot(int max = 500)
     {
         lock (_gate)
@@ -82,13 +82,13 @@ public sealed class LogService : IDisposable
         }
     }
 
-    /// <summary>Cuenta de entradas por nivel.</summary>
+    /// -------------Cuenta de entradas por nivel.</summary>
     public int CountByLevel(LogLevel level)
     {
         lock (_gate) return _entries.Count(e => e.Level == level);
     }
 
-    /// <summary>Limpia todo el log en memoria (NO borra el archivo en disco).</summary>
+    /// -------------Limpia todo el log en memoria (NO borra el archivo en disco).</summary>
     public void Clear()
     {
         lock (_gate) _entries.Clear();
@@ -96,10 +96,10 @@ public sealed class LogService : IDisposable
 
     // ───── Persistencia ──────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Escribe una entrada al archivo del dia. Si es la primera escritura
     /// del dia o si cambio la fecha (medianoche), rota el archivo.
-    /// </summary>
+    /// -------------
     private void WriteToFile(LogEntry entry)
     {
         lock (_fileGate)
@@ -146,17 +146,17 @@ public sealed class LogService : IDisposable
         }
     }
 
-    /// <summary>Cierra el StreamWriter actual (si lo hay).</summary>
+    /// -------------Cierra el StreamWriter actual (si lo hay).</summary>
     private void CloseWriterInternal()
     {
         try { _fileWriter?.Dispose(); } catch { }
         _fileWriter = null;
     }
 
-    /// <summary>
+    /// -------------
     /// Fuerza el volcado y cierre del archivo actual. Se llama desde el
     /// shutdown de la app para garantizar que no queden lineas sin escribir.
-    /// </summary>
+    /// -------------
     public void Dispose()
     {
         lock (_fileGate)

@@ -4,11 +4,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Configuracion del ecualizador de 10 bandas.
 /// Se persiste en JSON en el directorio del usuario.
 /// Incluye presets personalizados definidos por el usuario.
-/// </summary>
+/// -------------
 public sealed partial class EqualizerSettings : ObservableObject
 {
     public const int BandCount = 10;
@@ -23,23 +23,23 @@ public sealed partial class EqualizerSettings : ObservableObject
     [ObservableProperty] private string _presetName = "Flat";
     [ObservableProperty] private double[] _gains = new double[BandCount];
 
-    /// <summary>
+    /// -------------
     /// Presets personalizados definidos por el usuario.
     /// Clave = nombre del preset, valor = ganancias de las 10 bandas.
     /// Se persisten en un archivo JSON aparte (equalizer-presets.json).
-    /// </summary>
+    /// -------------
     [ObservableProperty] private Dictionary<string, double[]> _customPresets = new();
 
     public double MinGain => -12.0;
     public double MaxGain => +12.0;
 
-    /// <summary>Se dispara cuando cambia cualquier ganancia individual.</summary>
+    /// -------------Se dispara cuando cambia cualquier ganancia individual.</summary>
     public event EventHandler<int>? BandChanged;
 
-    /// <summary>Se dispara cuando cambian todas las ganancias a la vez (preset).</summary>
+    /// -------------Se dispara cuando cambian todas las ganancias a la vez (preset).</summary>
     public event EventHandler? AllBandsChanged;
 
-    /// <summary>Se dispara cuando se agrega o elimina un preset personalizado.</summary>
+    /// -------------Se dispara cuando se agrega o elimina un preset personalizado.</summary>
     public event EventHandler? CustomPresetsChanged;
 
     public void SetBandGain(int band, double gain)
@@ -67,7 +67,7 @@ public sealed partial class EqualizerSettings : ObservableObject
 
     public void ResetToFlat() => ApplyPreset("Flat");
 
-    /// <summary>Agrega o reemplaza un preset personalizado.</summary>
+    /// -------------Agrega o reemplaza un preset personalizado.</summary>
     public void SaveCustomPreset(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return;
@@ -80,7 +80,7 @@ public sealed partial class EqualizerSettings : ObservableObject
         CustomPresetsChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Elimina un preset personalizado.</summary>
+    /// -------------Elimina un preset personalizado.</summary>
     public bool DeleteCustomPreset(string name)
     {
         if (!CustomPresets.ContainsKey(name)) return false;
@@ -90,7 +90,7 @@ public sealed partial class EqualizerSettings : ObservableObject
         return true;
     }
 
-    /// <summary>Devuelve true si el nombre corresponde a un preset personalizado.</summary>
+    /// -------------Devuelve true si el nombre corresponde a un preset personalizado.</summary>
     public bool IsCustomPreset(string name) => CustomPresets.ContainsKey(name);
 
     private bool TryGetPresetValues(string name, out double[] values)
@@ -118,11 +118,11 @@ public sealed partial class EqualizerSettings : ObservableObject
     };
 }
 
-/// <summary>
+/// -------------
 /// Persistencia de la configuracion del ecualizador:
 ///   • Estado actual (bandas, habilitado, preset activo) → equalizer.json
 ///   • Presets personalizados                            → equalizer-presets.json
-/// </summary>
+/// -------------
 public static class EqualizerSettingsStore
 {
     private static readonly JsonSerializerOptions Options = new()

@@ -4,10 +4,10 @@ using RadioMaker.UI.Controls;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Convierte un SpectrumMode a su etiqueta legible en español para mostrar
 /// en el ComboBox del panel Spectrum.
-/// </summary>
+/// -------------
 public sealed class SpectrumModeLabelConverter : IValueConverter
 {
     public static readonly SpectrumModeLabelConverter Instance = new();

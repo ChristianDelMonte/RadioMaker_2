@@ -6,7 +6,7 @@ using Avalonia.Media.Imaging;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del editor de TAGs de un archivo de audio.
 ///
 /// Trabaja sobre una COPIA de los valores del archivo. Los cambios solo se
@@ -15,7 +15,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Al guardar exitosamente, recarga los TAGs del <see cref="AudioFileViewModel"/>
 /// original para que la lista y el panel de info inferior se actualicen solos.
-/// </summary>
+/// -------------
 public sealed partial class AudioTagEditorViewModel : ViewModelBase
 {
     private readonly AudioFileViewModel _file;
@@ -46,11 +46,11 @@ public sealed partial class AudioTagEditorViewModel : ViewModelBase
     public string SampleRateText => _file.Tags?.SampleRateText ?? string.Empty;
     public string ChannelsText => _file.Tags?.ChannelsText ?? string.Empty;
     public bool HasCoverArt => _file.Tags?.HasCoverArt == true;
-    /// <summary>
+    /// -------------
     /// Caratula embebida del archivo (Bitmap), o null si no tiene.
     /// Se delega al <see cref="AudioFileViewModel"/> original, que ya la
     /// cachea internamente y la invalida cuando los tags se recargan.
-    /// </summary>
+    /// -------------
     public Bitmap? CoverArt => _file.CoverArt;
 
     public string TechnicalLine
@@ -87,10 +87,10 @@ public sealed partial class AudioTagEditorViewModel : ViewModelBase
 
     // ───── Guardar ───────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Escribe los valores actuales al archivo. Devuelve true si la escritura
     /// fue exitosa. En caso de exito, recarga los tags del VM original.
-    /// </summary>
+    /// -------------
     public async Task<bool> SaveAsync()
     {
         try
@@ -132,7 +132,7 @@ public sealed partial class AudioTagEditorViewModel : ViewModelBase
         }
     }
 
-    /// <summary>Limpia el mensaje de estado (se usa al editar cualquier campo).</summary>
+    /// -------------Limpia el mensaje de estado (se usa al editar cualquier campo).</summary>
     public void ClearStatus()
     {
         StatusMessage = string.Empty;

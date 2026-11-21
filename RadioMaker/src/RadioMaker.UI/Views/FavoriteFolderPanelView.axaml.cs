@@ -8,14 +8,14 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Code-behind del panel de carpeta favorita.
 ///
 /// Solo maneja:
 ///   - Drag&drop de archivos (mismo patron que el explorador).
 ///   - Doble clic / Enter para activar archivo.
 ///   - Click derecho -> Editar tags.
-/// </summary>
+/// -------------
 public partial class FavoriteFolderPanelView : UserControl
 {
     public FavoriteFolderPanelView()

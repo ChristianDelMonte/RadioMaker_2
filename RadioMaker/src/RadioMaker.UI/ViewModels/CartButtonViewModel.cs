@@ -4,31 +4,31 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Wrapper de UI sobre <see cref="CartButton"/>.
 ///
 /// Expone las propiedades visuales del boton (label, color, estado) y
 /// se encarga de leer la duracion del archivo cuando se asigna.
-/// </summary>
+/// -------------
 public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
 {
     private readonly CartButton _button;
 
-    /// <summary>Handler cacheado para poder desuscribirse en Dispose.</summary>
+    /// -------------Handler cacheado para poder desuscribirse en Dispose.</summary>
     private readonly EventHandler _themeChangedHandler;
 
     private bool _disposed;
 
-    /// <summary>
+    /// -------------
     /// Cyan brillante del display LED. Se usa como acento para el highlight
     /// de drag &amp; drop, para unificar con el color del VU/LEDs.
-    /// </summary>
+    /// -------------
     private const string DragOverBorderHex = "#00E5FF";
 
-    /// <summary>
+    /// -------------
     /// Mismo cyan con ~20% de opacidad. Se usa como fondo del highlight
     /// (formato ARGB).
-    /// </summary>
+    /// -------------
     private const string DragOverBackgroundHex = "#3300E5FF";
 
     public CartButton Source => _button;
@@ -49,10 +49,10 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _isPlaying;
     [ObservableProperty] private bool _isSelected;
 
-    /// <summary>
+    /// -------------
     /// True mientras el usuario esta arrastrando un archivo valido SOBRE
     /// este boton. Se usa para el highlight visual de drag &amp; drop.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _isDragOver;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
@@ -77,7 +77,7 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
             ? $"+{VolumeDb:F1} dB"
             : $"{VolumeDb:F1} dB";
 
-    /// <summary>
+    /// -------------
     /// Color de fondo efectivo.
     ///
     /// Prioridad:
@@ -86,7 +86,7 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
     ///   3. IsSelected  -> color del boton aclarado.
     ///   4. !IsEnabled  -> gris.
     ///   5. Caso normal -> color elegido por el usuario.
-    /// </summary>
+    /// -------------
     public string EffectiveBackground
     {
         get
@@ -104,7 +104,7 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Color del borde efectivo.
     ///
     /// Prioridad:
@@ -112,7 +112,7 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
     ///   2. IsPlaying  -> rojo brillante.
     ///   3. IsSelected -> acento.
     ///   4. Caso normal -> borde sutil.
-    /// </summary>
+    /// -------------
     public string EffectiveBorderColor
     {
         get
@@ -127,20 +127,20 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Fondo del badge "REPRODUCIENDO" que se muestra cuando el cart esta
     /// sonando. Rojo brillante fijo, mismo en ambos temas.
-    /// </summary>
+    /// -------------
     public string PlayingBadgeBackground => "#EF4444";
 
-    /// <summary>
+    /// -------------
     /// Grosor del borde efectivo.
     ///
     /// Prioridad:
     ///   1. IsDragOver -> 3.0 (mas grueso que playing/selected).
     ///   2. IsPlaying o IsSelected -> 2.5.
     ///   3. Caso normal -> 1.0.
-    /// </summary>
+    /// -------------
     public double EffectiveBorderThickness
     {
         get
@@ -165,10 +165,10 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
         catch { return hex; }
     }
 
-    /// <summary>Opacidad del texto: 0.4 si esta deshabilitado, 1.0 si no.</summary>
+    /// -------------Opacidad del texto: 0.4 si esta deshabilitado, 1.0 si no.</summary>
     public double EffectiveOpacity => IsEnabled ? 1.0 : 0.4;
 
-    /// <summary>Muestra la etiqueta o un placeholder si no hay nada.</summary>
+    /// -------------Muestra la etiqueta o un placeholder si no hay nada.</summary>
     public string ButtonText => HasFile ? DisplayLabel : "(vacio)";
 
     // ───── Constructor ───────────────────────────────────────────────────
@@ -230,7 +230,7 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
         _button.Notes = Notes ?? string.Empty;
     }
 
-    /// <summary>Limpia el boton (borra archivo y label).</summary>
+    /// -------------Limpia el boton (borra archivo y label).</summary>
     public void Clear()
     {
         FilePath = string.Empty;
@@ -242,7 +242,7 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
         NotifyChanged();
     }
 
-    /// <summary>
+    /// -------------
     /// True si el Label actual parece ser "auto-generado" a partir del
     /// FilePath (o sea, el usuario no lo personalizo). Se usa para decidir
     /// si conviene pisarlo al reemplazar el audio.
@@ -251,7 +251,7 @@ public sealed partial class CartButtonViewModel : ViewModelBase, IDisposable
     ///   - Label vacio -> auto (nada que respetar).
     ///   - Label == nombre del FilePath sin extension -> auto.
     ///   - Cualquier otra cosa -> custom (no se pisa).
-    /// </summary>
+    /// -------------
     public bool IsLabelAutoGenerated()
     {
         if (string.IsNullOrWhiteSpace(Label))

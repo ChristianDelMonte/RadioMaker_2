@@ -8,10 +8,10 @@ using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Code-behind del editor de tandas. Maneja los dialogos nativos de
 /// archivos .tnd y la seleccion del archivo de cada pista.
-/// </summary>
+/// -------------
 public partial class TandaEditorView : UserControl
 {
     public TandaEditorView()
@@ -118,13 +118,8 @@ public partial class TandaEditorView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var audioTypes = new FilePickerFileType("Archivos de audio")
-        {
-            Patterns = new[]
-            {
-                "*.mp3", "*.ogg", "*.wav", "*.flac", "*.m4a", "*.aac", "*.opus", "*.wv"
-            }
-        };
+        var audioTypes = AudioFilePickerHelper.CreateAudioFileType(
+            AudioFilePickerHelper.GetSupportedExtensions(this));
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {

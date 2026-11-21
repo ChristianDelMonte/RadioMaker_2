@@ -7,7 +7,7 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Aplica automaticamente los ajustes de EQ, Trim y Normalizacion a cualquier
 /// canal que este por reproducirse. Emite un log detallado de cada aplicacion.
 ///
@@ -26,7 +26,7 @@ namespace RadioMaker.UI.Configuration;
 ///   ReapplyToAll se dispara muchas veces por segundo (cada movimiento de
 ///   slider). NO loguea para evitar spam. Solo se loguean los ajustes reales
 ///   cuando logDetails=true (primera vez que se carga un canal).
-/// </summary>
+/// -------------
 public sealed class ChannelConfigurator
 {
     private readonly EqualizerSettings _eqSettings;
@@ -53,10 +53,10 @@ public sealed class ChannelConfigurator
 
     // ───── API publica ───────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Aplica todos los ajustes automaticos al canal, ANTES de que arranque
     /// a reproducir.
-    /// </summary>
+    /// -------------
     public void ConfigureChannel(
         IAudioChannel channel,
         string filePath,
@@ -153,14 +153,14 @@ public sealed class ChannelConfigurator
             TaskScheduler.Default);
     }
 
-    /// <summary>
+    /// -------------
     /// Reaplica la configuracion (EQ + Trim + Normalizacion) a una lista de
     /// canales activos, en modo silencioso (SIN LOG).
     ///
     /// IMPORTANTE: este metodo se dispara muchas veces por segundo cuando
     /// el usuario arrastra un slider del EQ. NO loguear aqui para evitar
     /// spam en el panel de log.
-    /// </summary>
+    /// -------------
     public void ReapplyToAll(IEnumerable<IAudioChannel?> channels)
     {
         if (channels is null) return;
@@ -182,10 +182,10 @@ public sealed class ChannelConfigurator
         // NOTA: sin AppLogger aqui. Ver comentario del metodo.
     }
 
-    /// <summary>
+    /// -------------
     /// Pre-carga el analisis de un archivo en memoria sin tocar ningun canal.
     /// Util para pre-calentar la cache antes de que el usuario aprete Play.
-    /// </summary>
+    /// -------------
     public void Prewarm(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return;
@@ -241,9 +241,9 @@ public sealed class ChannelConfigurator
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Limpia solo el cache en memoria. Los .rmt persistentes se mantienen.
-    /// </summary>
+    /// -------------
     public void ClearCache() => _cache.Clear();
 
     // ───── Carga o analisis en background ───────────────────────────────

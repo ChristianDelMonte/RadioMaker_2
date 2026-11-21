@@ -5,12 +5,12 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del editor modal de un item programado.
 ///
 /// Trabaja sobre un CLON del item original. Los cambios solo se aplican
 /// al original si el usuario presiona Guardar.
-/// </summary>
+/// -------------
 public sealed partial class ScheduledItemEditorViewModel : ViewModelBase
 {
     private static readonly JsonSerializerOptions CloneOptions = new()
@@ -21,10 +21,10 @@ public sealed partial class ScheduledItemEditorViewModel : ViewModelBase
 
     private readonly ScheduledItemViewModel _original;
 
-    /// <summary>Item en edicion (clon). El editor bindea contra esto.</summary>
+    /// -------------Item en edicion (clon). El editor bindea contra esto.</summary>
     public ScheduledItemViewModel WorkingItem { get; }
 
-    /// <summary>Prioridades para el ComboBox.</summary>
+    /// -------------Prioridades para el ComboBox.</summary>
     public SchedulePriority[] AvailablePriorities { get; } =
         { SchedulePriority.Low, SchedulePriority.High };
 
@@ -42,7 +42,7 @@ public sealed partial class ScheduledItemEditorViewModel : ViewModelBase
 
     // ───── Guardar ───────────────────────────────────────────────────────
 
-    /// <summary>Aplica los cambios al item original.</summary>
+    /// -------------Aplica los cambios al item original.</summary>
     public void ApplyToOriginal()
     {
         _original.CopyFrom(WorkingItem);

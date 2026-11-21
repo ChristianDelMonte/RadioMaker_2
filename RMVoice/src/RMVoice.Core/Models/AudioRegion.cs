@@ -4,19 +4,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RMVoice.Core.Models;
 
-/// <summary>
+/// -------------
 /// Una región dentro de un archivo de audio (p. ej. "la hora 07", "el minuto 42",
 /// "22 grados" o "65 por ciento").
-/// </summary>
+/// -------------
 public sealed class AudioRegion : ObservableObject
 {
     private int _index;
     private double _startSeconds;
     private double _endSeconds;
 
-    /// <summary>
+    /// -------------
     /// Índice lógico de la región. Puede ser negativo (temperaturas bajo cero).
-    /// </summary>
+    /// -------------
     public int Index
     {
         get => _index;

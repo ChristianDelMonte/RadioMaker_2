@@ -11,11 +11,11 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Opcion del combo de filtro por extension del explorador.
 ///
 /// Si Extension es null/vacio, significa "Todas las extensiones".
-/// </summary>
+/// -------------
 public sealed class FileExtensionFilter
 {
     public string DisplayName { get; }
@@ -34,7 +34,7 @@ public sealed class FileExtensionFilter
     public override string ToString() => DisplayName;
 }
 
-/// <summary>
+/// -------------
 /// ViewModel principal del File Manager (Modulo 3C).
 ///
 /// Muestra archivos de audio Y proyectos nativos de RadioMaker
@@ -44,7 +44,7 @@ public sealed class FileExtensionFilter
 /// Filtro por extension:
 ///   - "Todas las extensiones" (por defecto): muestra todo lo soportado.
 ///   - Una extension especifica: solo muestra archivos con esa extension.
-/// </summary>
+/// -------------
 public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 {
     private readonly IAudioEngine _engine;
@@ -68,13 +68,13 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
     // ───── Filtros ───────────────────────────────────────────────────────
 
-    /// <summary>Opciones del combo de filtro por extension.</summary>
+    /// -------------Opciones del combo de filtro por extension.</summary>
     public ObservableCollection<FileExtensionFilter> AvailableFilters { get; } = new();
 
-    /// <summary>Filtro seleccionado. Por defecto: "Todas las extensiones".</summary>
+    /// -------------Filtro seleccionado. Por defecto: "Todas las extensiones".</summary>
     [ObservableProperty] private FileExtensionFilter? _selectedFilter;
 
-    /// <summary>Filtro de busqueda por nombre (texto libre).</summary>
+    /// -------------Filtro de busqueda por nombre (texto libre).</summary>
     [ObservableProperty] private string _searchFilter = string.Empty;
 
     // ───── Estado ────────────────────────────────────────────────────────
@@ -177,12 +177,12 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
     // ───── Construccion del filtro por extension ────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Arma la lista de filtros del combo:
     ///   1. "Todas las extensiones" (default).
     ///   2. Proyectos nativos: .rmf, .tnd, .rms, .rcb (con descripcion).
     ///   3. Extensiones de audio soportadas por el engine (alfabetico).
-    /// </summary>
+    /// -------------
     private void BuildAvailableFilters()
     {
         AvailableFilters.Clear();
@@ -228,13 +228,13 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
     // ───── Helper: extensiones soportadas (filtro-aware) ────────────────
 
-    /// <summary>
+    /// -------------
     /// Devuelve el set de extensiones a enumerar en el directorio actual.
     ///
     /// Si hay un filtro especifico seleccionado (distinto de "Todas"),
     /// devuelve solo esa extension. Si no, devuelve todas las soportadas:
     /// audios del engine + proyectos nativos.
-    /// </summary>
+    /// -------------
     private HashSet<string> GetSupportedExtensions()
     {
         var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -443,11 +443,11 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
             await NavigateToAsync(desktop);
     }
 
-    /// <summary>
+    /// -------------
     /// Activacion de un archivo (doble clic / Enter).
     ///   - Audio: reproduce en el bus propio del explorador.
     ///   - Proyecto nativo: no hace nada (hay que arrastrarlo).
-    /// </summary>
+    /// -------------
     [RelayCommand]
     private void ActivateSelectedFile()
     {

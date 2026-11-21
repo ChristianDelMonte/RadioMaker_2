@@ -6,10 +6,10 @@ using System;
 
 namespace RadioMaker.UI.Demo;
 
-/// <summary>
+/// -------------
 /// ViewModel del overlay de presentación inicial. Se crea una sola vez
 /// al arranque (si DemoCompleted == false) y se destruye al terminar.
-/// </summary>
+/// -------------
 public sealed partial class DemoViewModel : ObservableObject, IDisposable
 {
     private readonly DemoService _service;
@@ -110,11 +110,11 @@ public sealed partial class DemoViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Skip() => Close();
 
-    /// <summary>
+    /// -------------
     /// Devuelve el canal de audio del demo (o null si no está sonando).
     /// Se usa desde MainWindowViewModel para alimentar el VU meter y el
     /// Spectrum mientras la demo corre.
-    /// </summary>
+    /// -------------
     public RadioMaker.Core.Abstractions.IAudioChannel? GetCurrentChannel()
         => _service.GetCurrentChannel();
 

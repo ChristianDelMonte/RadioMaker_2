@@ -2,11 +2,11 @@ namespace RadioMaker.Core.Configuration;
 
 public enum EmergencySourceMode
 {
-    /// <summary>Playlist pre-armada (.rmf) unicamente.</summary>
+    /// -------------Playlist pre-armada (.rmf) unicamente.</summary>
     Prearmed = 0,
-    /// <summary>Carpeta con audios, shuffle.</summary>
+    /// -------------Carpeta con audios, shuffle.</summary>
     Folder = 1,
-    /// <summary>Playlist pre-armada si existe, carpeta como fallback.</summary>
+    /// -------------Playlist pre-armada si existe, carpeta como fallback.</summary>
     Hybrid = 2
 }
 

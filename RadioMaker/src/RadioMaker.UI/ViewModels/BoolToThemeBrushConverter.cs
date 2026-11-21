@@ -5,7 +5,7 @@ using Avalonia.Media;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Converter que toma un booleano y devuelve un brush resuelto desde los
 /// recursos de tema, eligiendo entre dos claves segun el valor.
 ///
@@ -16,7 +16,7 @@ namespace RadioMaker.UI.ViewModels;
 /// una clave, se usa para ambos estados.
 ///
 /// Tambien soporta colores hex crudos como fallback ("#00E5FF|#0D3D4A").
-/// </summary>
+/// -------------
 public sealed class BoolToThemeBrushConverter : IValueConverter
 {
     public static readonly BoolToThemeBrushConverter Instance = new();

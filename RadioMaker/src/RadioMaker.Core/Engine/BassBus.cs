@@ -4,7 +4,7 @@ using RadioMaker.Core.Logging;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Implementacion de <see cref="IAudioBus"/> sobre un dispositivo BASS.
 ///
 /// CAMBIO IMPORTANTE (fix del cambio de dispositivo en caliente):
@@ -19,7 +19,7 @@ namespace RadioMaker.Core.Engine;
 /// Guardamos dos indices:
 ///   • _requestedDeviceIndex: lo que pidio el usuario (-1 = "sistema").
 ///   • _resolvedDeviceIndex:  el indice real con el que trabaja BASS.
-/// </summary>
+/// -------------
 internal sealed class BassBus : IAudioBus
 {
     private readonly object _gate = new();
@@ -94,11 +94,11 @@ internal sealed class BassBus : IAudioBus
         return best;
     }
 
-    /// <summary>
+    /// -------------
     /// Nombre legible del dispositivo fisico asociado al bus.
     /// Consulta BASS en vivo para obtener el nombre actual del dispositivo.
     /// Si es el predeterminado, lo indica explicitamente.
-    /// </summary>
+    /// -------------
     public string DeviceDisplayName
     {
         get
@@ -165,12 +165,12 @@ internal sealed class BassBus : IAudioBus
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Cambia el dispositivo de salida del bus SIN interrumpir los canales activos.
     ///
     /// Los canales existentes siguen reproduciendo en su dispositivo original.
     /// Los canales nuevos se crearan en el nuevo dispositivo.
-    /// </summary>
+    /// -------------
     public bool ChangeDevice(int deviceIndex)
     {
         lock (_gate)
@@ -369,12 +369,12 @@ internal sealed class BassBus : IAudioBus
         lock (_gate) StopTestToneCore();
     }
 
-    /// <summary>
+    /// -------------
     /// Reproduce una secuencia de N pulsos de M ms separados por K ms.
     /// Se usa para el beep de emergencia (4 pulsos de 500ms, amplitud 0.75).
     /// No interfiere con la reproduccion en curso del bus: se suma como
     /// un stream adicional.
-    /// </summary>
+    /// -------------
     public void PlayTestToneSequence(
         double frequencyHz,
         int pulseMs,
@@ -443,10 +443,10 @@ internal sealed class BassBus : IAudioBus
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica una ganancia de ducking (dB) a todos los canales del bus.
     /// Invocado desde BassEngine a 50 Hz.
-    /// </summary>
+    /// -------------
     internal void ApplyDuckingGain(double gainDb)
     {
         foreach (var ch in _channels.ToArray())
@@ -461,10 +461,10 @@ internal sealed class BassBus : IAudioBus
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica el volumen global (0..1) a todos los canales del bus.
     /// Invocado desde BassEngine cuando el usuario mueve el slider master.
-    /// </summary>
+    /// -------------
     internal void ApplyGlobalVolume(double volume)
     {
         foreach (var ch in _channels.ToArray())
@@ -517,11 +517,11 @@ internal sealed class BassBus : IAudioBus
             throw new InvalidOperationException($"El bus '{DisplayName}' no esta inicializado.");
     }
 
-    /// <summary>
+    /// -------------
     /// Ejecuta <paramref name="action"/> cambiando temporalmente el CurrentDevice
     /// del hilo actual al de este bus. BASS usa estado thread-local para
     /// CurrentDevice, asi que restauramos el valor previo al salir.
-    /// </summary>
+    /// -------------
     private T WithDeviceContext<T>(Func<T> action)
     {
         int previous = Bass.CurrentDevice;

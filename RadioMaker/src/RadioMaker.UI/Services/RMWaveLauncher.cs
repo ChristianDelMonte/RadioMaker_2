@@ -3,7 +3,7 @@ using System.IO;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Helper estático para lanzar la app RMWave con un archivo .rmw
 /// abierto en la UI. Reutiliza la misma lógica de búsqueda del .exe que
 /// <c>MainWindow.LaunchComplement</c> (Addons/RMWave/RMWave.exe, etc).
@@ -11,18 +11,18 @@ namespace RadioMaker.UI.Services;
 /// IMPORTANTE: cada llamada abre una NUEVA instancia de RMWave. Si el
 /// usuario ya tenía RMWave abierto, va a tener dos ventanas. Ver nota de
 /// limitaciones al pie del README de integración.
-/// </summary>
+/// -------------
 public static class RMWaveLauncher
 {
-    /// <summary>True si el path es un proyecto .rmw.</summary>
+    /// -------------True si el path es un proyecto .rmw.</summary>
     public static bool IsRmwFile(string? path)
         => !string.IsNullOrWhiteSpace(path)
            && path.EndsWith(".rmw", StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
+    /// -------------
     /// Abre el .rmw en RMWave UI. Devuelve false si no se encontró el .exe
     /// o si el path no es válido (con un mensaje de error opcional).
-    /// </summary>
+    /// -------------
     public static bool OpenFile(string? filePath, out string? errorMessage)
     {
         errorMessage = null;
@@ -90,7 +90,7 @@ public static class RMWaveLauncher
         }
     }
 
-    /// <summary>Busca el ejecutable de RMWave en las ubicaciones conocidas.</summary>
+    /// -------------Busca el ejecutable de RMWave en las ubicaciones conocidas.</summary>
     private static string? FindRMWaveExe()
     {
         var baseDir = AppContext.BaseDirectory;

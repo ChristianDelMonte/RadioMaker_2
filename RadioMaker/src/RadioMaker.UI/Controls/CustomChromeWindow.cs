@@ -3,7 +3,7 @@ using Avalonia.Controls;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Clase base para ventanas con barra de titulo personalizada.
 ///
 /// Configura la ventana para usar chrome custom (sin decoraciones del
@@ -14,7 +14,7 @@ namespace RadioMaker.UI.Controls;
 ///   1. Cambiar el nodo raiz del .axaml de <Window> a <controls:CustomChromeWindow>.
 ///   2. Heredar del code-behind.
 ///   3. Agregar un control <controls:ModalTitleBar> en su layout.
-/// </summary>
+/// -------------
 public abstract class CustomChromeWindow : Window
 {
     protected CustomChromeWindow()
@@ -22,10 +22,10 @@ public abstract class CustomChromeWindow : Window
         ConfigurePlatformChrome();
     }
 
-    /// <summary>
+    /// -------------
     /// True si el chrome custom esta activo (Windows/macOS). False en Linux.
     /// Se puede usar para condicionar la visibilidad de la barra custom.
-    /// </summary>
+    /// -------------
     public bool IsCustomChromeEnabled => !OperatingSystem.IsLinux();
 
     private void ConfigurePlatformChrome()

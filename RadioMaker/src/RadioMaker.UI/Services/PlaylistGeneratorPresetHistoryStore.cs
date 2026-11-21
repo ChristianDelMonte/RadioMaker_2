@@ -2,11 +2,11 @@ using System.Text.Json;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Entrada del historial de presets recientes del generador.
 /// Solo guarda la RUTA al .rpg y un nombre cacheado para mostrar en el
 /// combo sin tener que abrir cada archivo.
-/// </summary>
+/// -------------
 public sealed class PresetHistoryEntry
 {
     public string FilePath { get; set; } = string.Empty;
@@ -16,13 +16,13 @@ public sealed class PresetHistoryEntry
     public override string ToString() => DisplayName;
 }
 
-/// <summary>
+/// -------------
 /// Persistencia del historial de presets recientes del generador en
 /// %APPDATA%/RmsAudioPlayer/generator-presets.json.
 ///
 /// Maximo N entradas (las mas recientes). Al cargar, se filtran las
 /// entradas cuyos archivos ya no existen en disco.
-/// </summary>
+/// -------------
 public static class PlaylistGeneratorPresetHistoryStore
 {
     private const int MaxEntries = 15;
@@ -79,10 +79,10 @@ public static class PlaylistGeneratorPresetHistoryStore
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Agrega o actualiza una entrada del historial. La mueve al tope.
     /// Devuelve la lista actualizada.
-    /// </summary>
+    /// -------------
     public static List<PresetHistoryEntry> AddOrUpdate(
         IEnumerable<PresetHistoryEntry> current,
         string filePath,
@@ -109,7 +109,7 @@ public static class PlaylistGeneratorPresetHistoryStore
         return trimmed;
     }
 
-    /// <summary>Quita una entrada por ruta. Devuelve la lista actualizada.</summary>
+    /// -------------Quita una entrada por ruta. Devuelve la lista actualizada.</summary>
     public static List<PresetHistoryEntry> Remove(
         IEnumerable<PresetHistoryEntry> current,
         string filePath)

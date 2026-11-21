@@ -5,7 +5,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Procesador de ducking automatico.
 ///
 /// Responsabilidades:
@@ -23,7 +23,7 @@ namespace RadioMaker.Core.Engine;
 /// Threading:
 ///   - _currentMicLevel y _currentGainDb cruzan hilos con accesos Interlocked.
 ///   - _config y la maquina de estados del timer estan protegidas con _timerLock.
-/// </summary>
+/// -------------
 internal sealed class DuckingProcessor : IDisposable
 {
     // ───── Configuracion de captura ──────────────────────────────────────
@@ -36,7 +36,7 @@ internal sealed class DuckingProcessor : IDisposable
     private volatile int _micStreamHandle;
     private double _currentMicLevel; // rango 0..1 lineal, actualizado por el record callback
     private readonly RecordProcedure _recordProc;
-    /// <summary>Buffer managed reutilizable para copiar los samples del micrófono.</summary>
+    /// -------------Buffer managed reutilizable para copiar los samples del micrófono.</summary>
     private float[] _recordBuffer = Array.Empty<float>();
 
     // ───── Estado del timer de procesamiento ─────────────────────────────
@@ -57,7 +57,7 @@ internal sealed class DuckingProcessor : IDisposable
     // ───── Publico ───────────────────────────────────────────────────────
     public bool IsActive => _enabled && _micInitialized;
 
-    /// <summary>Nivel actual del microfono en dBFS (rango tipico -80 a 0).</summary>
+    /// -------------Nivel actual del microfono en dBFS (rango tipico -80 a 0).</summary>
     public double CurrentMicLevelDb
     {
         get
@@ -68,10 +68,10 @@ internal sealed class DuckingProcessor : IDisposable
         }
     }
 
-    /// <summary>Ganancia de ducking actual (dB, siempre &lt;= 0).</summary>
+    /// -------------Ganancia de ducking actual (dB, siempre &lt;= 0).</summary>
     public double CurrentGainDb => Interlocked.CompareExchange(ref _currentGainDb, 0.0, 0.0);
 
-    /// <summary>Configuracion actual (copia).</summary>
+    /// -------------Configuracion actual (copia).</summary>
     public DuckingConfig Config
     {
         get { lock (_timerLock) return _config.Clone(); }
@@ -85,10 +85,10 @@ internal sealed class DuckingProcessor : IDisposable
 
     // ---------------------------------------------------------------- Control
 
-    /// <summary>
+    /// -------------
     /// Inicia o actualiza el procesador con la configuracion dada.
     /// Si el procesador ya estaba corriendo, se aplican los cambios en vivo.
-    /// </summary>
+    /// -------------
     public void Start(DuckingConfig config)
     {
         if (config is null) return;
@@ -136,7 +136,7 @@ internal sealed class DuckingProcessor : IDisposable
         _onGainChanged(CurrentGainDb);
     }
 
-    /// <summary>Detiene el procesador y libera el microfono.</summary>
+    /// -------------Detiene el procesador y libera el microfono.</summary>
     public void Stop()
     {
         lock (_lifecycleLock)
@@ -252,7 +252,7 @@ internal sealed class DuckingProcessor : IDisposable
 
     // ---------------------------------------------------------------- Record callback
 
-    /// <summary>
+    /// -------------
     /// Callback invocado por BASS en un hilo interno cuando hay datos del
     /// microfono disponibles. Calcula el RMS del bloque y actualiza
     /// _currentMicLevel.
@@ -262,7 +262,7 @@ internal sealed class DuckingProcessor : IDisposable
     ///   - false => detener la captura
     ///
     /// Se usa Marshal.Copy para leer el buffer nativo sin bloques unsafe.
-    /// </summary>
+    /// -------------
     private bool OnRecordData(int handle, IntPtr buffer, int length, IntPtr user)
     {
         if (length <= 0 || buffer == IntPtr.Zero) return true;
@@ -293,11 +293,11 @@ internal sealed class DuckingProcessor : IDisposable
 
     // ---------------------------------------------------------------- Maquina de estados
 
-    /// <summary>
+    /// -------------
     /// Timer interno a 50 Hz. Calcula la ganancia objetivo y la interpola
     /// suavemente hacia la actual (attack/release). Aplica el resultado
     /// via _onGainChanged.
-    /// </summary>
+    /// -------------
     private void OnTimerTick(object? state)
     {
         double micDb;

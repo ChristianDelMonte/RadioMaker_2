@@ -4,7 +4,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Analiza los niveles (peak maximo y RMS promedio) de un archivo de audio
 /// decodificandolo en memoria, SIN reproducirlo.
 ///
@@ -22,10 +22,10 @@ namespace RadioMaker.Core.Engine;
 ///
 /// IMPORTANTE: este metodo es SINCRONICO y puede tardar 1-3 segundos en
 /// archivos largos. SIEMPRE se debe llamar desde un hilo secundario (Task.Run).
-/// </summary>
+/// -------------
 internal static class BassLevelAnalyzer
 {
-    /// <summary>Bloque de lectura por iteracion: 1 segundo (freq * channels floats).</summary>
+    /// -------------Bloque de lectura por iteracion: 1 segundo (freq * channels floats).</summary>
     private const int TargetBlockSeconds = 1;
 
     public static NormalizationResult Analyze(string filePath)

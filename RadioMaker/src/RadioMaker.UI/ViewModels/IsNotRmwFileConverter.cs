@@ -4,10 +4,10 @@ using Avalonia.Data.Converters;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Inverso de IsRmwFileConverter: true si el valor NO es .rmw.
 /// Uso típico: IsEnabled="{Binding FilePath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}"
-/// </summary>
+/// -------------
 public sealed class IsNotRmwFileConverter : IValueConverter
 {
     public static readonly IsNotRmwFileConverter Instance = new();

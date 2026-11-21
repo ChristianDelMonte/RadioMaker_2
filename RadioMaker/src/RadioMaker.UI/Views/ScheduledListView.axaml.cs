@@ -186,7 +186,10 @@ public partial class ScheduledListView : UserControl
         if (owner is null) return;
 
         var editorVm = new ScheduledItemEditorViewModel(itemVm);
-        var win = new ScheduledItemEditorWindow { DataContext = editorVm };
+        var supportedAudioExtensions = owner.DataContext is MainWindowViewModel mainVm
+            ? mainVm.SupportedExtensions
+            : null;
+        var win = new ScheduledItemEditorWindow(supportedAudioExtensions) { DataContext = editorVm };
 
         var result = await win.ShowDialog<bool>(owner);
 

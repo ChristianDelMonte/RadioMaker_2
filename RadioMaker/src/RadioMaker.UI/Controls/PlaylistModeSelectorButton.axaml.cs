@@ -3,7 +3,7 @@ using Avalonia.Controls.Primitives;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Control reutilizable que muestra un boton compacto con el modo de
 /// reproduccion actual de la playlist (Una vez / Repetir / Aleatorio)
 /// y un flyout para cambiarlo.
@@ -13,7 +13,7 @@ namespace RadioMaker.UI.Controls;
 /// Igual que BusSelectorButton, el contenido del Flyout vive en un top-level
 /// aparte y no hereda el DataContext automaticamente, por lo que lo
 /// propagamos manualmente.
-/// </summary>
+/// -------------
 public partial class PlaylistModeSelectorButton : UserControl
 {
     public PlaylistModeSelectorButton()

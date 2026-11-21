@@ -6,7 +6,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Configuration;
 
-/// <summary>
+/// -------------
 /// Persistencia del analisis de audio (trim + normalizacion) en archivos .rmt.
 ///
 /// Ubicacion: %APPDATA%/RadioMaker/data/&lt;hash&gt;.rmt
@@ -24,7 +24,7 @@ namespace RadioMaker.Core.Configuration;
 /// Escritura atomica:
 ///   Se escribe a ".tmp" y luego se hace File.Move(overwrite: true).
 ///   Garantiza que nunca queda un .rmt a medio escribir.
-/// </summary>
+/// -------------
 public static class AudioAnalysisCacheStore
 {
     public const string Extension = ".rmt";
@@ -40,11 +40,11 @@ public static class AudioAnalysisCacheStore
 
     public static string DataFolder { get; } = BuildDataFolder();
 
-    /// <summary>
+    /// -------------
     /// True si hay una entrada de cache valida (existe, version OK, archivo
     /// sin cambios). No lee el JSON completo — solo chequea existencia del
     /// archivo. Para el chequeo completo, usar TryLoad.
-    /// </summary>
+    /// -------------
     public static bool HasValidCache(string audioFilePath)
     {
         if (string.IsNullOrWhiteSpace(audioFilePath)) return false;
@@ -56,14 +56,14 @@ public static class AudioAnalysisCacheStore
         catch { return false; }
     }
 
-    /// <summary>
+    /// -------------
     /// Intenta cargar el cache. Devuelve null si:
     ///   • El audio no existe.
     ///   • No hay .rmt guardado.
     ///   • La version del .rmt no coincide.
     ///   • El audio cambio (size o mtime distinto).
     ///   • El JSON es invalido.
-    /// </summary>
+    /// -------------
     public static AudioAnalysisCacheEntry? TryLoad(string audioFilePath)
     {
         try
@@ -94,10 +94,10 @@ public static class AudioAnalysisCacheStore
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Guarda el analisis. No lanza en caso de error (best-effort): si falla
     /// el guardado, la app sigue funcionando con el analisis en memoria.
-    /// </summary>
+    /// -------------
     public static bool Save(
         string audioFilePath,
         SilenceAnalysisResult silence,
@@ -146,9 +146,9 @@ public static class AudioAnalysisCacheStore
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Borra el cache de un archivo concreto.
-    /// </summary>
+    /// -------------
     public static void Invalidate(string audioFilePath)
     {
         try
@@ -160,7 +160,7 @@ public static class AudioAnalysisCacheStore
         catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Recorre la carpeta data/ y borra todos los .rmt cuyo audio:
     ///   • Ya no existe.
     ///   • Cambio de tamanio (probablemente reemplazado).
@@ -169,7 +169,7 @@ public static class AudioAnalysisCacheStore
     /// Devuelve la cantidad de archivos borrados. Util para llamar
     /// manualmente desde un boton "Limpiar cache" o desde un timer
     /// periodico.
-    /// </summary>
+    /// -------------
     public static int PurgeOrphans()
     {
         if (!Directory.Exists(DataFolder)) return 0;
@@ -207,9 +207,9 @@ public static class AudioAnalysisCacheStore
         return deleted;
     }
 
-    /// <summary>
+    /// -------------
     /// Calcula la ruta del .rmt para un audio dado.
-    /// </summary>
+    /// -------------
     public static string GetCachePath(string audioFilePath)
     {
         var hash = ComputeHash(audioFilePath);

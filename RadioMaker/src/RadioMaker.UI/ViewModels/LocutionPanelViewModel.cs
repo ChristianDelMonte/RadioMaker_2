@@ -11,7 +11,7 @@ using RMVoice.Core.Models;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de clima / locución del TopInfoPanel.
 ///
 /// Responsabilidades:
@@ -21,18 +21,18 @@ namespace RadioMaker.UI.ViewModels;
 ///     desde los botones del panel.
 ///   - Emitir eventos para que MainWindowViewModel abra la ventana de
 ///     configuración o la app RMVoice.
-/// </summary>
+/// -------------
 public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
 {
     private readonly IAudioEngine _audioEngine;
     private readonly LocutionService _locution;
     private readonly LocutionSettings _settings;
 
-    /// <summary>
+    /// -------------
     /// Callback para obtener TODOS los canales activos de la app. Lo setea
     /// MainWindowViewModel. Se usa para hacer ducking del audio en curso
     /// mientras suena una locucion disparada desde el panel.
-    /// </summary>
+    /// -------------
     private readonly Func<IEnumerable<IAudioChannel>>? _getActiveChannels;
 
     private DispatcherTimer? _refreshTimer;
@@ -45,17 +45,17 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
 
     // ───── Buses disponibles para la salida del panel ────────────────────
 
-    /// <summary>
+    /// -------------
     /// Lista de buses disponibles del engine. Se expone como
     /// ObservableCollection para bindear el ComboBox del panel de config.
-    /// </summary>
+    /// -------------
     public System.Collections.ObjectModel.ObservableCollection<IAudioBus> AvailableBuses { get; }
         = new();
 
-    /// <summary>
+    /// -------------
     /// Bus seleccionado en el ComboBox. Sincroniza con
     /// <see cref="LocutionSettings.OutputBusId"/>.
-    /// </summary>
+    /// -------------
     public IAudioBus? SelectedBus
     {
         get
@@ -93,9 +93,9 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Recarga la lista de buses disponibles desde el engine.
-    /// </summary>
+    /// -------------
     public void ReloadAvailableBuses()
     {
         try
@@ -118,44 +118,44 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
 
     // ───── Estado ────────────────────────────────────────────────────────
 
-    /// <summary>Ciudad, Pais (ej: "Buenos Aires, Argentina").</summary>
+    /// -------------Ciudad, Pais (ej: "Buenos Aires, Argentina").</summary>
     [ObservableProperty] private string _locationText = "Sin datos";
 
-    /// <summary>Temperatura formateada (ej: "22°C"). "---" si no hay datos.</summary>
+    /// -------------Temperatura formateada (ej: "22°C"). "---" si no hay datos.</summary>
     [ObservableProperty] private string _temperatureText = "---";
 
-    /// <summary>Humedad formateada (ej: "65%"). "---" si no hay datos.</summary>
+    /// -------------Humedad formateada (ej: "65%"). "---" si no hay datos.</summary>
     [ObservableProperty] private string _humidityText = "---";
 
-    /// <summary>True si RMVoice esta disponible e inicializado.</summary>
+    /// -------------True si RMVoice esta disponible e inicializado.</summary>
     [ObservableProperty] private bool _isAvailable;
 
-    /// <summary>True si hay una locución reproduciendose ahora.</summary>
+    /// -------------True si hay una locución reproduciendose ahora.</summary>
     [ObservableProperty] private bool _isPlaying;
 
-    /// <summary>True si hay datos de clima en cache.</summary>
+    /// -------------True si hay datos de clima en cache.</summary>
     [ObservableProperty] private bool _hasWeatherData;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
 
-    /// <summary>True si se puede disparar una locución (RMVoice OK y no sonando).</summary>
+    /// -------------True si se puede disparar una locución (RMVoice OK y no sonando).</summary>
     public bool CanPlay => IsAvailable && !IsPlaying;
 
-    /// <summary>Texto de ubicacion mostrado en el panel.</summary>
+    /// -------------Texto de ubicacion mostrado en el panel.</summary>
     public string LocationDisplayText =>
         HasWeatherData ? LocationText : "Sin datos";
 
-    /// <summary>Textos de clima mostrados en el panel.</summary>
+    /// -------------Textos de clima mostrados en el panel.</summary>
     public string TemperatureDisplayText => HasWeatherData ? TemperatureText : "---";
     public string HumidityDisplayText => HasWeatherData ? HumidityText : "---";
 
-    /// <summary>Tooltip del boton de clima segun estado.</summary>
+    /// -------------Tooltip del boton de clima segun estado.</summary>
     public string ClimateButtonTooltip =>
         !IsAvailable ? "RMVoice no esta disponible"
         : IsPlaying ? "Reproduciendo locucion..."
         : "Reproducir clima";
 
-    /// <summary>Tooltip del boton de hora segun estado.</summary>
+    /// -------------Tooltip del boton de hora segun estado.</summary>
     public string HourButtonTooltip =>
         !IsAvailable ? "RMVoice no esta disponible"
         : IsPlaying ? "Reproduciendo locucion..."
@@ -163,10 +163,10 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
 
     // ───── Eventos (los consume MainWindowViewModel) ─────────────────────
 
-    /// <summary>El usuario pidio abrir la ventana de configuracion.</summary>
+    /// -------------El usuario pidio abrir la ventana de configuracion.</summary>
     public event EventHandler? OpenSettingsRequested;
 
-    /// <summary>El usuario pidio abrir la app RMVoice.exe.</summary>
+    /// -------------El usuario pidio abrir la app RMVoice.exe.</summary>
     public event EventHandler? OpenRMVoiceRequested;
 
     // =====================================================================
@@ -290,10 +290,10 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el bus seleccionado para las locuciones del panel, o el
     /// bus primario si no hay uno configurado o no se encuentra.
-    /// </summary>
+    /// -------------
     private IAudioBus? GetSelectedBus()
     {
         try
@@ -313,19 +313,19 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Estado del ducking activo: mapa canal -> ganancia original (dB).
-    /// </summary>
+    /// -------------
     private sealed class DuckState
     {
         public Dictionary<IAudioChannel, double> OriginalGains { get; } = new();
     }
 
-    /// <summary>
+    /// -------------
     /// Baja el volumen de todos los canales activos del bus indicado al
     /// nivel configurado. Devuelve el estado para poder restaurarlo.
     /// Si el ducking esta deshabilitado, devuelve un estado vacio.
-    /// </summary>
+    /// -------------
     private DuckState ApplyDuckIfEnabled(IAudioBus? bus)
     {
         var state = new DuckState();
@@ -399,9 +399,9 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         return state;
     }
 
-    /// <summary>
+    /// -------------
     /// Restaura la ganancia original de cada canal afectado por el ducking.
-    /// </summary>
+    /// -------------
     private void RestoreDuck(DuckState state)
     {
         if (state.OriginalGains.Count == 0) return;
@@ -419,10 +419,10 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
             $"Ducking restaurado en {state.OriginalGains.Count} canal(es).");
     }
 
-    /// <summary>
+    /// -------------
     /// Resuelve el device index de salida para las locuciones disparadas
     /// desde los botones del panel. Usa el bus configurado en las settings.
-    /// </summary>
+    /// -------------
     private int ResolveOutputDevice()
     {
         try
@@ -466,9 +466,9 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Lee el clima cacheado del engine y actualiza las propiedades visibles.
-    /// </summary>
+    /// -------------
     private void RefreshFromCache()
     {
         try
@@ -504,10 +504,10 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(HumidityDisplayText));
     }
 
-    /// <summary>
+    /// -------------
     /// Construye el texto "Ciudad, Pais" a partir del WeatherLocation.
     /// Omite el campo Admin1 (provincia/estado) para que sea compacto.
-    /// </summary>
+    /// -------------
     private static string BuildLocationText(WeatherLocation loc)
     {
         var city = (loc.Name ?? string.Empty).Trim();
@@ -600,10 +600,10 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(HourButtonTooltip));
     }
 
-    /// <summary>
+    /// -------------
     /// Fuerza la recarga de buses si la lista esta vacia. Se llama desde
     /// MainWindowViewModel despues de inicializar el engine.
-    /// </summary>
+    /// -------------
     public void EnsureAvailableBusesLoaded()
     {
         if (AvailableBuses.Count == 0)

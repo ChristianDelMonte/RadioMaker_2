@@ -4,9 +4,9 @@ using RMVoice.Core.Models;
 
 namespace RMVoice.Core.Services;
 
-/// <summary>
+/// -------------
 /// Persiste los ajustes globales de la app en %AppData%/RMVoice/settings.json.
-/// </summary>
+/// -------------
 public sealed class AppSettingsStore
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -17,10 +17,10 @@ public sealed class AppSettingsStore
 
     private readonly string _filePath;
 
-    /// <summary>Crea un store apuntando a <c>%AppData%/RMVoice/settings.json</c>.</summary>
+    /// -------------Crea un store apuntando a <c>%AppData%/RMVoice/settings.json</c>.
     public AppSettingsStore() : this(EnginePaths.DefaultSettingsPath()) { }
 
-    /// <summary>Crea un store apuntando a una ruta arbitraria.</summary>
+    /// -------------Crea un store apuntando a una ruta arbitraria.
     public AppSettingsStore(string filePath)
     {
         _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));

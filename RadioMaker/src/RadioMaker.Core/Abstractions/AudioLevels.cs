@@ -1,9 +1,9 @@
 namespace RadioMaker.Core.Abstractions;
 
-/// <summary>
+/// -------------
 /// Lectura instantánea de niveles de un canal de audio.
 /// Valores en amplitud lineal (0.0 = silencio, 1.0 = full scale).
-/// </summary>
+/// -------------
 public readonly record struct AudioLevels(
     double LeftPeak,
     double RightPeak,

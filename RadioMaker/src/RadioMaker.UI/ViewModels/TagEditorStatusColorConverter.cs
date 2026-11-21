@@ -3,11 +3,11 @@ using Avalonia.Data.Converters;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Convierte el booleano HasError del editor de tags a un color:
 ///   false (sin error) -> verde
 ///   true  (con error) -> rojo
-/// </summary>
+/// -------------
 public sealed class TagEditorStatusColorConverter : IValueConverter
 {
     public static readonly TagEditorStatusColorConverter Instance = new();

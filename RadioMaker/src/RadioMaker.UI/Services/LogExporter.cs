@@ -7,9 +7,9 @@ using RadioMaker.Core.Logging;
 
 namespace RadioMaker.UI.Services;
 
-/// <summary>
+/// -------------
 /// Formatos soportados para exportar el log.
-/// </summary>
+/// -------------
 public enum LogExportFormat
 {
     Txt = 0,
@@ -19,7 +19,7 @@ public enum LogExportFormat
     Pdf = 4
 }
 
-/// <summary>
+/// -------------
 /// Exporta el log de la aplicacion a diferentes formatos.
 ///
 /// Formatos soportados:
@@ -33,10 +33,10 @@ public enum LogExportFormat
 ///
 /// NOTA: la licencia de QuestPDF se configura UNA SOLA VEZ en
 /// Program.Main al arrancar la app. No hay que setearla aca.
-/// </summary>
+/// -------------
 public static class LogExporter
 {
-    /// <summary>Extension por formato (con punto).</summary>
+    /// -------------Extension por formato (con punto).</summary>
     public static string GetExtension(LogExportFormat format) => format switch
     {
         LogExportFormat.Txt => ".txt",
@@ -47,7 +47,7 @@ public static class LogExporter
         _ => ".txt"
     };
 
-    /// <summary>Nombre legible del formato.</summary>
+    /// -------------Nombre legible del formato.</summary>
     public static string GetDisplayName(LogExportFormat format) => format switch
     {
         LogExportFormat.Txt => "Texto plano (.txt)",
@@ -58,7 +58,7 @@ public static class LogExporter
         _ => format.ToString()
     };
 
-    /// <summary>Filtro de archivos para el dialogo nativo de guardar.</summary>
+    /// -------------Filtro de archivos para el dialogo nativo de guardar.</summary>
     public static string GetFilePickerPattern(LogExportFormat format) => format switch
     {
         LogExportFormat.Txt => "*.txt",
@@ -69,10 +69,10 @@ public static class LogExporter
         _ => "*.*"
     };
 
-    /// <summary>
+    /// -------------
     /// Exporta las entradas al archivo indicado en el formato especificado.
     /// Devuelve true si la exportacion fue exitosa.
-    /// </summary>
+    /// -------------
     public static bool Export(IReadOnlyList<LogEntry> entries, string filePath, LogExportFormat format)
     {
         if (entries is null) return false;

@@ -4,9 +4,9 @@ using Avalonia.Media.Imaging;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Info de una libreria externa usada por la app.
-/// </summary>
+/// -------------
 public sealed class DependencyInfo
 {
     public string Name { get; }
@@ -15,7 +15,7 @@ public sealed class DependencyInfo
     public string Description { get; }
     public string Url { get; }
 
-    /// <summary>Color clave de recurso para el badge de licencia.</summary>
+    /// -------------Color clave de recurso para el badge de licencia.</summary>
     public string LicenseColor { get; }
 
     public bool HasUrl => !string.IsNullOrWhiteSpace(Url);
@@ -42,9 +42,9 @@ public sealed class DependencyInfo
     }
 }
 
-/// <summary>
+/// -------------
 /// Grupo de dependencias por categoria.
-/// </summary>
+/// -------------
 public sealed class DependencyGroup
 {
     public string Title { get; }
@@ -59,9 +59,9 @@ public sealed class DependencyGroup
     }
 }
 
-/// <summary>
+/// -------------
 /// Link rapido que se muestra en el tab "Acerca de".
-/// </summary>
+/// -------------
 public sealed class QuickLinkInfo
 {
     public string Label { get; }
@@ -74,7 +74,7 @@ public sealed class QuickLinkInfo
     }
 }
 
-/// <summary>
+/// -------------
 /// ViewModel de la ventana "Acerca de RadioMaker".
 ///
 /// Expone:
@@ -82,7 +82,7 @@ public sealed class QuickLinkInfo
 ///   - Lista de dependencias externas agrupadas por categoria, con
 ///     version, licencia, descripcion y link a la web del proyecto.
 ///   - Comandos para abrir links en el navegador externo.
-/// </summary>
+/// -------------
 public sealed partial class AboutWindowViewModel : ViewModelBase
 {
     // ───── Info de la app ────────────────────────────────────────────────
@@ -98,13 +98,13 @@ public sealed partial class AboutWindowViewModel : ViewModelBase
 
     public string CopyrightText { get; }
 
-    /// <summary>
+    /// -------------
     /// Imagen del header. Es la misma que se mostro en el splash screen
     /// al arrancar la app (se elige al azar una vez por sesion).
     ///
     /// Es un Bitmap (no un string) porque Avalonia no convierte strings
     /// a Bitmap automaticamente cuando vienen por Binding.
-    /// </summary>
+    /// -------------
     public Bitmap? SplashImage => SplashImageProvider.CurrentBitmap;
 
     public string FrameworkText => Services.AppVersionInfo.PlatformText;
@@ -225,9 +225,9 @@ public sealed partial class AboutWindowViewModel : ViewModelBase
 
     // ───── Links ─────────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Links rapidos que aparecen en el pie del tab "Acerca de".
-    /// </summary>
+    /// -------------
     public IReadOnlyList<QuickLinkInfo> QuickLinks { get; } = new List<QuickLinkInfo>
     {
         new("Sitio web de Avalonia", "https://avaloniaui.net"),

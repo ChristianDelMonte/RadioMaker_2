@@ -5,12 +5,12 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del editor modal de una pista de playlist.
 ///
 /// Trabaja sobre un CLON. Los cambios solo se aplican al original cuando
 /// el usuario presiona Guardar.
-/// </summary>
+/// -------------
 public sealed partial class PlaylistTrackEditorViewModel : ViewModelBase
 {
     private static readonly JsonSerializerOptions CloneOptions = new()
@@ -20,7 +20,7 @@ public sealed partial class PlaylistTrackEditorViewModel : ViewModelBase
 
     private readonly PlaylistTrackViewModel _original;
 
-    /// <summary>Pista en edicion (clon). El editor bindea contra esto.</summary>
+    /// -------------Pista en edicion (clon). El editor bindea contra esto.</summary>
     public PlaylistTrackViewModel WorkingTrack { get; }
 
     public string Header => "Editar pista de playlist";

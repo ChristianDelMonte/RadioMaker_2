@@ -2,7 +2,7 @@ using System.Text;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Importacion / exportacion de playlists en formatos M3U / M3U8 y PLS.
 ///
 /// M3U: formato de texto, un path por linea, precedido opcionalmente por
@@ -17,7 +17,7 @@ namespace RadioMaker.Core.Scheduling;
 /// Los formatos M3U/PLS no soportan mixados ni volumenes relativos: esos
 /// datos se preservan al trabajar con .rmf pero se pierden al exportar a
 /// M3U/PLS. Al reimportar un M3U/PLS se crean pistas basicas sin mixado.
-/// </summary>
+/// -------------
 public static class PlaylistFormatIO
 {
     public const string M3uExtension = ".m3u";
@@ -28,7 +28,7 @@ public static class PlaylistFormatIO
     // EXPORT
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>Exporta la playlist como archivo M3U / M3U8.</summary>
+    /// -------------Exporta la playlist como archivo M3U / M3U8.</summary>
     public static void ExportM3U(Playlist playlist, string path)
     {
         if (playlist is null) throw new ArgumentNullException(nameof(playlist));
@@ -57,7 +57,7 @@ public static class PlaylistFormatIO
         File.WriteAllText(path, sb.ToString(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
     }
 
-    /// <summary>Exporta la playlist como archivo PLS.</summary>
+    /// -------------Exporta la playlist como archivo PLS.</summary>
     public static void ExportPLS(Playlist playlist, string path)
     {
         if (playlist is null) throw new ArgumentNullException(nameof(playlist));
@@ -94,7 +94,7 @@ public static class PlaylistFormatIO
     // IMPORT
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>Detecta el formato por extension y lo importa.</summary>
+    /// -------------Detecta el formato por extension y lo importa.</summary>
     public static Playlist? ImportAuto(string path)
     {
         if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
@@ -109,7 +109,7 @@ public static class PlaylistFormatIO
         };
     }
 
-    /// <summary>Importa un archivo M3U / M3U8.</summary>
+    /// -------------Importa un archivo M3U / M3U8.</summary>
     public static Playlist? ImportM3U(string path)
     {
         try
@@ -170,7 +170,7 @@ public static class PlaylistFormatIO
         }
     }
 
-    /// <summary>Importa un archivo PLS.</summary>
+    /// -------------Importa un archivo PLS.</summary>
     public static Playlist? ImportPLS(string path)
     {
         try
@@ -243,10 +243,10 @@ public static class PlaylistFormatIO
     // Helpers
     // ═════════════════════════════════════════════════════════════════════
 
-    /// <summary>
+    /// -------------
     /// Si la ruta es absoluta la devuelve tal cual. Si es relativa la
     /// resuelve contra <paramref name="baseDir"/>.
-    /// </summary>
+    /// -------------
     private static string ResolvePath(string path, string baseDir)
     {
         if (string.IsNullOrWhiteSpace(path)) return string.Empty;

@@ -4,7 +4,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel de un selector de bus "simple" para usar dentro de pestañas
 /// independientes (por ejemplo, las carpetas favoritas del panel derecho,
 /// o las pestañas de Playlist).
@@ -16,7 +16,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Su proposito es que cada pestaña pueda elegir su propia salida de audio
 /// sin afectar la reproduccion de otros modulos ni de otras pestañas.
-/// </summary>
+/// -------------
 public sealed partial class SimpleBusSelectorViewModel : ViewModelBase
 {
     private readonly IAudioEngine _engine;
@@ -26,20 +26,20 @@ public sealed partial class SimpleBusSelectorViewModel : ViewModelBase
 
     [ObservableProperty] private IAudioBus? _selectedBus;
 
-    /// <summary>Siempre true: las pestañas no siguen el modo global.</summary>
+    /// -------------Siempre true: las pestañas no siguen el modo global.</summary>
     public bool CanChangeBus => true;
 
-    /// <summary>
+    /// -------------
     /// Callback opcional que se dispara cuando el usuario cambia el bus.
     /// Recibe el bus seleccionado (nunca null).
-    /// </summary>
+    /// -------------
     private readonly Action<IAudioBus>? _onBusChanged;
 
-    /// <summary>
+    /// -------------
     /// Evento que se dispara cuando cambia el bus. Es equivalente al
     /// callback pero como evento, para poder suscribirse sin tener que
     /// pasarlo por el constructor.
-    /// </summary>
+    /// -------------
     public event EventHandler<IAudioBus>? BusChanged;
 
     public SimpleBusSelectorViewModel(
@@ -76,9 +76,9 @@ public sealed partial class SimpleBusSelectorViewModel : ViewModelBase
         try { BusChanged?.Invoke(this, value); } catch { }
     }
 
-    /// <summary>
+    /// -------------
     /// Re-consulta la lista de buses del engine.
-    /// </summary>
+    /// -------------
     public void RefreshBuses()
     {
         var currentId = SelectedBus?.Id;
@@ -100,14 +100,14 @@ public sealed partial class SimpleBusSelectorViewModel : ViewModelBase
             SelectedBus = AvailableBuses[0];
     }
 
-    /// <summary>
+    /// -------------
     /// Intenta seleccionar el bus por Id. Devuelve true si lo encontro y
     /// lo selecciono, false si el bus no existe (en cuyo caso NO cambia
     /// la seleccion actual).
     ///
     /// Se usa al abrir un archivo persistido para restaurar el bus elegido
     /// por el usuario, o para caer al default si el bus ya no existe.
-    /// </summary>
+    /// -------------
     public bool TrySelectBusById(string? busId)
     {
         if (string.IsNullOrWhiteSpace(busId)) return false;
@@ -123,11 +123,11 @@ public sealed partial class SimpleBusSelectorViewModel : ViewModelBase
         return true;
     }
 
-    /// <summary>
+    /// -------------
     /// Selecciona un bus SIN disparar callbacks ni eventos. Util para
     /// restaurar el bus al cargar un archivo sin marcar la pestaña como
     /// dirty.
-    /// </summary>
+    /// -------------
     public void SelectBusSilently(IAudioBus? bus)
     {
         if (bus is null) return;

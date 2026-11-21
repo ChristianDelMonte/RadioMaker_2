@@ -4,7 +4,7 @@ using PlaybackState = RadioMaker.Core.Abstractions.PlaybackState;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Implementacion de <see cref="IAudioChannel"/> sobre un handle de BASS.
 ///
 /// Cadena de volumen efectivo:
@@ -18,7 +18,7 @@ namespace RadioMaker.Core.Engine;
 ///   - Normalizacion (ganancia adicional en dB)
 ///   - Auto-fade (fade-in al arrancar + fade-out antes del final)
 ///   - Ducking gain (atenuacion por microfono activo)
-/// </summary>
+/// -------------
 internal sealed class BassChannel : IAudioChannel
 {
     private readonly SyncProcedure _endSync;
@@ -659,11 +659,11 @@ internal sealed class BassChannel : IAudioChannel
         return Bass.ChannelSetAttribute(Handle, ChannelAttribute.Volume, (float)combined);
     }
 
-    /// <summary>
+    /// -------------
     /// Calcula el volumen combinado final:
     ///     userVolume * busVolume * 10^(normGainDb/20) * 10^(duckingGainDb/20)
     /// Limitado a 4.0 (aprox +12 dB) para evitar saturaciones catastroficas.
-    /// </summary>
+    /// -------------
     private double ComputeCombinedVolume()
     {
         double normFactor = Math.Pow(10.0, _normGainDb / 20.0);

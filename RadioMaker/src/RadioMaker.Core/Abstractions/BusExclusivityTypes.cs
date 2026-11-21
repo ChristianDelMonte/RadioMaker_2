@@ -13,13 +13,13 @@ public enum ModuleRole
 
 public enum InterruptionBehavior
 {
-    /// <summary>Fade-out + dispose. Se descarta.</summary>
+    /// -------------Fade-out + dispose. Se descarta.</summary>
     Stop = 0,
 
-    /// <summary>Fade-out + pause. El usuario lo reanuda manualmente.</summary>
+    /// -------------Fade-out + pause. El usuario lo reanuda manualmente.</summary>
     Pause = 1,
 
-    /// <summary>Fade-out + pause + auto-resume al liberar el bus.</summary>
+    /// -------------Fade-out + pause + auto-resume al liberar el bus.</summary>
     AutoResume = 2
 }
 
@@ -71,12 +71,12 @@ public sealed class ChannelExpropriatedEventArgs : EventArgs
     public string BusId { get; init; } = "";
     public string OwnerId { get; init; } = "";
     public ModuleRole Role { get; init; }
-    /// <summary>
+    /// -------------
     /// Como debe reaccionar el expropiado. <c>Stop</c>: fade-out + dispose.
     /// <c>Pause</c>: fade-out + pause (espera reanudacion manual).
     /// <c>AutoResume</c>: fade-out + pause; el coordinator lo va a reanudar
     /// cuando el expropiador libere el bus.
-    /// </summary>
+    /// -------------
     public InterruptionBehavior Behavior { get; init; }
 }
 

@@ -1,6 +1,6 @@
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>Coordina la única lista activa y el ritmo de inserción de encadenadores.</summary>
+/// -------------Coordina la única lista activa y el ritmo de inserción de encadenadores.</summary>
 public sealed class EncadenadoresRegistry
 {
     private readonly object _gate = new();
@@ -62,10 +62,10 @@ public sealed class EncadenadoresRegistry
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Cuenta un audio elegible y devuelve el siguiente encadenador si toca
     /// insertarlo antes de otro audio elegible.
-    /// </summary>
+    /// -------------
     public bool TryTakeAfterAudio(string sourceId, out EncadenadorTrack? track)
     {
         lock (_gate)
@@ -115,7 +115,7 @@ public sealed class EncadenadoresRegistry
         }
     }
 
-    /// <summary>Consulta el encadenador que tocaría después del audio actual sin avanzar el contador.</summary>
+    /// -------------Consulta el encadenador que tocaría después del audio actual sin avanzar el contador.</summary>
     public bool TryPeekAfterAudio(string sourceId, out EncadenadorTrack? track)
     {
         lock (_gate)

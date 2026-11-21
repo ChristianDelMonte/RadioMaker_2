@@ -4,7 +4,7 @@ using RMVoice.Core.Models;
 
 namespace RMVoice.Core.Services;
 
-/// <summary>
+/// -------------
 /// Lee y escribe los .txt de regiones con el formato:
 ///
 ///   start_region_table
@@ -14,7 +14,7 @@ namespace RMVoice.Core.Services;
 ///   end_region_table
 ///
 /// El índice puede ser negativo (usado por la tabla de temperaturas bajo cero).
-/// </summary>
+/// -------------
 public static class RegionTableParser
 {
     private const string StartMarker = "start_region_table";

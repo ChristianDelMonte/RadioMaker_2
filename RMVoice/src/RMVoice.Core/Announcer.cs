@@ -3,10 +3,10 @@ using RMVoice.Core.Services;
 
 namespace RMVoice.Core;
 
-/// <summary>
+/// -------------
 /// Implementación por defecto de <see cref="IAnnouncer"/>.
 /// Orquesta AudioService + ProfileStore + AppSettingsStore + WeatherService.
-/// </summary>
+/// -------------
 public sealed class Announcer : IAnnouncer
 {
     private readonly AnnouncerOptions _options;
@@ -88,10 +88,10 @@ public sealed class Announcer : IAnnouncer
 
     public WeatherSnapshot? LastWeather => _lastWeather;
 
-    /// <summary>
+    /// -------------
     /// Ubicación de clima en memoria. Persistencia la maneja el host
     /// (RMVoice.exe desde su UI, o RadioMaker si quiere).
-    /// </summary>
+    /// -------------
     public WeatherLocation? ActiveWeatherLocation
     {
         get => _activeWeatherLocation;
@@ -342,10 +342,10 @@ public sealed class Announcer : IAnnouncer
         return snap;
     }
 
-    /// <summary>
+    /// -------------
     /// Guarda el último snapshot de clima en settings.json. Preserva el
     /// resto de los ajustes (ubicación, auto-refresh, etc).
-    /// </summary>
+    /// -------------
     private void PersistLastWeather(WeatherSnapshot snapshot)
     {
         try
@@ -361,7 +361,7 @@ public sealed class Announcer : IAnnouncer
 
     // ---------------------------------------------------------------------
 
-    /// <summary>
+    /// -------------
     /// Resuelve la ruta de un asset empaquetado con el engine. Busca en
     /// dos ubicaciones posibles:
     ///
@@ -375,7 +375,7 @@ public sealed class Announcer : IAnnouncer
     ///        assets en su propio Assets/ (solo estan en Addons/RMVoice/)
     ///
     /// Si no encuentra el archivo en ninguna ubicacion, devuelve string vacio.
-    /// </summary>
+    /// -------------
     private static string BundledAsset(params string[] segments)
     {
         if (segments is null || segments.Length == 0)

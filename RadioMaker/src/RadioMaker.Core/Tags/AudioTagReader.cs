@@ -4,7 +4,7 @@ using TagFile = TagLib.File;
 
 namespace RadioMaker.Core.Tags;
 
-/// <summary>
+/// -------------
 /// Lector de TAGs de archivos de audio usando TagLib#.
 ///
 /// TagLib# soporta: MP3 (ID3v1/ID3v2), FLAC, Ogg Vorbis, MP4/M4A, WMA,
@@ -13,13 +13,13 @@ namespace RadioMaker.Core.Tags;
 /// IMPORTANTE: la lectura abre el archivo para leer sus metadata. Es una
 /// operacion de I/O ligera (~5-20 ms por archivo) pero que igual conviene
 /// hacer en un hilo secundario desde la UI.
-/// </summary>
+/// -------------
 public static class AudioTagReader
 {
-    /// <summary>
+    /// -------------
     /// Lee los TAGs del archivo indicado. Devuelve Empty si falla o el
     /// archivo no tiene metadata.
-    /// </summary>
+    /// -------------
     public static AudioTagInfo Read(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return AudioTagInfo.Empty;
@@ -58,13 +58,13 @@ public static class AudioTagReader
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Extrae los bytes de la primera imagen embebida del archivo.
     /// Devuelve null si no hay imagen o si falla la lectura.
     ///
     /// Se hace una copia defensiva del array subyacente del ByteVector
     /// porque TagLib puede reutilizar el buffer al liberar el archivo.
-    /// </summary>
+    /// -------------
     private static byte[]? ExtractCoverData(TagLib.Tag tag)
     {
         try

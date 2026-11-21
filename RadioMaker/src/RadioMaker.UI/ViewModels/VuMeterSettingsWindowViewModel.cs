@@ -6,7 +6,7 @@ using RadioMaker.UI.Controls;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de configuracion del VU meter.
 ///
 /// El timer interno genera la señal de demo del preview en vivo. NO se
@@ -14,7 +14,7 @@ namespace RadioMaker.UI.ViewModels;
 /// llama a <see cref="StartTimer"/> cuando el panel entra al arbol visual
 /// y a <see cref="StopTimer"/> cuando sale. Esto evita consumir CPU
 /// mientras el usuario esta en otra seccion de la ventana de configuracion.
-/// </summary>
+/// -------------
 public sealed partial class VuMeterSettingsWindowViewModel : ViewModelBase
 {
     private readonly DispatcherTimer _demoTimer;
@@ -47,21 +47,21 @@ public sealed partial class VuMeterSettingsWindowViewModel : ViewModelBase
         // StartTimer() al entrar al arbol visual.
     }
 
-    /// <summary>
+    /// -------------
     /// Arranca el timer del preview. Es idempotente.
     /// Lo llama el VuMeterPanel al entrar al arbol visual.
-    /// </summary>
+    /// -------------
     public void StartTimer()
     {
         if (_demoTimer.IsEnabled) return;
         _demoTimer.Start();
     }
 
-    /// <summary>
+    /// -------------
     /// Detiene el timer del preview. Es idempotente.
     /// Lo llama el VuMeterPanel al salir del arbol visual (cambio de
     /// seccion o cierre de la ventana).
-    /// </summary>
+    /// -------------
     public void StopTimer()
     {
         _demoTimer.Stop();

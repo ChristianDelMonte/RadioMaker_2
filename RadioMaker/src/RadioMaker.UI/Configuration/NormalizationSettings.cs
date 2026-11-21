@@ -5,24 +5,24 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.Configuration;
 
-/// <summary>
+/// -------------
 /// Configuracion persistente del panel de normalizacion de niveles.
-/// </summary>
+/// -------------
 public sealed partial class NormalizationSettings : ObservableObject
 {
-    /// <summary>Si true, la normalizacion se aplica al reproducir.</summary>
+    /// -------------Si true, la normalizacion se aplica al reproducir.</summary>
     [ObservableProperty] private bool _isEnabled = false;
 
-    /// <summary>Estrategia: Peak (evita clipping) o Rms (empareja sonoridad).</summary>
+    /// -------------Estrategia: Peak (evita clipping) o Rms (empareja sonoridad).</summary>
     [ObservableProperty] private NormalizationMode _mode = NormalizationMode.Peak;
 
-    /// <summary>Target en dBFS. Tipico: -1 dB para Peak, -16 dB para RMS.</summary>
+    /// -------------Target en dBFS. Tipico: -1 dB para Peak, -16 dB para RMS.</summary>
     [ObservableProperty] private double _targetDb = -1.0;
 
-    /// <summary>
+    /// -------------
     /// Si true, al cargar un archivo se analiza automaticamente.
     /// Recomendado cuando IsEnabled esta activo.
-    /// </summary>
+    /// -------------
     [ObservableProperty] private bool _autoAnalyzeOnLoad = true;
 }
 

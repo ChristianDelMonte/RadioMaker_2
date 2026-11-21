@@ -7,7 +7,7 @@ using Avalonia.Media;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Dial rotativo (knob) para controlar un valor continuo, al estilo de
 /// los mandos fisicos de equipos de audio profesionales.
 ///
@@ -20,7 +20,7 @@ namespace RadioMaker.UI.Controls;
 ///   - Se adapta al tamaño: usa min(Width, Height) como diametro.
 ///   - Los ticks se ocultan automaticamente si el control mide menos de
 ///     36px, para evitar ruido visual en espacios chicos.
-/// </summary>
+/// -------------
 public sealed class RotaryDial : Control
 {
     // Angulo de inicio/fin en grados respecto a la vertical (top = 0).
@@ -224,10 +224,10 @@ public sealed class RotaryDial : Control
 
     // ───── Helpers de dibujo ─────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Convierte (radio, angulo) a un punto absoluto. El angulo se mide
     /// en grados respecto a la vertical (0 = top, positivo = clockwise).
-    /// </summary>
+    /// -------------
     private static Point PolarToPoint(double cx, double cy, double radius, double angleDeg)
     {
         double rad = (angleDeg - 90.0) * Math.PI / 180.0;
@@ -339,10 +339,10 @@ public sealed class RotaryDial : Control
         Value = newValue;
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el angulo del punto respecto al centro del control,
     /// en el rango [-180, 180] y con 0 = arriba, positivo = clockwise.
-    /// </summary>
+    /// -------------
     private double AngleFromPoint(Point p)
     {
         double cx = Bounds.Width / 2;

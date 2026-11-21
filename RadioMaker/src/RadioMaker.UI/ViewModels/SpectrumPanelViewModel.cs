@@ -5,7 +5,7 @@ using RadioMaker.UI.Controls;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel Spectrum.
 ///
 /// Mantiene el canal actualmente monitoreado (el canal activo de cualquier
@@ -13,7 +13,7 @@ namespace RadioMaker.UI.ViewModels;
 ///   - El modo de visualizacion actual.
 ///   - El estado de reproduccion.
 ///   - Comandos para cambiar el modo y resetear el analizador.
-/// </summary>
+/// -------------
 public sealed partial class SpectrumPanelViewModel : ViewModelBase
 {
     private IAudioChannel? _channel;
@@ -33,7 +33,7 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
 
     public string SourceText { get; private set; } = string.Empty;
 
-    /// <summary>Lista de modos disponibles para el ComboBox.</summary>
+    /// -------------Lista de modos disponibles para el ComboBox.</summary>
     public SpectrumMode[] AvailableModes { get; } =
     {
         SpectrumMode.Fft,
@@ -50,13 +50,13 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
 
     // ───── API publica ───────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Actualiza el canal monitoreado. Se llama desde MainWindowViewModel
     /// cada vez que cambia el canal activo (o se detiene).
     ///
     /// <paramref name="sourceLabel"/> es una etiqueta para mostrar en el
     /// status: "MANUAL", "CART", "SCHEDULER", "PLAYLIST", etc.
-    /// </summary>
+    /// -------------
     public void SetChannel(IAudioChannel? channel, string sourceLabel = "")
     {
         if (ReferenceEquals(_channel, channel) && _spectrumSource is null &&
@@ -110,7 +110,7 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
 
     // ───── Comandos ──────────────────────────────────────────────────────
 
-    /// <summary>Cicla al siguiente modo (como el click en el control).</summary>
+    /// -------------Cicla al siguiente modo (como el click en el control).</summary>
     [RelayCommand]
     private void NextMode()
     {
@@ -118,7 +118,7 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
         Mode = AvailableModes[next];
     }
 
-    /// <summary>Activa o desactiva el analisis.</summary>
+    /// -------------Activa o desactiva el analisis.</summary>
     [RelayCommand]
     private void ToggleRunning()
     {

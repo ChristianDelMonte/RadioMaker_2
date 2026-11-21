@@ -4,7 +4,7 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel de un item dentro de un Bloque de Programacion.
 ///
 /// Es mucho mas simple que un ScheduledItemViewModel: los items dentro de
@@ -18,14 +18,14 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// El resultado se cachea en el modelo (DurationSeconds) para no recalcular
 /// cuando se reabre el editor.
-/// </summary>
+/// -------------
 public sealed partial class ScheduledBlockItemViewModel : ViewModelBase
 {
     private readonly ScheduledBlockItem _item;
 
     public ScheduledBlockItem Source => _item;
 
-    /// <summary>Se dispara cuando cambia cualquier propiedad relevante.</summary>
+    /// -------------Se dispara cuando cambia cualquier propiedad relevante.</summary>
     public event EventHandler? Changed;
 
     // ───── Propiedades observables ───────────────────────────────────────
@@ -34,11 +34,11 @@ public sealed partial class ScheduledBlockItemViewModel : ViewModelBase
     [ObservableProperty] private string _filePath;
     [ObservableProperty] private string _title;
 
-    /// <summary>
+    /// -------------
     /// Duracion total del contenido en segundos. Se recalcula cada vez que
     /// cambia el Kind o el FilePath. Se inicializa con el valor cacheado en
     /// el modelo (si lo hay).
-    /// </summary>
+    /// -------------
     [ObservableProperty] private double _durationSeconds;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
@@ -68,7 +68,7 @@ public sealed partial class ScheduledBlockItemViewModel : ViewModelBase
 
     public bool HasContent => !string.IsNullOrWhiteSpace(FilePath);
 
-    /// <summary>Duracion formateada como HH:MM:SS.</summary>
+    /// -------------Duracion formateada como HH:MM:SS.</summary>
     public string DurationText =>
         DurationSeconds > 0.5
             ? AudioFileInfoReader.FormatDuration(DurationSeconds)
@@ -94,14 +94,14 @@ public sealed partial class ScheduledBlockItemViewModel : ViewModelBase
 
     // ───── Calculo de duracion ───────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Recalcula la duracion del item en background. Depende de:
     ///   - SingleFile: lee el header del audio.
     ///   - Playlist:   carga el .rmf y suma duraciones de pistas habilitadas.
     ///   - Tanda:      carga el .tnd y suma duraciones de pistas habilitadas.
     ///
     /// Si el archivo es inaccesible o esta vacio, deja 0.
-    /// </summary>
+    /// -------------
     private async Task RefreshDurationAsync()
     {
         // Snapshot de los valores con los que arranca el calculo.
@@ -147,11 +147,11 @@ public sealed partial class ScheduledBlockItemViewModel : ViewModelBase
         DurationSeconds = seconds;
     }
 
-    /// <summary>
+    /// -------------
     /// Suma las duraciones de las pistas habilitadas de un .rmf.
     /// Usa el DurationSeconds cacheado en cada pista si esta disponible;
     /// si no, lo lee del archivo.
-    /// </summary>
+    /// -------------
     private static double GetPlaylistDuration(string rmfPath)
     {
         if (!File.Exists(rmfPath)) return 0;
@@ -176,11 +176,11 @@ public sealed partial class ScheduledBlockItemViewModel : ViewModelBase
         return total;
     }
 
-    /// <summary>
+    /// -------------
     /// Suma las duraciones de las pistas habilitadas de un .tnd.
     /// Usa el DurationSeconds cacheado en cada pista si esta disponible;
     /// si no, lo lee del archivo.
-    /// </summary>
+    /// -------------
     private static double GetTandaDuration(string tndPath)
     {
         if (!File.Exists(tndPath)) return 0;

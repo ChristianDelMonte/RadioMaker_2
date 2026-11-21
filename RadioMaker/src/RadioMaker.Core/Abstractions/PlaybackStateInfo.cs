@@ -2,9 +2,9 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.Core.Abstractions;
 
-/// <summary>
+/// -------------
 /// Estado de reproduccion del motor programado.
-/// </summary>
+/// -------------
 public enum PlaybackStateKind
 {
     Idle = 0,
@@ -13,11 +13,11 @@ public enum PlaybackStateKind
     Error = 3
 }
 
-/// <summary>
+/// -------------
 /// Snapshot del estado de reproduccion del PlaybackEngine.
 /// La UI lo usa para mostrar que esta sonando ahora.
 /// Si el item es una Tanda, los campos Tanda* describen la pista actual.
-/// </summary>
+/// -------------
 public sealed record PlaybackStateInfo(
     PlaybackStateKind Kind,
     string ItemTitle,
@@ -33,7 +33,7 @@ public sealed record PlaybackStateInfo(
     int TandaTrackCount = 0,
     string TandaTrackTitle = "")
 {
-    /// <summary>Estado inicial (nada reproduciendose).</summary>
+    /// -------------Estado inicial (nada reproduciendose).</summary>
     public static readonly PlaybackStateInfo Idle = new(
         PlaybackStateKind.Idle,
         string.Empty,
@@ -71,18 +71,18 @@ public sealed record PlaybackStateInfo(
     public bool HasSource => !string.IsNullOrWhiteSpace(SourceListName);
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
 
-    /// <summary>True si el item que suena es una Tanda.</summary>
+    /// -------------True si el item que suena es una Tanda.</summary>
     public bool IsTanda => TandaTrackIndex >= 0;
 
-    /// <summary>Texto de progreso: "Pista 3 de 8".</summary>
+    /// -------------Texto de progreso: "Pista 3 de 8".</summary>
     public string TandaProgressText => IsTanda
         ? $"Pista {TandaTrackIndex + 1} de {TandaTrackCount}"
         : string.Empty;
 
-    /// <summary>Nombre de la tanda para mostrar (vacio si no es tanda).</summary>
+    /// -------------Nombre de la tanda para mostrar (vacio si no es tanda).</summary>
     public string TandaNameText => IsTanda ? TandaName : string.Empty;
 
-    /// <summary>Posicion / duracion en formato mm:ss.</summary>
+    /// -------------Posicion / duracion en formato mm:ss.</summary>
     public string PositionText
     {
         get
@@ -93,7 +93,7 @@ public sealed record PlaybackStateInfo(
         }
     }
 
-    /// <summary>Progreso 0..1 para bindear a ProgressBar.</summary>
+    /// -------------Progreso 0..1 para bindear a ProgressBar.</summary>
     public double ProgressFraction =>
         DurationSeconds > 0.1 ? Math.Clamp(PositionSeconds / DurationSeconds, 0, 1) : 0.0;
 }

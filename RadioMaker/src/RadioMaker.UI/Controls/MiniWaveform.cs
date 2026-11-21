@@ -7,7 +7,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Mini osciloscopio (waveform) estilo LED display.
 ///
 /// Version compacta del modo Waveform del SpectrumAnalyzer, pensada para
@@ -17,7 +17,7 @@ namespace RadioMaker.UI.Controls;
 /// - Un solo trazo por canal (mono o estereo superpuestos en el centro).
 /// - Linea central como referencia.
 /// - Fondo oscuro fijo (es un visualizador, no sigue el tema).
-/// </summary>
+/// -------------
 public sealed class MiniWaveform : Control
 {
     // ───── Propiedad: canal fuente ───────────────────────────────────────
@@ -28,11 +28,11 @@ public sealed class MiniWaveform : Control
     public static readonly StyledProperty<IAudioSpectrum?> SpectrumProperty =
         AvaloniaProperty.Register<MiniWaveform, IAudioSpectrum?>(nameof(Spectrum));
 
-    /// <summary>Color del trazo cuando hay audio.</summary>
+    /// -------------Color del trazo cuando hay audio.</summary>
     public static readonly StyledProperty<IBrush?> StrokeBrushProperty =
         AvaloniaProperty.Register<MiniWaveform, IBrush?>(nameof(StrokeBrush));
 
-    /// <summary>Color del trazo cuando NO hay audio (apagado).</summary>
+    /// -------------Color del trazo cuando NO hay audio (apagado).</summary>
     public static readonly StyledProperty<IBrush?> InactiveBrushProperty =
         AvaloniaProperty.Register<MiniWaveform, IBrush?>(nameof(InactiveBrush));
 
@@ -42,7 +42,7 @@ public sealed class MiniWaveform : Control
         set => SetValue(ChannelProperty, value);
     }
 
-    /// <summary>Fuente de espectro opcional para audio sin IAudioChannel (p. ej. RMVoice).</summary>
+    /// -------------Fuente de espectro opcional para audio sin IAudioChannel (p. ej. RMVoice).</summary>
     public IAudioSpectrum? Spectrum
     {
         get => GetValue(SpectrumProperty);

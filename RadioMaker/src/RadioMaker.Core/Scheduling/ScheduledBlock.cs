@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Un Bloque de Programacion: secuencia ordenada de items que se reproducen
 /// de corrido (playlists, tandas y archivos sueltos) cuando el scheduler
 /// dispara el bloque.
@@ -17,61 +17,61 @@ namespace RadioMaker.Core.Scheduling;
 /// tiene horario. Los items internos se reproducen en secuencia pura.
 ///
 /// NO se permite anidar bloques dentro de bloques.
-/// </summary>
+/// -------------
 public sealed class ScheduledBlock
 {
-    /// <summary>Identificador unico del bloque.</summary>
+    /// -------------Identificador unico del bloque.</summary>
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
 
-    /// <summary>Nombre visible del bloque.</summary>
+    /// -------------Nombre visible del bloque.</summary>
     public string Name { get; set; } = "Nuevo Bloque";
 
-    /// <summary>Items que componen el bloque, en orden de reproduccion.</summary>
+    /// -------------Items que componen el bloque, en orden de reproduccion.</summary>
     public List<ScheduledBlockItem> Items { get; set; } = new();
 
-    /// <summary>Comentarios libres.</summary>
+    /// -------------Comentarios libres.</summary>
     public string Notes { get; set; } = string.Empty;
 
-    /// <summary>Titulo para mostrar.</summary>
+    /// -------------Titulo para mostrar.</summary>
     [JsonIgnore]
     public string DisplayName =>
         !string.IsNullOrWhiteSpace(Name) ? Name : "Nuevo Bloque";
 
-    /// <summary>Cantidad de items en el bloque.</summary>
+    /// -------------Cantidad de items en el bloque.</summary>
     [JsonIgnore]
     public int ItemCount => Items.Count;
 }
 
-/// <summary>
+/// -------------
 /// Un item dentro de un Bloque. Es una REFERENCIA a contenido en disco:
 ///   - SingleFile: ruta a un archivo de audio.
 ///   - Playlist:   ruta a un archivo .rmf.
 ///   - Tanda:      ruta a un archivo .tnd.
 ///
 /// Los items del bloque NO tienen horarios propios. Solo el bloque los tiene.
-/// </summary>
+/// -------------
 public sealed class ScheduledBlockItem
 {
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
 
     public ScheduledItemKind Kind { get; set; } = ScheduledItemKind.SingleFile;
 
-    /// <summary>
+    /// -------------
     /// Ruta al contenido:
     ///   - SingleFile: archivo de audio (.mp3, .flac, etc)
     ///   - Playlist:   archivo .rmf
     ///   - Tanda:      archivo .tnd
-    /// </summary>
+    /// -------------
     public string FilePath { get; set; } = string.Empty;
 
-    /// <summary>Titulo opcional. Si esta vacio, se usa el nombre del archivo.</summary>
+    /// -------------Titulo opcional. Si esta vacio, se usa el nombre del archivo.</summary>
     public string Title { get; set; } = string.Empty;
 
-    /// <summary>
+    /// -------------
     /// Duracion total del contenido en segundos. Se calcula al vuelo cuando
     /// se asigna un archivo y se persiste para no recalcular cada vez que
     /// se reabre el editor. 0 = no calculada todavia.
-    /// </summary>
+    /// -------------
     public double DurationSeconds { get; set; } = 0.0;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────

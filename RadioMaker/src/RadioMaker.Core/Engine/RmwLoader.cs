@@ -5,12 +5,12 @@ using RMWave.Core.Models;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Carga y cachea proyectos de RMWave (.rmw) desde disco.
 ///
 /// Un .rmw es un archivo JSON con el modelo completo del proyecto:
 /// pistas, clips, fades, marcadores, metadatos. NO es un archivo de audio.
-/// </summary>
+/// -------------
 internal static class RmwLoader
 {
     private static readonly JsonSerializerOptions Options = new()
@@ -19,17 +19,17 @@ internal static class RmwLoader
         WriteIndented = false
     };
 
-    /// <summary>True si el path corresponde a un archivo .rmw.</summary>
+    /// -------------True si el path corresponde a un archivo .rmw.</summary>
     public static bool IsRmwFile(string? filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return false;
         return filePath.EndsWith(".rmw", StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>
+    /// -------------
     /// Carga el proyecto desde disco. Devuelve null si el archivo no existe,
     /// el JSON es inválido, o el proyecto está vacío.
-    /// </summary>
+    /// -------------
     public static Project? Load(string filePath)
     {
         try
@@ -63,7 +63,7 @@ internal static class RmwLoader
         }
     }
 
-    /// <summary>Duración del proyecto sin inicializar el motor de audio.</summary>
+    /// -------------Duración del proyecto sin inicializar el motor de audio.</summary>
     public static double GetDuration(string filePath)
     {
         var project = Load(filePath);

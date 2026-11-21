@@ -8,7 +8,7 @@ using System.Text;
 
 namespace RadioMaker.UI.Views;
 
-/// <summary>
+/// -------------
 /// Ventana "Acerca de RadioMaker".
 ///
 /// Contiene dos tabs:
@@ -16,7 +16,7 @@ namespace RadioMaker.UI.Views;
 ///   - "Librerias": dependencias externas con licencia y URL.
 ///
 /// Los links se abren en el navegador externo del sistema.
-/// </summary>
+/// -------------
 public partial class AboutWindow : CustomChromeWindow
 {
     public AboutWindow()

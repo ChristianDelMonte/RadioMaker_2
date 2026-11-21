@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace RadioMaker.UI.Demo;
 
-/// <summary>
+/// -------------
 /// Reproduce la secuencia de audios de la presentación inicial.
 ///
 /// Aislamiento: no toca PlaylistPlayer ni PlaybackEngine. Usa el
 /// PrimaryBus directamente. Respeta engine.GlobalVolume automáticamente
 /// (BassBus.LoadFile aplica el global volume al canal nuevo).
-/// </summary>
+/// -------------
 public sealed class DemoService : IDisposable
 {
     private const string DemoFolderRelative = "Assets/demo";
@@ -39,10 +39,10 @@ public sealed class DemoService : IDisposable
 
     public DemoService(IAudioEngine engine) => _engine = engine;
 
-    /// <summary>Devuelve el canal del audio en curso (o null).</summary>
+    /// -------------Devuelve el canal del audio en curso (o null).</summary>
     public IAudioChannel? GetCurrentChannel() => _currentChannel;
 
-    /// <summary>Carga el manifest y resuelve las rutas. Devuelve false si no hay nada que reproducir.</summary>
+    /// -------------Carga el manifest y resuelve las rutas. Devuelve false si no hay nada que reproducir.</summary>
     public bool TryLoad()
     {
         try
@@ -98,7 +98,7 @@ public sealed class DemoService : IDisposable
         }
     }
 
-    /// <summary>Reproduce toda la secuencia. Await hasta que termine o el usuario haga Skip.</summary>
+    /// -------------Reproduce toda la secuencia. Await hasta que termine o el usuario haga Skip.</summary>
     public async Task PlayAsync(CancellationToken externalCt = default)
     {
         if (!IsLoaded) return;

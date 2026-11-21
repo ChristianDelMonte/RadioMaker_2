@@ -4,10 +4,10 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Convierte un LogExportFormat a su etiqueta legible para mostrar en el
 /// ComboBox del dialogo de exportacion.
-/// </summary>
+/// -------------
 public sealed class LogExportFormatLabelConverter : IValueConverter
 {
     public static readonly LogExportFormatLabelConverter Instance = new();

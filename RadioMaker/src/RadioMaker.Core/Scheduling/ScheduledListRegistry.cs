@@ -1,6 +1,6 @@
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Registro de todas las ScheduledList "activas" en la aplicacion.
 ///
 /// Una lista se registra cuando el usuario abre/crea una pestaña de programados
@@ -8,13 +8,13 @@ namespace RadioMaker.Core.Scheduling;
 /// (Sprint 6.5.2) consulta este registro para saber que items debe evaluar.
 ///
 /// Es thread-safe: usa lock simple porque el scheduler corre en otro hilo.
-/// </summary>
+/// -------------
 public sealed class ScheduledListRegistry
 {
     private readonly object _gate = new();
     private readonly List<Entry> _entries = new();
 
-    /// <summary>Entrada de registro: la lista + un nombre para mostrar en logs.</summary>
+    /// -------------Entrada de registro: la lista + un nombre para mostrar en logs.</summary>
     private sealed class Entry
     {
         public string Name { get; init; } = string.Empty;
@@ -22,12 +22,12 @@ public sealed class ScheduledListRegistry
         public bool IsEnabled { get; set; } = true;
     }
 
-    /// <summary>Se dispara cuando se agrega, quita o modifica una lista.</summary>
+    /// -------------Se dispara cuando se agrega, quita o modifica una lista.</summary>
     public event EventHandler? Changed;
 
     // ───── Registro ──────────────────────────────────────────────────────
 
-    /// <summary>Registra una lista. Es idempotente (si ya estaba, la ignora).</summary>
+    /// -------------Registra una lista. Es idempotente (si ya estaba, la ignora).</summary>
     public void Register(ScheduledList list, string displayName)
     {
         if (list is null) return;
@@ -48,7 +48,7 @@ public sealed class ScheduledListRegistry
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Desregistra una lista.</summary>
+    /// -------------Desregistra una lista.</summary>
     public void Unregister(ScheduledList list)
     {
         if (list is null) return;
@@ -63,7 +63,7 @@ public sealed class ScheduledListRegistry
             Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Habilita o deshabilita una lista del scheduler sin desregistrarla.</summary>
+    /// -------------Habilita o deshabilita una lista del scheduler sin desregistrarla.</summary>
     public void SetEnabled(ScheduledList list, bool enabled)
     {
         if (list is null) return;
@@ -83,7 +83,7 @@ public sealed class ScheduledListRegistry
             Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Indica si una lista esta registrada y habilitada.</summary>
+    /// -------------Indica si una lista esta registrada y habilitada.</summary>
     public bool IsEnabled(ScheduledList list)
     {
         lock (_gate)
@@ -95,7 +95,7 @@ public sealed class ScheduledListRegistry
 
     // ───── Consulta ──────────────────────────────────────────────────────
 
-    /// <summary>Devuelve una copia de todas las listas registradas (haya o no habilitadas).</summary>
+    /// -------------Devuelve una copia de todas las listas registradas (haya o no habilitadas).</summary>
     public IReadOnlyList<ScheduledList> GetAll()
     {
         lock (_gate)
@@ -104,7 +104,7 @@ public sealed class ScheduledListRegistry
         }
     }
 
-    /// <summary>Devuelve solo las listas registradas Y habilitadas.</summary>
+    /// -------------Devuelve solo las listas registradas Y habilitadas.</summary>
     public IReadOnlyList<ScheduledList> GetEnabled()
     {
         lock (_gate)
@@ -113,7 +113,7 @@ public sealed class ScheduledListRegistry
         }
     }
 
-    /// <summary>Devuelve cuantas listas hay registradas.</summary>
+    /// -------------Devuelve cuantas listas hay registradas.</summary>
     public int Count
     {
         get
@@ -122,7 +122,7 @@ public sealed class ScheduledListRegistry
         }
     }
 
-    /// <summary>Devuelve cuantas listas estan habilitadas.</summary>
+    /// -------------Devuelve cuantas listas estan habilitadas.</summary>
     public int EnabledCount
     {
         get
@@ -131,7 +131,7 @@ public sealed class ScheduledListRegistry
         }
     }
 
-    /// <summary>Limpia todo el registro.</summary>
+    /// -------------Limpia todo el registro.</summary>
     public void Clear()
     {
         bool wasEmpty;

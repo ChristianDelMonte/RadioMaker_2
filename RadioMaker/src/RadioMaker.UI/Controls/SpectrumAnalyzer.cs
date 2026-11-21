@@ -9,25 +9,25 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Modos de visualizacion del analizador de espectro.
-/// </summary>
+/// -------------
 public enum SpectrumMode
 {
-    /// <summary>FFT normal: picos de frecuencia con interpolacion suave.</summary>
+    /// -------------FFT normal: picos de frecuencia con interpolacion suave.</summary>
     Fft = 0,
 
-    /// <summary>FFT logaritmico: 28 bandas agrupadas estilo ecualizador.</summary>
+    /// -------------FFT logaritmico: 28 bandas agrupadas estilo ecualizador.</summary>
     LogBands = 1,
 
-    /// <summary>3D waterfall: mapa de calor desplazandose horizontalmente.</summary>
+    /// -------------3D waterfall: mapa de calor desplazandose horizontalmente.</summary>
     Waterfall = 2,
 
-    /// <summary>Osciloscopio: forma de onda en el dominio del tiempo.</summary>
+    /// -------------Osciloscopio: forma de onda en el dominio del tiempo.</summary>
     Waveform = 3
 }
 
-/// <summary>
+/// -------------
 /// Control de analisis de espectro de audio.
 ///
 /// Lee datos del canal bindeado (~30 veces por segundo) y los dibuja sobre
@@ -35,7 +35,7 @@ public enum SpectrumMode
 /// el control cambia entre modos.
 ///
 /// Basado en el ejemplo oficial "spectrum.c" de la libreria BASS de Un4seen.
-/// </summary>
+/// -------------
 public sealed class SpectrumAnalyzer : Control
 {
     // ───── Propiedades bindables ─────────────────────────────────────────
@@ -82,7 +82,7 @@ public sealed class SpectrumAnalyzer : Control
     private float[] _fftBuffer = new float[1024];
     private float[] _waveBuffer = new float[8192];
 
-    /// <summary>Buffer circular para el modo waterfall (una columna por tick).</summary>
+    /// -------------Buffer circular para el modo waterfall (una columna por tick).</summary>
     private byte[,]? _waterfallBuffer;
     private int _waterfallWidth;
     private int _waterfallHeight;
@@ -126,7 +126,7 @@ public sealed class SpectrumAnalyzer : Control
             _timer.Stop();
     }
 
-    /// <summary>Limpia los buffers (por ejemplo al cambiar de canal).</summary>
+    /// -------------Limpia los buffers (por ejemplo al cambiar de canal).</summary>
     public void Reset()
     {
         Array.Clear(_fftBuffer, 0, _fftBuffer.Length);
@@ -472,10 +472,10 @@ public sealed class SpectrumAnalyzer : Control
 
     // ───── Helpers ───────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Devuelve un color de la paleta segun la intensidad (0..255).
     /// Usa una rampa suave: azul oscuro → azul → verde → ambar → rojo.
-    /// </summary>
+    /// -------------
     private static Color PaletteColor(byte intensity)
     {
         if (intensity == 0) return BgColor;

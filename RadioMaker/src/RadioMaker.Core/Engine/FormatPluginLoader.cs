@@ -5,7 +5,7 @@ using RadioMaker.Core.Logging;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Escanea el directorio de la app buscando DLLs de plugins de BASS
 /// (bass*.dll / libbass*.so / libbass*.dylib), las carga automaticamente,
 /// y expone las extensiones de archivo soportadas por cada una.
@@ -28,17 +28,17 @@ namespace RadioMaker.Core.Engine;
 ///   KnownPlugins usa las claves SIN ese prefijo (bassflac, bass_aac, ...).
 ///   Hay que normalizar el nombre del archivo ANTES de hacer el lookup, si no
 ///   el plugin carga bien pero sus extensiones quedan vacías.
-/// </summary>
+/// -------------
 internal static class FormatPluginLoader
 {
-    /// <summary>Metadata de cada plugin conocido.</summary>
+    /// -------------Metadata de cada plugin conocido.</summary>
     private sealed record PluginMetadata(string DisplayName, string[] Extensions);
 
-    /// <summary>
+    /// -------------
     /// Diccionario de plugins conocidos. Clave = nombre del archivo sin
     /// extensión NI prefijo "lib", en minúsculas. Los que no aparecen aquí
     /// se listan como "desconocidos" pero igual se cargan.
-    /// </summary>
+    /// -------------
     private static readonly Dictionary<string, PluginMetadata> KnownPlugins =
         new(StringComparer.OrdinalIgnoreCase)
         {
@@ -58,7 +58,7 @@ internal static class FormatPluginLoader
             ["basshls"] = new("HLS", new[] { ".m3u8" }),
         };
 
-    /// <summary>Nombres de archivos que NO son plugins de formato.</summary>
+    /// -------------Nombres de archivos que NO son plugins de formato.</summary>
     private static readonly string[] NonPluginNames = { "bass", "bass_fx" };
 
     // -----------------------------------------------------------------------
@@ -172,10 +172,10 @@ internal static class FormatPluginLoader
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Encuentra todos los archivos bass*.{dll,so,dylib} en un directorio,
     /// excluyendo el core (bass) y el addon de efectos (bass_fx).
-    /// </summary>
+    /// -------------
     private static IEnumerable<string> FindBassPluginFiles(string directory)
     {
         string extension = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".dll"
@@ -206,7 +206,7 @@ internal static class FormatPluginLoader
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Devuelve el nombre del plugin normalizado, SIN extensión y SIN
     /// prefijo "lib". Ejemplos:
     ///   • Windows: "bassflac.dll"       → "bassflac"
@@ -217,7 +217,7 @@ internal static class FormatPluginLoader
     /// Este nombre es el que usan:
     ///   • KnownPlugins (para matchear las extensiones conocidas).
     ///   • NonPluginNames (para excluir bass.dll y bass_fx.dll).
-    /// </summary>
+    /// -------------
     private static string GetPluginBaseName(string filePath)
     {
         var baseName = Path.GetFileNameWithoutExtension(filePath);

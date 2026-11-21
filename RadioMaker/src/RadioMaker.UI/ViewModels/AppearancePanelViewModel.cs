@@ -4,7 +4,7 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel "Apariencia" del panel de configuracion.
 /// Permite elegir entre tres preferencias de tema:
 ///   - Sistema: sigue el tema del SO.
@@ -12,7 +12,7 @@ namespace RadioMaker.UI.ViewModels;
 ///   - Oscuro:  siempre oscuro.
 ///
 /// Los cambios se aplican en vivo a traves del ThemeService.
-/// </summary>
+/// -------------
 public sealed partial class AppearancePanelViewModel : ViewModelBase
 {
     [ObservableProperty] private ThemePreference _preference;

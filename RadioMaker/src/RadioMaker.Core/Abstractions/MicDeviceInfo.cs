@@ -1,8 +1,8 @@
 namespace RadioMaker.Core.Abstractions;
 
-/// <summary>
+/// -------------
 /// Info de un dispositivo de entrada (microfono) disponible en el sistema.
-/// </summary>
+/// -------------
 public sealed record MicDeviceInfo(
     int Index,
     string Name,

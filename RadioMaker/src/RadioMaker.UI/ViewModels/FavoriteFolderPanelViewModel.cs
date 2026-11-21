@@ -8,7 +8,7 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel de la pestaña de una carpeta favorita.
 ///
 /// A diferencia del explorador completo, este panel:
@@ -24,7 +24,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// La carpeta se carga una sola vez al abrir la pestaña. Si el usuario
 /// quiere ver contenido actualizado, cierra y vuelve a abrir la pestaña.
-/// </summary>
+/// -------------
 public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDisposable
 {
     private readonly FavoriteFolderEntry _entry;
@@ -47,18 +47,18 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
     [ObservableProperty] private bool _isPlaying;
     [ObservableProperty] private string _nowPlayingText = string.Empty;
 
-    /// <summary>
+    /// -------------
     /// Reservado para cuando FavoriteFolder participe del BusExclusivityCoordinator.
     /// Hoy siempre es false: las preescuchas no se pausan por coordinacion.
-    /// </summary>
+    /// -------------
     public bool IsPausedByCoordinator => false;
 
     public ObservableCollection<AudioFileViewModel> Files { get; } = new();
 
-    /// <summary>
+    /// -------------
     /// Selector de bus de salida propio de esta pestaña. Al reproducir un
     /// archivo, el canal se carga en este bus y no afecta otras pestañas.
-    /// </summary>
+    /// -------------
     public SimpleBusSelectorViewModel BusSelector { get; }
 
     public bool HasFiles => Files.Count > 0;
@@ -70,7 +70,7 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
         ? "Sin archivos de audio"
         : $"{FileCount} archivo(s)";
 
-    /// <summary>Se dispara cuando el usuario activa un archivo (doble clic / Enter).</summary>
+    /// -------------Se dispara cuando el usuario activa un archivo (doble clic / Enter).</summary>
     public event EventHandler<AudioFileViewModel>? FileActivated;
 
     // ───── Constructor ───────────────────────────────────────────────────
@@ -241,11 +241,11 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
 
     // ───── Reproduccion ──────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Reproduce un archivo en el bus seleccionado. Si habia otro sonando
     /// en esta pestaña, se detiene antes. No afecta la reproduccion de
     /// otras pestañas ni de otros modulos.
-    /// </summary>
+    /// -------------
     public void PlayFile(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return;

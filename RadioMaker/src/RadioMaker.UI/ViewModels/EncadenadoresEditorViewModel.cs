@@ -15,6 +15,13 @@ public sealed partial class EncadenadorTrackViewModel : ObservableObject
         ? TimeSpan.FromSeconds(Model.DurationSeconds).ToString(@"m\:ss")
         : "--:--";
     public EncadenadorTrackViewModel(EncadenadorTrack model) => Model = model;
+
+    public void Refresh()
+    {
+        OnPropertyChanged(nameof(DisplayTitle));
+        OnPropertyChanged(nameof(FilePath));
+        OnPropertyChanged(nameof(DurationText));
+    }
 }
 
 public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
@@ -124,6 +131,25 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
         _set.Tracks.Add(model);
         RefreshDerived();
         MarkDirty();
+    }
+
+    public void UpdateTrack(EncadenadorTrackViewModel track, string filePath, string title)
+    {
+        if (!Tracks.Contains(track) || string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath)) return;
+
+        var fullPath = Path.GetFullPath(filePath);
+        var pathChanged = !string.Equals(track.Model.FilePath, fullPath,
+            OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        track.Model.FilePath = fullPath;
+        track.Model.Title = title.Trim();
+        if (pathChanged)
+        {
+            try { track.Model.DurationSeconds = Math.Max(0, AudioFileInfoReader.GetDurationSeconds(fullPath)); }
+            catch { track.Model.DurationSeconds = 0; }
+        }
+        track.Refresh();
+        MarkDirty();
+        if (IsActive) _registry.Update(_ownerId, _set);
     }
 
     [RelayCommand]

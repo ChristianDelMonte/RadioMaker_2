@@ -4,7 +4,7 @@ using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Converter de dos vias para bindear RadioButtons a una propiedad de tipo
 /// enum. Compara el valor actual contra el ConverterParameter y devuelve
 /// true/false. En sentido inverso, si el valor es true, asigna el parameter
@@ -12,7 +12,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Uso:
 ///     IsChecked="{Binding Preference, Converter={x:Static ...}, ConverterParameter=System}"
-/// </summary>
+/// -------------
 public sealed class ThemePreferenceMatchConverter : IValueConverter
 {
     public static readonly ThemePreferenceMatchConverter Instance = new();

@@ -4,22 +4,22 @@ using RadioMaker.Core.Tags;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Progreso del generador. Se reporta al UI para mostrar mensajes de
 /// estado mientras escanea la carpeta y lee las duraciones / tags.
-/// </summary>
+/// -------------
 public sealed record PlaylistGeneratorProgress(
     string Message,
     int Current,
     int Total);
 
-/// <summary>
+/// -------------
 /// Candidato de audio encontrado durante el escaneo de carpeta.
 /// Lleva path, duracion y (opcionalmente) los tags del archivo.
 ///
 /// Si el usuario NO activo filtros por tags ni reglas de variedad por
 /// artista, Tags queda en Empty y no se leyo nunca.
-/// </summary>
+/// -------------
 public sealed class AudioCandidate
 {
     public string FilePath { get; init; } = string.Empty;
@@ -29,10 +29,10 @@ public sealed class AudioCandidate
     public string DisplayName =>
         string.IsNullOrEmpty(FilePath) ? "" : Path.GetFileNameWithoutExtension(FilePath);
 
-    /// <summary>
+    /// -------------
     /// Artista normalizado. Vacio = "wildcard" para las reglas de variedad
     /// (nunca bloquea ni es bloqueado).
-    /// </summary>
+    /// -------------
     public string Artist =>
         string.IsNullOrWhiteSpace(Tags?.Performers)
             ? string.Empty
@@ -40,9 +40,9 @@ public sealed class AudioCandidate
 
     public bool HasArtist => !string.IsNullOrEmpty(Artist);
 
-    /// <summary>
+    /// -------------
     /// Texto secundario util para el preview.
-    /// </summary>
+    /// -------------
     public string SubtitleText
     {
         get
@@ -60,9 +60,9 @@ public sealed class AudioCandidate
     }
 }
 
-/// <summary>
+/// -------------
 /// Resultado de una ejecucion del generador.
-/// </summary>
+/// -------------
 public sealed record PlaylistGeneratorResult(
     bool Success,
     string? ErrorMessage,
@@ -99,7 +99,7 @@ public sealed record PlaylistGeneratorResult(
             filteredByTags, filteredByDuration, relaxedByArtistRules);
 }
 
-/// <summary>
+/// -------------
 /// Servicio de generacion automatica de playlists.
 ///
 /// Uso tipico desde la UI:
@@ -116,7 +116,7 @@ public sealed record PlaylistGeneratorResult(
 ///   - Duraciones: se cachean siempre.
 ///   - Tags: se leen SOLO si hay filtros o reglas de variedad activas.
 ///     Se cachean tambien.
-/// </summary>
+/// -------------
 public static class PlaylistGeneratorService
 {
     private sealed class CachedInfo
@@ -379,7 +379,7 @@ public static class PlaylistGeneratorService
 
     // ───── Paso 3: seleccion ────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Selecciona las pistas aplicando orden, modo (cantidad/duracion) y
     /// reglas de variedad (ventana deslizante de artistas).
     ///
@@ -387,7 +387,7 @@ public static class PlaylistGeneratorService
     /// <see cref="PlaylistGeneratorOptions.RelaxIfNotEnough"/> esta activo,
     /// hace una segunda pasada aceptando las pistas descartadas por
     /// variedad, marcandolas en <paramref name="relaxedCount"/>.
-    /// </summary>
+    /// -------------
     private static List<AudioCandidate> SelectTracks(
         IReadOnlyList<AudioCandidate> candidates,
         PlaylistGeneratorOptions options,
@@ -586,7 +586,7 @@ public static class PlaylistGeneratorService
 
     // ───── Round-robin por artista ──────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Reordena el pool intercalando artistas:
     ///   - Agrupa por artista (los "sin artista" forman un grupo wildcard).
     ///   - Ordena los grupos: primero los que tienen artista, y dentro de
@@ -594,7 +594,7 @@ public static class PlaylistGeneratorService
     ///     que se repartan mejor).
     ///   - Shuffle dentro de cada grupo.
     ///   - Intercala uno de cada grupo en rotacion.
-    /// </summary>
+    /// -------------
     private static List<AudioCandidate> BuildRoundRobinPool(List<AudioCandidate> input)
     {
         if (input.Count == 0) return new List<AudioCandidate>();
@@ -633,9 +633,9 @@ public static class PlaylistGeneratorService
         return result;
     }
 
-    /// <summary>
+    /// -------------
     /// Fisher-Yates shuffle usando Random.Shared (thread-safe).
-    /// </summary>
+    /// -------------
     private static void Shuffle<T>(IList<T> list)
     {
         var rng = Random.Shared;

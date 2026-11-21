@@ -3,10 +3,10 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Implementación de <see cref="IAudioLevelMeter"/> basada en
 /// <c>Bass.ChannelGetLevel</c>.
-/// </summary>
+/// -------------
 internal sealed class BassLevelMeter : IAudioLevelMeter
 {
     private readonly int _handle;

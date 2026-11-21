@@ -4,7 +4,7 @@ using Avalonia.Data.Converters;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Devuelve true si el valor (string) es una ruta .rmw.
 /// Uso típico:
 ///   IsEnabled="{Binding FilePath, Converter={x:Static vm:IsRmwFileConverter.Instance}}"
@@ -12,7 +12,7 @@ namespace RadioMaker.UI.ViewModels;
 ///
 /// Acepta null/vacío → false (la opción queda deshabilitada).
 /// Es case-insensitive en la extensión.
-/// </summary>
+/// -------------
 public sealed class IsRmwFileConverter : IValueConverter
 {
     public static readonly IsRmwFileConverter Instance = new();
@@ -27,7 +27,7 @@ public sealed class IsRmwFileConverter : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 
-    /// <summary>Versión inversa: útil para "Editar tags" (ocultar/deshabilitar si ES .rmw).</summary>
+    /// -------------Versión inversa: útil para "Editar tags" (ocultar/deshabilitar si ES .rmw).</summary>
     public static bool IsNotRmw(string? path)
         => !( !string.IsNullOrWhiteSpace(path)
               && path.EndsWith(".rmw", StringComparison.OrdinalIgnoreCase) );

@@ -13,7 +13,7 @@ public sealed class BassEngine : IAudioEngine
     private readonly List<BassBus> _buses = new();
     private readonly List<FormatPluginInfo> _plugins = new();
 
-    /// <summary>
+    /// -------------
     /// Refcount por dispositivo BASS inicializado. Clave = indice real de BASS
     /// (el que devuelve ResolveDeviceIndex), Valor = cantidad de buses que lo usan.
     /// El dispositivo se libera (Bass.Free) solo cuando el refcount llega a 0.
@@ -21,7 +21,7 @@ public sealed class BassEngine : IAudioEngine
     /// Esto permite tener varios buses compartiendo el mismo dispositivo sin
     /// liberarlo por error, y permite tener varios dispositivos inicializados
     /// en simultaneo (BASS lo soporta).
-    /// </summary>
+    /// -------------
     private readonly Dictionary<int, int> _deviceRefCounts = new();
 
     private bool _disposed;
@@ -277,13 +277,13 @@ public sealed class BassEngine : IAudioEngine
 
     // ------------------------------------------------------- Device refcount
 
-    /// <summary>
+    /// -------------
     /// Adquiere una referencia al dispositivo. Si es la primera referencia,
     /// inicializa el dispositivo con Bass.Init. Si ya estaba inicializado,
     /// solo suma el refcount.
     ///
     /// Devuelve el indice REAL resuelto (no el solicitado).
-    /// </summary>
+    /// -------------
     internal int AcquireDevice(int requestedIndex)
     {
         lock (_gate)
@@ -308,10 +308,10 @@ public sealed class BassEngine : IAudioEngine
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Libera una referencia al dispositivo. Si el refcount llega a 0,
     /// se libera el dispositivo con Bass.Free.
-    /// </summary>
+    /// -------------
     internal void ReleaseDevice(int resolvedIndex)
     {
         lock (_gate)
@@ -368,10 +368,10 @@ public sealed class BassEngine : IAudioEngine
         return false;
     }
 
-    /// <summary>
+    /// -------------
     /// Resuelve un indice "solicitado" (puede ser -1) al indice real de BASS.
     /// Ver nota en versiones anteriores sobre por que -1 no es "predeterminado".
-    /// </summary>
+    /// -------------
     public static int ResolveDeviceIndex(int requested)
     {
         if (requested >= 0 && requested < Bass.DeviceCount)

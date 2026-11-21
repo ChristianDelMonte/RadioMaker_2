@@ -30,7 +30,7 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    /// <summary>
+    /// -------------
     /// Flujo de arranque con splash:
     ///   1. Mostrar el splash.
     ///   2. Inicializar el motor de audio (BassEngine + Initialize).
@@ -41,7 +41,7 @@ public partial class App : Application
     ///
     /// Cada paso reporta progreso al splash. Los pasos pesados corren en
     /// Task.Run; los pasos que tocan UI corren en el hilo de UI.
-    /// </summary>
+    /// -------------
     private async Task InitializeWithSplashAsync(IClassicDesktopStyleApplicationLifetime desktop)
     {
         var splash = new SplashWindow();

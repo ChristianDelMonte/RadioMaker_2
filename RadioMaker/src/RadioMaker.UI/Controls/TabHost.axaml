@@ -204,7 +204,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem Header="Nueva pestaña Encadenadores"
+                                <MenuItem Header="Nuevo Encadenador"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddEncadenadoresTabCommand}">
                                     <MenuItem.Icon>

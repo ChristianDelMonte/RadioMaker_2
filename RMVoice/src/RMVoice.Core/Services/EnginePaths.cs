@@ -1,23 +1,23 @@
 namespace RMVoice.Core.Services;
 
-/// <summary>
+/// -------------
 /// Resolución de rutas por defecto del Engine.
 /// Se encarga de la migración silenciosa desde la carpeta heredada
 /// (%AppData%/AnnouncerClock) hacia la nueva (%AppData%/RMVoice).
-/// </summary>
+/// -------------
 internal static class EnginePaths
 {
     private const string AppFolderName = "RMVoice";
     private const string LegacyFolderName = "RMVoice";
 
-    /// <summary>Carpeta raíz de datos de la app (creada si no existe).</summary>
+    /// -------------Carpeta raíz de datos de la app (creada si no existe).
     public static string RootDirectory => EnsureRootDirectory();
 
-    /// <summary>Ruta por defecto a profiles.json.</summary>
+    /// -------------Ruta por defecto a profiles.json.
     public static string DefaultProfilesPath()
         => Path.Combine(EnsureRootDirectory(), "profiles.json");
 
-    /// <summary>Ruta por defecto a settings.json.</summary>
+    /// -------------Ruta por defecto a settings.json.
     public static string DefaultSettingsPath()
         => Path.Combine(EnsureRootDirectory(), "settings.json");
 

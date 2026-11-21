@@ -4,7 +4,7 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>Convierte un PlaylistMode a su etiqueta en español.</summary>
+/// -------------Convierte un PlaylistMode a su etiqueta en español.</summary>
 public sealed class PlaylistModeLabelConverter : IValueConverter
 {
     public static readonly PlaylistModeLabelConverter Instance = new();

@@ -5,13 +5,13 @@ using RMVoice.Core.Models;
 
 namespace RMVoice.Core.Services;
 
-/// <summary>
+/// -------------
 /// Cliente de la API pública de Open-Meteo (no requiere clave):
 ///
 ///   • Geocodificación: https://geocoding-api.open-meteo.com/v1/search
 ///   • Clima actual:    https://api.open-meteo.com/v1/forecast
 ///                      ?current=temperature_2m,relative_humidity_2m
-/// </summary>
+/// -------------
 public sealed class WeatherService : IDisposable
 {
     private const string GeocodingUrl = "https://geocoding-api.open-meteo.com/v1/search";
@@ -32,7 +32,7 @@ public sealed class WeatherService : IDisposable
         _http.DefaultRequestHeaders.Accept.ParseAdd("application/json");
     }
 
-    /// <summary>Busca ubicaciones por nombre. Devuelve lista vacía si no hay coincidencias.</summary>
+    /// -------------Busca ubicaciones por nombre. Devuelve lista vacía si no hay coincidencias.
     public async Task<List<WeatherLocation>> SearchAsync(string query, CancellationToken ct = default)
     {
         var result = new List<WeatherLocation>();
@@ -65,7 +65,7 @@ public sealed class WeatherService : IDisposable
         return result;
     }
 
-    /// <summary>Temperatura (°C) y humedad (%) actuales para la ubicación indicada.</summary>
+    /// -------------Temperatura (°C) y humedad (%) actuales para la ubicación indicada.
     public async Task<WeatherSnapshot> FetchCurrentAsync(WeatherLocation location, CancellationToken ct = default)
     {
         var lat = location.Latitude.ToString("0.######", CultureInfo.InvariantCulture);

@@ -4,10 +4,10 @@ using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI;
 
-/// <summary>
+/// -------------
 /// Resuelve automáticamente la vista correspondiente a un ViewModel,
 /// buscando un tipo con el mismo nombre pero en el namespace 'Views'.
-/// </summary>
+/// -------------
 public sealed class ViewLocator : IDataTemplate
 {
     public Control? Build(object? param)

@@ -6,7 +6,7 @@ using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.Controls;
 
-/// <summary>
+/// -------------
 /// Panel compacto con dos lineas de display digital LED (7 segmentos).
 ///
 /// El fondo del panel es theme-aware:
@@ -16,7 +16,7 @@ namespace RadioMaker.UI.Controls;
 ///
 /// Los colores de los segmentos los maneja <see cref="LedLine"/>, que
 /// tambien es theme-aware.
-/// </summary>
+/// -------------
 public partial class LedPanel : UserControl
 {
     public static readonly StyledProperty<string> Line1TextProperty =
@@ -84,11 +84,11 @@ public partial class LedPanel : UserControl
         Dispatcher.UIThread.Post(ApplyThemeBackground);
     }
 
-    /// <summary>
+    /// -------------
     /// Aplica el color de fondo del panel segun el tema actual.
     ///   - Dark:  casi negro.
     ///   - Light: cyan claro (display LED iluminado).
-    /// </summary>
+    /// -------------
     private void ApplyThemeBackground()
     {
         var border = this.FindControl<Border>("PanelBorder");

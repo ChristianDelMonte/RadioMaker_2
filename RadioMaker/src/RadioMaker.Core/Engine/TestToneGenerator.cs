@@ -4,7 +4,7 @@ using ManagedBass;
 // (namespace renombrado — ver nota en BassEngine.cs)
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Genera un tono senoidal PCM de 16 bits estéreo que BASS puede reproducir
 /// como si fuera un stream de archivo. Se usa para el botón "Probar salida".
 ///
@@ -15,7 +15,7 @@ namespace RadioMaker.Core.Engine;
 ///   • Escribimos las muestras en un <c>short[]</c> managed reutilizable y las
 ///     copiamos al buffer nativo con <see cref="Marshal.Copy(short[], int, IntPtr, int)"/>.
 ///     Así evitamos bloques unsafe y el flag /unsafe en el .csproj.
-/// </summary>
+/// -------------
 internal sealed class TestToneGenerator
 {
     private readonly StreamProcedure _procedure;
@@ -37,10 +37,10 @@ internal sealed class TestToneGenerator
         _procedure = WriteSamples;
     }
 
-    /// <summary>
+    /// -------------
     /// Crea el stream de BASS asociado. El handle devuelto debe liberarse con
     /// <c>Bass.StreamFree</c> una vez finalizada la reproducción.
-    /// </summary>
+    /// -------------
     public int CreateStream()
     {
         // Bass.CreateStream(freq, channels, flags, procedure, user)

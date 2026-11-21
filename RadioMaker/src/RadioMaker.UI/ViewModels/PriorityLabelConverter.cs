@@ -4,9 +4,9 @@ using RadioMaker.Core.Scheduling;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// Convierte un SchedulePriority a su etiqueta legible en español.
-/// </summary>
+/// -------------
 public sealed class PriorityLabelConverter : IValueConverter
 {
     public static readonly PriorityLabelConverter Instance = new();

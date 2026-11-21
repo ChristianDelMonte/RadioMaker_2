@@ -6,7 +6,7 @@ using RadioMaker.Core.Engine;
 
 namespace RadioMaker.Core.Playback;
 
-/// <summary>
+/// -------------
 /// Servicio que envuelve el motor de locución de RMVoice.
 ///
 /// Responsabilidades:
@@ -22,7 +22,7 @@ namespace RadioMaker.Core.Playback;
 /// El servicio es TOLERANTE A FALLOS: si RMVoice.Engine no está disponible
 /// o falla al inicializar, <see cref="IsAvailable"/> queda en false y todos
 /// los Play* devuelven false. La app sigue funcionando con normalidad.
-/// </summary>
+/// -------------
 public sealed class LocutionService : IDisposable
 {
     private readonly object _gate = new();
@@ -35,7 +35,7 @@ public sealed class LocutionService : IDisposable
 
     public LocutionService() { }
 
-    /// <summary>True si RMVoice.Engine está cargado e inicializado.</summary>
+    /// -------------True si RMVoice.Engine está cargado e inicializado.</summary>
     public bool IsAvailable
     {
         get
@@ -44,7 +44,7 @@ public sealed class LocutionService : IDisposable
         }
     }
 
-    /// <summary>True si hay una locución reproduciéndose ahora.</summary>
+    /// -------------True si hay una locución reproduciéndose ahora.</summary>
     public bool IsPlaying
     {
         get
@@ -74,18 +74,18 @@ public sealed class LocutionService : IDisposable
         }
     }
 
-    /// <summary>Se dispara cuando cambia el estado de disponibilidad.</summary>
+    /// -------------Se dispara cuando cambia el estado de disponibilidad.</summary>
     public event EventHandler? StateChanged;
 
     // ───── Ciclo de vida ─────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Inicializa el motor de locución. Es idempotente.
     /// Se llama una vez al arranque de RadioMaker (durante el splash).
     ///
     /// IMPORTANTE: llamar DESPUÉS de que RadioMaker inicializó BASS
     /// (BassEngine.Initialize).
-    /// </summary>
+    /// -------------
     public void Initialize()
     {
         lock (_gate)
@@ -129,11 +129,11 @@ public sealed class LocutionService : IDisposable
 
     // ───── Reproducción ──────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Reproduce un comando de locución en el device indicado.
     /// El await termina cuando la locución acaba.
     /// Devuelve false si RMVoice no está disponible o si falló.
-    /// </summary>
+    /// -------------
     public async Task<bool> PlayAsync(
         LocutionCommand command,
         int deviceIndex,
@@ -177,7 +177,7 @@ public sealed class LocutionService : IDisposable
         }
     }
 
-    /// <summary>Corta la locución en curso (si la hay).</summary>
+    /// -------------Corta la locución en curso (si la hay).</summary>
     public void Stop()
     {
         try
@@ -191,11 +191,11 @@ public sealed class LocutionService : IDisposable
 
     // ───── Clima ─────────────────────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Refresca el clima consultando la API (Open-Meteo) ahora mismo.
     /// Es seguro llamarlo aunque no haya ubicación configurada: solo
     /// loguea un warning.
-    /// </summary>
+    /// -------------
     public async Task RefreshWeatherAsync(CancellationToken ct = default)
     {
         IAnnouncer? announcer;
@@ -216,7 +216,7 @@ public sealed class LocutionService : IDisposable
         }
     }
 
-    /// <summary>Último snapshot de clima cacheado por el engine (o null).</summary>
+    /// -------------Último snapshot de clima cacheado por el engine (o null).</summary>
     public WeatherSnapshot? LastWeather
     {
         get
@@ -225,7 +225,7 @@ public sealed class LocutionService : IDisposable
         }
     }
 
-    /// <summary>Ubicación de clima configurada (o null).</summary>
+    /// -------------Ubicación de clima configurada (o null).</summary>
     public WeatherLocation? ActiveWeatherLocation
     {
         get

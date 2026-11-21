@@ -4,7 +4,7 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Implementacion de <see cref="IAudioSpectrum"/> sobre un handle de BASS.
 ///
 /// Usa BASS_ChannelGetData con el flag BASS_DATA_FFT2048 para obtener los
@@ -18,10 +18,10 @@ namespace RadioMaker.Core.Engine;
 ///
 /// NO es thread-safe con la liberacion del canal: el llamador debe dejar
 /// de consultarlo ANTES de disponer el canal.
-/// </summary>
+/// -------------
 internal sealed class BassSpectrum : IAudioSpectrum
 {
-    /// <summary>Cantidad de bins de FFT que devuelve BASS_DATA_FFT2048.</summary>
+    /// -------------Cantidad de bins de FFT que devuelve BASS_DATA_FFT2048.</summary>
     public const int FftBins = 1024;
 
     private readonly int _handle;

@@ -1,9 +1,9 @@
 namespace RMVoice.Core;
 
-/// <summary>
+/// -------------
 /// Qué piezas se anuncian en una locución.
 /// Es un enum de flags para poder componer combinaciones futuras sin romper la API.
-/// </summary>
+/// -------------
 [Flags]
 public enum AnnounceContent
 {

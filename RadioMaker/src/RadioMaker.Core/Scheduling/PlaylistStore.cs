@@ -3,12 +3,12 @@ using System.Text.Json.Serialization;
 
 namespace RadioMaker.Core.Scheduling;
 
-/// <summary>
+/// -------------
 /// Persistencia de playlists en archivos .rmf (JSON).
 ///
 /// El formato es autocontenido: toda la informacion de la playlist (pistas,
 /// mixados, modo, notas) se serializa en un unico archivo .rmf.
-/// </summary>
+/// -------------
 public static class PlaylistStore
 {
     public const string FileExtension = ".rmf";

@@ -4,10 +4,10 @@ using RadioMaker.Core.Abstractions;
 
 namespace RadioMaker.Core.Engine;
 
-/// <summary>
+/// -------------
 /// Stub de IEqualizer para canales RMW. Guarda las ganancias pero NO las aplica
 /// al audio (el EQ de 10 bandas todavía no está integrado con el mixer del Core).
-/// </summary>
+/// -------------
 internal sealed class RmwEqualizer : IEqualizer
 {
     private const int Bands = 10;

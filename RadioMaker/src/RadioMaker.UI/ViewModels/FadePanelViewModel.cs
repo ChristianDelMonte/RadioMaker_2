@@ -4,7 +4,7 @@ using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.ViewModels;
 
-/// <summary>
+/// -------------
 /// ViewModel del panel de fade automatico.
 ///
 /// Cubre dos comportamientos:
@@ -13,7 +13,7 @@ namespace RadioMaker.UI.ViewModels;
 ///   2) Crossfade entre carts: cuando la botonera esta en modo crossfade,
 ///      disparar un cart mientras suena otro hace fade-out del que suena
 ///      y fade-in del nuevo.
-/// </summary>
+/// -------------
 public sealed partial class FadePanelViewModel : ViewModelBase
 {
     private readonly FadeSettings _settings;
@@ -67,10 +67,10 @@ public sealed partial class FadePanelViewModel : ViewModelBase
 
     // ───── Crossfade entre carts ─────────────────────────────────────────
 
-    /// <summary>
+    /// -------------
     /// Modo crossfade de la botonera. Cuando esta activo, disparar un cart
     /// mientras suena otro hace crossfade. Se persiste en disco.
-    /// </summary>
+    /// -------------
     public bool CartCrossfadeEnabled
     {
         get => _settings.CartCrossfadeEnabled;
@@ -85,9 +85,9 @@ public sealed partial class FadePanelViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
+    /// -------------
     /// Duracion del crossfade en segundos (0.1 a 5.0). Se persiste en disco.
-    /// </summary>
+    /// -------------
     public double CartCrossfadeSeconds
     {
         get => _settings.CartCrossfadeSeconds;
