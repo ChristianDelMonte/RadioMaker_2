@@ -7,10 +7,11 @@
 
 > 🎙️ **Forever FREE Radio Automation Software!**
 
-Suite completa de automatización de radio multiplataforma, compuesta por un
-**motor central** y dos **addons opcionales** para locuciones y edición
-multipista. Escrita en **C# / .NET 8** con **Avalonia UI** para una experiencia
-de escritorio nativa en Windows, Linux y macOS.
+Suite completa de automatización de radio multiplataforma, compuesta por
+**RadioMaker** como aplicación principal y los complementos **RMVoice** para
+locuciones y **RMWave** para edición multipista. Los tres proyectos se
+distribuyen juntos en un mismo paquete. Escrita en **C# / .NET 8** con
+**Avalonia UI** para Windows, Linux y macOS.
 
 <!-- Badges opcionales (descomentar cuando exista CI/CD) -->
 
@@ -27,6 +28,7 @@ de escritorio nativa en Windows, Linux y macOS.
   - [RadioMaker (motor principal)](#radiomaker-motor-principal)
   - [RMVoice (addon de locuciones)](#rmvoice-addon-de-locuciones)
   - [RMWave (addon de edición multipista)](#rmwave-addon-de-edición-multipista)
+- [Manual de usuario](RadioMaker/docs/manual-usuario.md)
 - [Arquitectura del proyecto](#-arquitectura-del-proyecto)
 - [Requisitos del sistema](#-requisitos-del-sistema)
 - [Compilación](#-compilación)
@@ -81,6 +83,22 @@ persistente.
     con shuffle) hasta que el operador la detenga.
   - Beep de alerta configurable (frecuencia, duración, cada N tracks).
 - **Log del scheduler en vivo** con contadores y niveles de severidad.
+
+#### 🔗 Encadenadores
+
+- Listas de audios que se insertan automáticamente entre las pistas de una
+  playlist o una secuencia del Scheduler.
+- Cada pestaña mantiene su propia configuración y se guarda como **`.rme`**.
+- El operador puede activar una lista (solo una puede estar activa a la vez),
+  elegir orden secuencial o aleatorio y definir cada cuántos audios insertar
+  un Encadenador.
+- El contador puede continuar entre fuentes o reiniciarse cuando cambia la
+  fuente, según la configuración elegida.
+- No interrumpen Carts ni Tandas. Se reproducen sin fades propios, respetan el
+  volumen global y heredan el bus de salida de la playlist o programación que
+  los está reproduciendo.
+- Con los fades habilitados, se acoplan a las transiciones de las pistas de la
+  playlist o del Scheduler.
 
 #### 🎛️ Procesamiento de audio
 
@@ -146,8 +164,9 @@ persistente.
   - **Programados** (`.rms`).
   - **Tandas** (`.tnd`).
   - **Playlists** (`.rmf`).
+  - **Encadenadores** (`.rme`).
   - **Carts** (`.rcb`).
-  - **Notes** (`.txt` con draft autosave).
+  - **Notas** (`.txt` con borrador autosave).
   - **Carpetas favoritas**.
 - **Restauración automática** del estado al reabrir la app.
 
@@ -289,92 +308,83 @@ reproducen como archivos comunes en RadioMaker.
 
 ---
 
-## 🏗️ Arquitectura del proyecto
+## 🏗️ Arquitectura y estructura del repositorio
 
-RadioMaker se compone de **3 soluciones independientes** que se integran entre
-sí mediante referencias de proyecto y contratos públicos.
+Los tres proyectos viven en **un único repositorio**. RadioMaker es la
+aplicación principal; RMVoice y RMWave tienen motores Core referenciados por
+RadioMaker y aplicaciones UI propias que se empaquetan como complementos.
 
-```bash
-RadioMaker/                              ← repo principal
-│
-├── src/
-│   ├── RadioMaker.Core/                 ← Motor de audio (biblioteca)
-│   │   ├── Abstractions/                (IAudioEngine, IAudioBus, IAudioChannel)
-│   │   ├── Configuration/               (persistencia de configuración)
-│   │   ├── Engine/                      (BassEngine, BassBus, BassChannel, RmwChannel)
-│   │   ├── Logging/                     (AppLogger, LogService)
-│   │   ├── Playback/                    (CartBoardPlayer, PlaylistPlayer, LocutionService)
-│   │   ├── Scheduling/                  (SchedulerService, PlaybackEngine, …)
-│   │   ├── Tags/                        (lectura/escritura de TAGs)
-│   │   └── RadioMaker.Core.csproj       (AssemblyName: RadioMaker.Core)
-│   │
-│   └── RadioMaker.UI/                   ← Aplicación de escritorio (Avalonia)
-│       ├── Configuration/
-│       ├── Controls/                    (VuMeter, SpectrumAnalyzer, etc.)
-│       ├── Services/
-│       ├── ViewModels/
-│       ├── Views/
-│       ├── Themes/
-│       └── RadioMaker.UI.csproj         (AssemblyName: RadioMaker)
-│
-├── distribution/                        ← READMEs por plataforma
-│   ├── README-WINDOWS.md
-│   ├── README-LINUX.md
-│   └── README-MAC.md
-│
-├── build-windows.ps1                    ← Script de compilación Windows
-├── build-linux.ps1                      ← Script de compilación Linux
-├── build-mac.ps1                        ← Script de compilación macOS
-├── RadioMaker.sln
-└── README.md                            ← Este archivo
+```text
+RadioMaker_2/                              ← raíz del repositorio
+├── RadioMaker/                            ← aplicación principal
+│   ├── docs/
+│   │   └── manual-usuario.md              ← manual para usuarios y Wiki
+│   ├── src/
+│   │   ├── RadioMaker.Core/
+│   │   │   ├── Abstractions/               ← interfaces de audio
+│   │   │   ├── Configuration/              ← configuración y workspace
+│   │   │   ├── Engine/                     ← motor BASS, buses y canales
+│   │   │   ├── Logging/                    ← registro de eventos
+│   │   │   ├── Playback/                   ← players y servicio de locución
+│   │   │   ├── Scheduling/                 ← Scheduler y formatos nativos
+│   │   │   │   ├── Encadenadores.cs
+│   │   │   │   ├── EncadenadoresRegistry.cs
+│   │   │   │   └── EncadenadoresStore.cs
+│   │   │   │   ├── Tags/                       ← lectura y edición de metadatos
+│   │   │   └── RadioMaker.Core.csproj
+│   │   └── RadioMaker.UI/
+│   │       ├── Configuration/
+│   │       ├── Controls/                   ← Spectrum, VU y controles UI
+│   │       ├── Services/
+│   │       ├── Themes/
+│   │       ├── ViewModels/
+│   │       │   └── EncadenadoresEditorViewModel.cs
+│   │       ├── Views/
+│   │       │   ├── EncadenadoresEditorView.axaml
+│   │       │   └── EncadenadoresEditorView.axaml.cs
+│   │       ├── runtimes/                   ← bibliotecas nativas por plataforma
+│   │       └── RadioMaker.UI.csproj
+│   ├── RadioMaker.sln
+│   └── README.md
+├── RMVoice/                                ← addon de locuciones
+│   ├── src/
+│   │   ├── RMVoice.Core/                   ← motor, audio, clima y perfiles
+│   │   └── RMVoice.UI/                     ← aplicación standalone y Assets
+│   └── RMVoice.sln
+├── RMWave/                                 ← addon de edición multipista
+│   ├── src/
+│   │   ├── RMWave.Core/                    ← timeline, mezcla y grabación
+│   │   └── RMWave.UI/                      ← editor y controles visuales
+│   └── RMWave.slnx
+├── distribution/                           ← guías por plataforma
+├── imagenes/                               ← imágenes del README y marca
+├── build-windows.ps1                       ← empaquetado Windows
+├── build-linux.ps1                         ← empaquetado Linux
+├── build-mac.ps1                           ← empaquetado macOS
+├── publish/                                ← salida generada por los scripts
+├── LICENSE
+└── README.md                               ← este archivo
 ```
-```bash
-RMVoice/                                 ← Addon de locuciones (repo hermano)
-│
-├── src/
-│   ├── RMVoice.Core/                    ← Motor de locuciones (biblioteca)
-│   │   ├── Models/                      (VoiceProfile, AudioRegion, WeatherLocation, …)
-│   │   ├── Services/                    (AudioService, WeatherService, ProfileStore, …)
-│   │   ├── Announcer.cs
-│   │   ├── AnnounceRequest.cs
-│   │   ├── AnnounceContent.cs
-│   │   ├── AnnouncerOptions.cs
-│   │   ├── IAnnouncer.cs
-│   │   └── RMVoice.Core.csproj          (AssemblyName: RMVoice.Core)
-│   │
-│   └── RMVoice.UI/                      ← Aplicación standalone (Avalonia)
-│       ├── Assets/
-│       │   ├── Clima/Hombre/            (T_*.txt, Hu_*.txt + audios)
-│       │   └── Hora/Hombre/             (H_*.txt, M_*.txt + audios)
-│       ├── Configuration/
-│       ├── Controls/
-│       ├── Models/
-│       ├── Services/
-│       ├── ViewModels/
-│       ├── Views/
-│       └── RMVoice.UI.csproj            (AssemblyName: RMVoice)
-│
-├── RMVoice.sln
-└── README.md
-```
-```bash
-RMWave/                                  ← Addon de edición multipista (repo hermano)
-│
-├── src/
-│   ├── RMWave.Core/                     ← Motor de edición y playback (biblioteca)
-│   │   ├── Audio/                       (RecordingEngine, TimelinePlayer, WaveformCache)
-│   │   ├── Models/                      (ProjectModel)
-│   │   └── RMWave.Core.csproj           (AssemblyName: RMWave.Core)
-│   │
-│   └── RMWave.UI/                       ← Aplicación standalone (Avalonia)
-│       ├── Controls/                    (AudioKnob, VuMeter, CustomChromeWindow)
-│       ├── Services/                    (RecentProjectsManager)
-│       ├── Themes/                      (ThemeManager)
-│       └── RMWave.UI.csproj             (AssemblyName: RMWave)
-│
-├── RMWave.sln
-└── README.md
-```
+
+### Organización de Encadenadores
+
+La función está separada entre el modelo y la persistencia del motor, el
+registro que garantiza que solo una lista esté activa y la interfaz de
+edición. Los archivos `.rme` guardan la lista de audio y sus opciones (orden,
+frecuencia de inserción y reinicio del contador). Las pestañas pueden estar
+en la zona izquierda o central; cada una conserva su propio archivo y
+configuración.
+
+### Formatos nativos principales
+
+| Extensión | Contenido |
+| --- | --- |
+| `.rmf` | Playlist |
+| `.rms` | Lista de Programados |
+| `.tnd` | Tanda |
+| `.rme` | Lista/configuración de Encadenadores |
+| `.rcb` | Botonera Cart |
+| `.rmw` | Proyecto multipista de RMWave |
 
 ### AssemblyNames de salida
 
@@ -393,9 +403,11 @@ RMWave/                                  ← Addon de edición multipista (repo 
 - El engine de RMVoice se usa desde `LocutionService` para disparar locuciones.
 - El engine de RMWave se usa desde `RmwChannel` para reproducir archivos
   `.rmw` como si fueran audios comunes.
-- Los addons UI (`RMVoice.exe`, `RMWave.exe`) se compilan por separado y se
-  copian a `Addons/RMVoice/` y `Addons/RMWave/` dentro del publish de
-  RadioMaker.
+- Los motores Core se incluyen como dependencias de RadioMaker. Las
+  aplicaciones UI (`RMVoice.exe`, `RMWave.exe`) se publican en
+  `Addons/RMVoice/` y `Addons/RMWave/` dentro del paquete distribuible.
+- El paquete mantiene los tres componentes juntos y agrega bibliotecas BASS
+  nativas según la plataforma de destino.
 
 ---
 
@@ -426,26 +438,24 @@ colocarlas en `RadioMaker/src/RadioMaker.UI/runtimes/{rid}/native/`.
 
 ## 🔧 Compilación
 
-### Clonar los 3 repos
+### Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/RadioMaker.git
-git clone https://github.com/tu-usuario/RMVoice.git
-git clone https://github.com/tu-usuario/RMWave.git
+git clone https://github.com/ChristianDelMonte/RadioMaker_2.git
+cd RadioMaker_2
 ```
 
-Los 3 repos deben quedar como carpetas **hermanas** en el mismo directorio
-padre:
+El repositorio incluye los tres proyectos como carpetas hermanas:
 
 ```
-tu-carpeta-de-trabajo/
+RadioMaker_2/
 ├── RadioMaker/
 ├── RMVoice/
 └── RMWave/
 ```
 
-Eso es porque `RadioMaker.Core.csproj` referencia a `..\..\..\RMVoice\src\RMVoice.Core\RMVoice.Core.csproj`
-y `..\..\..\RMWave\src\RMWave.Core\RMWave.Core.csproj`.
+Las referencias de proyecto y los scripts de empaquetado usan esta estructura;
+mantenga los tres directorios en esas ubicaciones relativas.
 
 ### Compilación rápida (una plataforma)
 
@@ -462,11 +472,9 @@ dotnet build RadioMaker/src/RadioMaker.UI/RadioMaker.UI.csproj -c Release -r osx
 
 ### Compilación distribuible (self-contained, con addons)
 
-Usar los scripts de PowerShell desde la raíz de RadioMaker:
+Ejecute los scripts de PowerShell desde la raíz del repositorio (`RadioMaker_2`):
 
 ```
-cd RadioMaker
-
 # Windows → genera RadioMaker-windows-x64.zip
 .\build-windows.ps1
 
@@ -486,7 +494,7 @@ correspondiente (self-contained).
 4. Incluye el `README-{PLATAFORMA}.md` correspondiente.
 5. Genera el `.zip` / `.tar.gz` final.
 
-**Salida**: `RadioMaker/publish/RadioMaker-{plataforma}.[zip|tar.gz]`
+**Salida**: `publish/RadioMaker-{plataforma}.[zip|tar.gz]`
 
 ---
 
@@ -510,12 +518,20 @@ para guías detalladas de instalación y troubleshooting.
 ### Uso básico
 
 1. **Configurar buses de salida**: Configuración → Buses de salida.
-2. **Cargar una playlist**: Archivo → Abrir → Playlist, o arrastrar un `.rmf`.
-3. **Programar**: Archivo → Nuevo → Programados, agregar ítems con horarios.
-4. **Ajustar procesamiento**: Configuración → EQ / Silencios / Normalización /
-Ducking / Fade.
-5. **Ver el log**: menú Ver → Log.
-6. **Exportar el log**: botón Exportar en el panel de log.
+2. **Crear o abrir contenido**: use Archivo → Nuevo/Abrir o los botones de la
+   barra de cada pestaña. También puede arrastrar archivos desde File Manager.
+3. **Programar**: cree una pestaña Programados, agregue archivos, tandas,
+   playlists o bloques, configure días y horas, y active la lista.
+4. **Configurar Encadenadores**: cree una pestaña en el panel izquierdo o
+   central, agregue audios, ajuste orden e intervalo y active la lista. El
+   ruteo se hereda de la fuente de reproducción.
+5. **Ajustar procesamiento y ruteo**: use Configuración para buses, ruteo por
+   módulo, Fade, Silencios, Normalización, Ducking y otras opciones.
+6. **Consultar registros**: use la pestaña Log del panel central inferior;
+   desde allí puede exportar los registros.
+
+Para instrucciones paso a paso de todos los módulos, consulte el
+[Manual de usuario](RadioMaker/docs/manual-usuario.md).
 
 ---
 
@@ -553,16 +569,13 @@ Ducking / Fade.
 | **ManagedBass.Flac** | 4.0.2 | MIT | Decodificador FLAC |
 | **ManagedBass.Aac** | 4.0.2 | MIT | Decodificador AAC/M4A |
 | **ManagedBass.Ac3** | 4.0.2 | MIT | Decodificador AC-3 |
-| **ManagedBass.Aix** | 4.0.2 | MIT | Decodificador AIX |
 | **ManagedBass.Alac** | 4.0.2 | MIT | Decodificador ALAC |
 | **ManagedBass.Ape** | 4.0.2 | MIT | Decodificador Monkey's Audio |
 | **ManagedBass.Dsd** | 4.0.2 | MIT | Decodificador DSD |
 | **ManagedBass.Hls** | 4.0.2 | MIT | Streaming HLS |
 | **ManagedBass.Mpc** | 4.0.2 | MIT | Decodificador Musepack |
-| **ManagedBass.Ofr** | 4.0.2 | MIT | Decodificador OptimFROG |
 | **ManagedBass.Opus** | 4.0.2 | MIT | Decodificador Opus |
 | **ManagedBass.Spx** | 4.0.2 | MIT | Decodificador Speex |
-| **ManagedBass.WA** | 4.0.2 | MIT | Decodificador WavPack |
 | **ManagedBass.Wma** | 4.0.2 | MIT | Decodificador Windows Media |
 | **ManagedBass.Wv** | 4.0.2 | MIT | Decodificador WavPack |
 ⚙
@@ -706,8 +719,9 @@ issue para discutir qué te gustaría cambiar.
 
 ### Cómo compilar y probar
 
-1. Fork de los 3 repos (RadioMaker, RMVoice, RMWave).
-2. Clonar los 3 forks como carpetas **hermanas**.
+1. Fork del repositorio `RadioMaker_2`.
+2. Clonar ese fork; RadioMaker, RMVoice y RMWave ya están organizados como
+   carpetas dentro del repositorio.
 3. Instalar .NET 8 SDK y las librerías nativas de BASS para tu plataforma.
 4. `dotnet build RadioMaker/RadioMaker.sln` (o abrir la solución en VS / Rider).
 5. Correr `build-{plataforma}.ps1` para generar un paquete distribuible.
