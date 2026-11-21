@@ -634,28 +634,6 @@ a USD 1.000.000**.
 
 ## 🗺️ Roadmap
 
-### Pendientes técnicos (bug fixes y mejoras)
-
-- □  
-**Panel "Reproduciendo" / "Siguiente" con locuciones**: cuando suena una
-locución o cuando la siguiente pista es una locución, los paneles no la
-muestran.
-- □  
-**P4 — Podar plugins BASS no usados**: revisar si `ManagedBass.Aix`,
-`ManagedBass.Ofr` y `ManagedBass.WA` están realmente referenciados, o si se
-pueden sacar del `.csproj`.
-- □  
-**P5 — EQ de RMWave**: implementar `ApplyEqToStream` con
-`BASS_FX_BFX_PEAKEQ` (cross-platform) para que el ecualizador de RMWave
-aplique al audio.
-- □  
-**P7 — Refactor estructural**: dividir archivos gigantes
-(`MainWindowViewModel`, `PlaylistPlayer`, `PlaybackEngine`,
-`MainWindow.axaml.cs`).
-- □  
-**P8 — RMCast**: decidir si se implementa, se remueve del menú, o se deja
-como placeholder.
-
 ### Features futuras
 
 - □  
