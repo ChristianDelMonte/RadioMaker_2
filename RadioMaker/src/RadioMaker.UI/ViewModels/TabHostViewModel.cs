@@ -33,6 +33,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
     private readonly FavoriteFolderRegistry? _favoriteRegistry;
     private readonly IAudioEngine? _audioEngine;
     private readonly RadioMaker.Core.Scheduling.PlaybackEngine? _playbackEngine;
+    private readonly EncadenadoresRegistry? _encadenadoresRegistry;
 
     // ── FASE B: factory y cleanup de players de playlist ─────────────────
     /// <summary>
@@ -103,7 +104,8 @@ public sealed partial class TabHostViewModel : ViewModelBase
         FavoriteFolderRegistry? favoriteRegistry = null,
         IAudioEngine? audioEngine = null,
         SchedulerPanelViewModel? schedulerPanel = null,
-        RadioMaker.Core.Scheduling.PlaybackEngine? playbackEngine = null)
+        RadioMaker.Core.Scheduling.PlaybackEngine? playbackEngine = null,
+        EncadenadoresRegistry? encadenadoresRegistry = null)
     {
         Zone = zone;
         _registry = registry;
@@ -113,6 +115,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
         _favoriteRegistry = favoriteRegistry;
         _audioEngine = audioEngine;
         _playbackEngine = playbackEngine;
+        _encadenadoresRegistry = encadenadoresRegistry;
 
         if (_favoriteRegistry is not null)
         {
@@ -291,6 +294,28 @@ public sealed partial class TabHostViewModel : ViewModelBase
         return tab;
     }
 
+    private TabItemViewModel CreateEncadenadoresTab(EncadenadoresEditorViewModel vm)
+    {
+        var tab = new TabItemViewModel(
+            title: vm.TitleWithDirty,
+            kind: TabKind.Encadenadores,
+            isClosable: true,
+            content: vm,
+            onCloseRequested: t => CloseTab(t));
+
+        vm.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(EncadenadoresEditorViewModel.Name) ||
+                e.PropertyName == nameof(EncadenadoresEditorViewModel.IsDirty))
+                tab.Title = vm.TitleWithDirty;
+            if (e.PropertyName == nameof(EncadenadoresEditorViewModel.IsActive))
+                TabsChanged?.Invoke(this, EventArgs.Empty);
+        };
+
+        tab.TitleCommitted += (_, newTitle) => vm.Name = newTitle;
+        return tab;
+    }
+
     private TabItemViewModel CreateNotesTab(NotesEditorViewModel vm)
     {
         var tab = new TabItemViewModel(
@@ -423,6 +448,18 @@ public sealed partial class TabHostViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    public void AddEncadenadoresTab()
+    {
+        if (Zone == TabZone.Right || _encadenadoresRegistry is null) return;
+        var vm = new EncadenadoresEditorViewModel(_encadenadoresRegistry);
+        var tab = CreateEncadenadoresTab(vm);
+        Tabs.Add(tab);
+        SelectedTab = tab;
+        TabsChanged?.Invoke(this, EventArgs.Empty);
+        SaveWorkspace();
+    }
+
+    [RelayCommand]
     public void AddNotesTab()
     {
         var draftId = Guid.NewGuid().ToString("N");
@@ -523,6 +560,11 @@ public sealed partial class TabHostViewModel : ViewModelBase
         if (tab.Content is NotesEditorViewModel notesVm)
         {
             try { notesVm.Dispose(); } catch { }
+        }
+
+        if (tab.Content is EncadenadoresEditorViewModel encadenadoresVm)
+        {
+            try { encadenadoresVm.Dispose(); } catch { }
         }
 
         // ── FASE B: liberar el player de playlist ───────────────────────
@@ -647,6 +689,10 @@ public sealed partial class TabHostViewModel : ViewModelBase
                     playlist.AddTrackFromFile(filePath);
                     return true;
 
+                case EncadenadoresEditorViewModel encadenadores:
+                    encadenadores.AddFile(filePath);
+                    return true;
+
                 case ScheduledListViewModel scheduled:
                     scheduled.AddFileAsItem(filePath);
                     return true;
@@ -714,6 +760,16 @@ public sealed partial class TabHostViewModel : ViewModelBase
                     {
                         entry.FilePath = pVm.LoadedFilePath ?? string.Empty;
                         entry.Title = pVm.PlaylistName ?? string.Empty;
+                    }
+                    break;
+
+                case TabKind.Encadenadores:
+                    entry.Kind = WorkspaceTabKind.Encadenadores;
+                    if (tab.Content is EncadenadoresEditorViewModel eVm)
+                    {
+                        entry.FilePath = eVm.LoadedFilePath ?? string.Empty;
+                        entry.Title = eVm.Name ?? string.Empty;
+                        entry.IsActive = eVm.IsActive;
                     }
                     break;
 
@@ -865,6 +921,24 @@ public sealed partial class TabHostViewModel : ViewModelBase
                         }
 
                         var tab = CreatePlaylistTab(vm);
+                        Tabs.Add(tab);
+                        createdTab = tab;
+                        return true;
+                    }
+
+                case WorkspaceTabKind.Encadenadores:
+                    {
+                        if (Zone == TabZone.Right || _encadenadoresRegistry is null) return false;
+                        var vm = new EncadenadoresEditorViewModel(_encadenadoresRegistry);
+                        if (!string.IsNullOrEmpty(entry.FilePath) && File.Exists(entry.FilePath))
+                            vm.LoadFromFile(entry.FilePath);
+                        if (!string.IsNullOrWhiteSpace(entry.Title) && string.IsNullOrEmpty(vm.LoadedFilePath))
+                        {
+                            vm.Name = entry.Title;
+                            vm.IsDirty = false;
+                        }
+                        if (entry.IsActive) vm.SetActive(true);
+                        var tab = CreateEncadenadoresTab(vm);
                         Tabs.Add(tab);
                         createdTab = tab;
                         return true;
@@ -1026,6 +1100,23 @@ public sealed partial class TabHostViewModel : ViewModelBase
                         if (!vm.LoadFromFile(path)) return false;
 
                         var tab = CreatePlaylistTab(vm);
+                        Tabs.Add(tab);
+                        SelectedTab = tab;
+                        TabsChanged?.Invoke(this, EventArgs.Empty);
+                        SaveWorkspace();
+                        return true;
+                    }
+
+                case ".rme":
+                    {
+                        if (Zone == TabZone.Right || _encadenadoresRegistry is null) return false;
+                        var vm = new EncadenadoresEditorViewModel(_encadenadoresRegistry);
+                        if (!vm.LoadFromFile(path))
+                        {
+                            vm.Dispose();
+                            return false;
+                        }
+                        var tab = CreateEncadenadoresTab(vm);
                         Tabs.Add(tab);
                         SelectedTab = tab;
                         TabsChanged?.Invoke(this, EventArgs.Empty);

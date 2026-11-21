@@ -1,6 +1,8 @@
 using RMVoice.Core;
 using RMVoice.Core.Models;
 using RadioMaker.Core.Logging;
+using RadioMaker.Core.Abstractions;
+using RadioMaker.Core.Engine;
 
 namespace RadioMaker.Core.Playback;
 
@@ -27,6 +29,9 @@ public sealed class LocutionService : IDisposable
     private IAnnouncer? _announcer;
     private bool _available;
     private bool _disposed;
+    private int _monitorHandle;
+    private BassLevelMeter? _monitorMeter;
+    private BassSpectrum? _monitorSpectrum;
 
     public LocutionService() { }
 
@@ -45,6 +50,27 @@ public sealed class LocutionService : IDisposable
         get
         {
             lock (_gate) return _announcer?.IsPlaying == true;
+        }
+    }
+
+    public IAudioLevelMeter? CurrentMeter => GetCurrentMonitor().Meter;
+    public IAudioSpectrum? CurrentSpectrum => GetCurrentMonitor().Spectrum;
+
+    private (IAudioLevelMeter? Meter, IAudioSpectrum? Spectrum) GetCurrentMonitor()
+    {
+        lock (_gate)
+        {
+            var handle = _announcer?.CurrentStreamHandle ?? 0;
+            if (_disposed || handle == 0) return (null, null);
+
+            if (_monitorHandle != handle)
+            {
+                _monitorHandle = handle;
+                _monitorMeter = new BassLevelMeter(handle);
+                _monitorSpectrum = new BassSpectrum(handle);
+            }
+
+            return (_monitorMeter, _monitorSpectrum);
         }
     }
 
@@ -228,6 +254,9 @@ public sealed class LocutionService : IDisposable
             try { _announcer?.Dispose(); } catch { }
             _announcer = null;
             _available = false;
+            _monitorHandle = 0;
+            _monitorMeter = null;
+            _monitorSpectrum = null;
         }
     }
 }

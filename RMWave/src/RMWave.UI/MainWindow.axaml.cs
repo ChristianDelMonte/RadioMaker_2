@@ -314,18 +314,21 @@ public partial class MainWindow : Controls.CustomChromeWindow
     // ==========================================
     private void UpdateWindowTitle()
     {
-        var projectName = _engine.Project.Name;
         var baseTitle = "RadioMaker Wave Editor Addon";
 
-        if (!string.IsNullOrWhiteSpace(projectName))
-            Title = $"{baseTitle} - {projectName}";
-        else if (_currentProjectPath != null)
-            Title = $"{baseTitle} - {System.IO.Path.GetFileNameWithoutExtension(_currentProjectPath)}";
-        else
-            Title = baseTitle;
+        var fileName = string.IsNullOrWhiteSpace(_currentProjectPath)
+            ? "documento sin nombre.rmw"
+            : System.IO.Path.GetFileName(_currentProjectPath);
+        Title = $"{baseTitle} - {fileName}";
 
         if (_hasUnsavedChanges)
             Title += " *";
+
+        // La ventana usa una barra de título propia: mantenerla sincronizada
+        // con el título nativo al abrir, guardar, crear y editar proyectos.
+        var titleText = this.FindControl<TextBlock>("WindowTitleText");
+        if (titleText is not null)
+            titleText.Text = Title;
     }
 
     // ==========================================

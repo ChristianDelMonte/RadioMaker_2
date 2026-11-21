@@ -310,6 +310,7 @@ public partial class TabHost : UserControl
         if (string.IsNullOrEmpty(ext)) return false;
 
         return ext.Equals(".rmf", StringComparison.OrdinalIgnoreCase)
+            || ext.Equals(".rme", StringComparison.OrdinalIgnoreCase)
             || ext.Equals(".tnd", StringComparison.OrdinalIgnoreCase)
             || ext.Equals(".rms", StringComparison.OrdinalIgnoreCase)
             || ext.Equals(".rcb", StringComparison.OrdinalIgnoreCase);

@@ -37,6 +37,7 @@ public sealed class PlaylistPlayer : IDisposable
     private readonly Action<Action> _dispatch;
     private readonly LocutionService? _locution;
     private readonly BusExclusivityCoordinator? _coordinator;
+    private readonly EncadenadoresRegistry? _encadenadores;
     private readonly string _instanceId = Guid.NewGuid().ToString("N");
     private string _acquiredBusId = string.Empty;
 
@@ -110,6 +111,10 @@ public sealed class PlaylistPlayer : IDisposable
     private IAudioChannel? _mixChannel;
     private System.Threading.Timer? _mixTimer;
     private double _mixOriginalNormGainDb;
+    private IAudioChannel? _encadenadorChannel;
+    private readonly HashSet<IAudioChannel> _encadenadorTails = new();
+    private int _encadenadorNextIndex = -1;
+    private bool _encadenadorNextStarted;
 
     // ───── Timer de progreso ─────────────────────────────────────────────
 
@@ -133,12 +138,14 @@ public sealed class PlaylistPlayer : IDisposable
         IAudioEngine audioEngine,
         Action<Action> dispatch,
         LocutionService? locution = null,
-        BusExclusivityCoordinator? coordinator = null)
+        BusExclusivityCoordinator? coordinator = null,
+        EncadenadoresRegistry? encadenadores = null)
     {
         _audioEngine = audioEngine ?? throw new ArgumentNullException(nameof(audioEngine));
         _dispatch = dispatch ?? throw new ArgumentNullException(nameof(dispatch));
         _locution = locution;
         _coordinator = coordinator;
+        _encadenadores = encadenadores;
 
         if (_coordinator is not null)
         {
@@ -192,6 +199,31 @@ public sealed class PlaylistPlayer : IDisposable
     /// <summary>Ruta del archivo que esta reproduciendo ahora (o vacio).</summary>
     public string CurrentFilePath { get; private set; } = string.Empty;
 
+    public bool IsEncadenadorPlaying
+    {
+        get { lock (_gate) return _encadenadorChannel is not null; }
+    }
+
+    public (string Title, string FilePath)? GetUpcomingEncadenadorInfo()
+    {
+        lock (_gate)
+        {
+            if (_encadenadorChannel is not null || _playlist is null || _currentChannel is null)
+                return null;
+            var next = PeekNextIndex();
+            if (next < 0 || next >= _playlist.Tracks.Count) return null;
+            var track = _playlist.Tracks[next];
+            if (!track.IsEnabled || track.ItemKind != PlaylistItemKind.Audio ||
+                string.IsNullOrWhiteSpace(track.FilePath) || !File.Exists(track.FilePath))
+                return null;
+            if (_encadenadores is null ||
+                !_encadenadores.TryPeekAfterAudio($"playlist:{_playlist.Id}", out var chain) ||
+                chain is null)
+                return null;
+            return (chain.DisplayTitle, chain.FilePath);
+        }
+    }
+
     /// <summary>
     /// Reaplica la configuracion al canal actual (EQ / Trim / Normalizacion).
     /// Se usa desde la UI cuando termina un analisis en background para el
@@ -199,6 +231,7 @@ public sealed class PlaylistPlayer : IDisposable
     /// </summary>
     public void ReapplyCurrentChannelConfig()
     {
+        if (IsEncadenadorPlaying) return;
         var ch = _currentChannel;
         var path = CurrentFilePath;
 
@@ -226,7 +259,7 @@ public sealed class PlaylistPlayer : IDisposable
 
         lock (_gate)
         {
-            if (_currentChannel is not null)
+            if (_currentChannel is not null && !ReferenceEquals(_currentChannel, _encadenadorChannel))
                 list.Add(_currentChannel);
 
             if (_mixChannel is not null)
@@ -351,6 +384,9 @@ public sealed class PlaylistPlayer : IDisposable
                 }
                 catch { }
 
+                foreach (var tail in _encadenadorTails)
+                    try { tail.Pause(); } catch { }
+
                 // Liberar el bus para que otro módulo pueda tomarlo.
                 ReleaseBusInternal();
 
@@ -386,6 +422,9 @@ public sealed class PlaylistPlayer : IDisposable
 
                 try { _currentChannel.Play(); }
                 catch { }
+
+                foreach (var tail in _encadenadorTails)
+                    try { tail.Play(); } catch { }
 
                 RaiseState(BuildState(PlaylistPlayerStatus.Playing));
                 StartProgressTimer();
@@ -453,7 +492,7 @@ public sealed class PlaylistPlayer : IDisposable
 
     // ───── Reproduccion de pistas ────────────────────────────────────────
 
-    private void PlayTrackInternal(int index)
+    private void PlayTrackInternal(int index, bool preserveEncadenadores = false)
     {
         if (_playlist is null) return;
 
@@ -507,7 +546,7 @@ public sealed class PlaylistPlayer : IDisposable
         StopProgressTimer();
         StopMixTimer();
         StopMixChannel();
-        StopCurrentChannelInternal(keepPlaylist: true);
+        StopCurrentChannelInternal(keepPlaylist: true, preserveEncadenadores: preserveEncadenadores);
 
         var bus = _targetBus ?? _audioEngine.PrimaryBus;
 
@@ -794,6 +833,9 @@ public sealed class PlaylistPlayer : IDisposable
                 var currentCh = _currentChannel;
                 if (currentCh is null) return;
 
+                if (TryStartEncadenador(nextIndex, currentCh))
+                    return;
+
                 _isCrossfading = true;
 
                 try
@@ -890,6 +932,166 @@ public sealed class PlaylistPlayer : IDisposable
         });
     }
 
+    private bool TryStartEncadenador(int nextIndex, IAudioChannel? oldChannel)
+    {
+        if (_encadenadores is null || _playlist is null || _encadenadorChannel is not null)
+            return false;
+        if (nextIndex < 0 || nextIndex >= _playlist.Tracks.Count) return false;
+
+        var nextTrack = _playlist.Tracks[nextIndex];
+        if (!nextTrack.IsEnabled || nextTrack.ItemKind != PlaylistItemKind.Audio ||
+            string.IsNullOrWhiteSpace(nextTrack.FilePath) || !File.Exists(nextTrack.FilePath))
+            return false;
+
+        if (!_encadenadores.TryTakeAfterAudio($"playlist:{_playlist.Id}", out var encadenador) || encadenador is null)
+            return false;
+
+        IAudioChannel chainChannel;
+        try
+        {
+            var bus = _targetBus ?? _audioEngine.PrimaryBus;
+            chainChannel = bus.LoadFile(encadenador.FilePath);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warning("ENCADENADORES", $"No se pudo cargar '{encadenador.FilePath}': {ex.Message}");
+            return false;
+        }
+
+        var fadeMs = (int)Math.Max(0, _crossfadeSeconds * 1000);
+        _encadenadorChannel = chainChannel;
+        _encadenadorNextIndex = nextIndex;
+        _encadenadorNextStarted = false;
+        _currentChannel = chainChannel;
+        CurrentFilePath = encadenador.FilePath;
+        chainChannel.Ended += OnEncadenadorChannelEnded;
+
+        if (_crossfadeSeconds > 0.05 && chainChannel.Duration.TotalSeconds > _crossfadeSeconds)
+        {
+            chainChannel.SetCrossfade(_crossfadeSeconds);
+            chainChannel.NearEnd += OnEncadenadorNearEnd;
+        }
+
+        try
+        {
+            chainChannel.Play(); // audio en crudo: sin configurador, trim ni ganancia de pista
+            if (oldChannel is not null)
+            {
+                try
+                {
+                    oldChannel.NearEnd -= OnChannelNearEnd;
+                    oldChannel.Ended -= OnChannelEnded;
+                    if (fadeMs > 0) oldChannel.FadeOut(fadeMs);
+                    else oldChannel.Stop();
+                    _ = DisposeOldChannelAsync(oldChannel, fadeMs);
+                }
+                catch { try { oldChannel.Dispose(); } catch { } }
+            }
+            RaiseState(BuildState(PlaylistPlayerStatus.Playing));
+            StartProgressTimer();
+            AppLogger.Info("ENCADENADORES",
+                $"Reproduciendo '{encadenador.DisplayTitle}' entre pistas de '{_playlist.Name}'.");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warning("ENCADENADORES", $"Error reproduciendo '{encadenador.FilePath}': {ex.Message}");
+            StopEncadenadorChannels();
+            return false;
+        }
+    }
+
+    private void OnEncadenadorNearEnd(object? sender, EventArgs e)
+    {
+        _dispatch(() =>
+        {
+            lock (_gate)
+            {
+                if (_disposed || !ReferenceEquals(sender, _encadenadorChannel) || _encadenadorNextStarted)
+                    return;
+                StartNextTrackDuringEncadenador();
+            }
+        });
+    }
+
+    private void OnEncadenadorChannelEnded(object? sender, ChannelEndedEventArgs e)
+    {
+        _dispatch(() =>
+        {
+            lock (_gate)
+            {
+                if (sender is not IAudioChannel channel) return;
+                if (!ReferenceEquals(channel, _encadenadorChannel))
+                {
+                    _encadenadorTails.Remove(channel);
+                    try { channel.Ended -= OnEncadenadorChannelEnded; channel.Dispose(); } catch { }
+                    return;
+                }
+
+                channel.Ended -= OnEncadenadorChannelEnded;
+                channel.NearEnd -= OnEncadenadorNearEnd;
+                _encadenadorChannel = null;
+                if (ReferenceEquals(_currentChannel, channel)) _currentChannel = null;
+                try { channel.Dispose(); } catch { }
+
+                if (!_encadenadorNextStarted)
+                    StartNextTrackDuringEncadenador();
+            }
+        });
+    }
+
+    private void StartNextTrackDuringEncadenador()
+    {
+        if (_encadenadorNextStarted) return;
+        _encadenadorNextStarted = true;
+        var nextIndex = _encadenadorNextIndex;
+        _encadenadorNextIndex = -1;
+
+        if (nextIndex < 0 || _playlist is null)
+        {
+            Stop();
+            return;
+        }
+
+        var chainChannel = _encadenadorChannel;
+        if (chainChannel is not null)
+        {
+            chainChannel.NearEnd -= OnEncadenadorNearEnd;
+            chainChannel.Ended -= OnEncadenadorChannelEnded;
+            chainChannel.Ended += OnEncadenadorChannelEnded;
+            _encadenadorTails.Add(chainChannel);
+            _encadenadorChannel = null;
+        }
+
+        if (ReferenceEquals(_currentChannel, chainChannel)) _currentChannel = null;
+        _isCrossfading = false;
+        PlayTrackInternal(nextIndex, preserveEncadenadores: true);
+    }
+
+    private void StopEncadenadorChannels()
+    {
+        if (_encadenadorChannel is not null)
+        {
+            try
+            {
+                _encadenadorChannel.Ended -= OnEncadenadorChannelEnded;
+                _encadenadorChannel.NearEnd -= OnEncadenadorNearEnd;
+                _encadenadorChannel.Stop();
+                _encadenadorChannel.Dispose();
+            }
+            catch { }
+            _encadenadorChannel = null;
+        }
+
+        foreach (var channel in _encadenadorTails.ToArray())
+        {
+            try { channel.Ended -= OnEncadenadorChannelEnded; channel.Stop(); channel.Dispose(); } catch { }
+        }
+        _encadenadorTails.Clear();
+        _encadenadorNextIndex = -1;
+        _encadenadorNextStarted = false;
+    }
+
     private async Task DisposeOldChannelAsync(IAudioChannel oldChannel, int fadeMs)
     {
         try
@@ -941,6 +1143,10 @@ public sealed class PlaylistPlayer : IDisposable
                 TrackEnded?.Invoke(this, endedIndex);
                 TrackCompleted?.Invoke(this, endedIndex);
 
+                var nextIndex = GetNextIndex();
+                if (nextIndex >= 0 && TryStartEncadenador(nextIndex, oldChannel: null))
+                    return;
+
                 AdvanceToNext(auto: true);
             }
         });
@@ -980,6 +1186,16 @@ public sealed class PlaylistPlayer : IDisposable
             Stop();
             return;
         }
+
+        // El salto manual mantiene la misma inserción de encadenadores que
+        // el avance natural: si el siguiente elemento es un audio y el
+        // contador indica que toca insertar, se reproduce el encadenador
+        // antes de abrir ese audio.
+        if (!auto && _currentTrack?.ItemKind == PlaylistItemKind.Audio &&
+            next < _playlist.Tracks.Count &&
+            _playlist.Tracks[next].ItemKind == PlaylistItemKind.Audio &&
+            TryStartEncadenador(next, _currentChannel))
+            return;
 
         PlayTrackInternal(next);
     }
@@ -1173,7 +1389,7 @@ public sealed class PlaylistPlayer : IDisposable
 
     // ───── Helpers ───────────────────────────────────────────────────────
 
-    private void StopCurrentChannelInternal(bool keepPlaylist = false)
+    private void StopCurrentChannelInternal(bool keepPlaylist = false, bool preserveEncadenadores = false)
     {
         _isPausedByCoordinator = false;
         _advanceOnResume = false;
@@ -1183,6 +1399,7 @@ public sealed class PlaylistPlayer : IDisposable
         StopMixTimer();
         CancelMixLocution();
         StopMixChannel();
+        if (!preserveEncadenadores) StopEncadenadorChannels();
         _mixOriginalNormGainDb = 0;
 
         if (_currentChannel is not null)

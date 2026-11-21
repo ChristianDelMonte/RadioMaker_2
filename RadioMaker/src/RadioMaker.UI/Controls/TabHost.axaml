@@ -204,6 +204,16 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
+                                <MenuItem Header="Nueva pestaña Encadenadores"
+                                          IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
+                                          Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddEncadenadoresTabCommand}">
+                                    <MenuItem.Icon>
+                                        <materialIcons:MaterialIcon Kind="LinkVariant"
+                                                                    Width="14" Height="14"
+                                                                    Foreground="{DynamicResource AccentText}" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
                                 <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}" />
 
                                 <MenuItem Header="Nueva Nota"

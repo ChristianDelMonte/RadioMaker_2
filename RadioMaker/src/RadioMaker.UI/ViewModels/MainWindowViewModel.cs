@@ -34,6 +34,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     private readonly PlaylistPlayer _playlistPlayer;
     private readonly CartBoardPlayer _cartPlayer;
     private readonly BusExclusivityCoordinator _coordinator;
+    private readonly EncadenadoresRegistry _encadenadoresRegistry = new();
     private readonly EmergencyWatchdogService _emergency;
     private readonly EmergencySettings _emergencySettings;
 
@@ -41,6 +42,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     private RadioMaker.UI.Demo.DemoService? _demoService;
 
     public BusExclusivityCoordinator Coordinator => _coordinator;
+    public EncadenadoresRegistry Encadenadores => _encadenadoresRegistry;
 
     /// <summary>
     /// Motor de audio compartido. Expuesto publicamente para evitar
@@ -174,6 +176,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// Se actualiza desde RefreshNowPlayingPanel.
     /// </summary>
     [ObservableProperty] private IAudioChannel? _nowPlayingChannel;
+
+    /// <summary>Espectro mostrado en el mini visualizador, incluso para locuciones RMVoice.</summary>
+    public IAudioSpectrum? NowPlayingSpectrum =>
+        (_locution.IsPlaying ? _locution.CurrentSpectrum : null) ?? NowPlayingChannel?.Spectrum;
 
     /// <summary>
     /// True si el panel "En reproduccion" tiene contenido (hay algo sonando
@@ -654,7 +660,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _scheduler,
             action => Dispatcher.UIThread.Post(action),
             _coordinator,
-            _locution);
+            _locution,
+            _encadenadoresRegistry);
 
         _playback.ConfigureChannel = (channel, filePath, logDetails) =>
             _configurator.ConfigureChannel(channel, filePath, "SCHEDULER", logDetails);
@@ -707,6 +714,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _locution,
             _locutionSettings,
             getActiveChannels: GetAllActiveChannels);
+        LocutionPanel.PropertyChanged += OnLocutionPanelPropertyChanged;
         LocutionPanel.OpenSettingsRequested += (_, _) => OpenSettingsFromPanel();
         LocutionPanel.OpenRMVoiceRequested += (_, _) => LaunchRMVoiceUI();
 
@@ -724,7 +732,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _engine,
             action => Dispatcher.UIThread.Post(action),
             _locution,
-            _coordinator);
+            _coordinator,
+            _encadenadoresRegistry);
 
         _playlistPlayer.ConfigureChannel = (channel, filePath, logDetails) =>
             _configurator.ConfigureChannel(channel, filePath, "PLAYLIST", logDetails);
@@ -863,7 +872,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             BusSelectorScheduler,
             BusSelectorPlaylist,
             schedulerPanel: Scheduler,
-            playbackEngine: _playback)
+            playbackEngine: _playback,
+            encadenadoresRegistry: _encadenadoresRegistry)
         {
             CartBoardFactory = cartFactory,
             CartBoardDisposer = DisposeExtraCartBoard,
@@ -881,7 +891,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             BusSelectorScheduler,
             BusSelectorPlaylist,
             fixedPanel: CartBoard,
-            playbackEngine: _playback)
+            playbackEngine: _playback,
+            encadenadoresRegistry: _encadenadoresRegistry)
         {
             CartBoardFactory = cartFactory,
             CartBoardDisposer = DisposeExtraCartBoard,
@@ -1154,6 +1165,30 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 // Reasignar el spectrum al canal que corresponda (o null).
                 try { UpdateSpectrumChannel(); } catch { }
             }
+        });
+    }
+
+    private void OnLocutionPanelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(LocutionPanelViewModel.IsPlaying)) return;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (LocutionPanel.IsPlaying)
+            {
+                if (!_positionTimer.IsEnabled) _positionTimer.Start();
+                if (!_meterTimer.IsEnabled) _meterTimer.Start();
+            }
+            else if (_currentChannel is null && _playback.CurrentChannel is null &&
+                     !_currentPlaybackInfo.IsActive &&
+                     !AnyPlaylistPlayerPlaying() && !AnyCartPlaying())
+            {
+                _positionTimer.Stop();
+                _meterTimer.Stop();
+                ResetMeter();
+            }
+
+            try { UpdateSpectrumChannel(); } catch { }
         });
     }
 
@@ -1566,6 +1601,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     _logService.Info("FileBrowser", $"Agregado a playlist: {file.FileName}");
                     break;
 
+                case EncadenadoresEditorViewModel encadenadores:
+                    encadenadores.AddFile(file.FullPath);
+                    StatusMessage = $"Agregado a Encadenadores: {file.FileName}";
+                    break;
+
                 case ScheduledListViewModel scheduled:
                     scheduled.AddFileAsItem(file.FullPath);
                     StatusMessage = $"Agregado a Programados: {file.FileName}";
@@ -1667,7 +1707,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _engine,
             action => Dispatcher.UIThread.Post(action),
             _locution,
-            _coordinator);
+            _coordinator,
+            _encadenadoresRegistry);
 
         player.ConfigureChannel = (channel, filePath, logDetails) =>
             _configurator.ConfigureChannel(channel, filePath, "PLAYLIST", logDetails);
@@ -2198,6 +2239,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         // 4) Panel "En reproduccion".
         RefreshNowPlayingPanel();
+        OnPropertyChanged(nameof(NowPlayingSpectrum));
 
         // 5) Panel "Siguiente".
         RefreshNextPlayingPanel();
@@ -2262,7 +2304,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                         var tags = GetTagsCached(_playback.CurrentFilePath);
                         secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
                             ? tags!.Performers
-                            : $"Tanda: {info.TandaNameText}";
+                            : (_playback.IsEncadenadorPlaying
+                                ? "Encadenador"
+                                : $"Tanda: {info.TandaNameText}");
                     }
                     else
                     {
@@ -2272,7 +2316,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
                     NowPlayingTitle = title;
                     NowPlayingArtist = secondary;
-                    NowPlayingPosition = info.TandaProgressText;
+                    NowPlayingPosition = _playback.IsEncadenadorPlaying
+                        ? "Encadenador"
+                        : info.TandaProgressText;
                     NowPlayingChannel = schedChannel;
                     IsNowPlayingActive = true;
                     return;
@@ -2287,10 +2333,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     NowPlayingTitle = ResolveDisplayTitle(tags, SafeFileName(path));
                     NowPlayingArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
                         ? tags!.Performers
-                        : (!string.IsNullOrWhiteSpace(info.SourceListName)
+                        : (_playback.IsEncadenadorPlaying
+                            ? "Encadenador"
+                            : !string.IsNullOrWhiteSpace(info.SourceListName)
                             ? $"Programado: {info.SourceListName}"
                             : "Programado");
-                    NowPlayingPosition = string.Empty;
+                    NowPlayingPosition = _playback.IsEncadenadorPlaying ? "Encadenador" : string.Empty;
                     NowPlayingChannel = schedChannel;
                     IsNowPlayingActive = true;
                     return;
@@ -2330,14 +2378,18 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                         title = ResolveDisplayTitle(tags, SafeFileName(path));
                         secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
                             ? tags!.Performers
-                            : (playlist?.DisplayName ?? "Playlist");
+                            : (activePl.IsEncadenadorPlaying
+                                ? "Encadenador"
+                                : playlist?.DisplayName ?? "Playlist");
                     }
 
                     NowPlayingTitle = title;
                     NowPlayingArtist = secondary;
-                    NowPlayingPosition = (playlist is not null && idx >= 0)
-                        ? $"Pista {idx + 1} de {playlist.Tracks.Count}"
-                        : string.Empty;
+                    NowPlayingPosition = activePl.IsEncadenadorPlaying
+                        ? "Encadenador"
+                        : (playlist is not null && idx >= 0)
+                            ? $"Pista {idx + 1} de {playlist.Tracks.Count}"
+                            : string.Empty;
                     NowPlayingChannel = plChannel;
                     IsNowPlayingActive = true;
                     return;
@@ -2401,6 +2453,20 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
             if (schedulerIsPlaying)
             {
+                var nextEncadenador = _playback.GetUpcomingEncadenadorInfo();
+                if (nextEncadenador is not null)
+                {
+                    var chain = nextEncadenador.Value;
+                    var tags = GetTagsCached(chain.FilePath);
+                    NextTitle = ResolveDisplayTitle(tags, chain.Title);
+                    NextArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
+                        ? tags!.Performers
+                        : "Encadenador";
+                    NextPosition = string.Empty;
+                    IsNextPlayingActive = true;
+                    return;
+                }
+
                 var nextTanda = _playback.GetNextTandaTrackInfo();
                 if (nextTanda is not null)
                 {
@@ -2465,6 +2531,20 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
             // 3) Próxima pista de la playlist activa.
             var activePl = GetActivePlaylistPlayer();
+            var nextPlaylistEncadenador = activePl?.GetUpcomingEncadenadorInfo();
+            if (nextPlaylistEncadenador is not null)
+            {
+                var chain = nextPlaylistEncadenador.Value;
+                var tags = GetTagsCached(chain.FilePath);
+                NextTitle = ResolveDisplayTitle(tags, chain.Title);
+                NextArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
+                    ? tags!.Performers
+                    : "Encadenador";
+                NextPosition = string.Empty;
+                IsNextPlayingActive = true;
+                return;
+            }
+
             var upcoming = activePl?.GetUpcomingTrackInfo();
             if (upcoming is not null)
             {
@@ -2653,6 +2733,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void UpdateSpectrumChannel()
     {
+        if (_locution.IsPlaying && _locution.CurrentSpectrum is { } locutionSpectrum)
+        {
+            Spectrum.SetSpectrumSource(locutionSpectrum, "LOCUCIÓN", "Hora / clima");
+            return;
+        }
+
         IAudioChannel? active = null;
         string source = string.Empty;
 
@@ -2713,20 +2799,18 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             }
         }
 
-        // Solo actualizar si cambio.
-        if (ReferenceEquals(active, _lastSpectrumChannel)) return;
-
-        _lastSpectrumChannel = active;
         Spectrum.SetChannel(active, source);
     }
 
     private void RefreshMeter()
     {
+        var locutionMeter = _locution.IsPlaying ? _locution.CurrentMeter : null;
         var ch = ActiveChannel;
-        if (ch is null) return;
+        var meter = locutionMeter ?? ch?.Meter;
+        if (meter is null) return;
 
         AudioLevels levels;
-        try { levels = ch.Meter.Read(); }
+        try { levels = meter.Read(); }
         catch { _meterTimer.Stop(); return; }
 
         VuLeftLevel = levels.LeftPeak;
@@ -2864,7 +2948,6 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     }
 
     private PlaybackStateKind _lastPlaybackEngineKind = PlaybackStateKind.Idle;
-    private IAudioChannel? _lastSpectrumChannel;
 
     /// <summary>
     /// True si hay algo reproduciendo en el bus del Scheduler (el "aire").

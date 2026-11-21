@@ -17,6 +17,7 @@ namespace RadioMaker.UI.ViewModels;
 public sealed partial class SpectrumPanelViewModel : ViewModelBase
 {
     private IAudioChannel? _channel;
+    private IAudioSpectrum? _spectrumSource;
 
     // ───── Estado ────────────────────────────────────────────────────────
 
@@ -27,7 +28,8 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
     // ───── Propiedades derivadas ─────────────────────────────────────────
 
     public IAudioChannel? Channel => _channel;
-    public bool HasChannel => _channel is not null;
+    public IAudioSpectrum? SpectrumSource => _spectrumSource ?? _channel?.Spectrum;
+    public bool HasChannel => SpectrumSource is not null;
 
     public string SourceText { get; private set; } = string.Empty;
 
@@ -57,16 +59,18 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
     /// </summary>
     public void SetChannel(IAudioChannel? channel, string sourceLabel = "")
     {
-        if (ReferenceEquals(_channel, channel) &&
+        if (ReferenceEquals(_channel, channel) && _spectrumSource is null &&
             string.Equals(SourceText, sourceLabel, StringComparison.Ordinal))
         {
             return;
         }
 
         _channel = channel;
+        _spectrumSource = null;
         SourceText = sourceLabel ?? string.Empty;
 
         OnPropertyChanged(nameof(Channel));
+        OnPropertyChanged(nameof(SpectrumSource));
         OnPropertyChanged(nameof(HasChannel));
         OnPropertyChanged(nameof(SourceText));
 
@@ -84,6 +88,24 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
                 ? $"Monitoreando: {file}"
                 : $"[{SourceText}] {file}";
         }
+    }
+
+    public void SetSpectrumSource(IAudioSpectrum? spectrum, string sourceLabel, string displayName)
+    {
+        if (_channel is null && ReferenceEquals(_spectrumSource, spectrum) &&
+            string.Equals(SourceText, sourceLabel, StringComparison.Ordinal))
+            return;
+
+        _channel = null;
+        _spectrumSource = spectrum;
+        SourceText = sourceLabel ?? string.Empty;
+        OnPropertyChanged(nameof(Channel));
+        OnPropertyChanged(nameof(SpectrumSource));
+        OnPropertyChanged(nameof(HasChannel));
+        OnPropertyChanged(nameof(SourceText));
+        StatusMessage = spectrum is null
+            ? "Sin canal activo."
+            : $"[{SourceText}] {displayName}";
     }
 
     // ───── Comandos ──────────────────────────────────────────────────────

@@ -92,6 +92,7 @@
 
                     <controls:MiniWaveform Grid.Column="1"
                                            Channel="{Binding NowPlayingChannel}"
+                                           Spectrum="{Binding NowPlayingSpectrum}"
                                            Width="110" Height="56"
                                            VerticalAlignment="Center" />
                 </Grid>

@@ -25,6 +25,9 @@ public sealed class MiniWaveform : Control
     public static readonly StyledProperty<IAudioChannel?> ChannelProperty =
         AvaloniaProperty.Register<MiniWaveform, IAudioChannel?>(nameof(Channel));
 
+    public static readonly StyledProperty<IAudioSpectrum?> SpectrumProperty =
+        AvaloniaProperty.Register<MiniWaveform, IAudioSpectrum?>(nameof(Spectrum));
+
     /// <summary>Color del trazo cuando hay audio.</summary>
     public static readonly StyledProperty<IBrush?> StrokeBrushProperty =
         AvaloniaProperty.Register<MiniWaveform, IBrush?>(nameof(StrokeBrush));
@@ -37,6 +40,13 @@ public sealed class MiniWaveform : Control
     {
         get => GetValue(ChannelProperty);
         set => SetValue(ChannelProperty, value);
+    }
+
+    /// <summary>Fuente de espectro opcional para audio sin IAudioChannel (p. ej. RMVoice).</summary>
+    public IAudioSpectrum? Spectrum
+    {
+        get => GetValue(SpectrumProperty);
+        set => SetValue(SpectrumProperty, value);
     }
 
     public IBrush? StrokeBrush
@@ -82,6 +92,7 @@ public sealed class MiniWaveform : Control
         base.OnPropertyChanged(change);
 
         if (change.Property == ChannelProperty ||
+            change.Property == SpectrumProperty ||
             change.Property == StrokeBrushProperty ||
             change.Property == InactiveBrushProperty)
         {
@@ -108,8 +119,8 @@ public sealed class MiniWaveform : Control
             new Point(0, centerY),
             new Point(bounds.Width, centerY));
 
-        var channel = Channel;
-        if (channel is null)
+        var spectrum = Spectrum ?? Channel?.Spectrum;
+        if (spectrum is null)
         {
             DrawFlatLine(ctx, bounds, centerY, DefaultInactiveBrush);
             return;
@@ -117,8 +128,6 @@ public sealed class MiniWaveform : Control
 
         try
         {
-            var spectrum = channel.Spectrum;
-
             // Cantidad de frames = ancho en pixeles (1 muestra por pixel).
             int frames = (int)bounds.Width;
             if (frames <= 1) return;

@@ -43,6 +43,9 @@ public sealed class SpectrumAnalyzer : Control
     public static readonly StyledProperty<IAudioChannel?> ChannelProperty =
         AvaloniaProperty.Register<SpectrumAnalyzer, IAudioChannel?>(nameof(Channel));
 
+    public static readonly StyledProperty<IAudioSpectrum?> SpectrumProperty =
+        AvaloniaProperty.Register<SpectrumAnalyzer, IAudioSpectrum?>(nameof(Spectrum));
+
     public static readonly StyledProperty<SpectrumMode> ModeProperty =
         AvaloniaProperty.Register<SpectrumAnalyzer, SpectrumMode>(nameof(Mode));
 
@@ -53,6 +56,12 @@ public sealed class SpectrumAnalyzer : Control
     {
         get => GetValue(ChannelProperty);
         set => SetValue(ChannelProperty, value);
+    }
+
+    public IAudioSpectrum? Spectrum
+    {
+        get => GetValue(SpectrumProperty);
+        set => SetValue(SpectrumProperty, value);
     }
 
     public SpectrumMode Mode
@@ -150,6 +159,11 @@ public sealed class SpectrumAnalyzer : Control
             if (Channel is not null)
                 Start();
         }
+        else if (change.Property == SpectrumProperty)
+        {
+            Reset();
+            if (Spectrum is not null) Start();
+        }
         else if (change.Property == IsRunningProperty)
         {
             if (IsRunning) Start();
@@ -189,14 +203,12 @@ public sealed class SpectrumAnalyzer : Control
         // Fondo.
         ctx.FillRectangle(new SolidColorBrush(BgColor), bounds);
 
-        var channel = Channel;
-        if (channel is null)
+        var spectrum = Spectrum ?? Channel?.Spectrum;
+        if (spectrum is null)
         {
             DrawCenteredText(ctx, bounds, "Sin canal activo");
             return;
         }
-
-        var spectrum = channel.Spectrum;
 
         // Dibujar segun el modo.
         switch (Mode)

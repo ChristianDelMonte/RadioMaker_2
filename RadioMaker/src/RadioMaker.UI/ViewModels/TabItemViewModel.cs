@@ -43,7 +43,8 @@ public enum TabKind
     /// Pestaña de una carpeta favorita. Cerrable. Solo se ofrece en la
     /// zona derecha, desde el submenu de favoritos.
     /// </summary>
-    FavoriteFolder
+    FavoriteFolder,
+    Encadenadores
 }
 
 /// <summary>
@@ -92,6 +93,7 @@ public sealed partial class TabItemViewModel : ViewModelBase
         TabKind.Cart => MaterialIconKind.Grid,
         TabKind.Notes => MaterialIconKind.NoteText,
         TabKind.FavoriteFolder => MaterialIconKind.FolderStar,
+        TabKind.Encadenadores => MaterialIconKind.LinkVariant,
         _ => MaterialIconKind.File,
     };
 

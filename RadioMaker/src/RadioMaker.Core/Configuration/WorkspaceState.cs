@@ -15,7 +15,8 @@ public enum WorkspaceTabKind
     Playlist = 2,
     Notes = 3,
     Cart = 4,
-    FavoriteFolder = 5
+    FavoriteFolder = 5,
+    Encadenadores = 6
 }
 
 /// <summary>
@@ -38,6 +39,9 @@ public sealed class WorkspaceTabEntry
     public WorkspaceTabKind Kind { get; set; }
     public string FilePath { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
+
+    /// <summary>Solo para pestañas Encadenadores: indica si es la activa.</summary>
+    public bool IsActive { get; set; }
 
     /// <summary>
     /// Solo para pestañas de tipo Notes. Identifica el archivo de draft

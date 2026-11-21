@@ -46,11 +46,14 @@
                                          Width="18" Height="18"
                                          Foreground="#4D6BFE"
                                          VerticalAlignment="Center" />
-                        <TextBlock Text="RadioMaker Wave Addon"
+                        <TextBlock Name="WindowTitleText"
+                                   Text="RadioMaker Wave Editor Addon - documento sin nombre.rmw"
                                    FontSize="14"
                                    FontWeight="Bold"
                                    Foreground="#F0F0F0"
-                                   VerticalAlignment="Center" />
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxWidth="650" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="2"

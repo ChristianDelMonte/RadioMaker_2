@@ -103,6 +103,10 @@ public sealed class TandaTrack
     /// <summary>Nivel al que se reduce la pista principal durante el mix (0.0 .. 1.0).</summary>
     public double MixDuckLevel { get; set; } = 0.3;
 
+    /// <summary>Marca pistas virtuales de playlist/bloque que admiten encadenadores.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public bool EncadenadorEligible { get; set; }
+
     // ───── Propiedades derivadas ─────────────────────────────────────────
 
     /// <summary>

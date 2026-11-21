@@ -192,6 +192,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
         // Proyectos nativos primero (mas relevantes para radio).
         AvailableFilters.Add(new FileExtensionFilter(".rmf  — Playlist", ".rmf"));
+        AvailableFilters.Add(new FileExtensionFilter(".rme  — Encadenadores", ".rme"));
         AvailableFilters.Add(new FileExtensionFilter(".tnd  — Tanda", ".tnd"));
         AvailableFilters.Add(new FileExtensionFilter(".rms  — Programados", ".rms"));
         AvailableFilters.Add(new FileExtensionFilter(".rcb  — Botonera", ".rcb"));
@@ -206,7 +207,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
                 var lower = e.ToLowerInvariant();
 
                 // Evitar duplicados de proyectos.
-                if (lower == ".rmf" || lower == ".tnd" || lower == ".rms" || lower == ".rcb")
+                if (lower == ".rmf" || lower == ".rme" || lower == ".tnd" || lower == ".rms" || lower == ".rcb")
                     continue;
 
                 audioExts.Add(lower);
@@ -259,6 +260,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
         // Proyectos nativos de RadioMaker.
         set.Add(PlaylistStore.FileExtension);         // .rmf
+        set.Add(EncadenadoresStore.FileExtension);   // .rme
         set.Add(TandaStore.FileExtension);            // .tnd
         set.Add(ScheduledListStore.FileExtension);    // .rms
         set.Add(CartBoardStore.FileExtension);        // .rcb

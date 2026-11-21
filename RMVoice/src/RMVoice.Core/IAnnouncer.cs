@@ -11,6 +11,8 @@ public interface IAnnouncer : IDisposable
 
     bool IsInitialized { get; }
     bool IsPlaying { get; }
+    /// <summary>Handle BASS del segmento de locución que suena actualmente, o cero.</summary>
+    int CurrentStreamHandle { get; }
 
     int DefaultDevice { get; set; }
     float Volume { get; set; }

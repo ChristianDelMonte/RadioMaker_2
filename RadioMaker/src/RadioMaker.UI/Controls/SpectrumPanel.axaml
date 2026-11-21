@@ -81,7 +81,7 @@
                     Margin="4">
                 <controls:SpectrumAnalyzer
                     Name="Analyzer"
-                    Channel="{Binding Channel}"
+                    Spectrum="{Binding SpectrumSource}"
                     Mode="{Binding Mode}"
                     IsRunning="{Binding IsRunning}"
                     HorizontalAlignment="Stretch"

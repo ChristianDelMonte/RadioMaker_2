@@ -26,6 +26,7 @@ public sealed class AudioService : IDisposable
     // Serializa las locuciones: una sola a la vez.
     private readonly SemaphoreSlim _playLock = new(1, 1);
     private int _stopGeneration;
+    private int _currentStreamHandle;
 
     // TCS del segmento en curso (lo completa el callback o Stop).
     private TaskCompletionSource<bool>? _currentSegmentTcs;
@@ -77,6 +78,9 @@ public sealed class AudioService : IDisposable
 
     /// <summary>True si hay una locución reproduciéndose ahora mismo.</summary>
     public bool IsPlaying => _playLock.CurrentCount == 0;
+
+    /// <summary>Handle BASS del segmento de voz actual, o cero si no hay audio activo.</summary>
+    public int CurrentStreamHandle => Volatile.Read(ref _currentStreamHandle);
 
     /// <summary>Dispositivo por defecto (se usa cuando el request no especifica uno).</summary>
     public int DefaultDevice { get; set; } = -1;
@@ -214,6 +218,7 @@ public sealed class AudioService : IDisposable
         }
         finally
         {
+            Interlocked.Exchange(ref _currentStreamHandle, 0);
             _playLock.Release();
         }
     }
@@ -222,6 +227,7 @@ public sealed class AudioService : IDisposable
     public void Stop()
     {
         Interlocked.Increment(ref _stopGeneration);
+        Interlocked.Exchange(ref _currentStreamHandle, 0);
         var tcs = Interlocked.Exchange(ref _currentSegmentTcs, null);
 
         lock (_gate)
@@ -276,6 +282,8 @@ public sealed class AudioService : IDisposable
                 _endSyncProc);
 
             _syncs[segment.Kind] = sync;
+
+            Interlocked.Exchange(ref _currentStreamHandle, stream);
 
             // 4. play.
             Bass.ChannelPlay(stream, false);
