@@ -123,14 +123,15 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(WindowClosingEventArgs e)
     {
+        RadioMaker.Core.Logging.AppLogger.Info("APP", "Cierre de RadioMaker solicitado.");
         if (DataContext is MainWindowViewModel vm)
         {
-            try { vm.SaveWorkspace(); } catch { }
+            try { vm.SaveWorkspace(); }
+            catch (Exception ex)
+            {
+                RadioMaker.Core.Logging.AppLogger.Error("APP SHUTDOWN", "No se pudo guardar el workspace al cerrar la ventana", ex);
+            }
         }
-
-        // Flush del log a disco por si la app se cierra sin pasar por
-        // ShutdownRequested (Alt+F4, cierre del WM, etc.).
-        try { RadioMaker.Core.Logging.AppLogger.Service.Dispose(); } catch { }
 
         base.OnClosing(e);
     }

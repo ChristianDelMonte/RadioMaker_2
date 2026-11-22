@@ -31,6 +31,9 @@ public static class AppLogger
     public static void Warning(string category, string message)
         => _service.Warning(category, message);
 
+    public static void Warning(string category, string message, Exception ex)
+        => _service.Warning(category, message, ex);
+
     public static void Error(string category, string message)
         => _service.Error(category, message);
 

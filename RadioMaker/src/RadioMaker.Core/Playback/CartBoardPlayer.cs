@@ -131,7 +131,11 @@ public sealed class CartBoardPlayer : IDisposable
     {
         lock (_gate)
         {
+            if (ReferenceEquals(_targetBus, bus)) return;
+            var previousBus = _targetBus?.DisplayName ?? "(sin asignar)";
             _targetBus = bus;
+            AppLogger.Info("CART ROUTING",
+                $"Bus cambiado: {previousBus} -> {bus?.DisplayName ?? "(sin asignar)"}.");
 
             // Si cambia el bus, libero el anterior. Los canales activos del
             // bus viejo siguen sonando (huerfanos) hasta que terminen.
@@ -323,7 +327,8 @@ public sealed class CartBoardPlayer : IDisposable
                         (useCrossfade ? $" | CROSSFADE {crossfadeMs}ms" : ""));
 
                     // Aplicar EQ/Trim/Norm (logueando detalles).
-                    try { ConfigureChannel?.Invoke(channel, button.FilePath, true); } catch { }
+                    try { ConfigureChannel?.Invoke(channel, button.FilePath, true); }
+                    catch (Exception ex) { AppLogger.Error("CART CONFIG", $"No se pudo configurar '{fileName}'", ex); }
 
                     // Volumen adicional del boton.
                     double baseNormalizationGainDb = channel.NormalizationGainDb;
@@ -377,6 +382,7 @@ public sealed class CartBoardPlayer : IDisposable
         {
             lock (_gate)
             {
+                AppLogger.Info("CART CONTROL", $"Detener solicitado: {button.DisplayLabel}.");
                 StopInternal(button.Id);
                 RaiseStateChanged(button.Id, isPlaying: false);
             }
@@ -390,6 +396,8 @@ public sealed class CartBoardPlayer : IDisposable
         {
             lock (_gate)
             {
+                if (_activeChannels.Count > 0)
+                    AppLogger.Info("CART CONTROL", $"Detener todo solicitado ({_activeChannels.Count} cart(s) activo(s)).");
                 foreach (var id in _activeChannels.Keys.ToList())
                 {
                     StopInternal(id);

@@ -1,4 +1,5 @@
 using System.Threading;
+using RadioMaker.Core.Logging;
 
 namespace RadioMaker.Core.Scheduling;
 
@@ -142,7 +143,7 @@ public sealed class SchedulerService : IDisposable
         }
         catch (Exception ex)
         {
-            AddLog(SchedulerLogLevel.Error, $"Error en tick: {ex.Message}");
+            AddLog(SchedulerLogLevel.Error, $"Error en tick: {ex}");
         }
     }
 
@@ -154,7 +155,7 @@ public sealed class SchedulerService : IDisposable
         }
         catch (Exception ex)
         {
-            AddLog(SchedulerLogLevel.Error, $"Error en handler de ItemTriggered: {ex.Message}");
+            AddLog(SchedulerLogLevel.Error, $"Error en handler de ItemTriggered: {ex}");
         }
     }
 
@@ -170,6 +171,17 @@ public sealed class SchedulerService : IDisposable
             if (_log.Count > MaxLogEntries)
                 _log.RemoveRange(0, _log.Count - MaxLogEntries);
         }
+
+        // El panel conserva su log operativo propio, y la misma entrada se
+        // incorpora al log central persistente para exportacion y diagnostico.
+        var appLevel = level switch
+        {
+            SchedulerLogLevel.Warning => LogLevel.Warning,
+            SchedulerLogLevel.Error => LogLevel.Error,
+            _ => LogLevel.Info
+        };
+        var appCategory = level == SchedulerLogLevel.Trigger ? "SCHEDULER TRIGGER" : "SCHEDULER";
+        AppLogger.Service.Write(appLevel, appCategory, message);
 
         try { LogAdded?.Invoke(this, entry); } catch { }
     }

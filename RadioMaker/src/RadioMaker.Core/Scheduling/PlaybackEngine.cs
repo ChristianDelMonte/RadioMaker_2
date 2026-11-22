@@ -374,12 +374,15 @@ public sealed class PlaybackEngine : IDisposable
                 {
                     _tandaLocutionPaused = true;
                     CancelTandaLocution();
+                    _scheduler.AddLog(SchedulerLogLevel.Info, "Pausa solicitada durante una locución de la tanda.");
                     return;
                 }
                 if (_currentChannel is null) return;
                 try
                 {
                     if (_currentChannel.State != PlaybackState.Playing) return;
+                    _scheduler.AddLog(SchedulerLogLevel.Info,
+                        $"Pausa solicitada: {_currentItem?.DisplayTitle ?? _currentTanda?.DisplayName ?? "reproducción programada"}.");
                     _currentChannel.Pause();
                     foreach (var tail in _encadenadorTails)
                         try { tail.Pause(); } catch { }
@@ -410,6 +413,8 @@ public sealed class PlaybackEngine : IDisposable
                 try
                 {
                     if (_currentChannel.State != PlaybackState.Paused) return;
+                    _scheduler.AddLog(SchedulerLogLevel.Info,
+                        $"Reanudación solicitada: {_currentItem?.DisplayTitle ?? _currentTanda?.DisplayName ?? "reproducción programada"}.");
                     _currentChannel.Play();
                     foreach (var tail in _encadenadorTails)
                         try { tail.Play(); } catch { }
@@ -434,6 +439,9 @@ public sealed class PlaybackEngine : IDisposable
             lock (_gate)
             {
                 if (_currentChannel is null && _currentTanda is null) return;
+
+                _scheduler.AddLog(SchedulerLogLevel.Info,
+                    $"Siguiente solicitado durante: {_currentItem?.DisplayTitle ?? _currentTanda?.DisplayName ?? "reproducción programada"}.");
 
                 CancelTandaLocution();
                 _tandaLocutionPaused = false;
@@ -520,6 +528,9 @@ public sealed class PlaybackEngine : IDisposable
             {
                 if (_currentChannel is null) return;
 
+                _scheduler.AddLog(SchedulerLogLevel.Info,
+                    $"Anterior solicitado durante: {_currentItem?.DisplayTitle ?? _currentTanda?.DisplayName ?? "reproducción programada"}.");
+
                 StopEncadenadorChannels();
 
                 // Caso 1: estamos dentro de una tanda y hay un track anterior.
@@ -559,6 +570,7 @@ public sealed class PlaybackEngine : IDisposable
     {
         _dispatch(() =>
         {
+            _scheduler.AddLog(SchedulerLogLevel.Info, "Detener todo solicitado para el Scheduler.");
             StopCurrentPlaybackInternal(unmarkScheduler: true);
             _suspended = null;
             ClearQueue();
@@ -1284,7 +1296,8 @@ public sealed class PlaybackEngine : IDisposable
                 AppLogger.Info("SCHEDULER", $"FADE desactivado para {fileName}");
             }
 
-            try { ConfigureChannel?.Invoke(channel, item.FilePath, true); } catch { }
+            try { ConfigureChannel?.Invoke(channel, item.FilePath, true); }
+            catch (Exception ex) { AppLogger.Error("SCHEDULER CONFIG", $"No se pudo configurar '{fileName}'", ex); }
 
             if (resumeAtSeconds > 0.1)
             {
@@ -1421,7 +1434,8 @@ public sealed class PlaybackEngine : IDisposable
                     $"FADE activado para {fileName} (primera pista) | Duracion: {_autoFadeSeconds:F1}s");
             }
 
-            try { ConfigureChannel?.Invoke(channel, track.FilePath, true); } catch { }
+            try { ConfigureChannel?.Invoke(channel, track.FilePath, true); }
+            catch (Exception ex) { AppLogger.Error("SCHEDULER CONFIG", $"No se pudo configurar '{fileName}'", ex); }
 
             double trackGainDb = track.VolumeDb;
             if (Math.Abs(trackGainDb) > 0.01)

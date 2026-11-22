@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Configuration;
+using RadioMaker.Core.Logging;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -66,7 +67,10 @@ public sealed partial class RoutingPanelViewModel : ViewModelBase
             if (Main?.Coordinator is { } c)
                 BusExclusivityConfigStore.Save(c.Config);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            AppLogger.Error("SETTINGS EXCLUSIVITY", "No se pudieron guardar las políticas de exclusividad", ex);
+        }
     }
 
     [CommunityToolkit.Mvvm.Input.RelayCommand]
@@ -77,6 +81,7 @@ public sealed partial class RoutingPanelViewModel : ViewModelBase
         coordinator.ResetPoliciesToDefaults();
         LoadPolicies();
         SavePolicies();
+        AppLogger.Info("SETTINGS EXCLUSIVITY", "Políticas de exclusividad restablecidas a sus valores predeterminados.");
     }
 
     private void SyncSelectedAirBus()
@@ -113,5 +118,6 @@ public sealed partial class RoutingPanelViewModel : ViewModelBase
         if (Main is null) return;
 
         Main.Routing.AirBusId = value.Id;
+        AppLogger.Info("SETTINGS ROUTING", $"Bus de aire seleccionado: {value.DisplayName}.");
     }
 }

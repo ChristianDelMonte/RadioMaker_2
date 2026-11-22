@@ -13,10 +13,14 @@ namespace RadioMaker.UI;
 
 public partial class App : Application
 {
+    private static bool _globalExceptionHooksRegistered;
+
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted()
     {
+        RegisterGlobalExceptionLogging();
+
         // Inicializar el servicio de temas ANTES de crear cualquier ventana.
         ThemeService.Initialize();
 
@@ -28,6 +32,30 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void RegisterGlobalExceptionLogging()
+    {
+        if (_globalExceptionHooksRegistered) return;
+        _globalExceptionHooksRegistered = true;
+
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        {
+            if (args.ExceptionObject is Exception ex)
+                AppLogger.Error("APP UNHANDLED", $"Excepción no controlada (terminating={args.IsTerminating})", ex);
+            else
+                AppLogger.Error("APP UNHANDLED", $"Error no controlado (terminating={args.IsTerminating}): {args.ExceptionObject}");
+
+            if (args.IsTerminating)
+            {
+                try { AppLogger.Service.Dispose(); } catch { }
+            }
+        };
+
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            AppLogger.Error("TASK UNOBSERVED", "Excepción de una tarea no observada", args.Exception);
+        };
     }
 
     /// -------------
@@ -44,6 +72,7 @@ public partial class App : Application
     /// -------------
     private async Task InitializeWithSplashAsync(IClassicDesktopStyleApplicationLifetime desktop)
     {
+        AppLogger.Info("APP", "Inicio de RadioMaker.");
         var splash = new SplashWindow();
         splash.Show();
         splash.ReportProgress(0.0, "Iniciando RadioMaker...");
@@ -71,7 +100,7 @@ public partial class App : Application
                 catch (Exception ex)
                 {
                     AppLogger.Warning("Splash",
-                        $"Fallo la inicializacion de BASS: {ex.Message}");
+                        "Fallo la inicializacion de BASS.", ex);
                 }
             });
 
@@ -93,7 +122,7 @@ public partial class App : Application
             catch (Exception ex)
             {
                 AppLogger.Warning("Splash",
-                    $"No se pudo restaurar el workspace: {ex.Message}");
+                    "No se pudo restaurar el workspace.", ex);
             }
 
             // ── Paso 5: interfaz ──────────────────────────────────────
@@ -106,12 +135,15 @@ public partial class App : Application
 
             desktop.ShutdownRequested += (_, _) =>
             {
-                try { viewModel.SaveWorkspace(); } catch { }
+                try { viewModel.SaveWorkspace(); }
+                catch (Exception ex) { AppLogger.Error("APP SHUTDOWN", "No se pudo guardar el workspace al cerrar", ex); }
+                try { engine.Dispose(); }
+                catch (Exception ex) { AppLogger.Error("APP SHUTDOWN", "Error al liberar el motor de audio", ex); }
                 try { AppLogger.Service.Dispose(); } catch { }
-                try { engine.Dispose(); } catch { }
             };
 
             mainWindow.Show();
+            AppLogger.Info("APP", "Ventana principal lista.");
 
             // ── Paso 6: cierre del splash ─────────────────────────────
             splash.ReportProgress(1.0, "Listo");

@@ -768,7 +768,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _configurator.ConfigureChannel(ch, path, "EMERGENCY", log);
 
         Emergency = new EmergencyPanelViewModel(_emergencySettings, _emergency);
-        Emergency.SettingsChanged = (s) => _emergency.UpdateSettings(s);
+        Emergency.SettingsChanged = s =>
+        {
+            _emergency.UpdateSettings(s);
+            _logService.Info("SETTINGS EMERGENCY",
+                $"Enabled={s.IsEnabled}; Mode={s.Mode}; Silence={s.DetectSilence} at {s.ThresholdDb:F1} dB/{s.SilenceThresholdSeconds}s; " +
+                $"NoChannels={s.DetectNoChannels}; Volume={s.Volume:P0}; FadeIn={s.FadeInMs}ms; FadeOut={s.FadeOutMs}ms.");
+        };
 
         Emergency.PropertyChanged += (_, e) =>
         {
@@ -809,6 +815,20 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 OnPropertyChanged(nameof(DuckingTooltip));
                 OnPropertyChanged(nameof(DuckingButtonBackground));
                 OnPropertyChanged(nameof(DuckingButtonForeground));
+            }
+
+            if (e.PropertyName is nameof(DuckingPanelViewModel.IsEnabled)
+                or nameof(DuckingPanelViewModel.ThresholdDb)
+                or nameof(DuckingPanelViewModel.ReductionDb)
+                or nameof(DuckingPanelViewModel.HoldMs)
+                or nameof(DuckingPanelViewModel.AttackMs)
+                or nameof(DuckingPanelViewModel.ReleaseMs)
+                or nameof(DuckingPanelViewModel.SelectedMic))
+            {
+                _logService.Info("SETTINGS DUCKING",
+                    $"Enabled={Ducking.IsEnabled}; Mic={Ducking.SelectedMic?.Name ?? "(default)"}; " +
+                    $"Threshold={Ducking.ThresholdDb:F1}dB; Reduction={Ducking.ReductionDb:F1}dB; " +
+                    $"Hold={Ducking.HoldMs}ms; Attack={Ducking.AttackMs}ms; Release={Ducking.ReleaseMs}ms.");
             }
         };
 
@@ -1017,7 +1037,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 e.PropertyName == nameof(FadePanelViewModel.Seconds))
             {
                 _playback.SetAutoFade(Fade.IsEnabled, Fade.Seconds);
-                _logService.Debug("Fade", $"Auto-fade: {Fade.IsEnabled} @ {Fade.Seconds}s");
+                _logService.Info("SETTINGS FADE", $"Auto-fade: {Fade.IsEnabled} @ {Fade.Seconds}s.");
             }
             else if (e.PropertyName == nameof(FadePanelViewModel.CartCrossfadeEnabled) ||
                      e.PropertyName == nameof(FadePanelViewModel.CartCrossfadeSeconds))
@@ -1029,8 +1049,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 _coordinator.CrossfadeDurationMs =
                     (int)Math.Round(Fade.CartCrossfadeSeconds * 1000.0);
 
-                _logService.Debug("Cart",
-                    $"Crossfade: {Fade.CartCrossfadeEnabled} @ {Fade.CartCrossfadeSeconds:F1}s");
+                _logService.Info("SETTINGS CROSSFADE",
+                    $"Cart/Playlist crossfade: {Fade.CartCrossfadeEnabled} @ {Fade.CartCrossfadeSeconds:F1}s.");
             }
         };
 
@@ -1051,7 +1071,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             var savedBehavior = InterruptionBehaviorSettingsStore.Load().Behavior;
             ApplyInterruptionBehaviorToAllPlaylistPlayers(savedBehavior);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            _logService.Error("SETTINGS PLAYLIST", "No se pudo cargar el comportamiento de interrupción guardado", ex);
+        }
 
         // Arrancar el watchdog de emergencia (si esta habilitado en settings,
         // el watchdog comienza a monitorear; sino, el tick es no-op).
@@ -1604,6 +1627,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 case EncadenadoresEditorViewModel encadenadores:
                     encadenadores.AddFile(file.FullPath);
                     StatusMessage = $"Agregado a Encadenadores: {file.FileName}";
+                    _logService.Info("FILE MANAGER", $"Agregado a Encadenadores: {file.FileName}");
                     break;
 
                 case ScheduledListViewModel scheduled:
@@ -1620,6 +1644,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
                 default:
                     StatusMessage = $"La pestaña '{selectedTab.Title}' no admite archivos.";
+                    _logService.Warning("FILE MANAGER",
+                        $"No se pudo agregar '{file.FileName}': la pestaña '{selectedTab.Title}' no admite archivos.");
                     break;
             }
         }
@@ -1933,6 +1959,21 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// -------------
     private void OnProcessingSettingsChanged(object? sender, EventArgs e)
     {
+        var settingsMessage = sender switch
+        {
+            EqualizerPanelViewModel eq =>
+                $"EQ: Enabled={eq.IsEnabled}; Preset={eq.SelectedPreset}; Bands=" +
+                string.Join(", ", eq.Bands.Select(b => $"{b.Label}:{b.Gain:+0.0;-0.0;0.0}dB")),
+            SilencePanelViewModel silence =>
+                $"Trim: Enabled={silence.AutoTrimEnabled}; Threshold={silence.ThresholdDb:F1}dB; " +
+                $"Block={silence.BlockMs}ms; MinSilence={silence.MinSilenceMs}ms.",
+            NormalizationPanelViewModel norm =>
+                $"Normalization: Enabled={norm.IsEnabled}; Mode={norm.Mode}; Target={norm.TargetDb:F1}dB.",
+            _ => null
+        };
+        if (settingsMessage is not null)
+            _logService.Info("SETTINGS AUDIO", settingsMessage);
+
         try
         {
             // Usar el inventario común: incluye todas las playlists, carts,
@@ -2056,10 +2097,15 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _positionTimer.Stop();
             _meterTimer.Stop();
             StatusMessage = "Pausado.";
+            _logService.Info("PLAYER MANUAL", $"Pausa solicitada: {Path.GetFileName(CurrentFilePath)}.");
             SyncPlaybackState();
             RefreshCommandStates();
         }
-        catch (Exception ex) { LastError = ex.Message; }
+        catch (Exception ex)
+        {
+            LastError = ex.Message;
+            _logService.Error("PLAYER MANUAL", "Error al pausar", ex);
+        }
     }
 
     [RelayCommand] private void Stop()
@@ -2072,10 +2118,15 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             Position = TimeSpan.Zero;
             ResetMeter();
             StatusMessage = "Detenido.";
+            _logService.Info("PLAYER MANUAL", $"Detención solicitada: {Path.GetFileName(CurrentFilePath)}.");
             SyncPlaybackState();
             RefreshCommandStates();
         }
-        catch (Exception ex) { LastError = ex.Message; }
+        catch (Exception ex)
+        {
+            LastError = ex.Message;
+            _logService.Error("PLAYER MANUAL", "Error al detener", ex);
+        }
     }
 
     public void LoadFile(string filePath)
@@ -2161,12 +2212,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 Position = TimeSpan.Zero;
                 PlaybackState = PlaybackState.Stopped;
                 StatusMessage = "Detenido por el usuario.";
+                _logService.Info("PLAYER MANUAL", $"Detenido: {Path.GetFileName(CurrentFilePath)}.");
             }
             else
             {
                 Position = Duration;
                 PlaybackState = PlaybackState.Ended;
                 StatusMessage = "Fin.";
+                _logService.Info("PLAYER MANUAL", $"Reproducción finalizada: {Path.GetFileName(CurrentFilePath)}.");
             }
             SyncPlaybackState();
             RefreshCommandStates();
@@ -2968,10 +3021,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         // Aplicar al volumen global del engine (afecta a TODOS los canales
         // de TODOS los reproductores: cart, playlist, scheduler, manual).
-        try { _engine.GlobalVolume = value; } catch { }
+        try { _engine.GlobalVolume = value; }
+        catch (Exception ex) { _logService.Error("SETTINGS VOLUME", "No se pudo aplicar el volumen global", ex); }
 
         // Persistir en disco para el proximo arranque.
-        try { VolumeSettingsStore.Save(value); } catch { }
+        try { VolumeSettingsStore.Save(value); }
+        catch (Exception ex) { _logService.Error("SETTINGS VOLUME", "No se pudo guardar el volumen global", ex); }
+
+        _logService.Info("SETTINGS VOLUME", $"Volumen global ajustado a {value:P0}.");
 
         OnPropertyChanged(nameof(VolumeText));
     }
@@ -3012,6 +3069,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             StatusMessage = _routing.UseGlobalBus
                 ? $"Bus global aplicado a todos los modulos: {_routing.GlobalBus.DisplayName}"
                 : "Modo por modulo activo. Cada modulo puede elegir su salida.";
+            _logService.Info("SETTINGS ROUTING",
+                _routing.UseGlobalBus
+                    ? $"Modo global activo; bus={_routing.GlobalBus.DisplayName}."
+                    : "Modo de ruteo individual por módulo activo.");
         });
     }
 
@@ -3024,6 +3085,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         Dispatcher.UIThread.Post(() =>
         {
             var bus = _routing.GetEffectiveBus(kind);
+            _logService.Info("SETTINGS ROUTING", $"Bus predeterminado para {kind}: {bus.DisplayName}.");
 
             switch (kind)
             {
@@ -3064,6 +3126,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         // El combo global del header ahora actua como "bus global".
         // El routing se encarga de propagar a los modulos segun el modo.
         _routing?.SetGlobalBus(newValue);
+        _logService.Info("SETTINGS ROUTING", $"Bus global seleccionado: {newValue.DisplayName}.");
 
         if (HasFile)
         {
@@ -3125,7 +3188,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
             WorkspaceStateStore.Save(state);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            _logService.Error("WORKSPACE", "No se pudo guardar el workspace", ex);
+        }
     }
 
     /// -------------
@@ -3149,7 +3215,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 CartBoard.SaveToFile(path);
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            _logService.Error("CART", "No se pudo guardar la botonera principal", ex);
+        }
 
         // Botoneras extras (pestañas abiertas en la zona central).
         // Solo guardamos las que ya tienen una ruta asignada (fueron
@@ -3163,11 +3232,15 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     if (string.IsNullOrEmpty(extraCart.LoadedFilePath))
                         continue;
 
-                    try { extraCart.SaveToFile(extraCart.LoadedFilePath); } catch { }
+                    try { extraCart.SaveToFile(extraCart.LoadedFilePath); }
+                    catch (Exception ex) { _logService.Error("CART", "No se pudo guardar una botonera adicional", ex); }
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            _logService.Error("CART", "Error al guardar las botoneras", ex);
+        }
     }
 
     /// -------------

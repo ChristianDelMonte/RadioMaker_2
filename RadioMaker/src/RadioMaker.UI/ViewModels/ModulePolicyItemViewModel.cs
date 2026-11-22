@@ -1,6 +1,7 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.Core.Logging;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -57,18 +58,21 @@ public sealed partial class ModulePolicyItemViewModel : ViewModelBase
     partial void OnIsExclusiveChanged(bool value)
     {
         _policy.IsExclusive = value;
+        AppLogger.Info("SETTINGS EXCLUSIVITY", $"{Role}: Exclusive={value}; Priority={Priority}; Behavior={Behavior}.");
         try { _onChanged?.Invoke(); } catch { }
     }
 
     partial void OnPriorityChanged(ModulePriority value)
     {
         _policy.Priority = value;
+        AppLogger.Info("SETTINGS EXCLUSIVITY", $"{Role}: Exclusive={IsExclusive}; Priority={value}; Behavior={Behavior}.");
         try { _onChanged?.Invoke(); } catch { }
     }
 
     partial void OnBehaviorChanged(InterruptionBehavior value)
     {
         _policy.Behavior = value;
+        AppLogger.Info("SETTINGS EXCLUSIVITY", $"{Role}: Exclusive={IsExclusive}; Priority={Priority}; Behavior={value}.");
         try { _onChanged?.Invoke(); } catch { }
     }
 

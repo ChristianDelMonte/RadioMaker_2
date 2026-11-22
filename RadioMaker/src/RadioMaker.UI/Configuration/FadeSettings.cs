@@ -1,5 +1,6 @@
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
+using RadioMaker.Core.Logging;
 
 namespace RadioMaker.UI.Configuration;
 
@@ -61,7 +62,7 @@ public static class FadeSettingsStore
                 if (s is not null) return s;
             }
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Warning("SETTINGS FADE", "No se pudo leer la configuración guardada.", ex); }
         return new FadeSettings();
     }
 
@@ -73,7 +74,7 @@ public static class FadeSettingsStore
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(ConfigPath, JsonSerializer.Serialize(settings, Options));
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Error("SETTINGS FADE", "No se pudo guardar la configuración.", ex); }
     }
 
     private static string BuildPath()

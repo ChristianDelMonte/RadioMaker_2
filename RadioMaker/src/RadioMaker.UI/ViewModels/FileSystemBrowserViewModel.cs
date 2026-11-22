@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.Core.Logging;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Configuration;
 using RadioMaker.UI.Services;
@@ -468,16 +469,23 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
     public void PlayFile(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return;
-        if (!File.Exists(filePath)) return;
+        if (!File.Exists(filePath))
+        {
+            AppLogger.Warning("FILE MANAGER PLAY", $"No existe el archivo solicitado: {filePath}");
+            return;
+        }
 
         if (BusSelector.SelectedBus is not IAudioBus bus)
         {
             StatusMessage = "No hay bus de salida seleccionado.";
+            AppLogger.Warning("FILE MANAGER PLAY", "No se pudo reproducir: no hay bus de salida seleccionado.");
             return;
         }
 
         try
         {
+            if (_currentChannel is not null)
+                AppLogger.Info("FILE MANAGER PLAY", $"Vista previa reemplazada por: {Path.GetFileName(filePath)}.");
             StopCurrentChannel();
 
             var channel = bus.LoadFile(filePath);
@@ -486,6 +494,9 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
             channel.Play();
 
+            AppLogger.Info("FILE MANAGER PLAY",
+                $"Bus={bus.DisplayName} | Reproduciendo: {Path.GetFileName(filePath)}.");
+
             IsPlaying = true;
             NowPlayingText = Path.GetFileName(filePath);
             StatusMessage = $"Reproduciendo: {NowPlayingText}";
@@ -493,12 +504,15 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
         catch (Exception ex)
         {
             StatusMessage = $"Error al reproducir: {ex.Message}";
+            AppLogger.Error("FILE MANAGER PLAY", $"Error al reproducir '{filePath}'", ex);
         }
     }
 
     [RelayCommand]
     private void StopPlayback()
     {
+        if (_currentChannel is not null)
+            AppLogger.Info("FILE MANAGER PLAY", $"Detención solicitada: {NowPlayingText}.");
         StopCurrentChannel();
         IsPlaying = false;
         NowPlayingText = string.Empty;
@@ -524,6 +538,10 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
     {
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
+            AppLogger.Info("FILE MANAGER PLAY",
+                e.WasStoppedByUser
+                    ? $"Vista previa detenida: {NowPlayingText}."
+                    : $"Vista previa finalizada: {NowPlayingText}.");
             IsPlaying = false;
             NowPlayingText = string.Empty;
             StopCurrentChannel();

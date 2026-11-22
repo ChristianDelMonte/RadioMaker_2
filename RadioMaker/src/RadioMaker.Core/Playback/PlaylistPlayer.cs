@@ -160,7 +160,11 @@ public sealed class PlaylistPlayer : IDisposable
     {
         lock (_gate)
         {
+            if (ReferenceEquals(_targetBus, bus)) return;
+            var previousBus = _targetBus?.DisplayName ?? "(sin asignar)";
             _targetBus = bus;
+            AppLogger.Info("PLAYLIST ROUTING",
+                $"Bus cambiado: {previousBus} -> {bus?.DisplayName ?? "(sin asignar)"}.");
 
             if (!string.IsNullOrEmpty(_acquiredBusId) &&
                 (bus is null || !string.Equals(bus.Id, _acquiredBusId, StringComparison.OrdinalIgnoreCase)))
@@ -238,7 +242,8 @@ public sealed class PlaylistPlayer : IDisposable
         if (ch is null) return;
         if (string.IsNullOrWhiteSpace(path)) return;
 
-        try { ConfigureChannel?.Invoke(ch, path, false); } catch { }
+        try { ConfigureChannel?.Invoke(ch, path, false); }
+        catch (Exception ex) { AppLogger.Error("PLAYLIST CONFIG", $"No se pudo reaplicar procesamiento a '{Path.GetFileName(path)}'", ex); }
     }
 
     /// -------------Canal actualmente sonando (o null).</summary>
@@ -352,6 +357,7 @@ public sealed class PlaylistPlayer : IDisposable
             lock (_gate)
             {
                 if (_playlist is null) return;
+                AppLogger.Info("PLAYLIST CONTROL", $"Pausa solicitada: '{_playlist.Name}'.");
 
                 // ===== FIX: pausa MANUAL =====
                 // Marcar como NO-pausada-por-coordinator. Sin esto, si la
@@ -411,6 +417,7 @@ public sealed class PlaylistPlayer : IDisposable
                 _isPausedByCoordinator = false;
                 if (_currentChannel is null) return;
                 if (_playlist is null) return;
+                AppLogger.Info("PLAYLIST CONTROL", $"Reanudación solicitada: '{_playlist.Name}'.");
 
                 var bus = _targetBus ?? _audioEngine.PrimaryBus;
                 var acquire = TryAcquireBus(bus.Id, _currentChannel);
@@ -439,6 +446,8 @@ public sealed class PlaylistPlayer : IDisposable
         {
             lock (_gate)
             {
+                if (_playlist is not null)
+                    AppLogger.Info("PLAYLIST CONTROL", $"Detener solicitado: '{_playlist.Name}'.");
                 CancelCurrentLocution();
                 StopCurrentChannelInternal();
                 _playlist = null;
@@ -461,6 +470,7 @@ public sealed class PlaylistPlayer : IDisposable
             lock (_gate)
             {
                 if (_playlist is null) return;
+                AppLogger.Info("PLAYLIST CONTROL", $"Siguiente solicitado: '{_playlist.Name}'.");
                 CancelCurrentLocution();
                 AdvanceToNext(auto: false);
             }
@@ -475,6 +485,7 @@ public sealed class PlaylistPlayer : IDisposable
             lock (_gate)
             {
                 if (_playlist is null) return;
+                AppLogger.Info("PLAYLIST CONTROL", $"Anterior solicitado: '{_playlist.Name}'.");
                 CancelCurrentLocution();
                 GoToPrevious();
             }
@@ -584,7 +595,8 @@ public sealed class PlaylistPlayer : IDisposable
                 $"Reproduciendo: {fileName}" +
                 (track.HasMix ? $" | MIX: {track.MixDisplayName}" : ""));
 
-            try { ConfigureChannel?.Invoke(channel, track.FilePath, true); } catch { }
+            try { ConfigureChannel?.Invoke(channel, track.FilePath, true); }
+            catch (Exception ex) { AppLogger.Error("PLAYLIST CONFIG", $"No se pudo configurar '{fileName}'", ex); }
 
             // ===== CROSSFADE: activar el near-end trigger =====
             if (_crossfadeSeconds > 0.05)

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Platform;
 using Avalonia.Styling;
+using RadioMaker.Core.Logging;
 using RadioMaker.UI.Configuration;
 
 namespace RadioMaker.UI.Services;
@@ -67,6 +68,7 @@ public static class ThemeService
         ThemeSettingsStore.Save(pref);
         ApplyVariant(pref);
         StartSystemListener();
+        AppLogger.Info("SETTINGS APPEARANCE", $"Theme preference={pref}.");
 
         PreferenceChanged?.Invoke(null, pref);
     }

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using RadioMaker.Core.Logging;
 
 namespace RadioMaker.Core.Configuration;
 
@@ -24,7 +25,7 @@ public static class EmergencySettingsStore
                 if (s is not null) return s;
             }
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Warning("SETTINGS EMERGENCY", "No se pudo leer la configuración guardada.", ex); }
         return new EmergencySettings();
     }
 
@@ -36,7 +37,7 @@ public static class EmergencySettingsStore
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(ConfigPath, JsonSerializer.Serialize(settings, Options));
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Error("SETTINGS EMERGENCY", "No se pudo guardar la configuración.", ex); }
     }
 
     private static string BuildPath()

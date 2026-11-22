@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Threading.Channels;
+
 namespace RadioMaker.Core.Logging;
 
 /// -------------
@@ -9,14 +12,15 @@ namespace RadioMaker.Core.Logging;
 ///
 /// Ademas mantiene las entradas en memoria (para el panel de log), las
 /// persiste automaticamente a disco:
-///   - Un archivo por dia en %APPDATA%/RmsAudioPlayer/log/.
+///   - Un archivo por dia en la carpeta de datos de usuario de RadioMaker.
 ///   - Nombre: rms-log-YYYY-MM-DD.log
 ///   - Si la carpeta no existe, se crea automaticamente.
 ///   - Cuando cambia el dia (app corriendo mas alla de la medianoche),
 ///     se abre un archivo nuevo sin reiniciar la app.
 ///
 /// Thread-safe: los metodos se pueden llamar desde cualquier hilo
-/// (incluyendo los hilos internos de BASS).
+/// (incluyendo los hilos internos de BASS). La escritura a disco se encola
+/// para no bloquear callbacks de audio.
 /// -------------
 public sealed class LogService : IDisposable
 {
@@ -24,6 +28,14 @@ public sealed class LogService : IDisposable
 
     private readonly object _gate = new();
     private readonly List<LogEntry> _entries = new();
+    private readonly Channel<LogEntry> _fileQueue = Channel.CreateBounded<LogEntry>(
+        new BoundedChannelOptions(8192)
+        {
+            SingleReader = true,
+            AllowSynchronousContinuations = false,
+            FullMode = BoundedChannelFullMode.Wait
+        });
+    private readonly Task _fileWriterTask;
 
     // ───── Persistencia a archivo ────────────────────────────────────────
 
@@ -40,14 +52,24 @@ public sealed class LogService : IDisposable
     /// -------------Se dispara cuando se agrega una nueva entrada.</summary>
     public event EventHandler<LogEntry>? EntryAdded;
 
+    public LogService()
+    {
+        _fileWriterTask = Task.Run(ProcessFileQueueAsync);
+    }
+
     // ───── Escritura ─────────────────────────────────────────────────────
 
     public void Debug(string category, string message) => Write(LogLevel.Debug, category, message);
     public void Info(string category, string message) => Write(LogLevel.Info, category, message);
     public void Warning(string category, string message) => Write(LogLevel.Warning, category, message);
+    public void Warning(string category, string message, Exception ex)
+        => Write(LogLevel.Warning, category, FormatException(message, ex));
     public void Error(string category, string message) => Write(LogLevel.Error, category, message);
     public void Error(string category, string message, Exception ex)
-        => Write(LogLevel.Error, category, $"{message}: {ex.Message}");
+        => Write(LogLevel.Error, category, FormatException(message, ex));
+
+    private static string FormatException(string message, Exception ex)
+        => $"{message}: {ex}".Replace("\r", " ").Replace("\n", " | ");
 
     public void Write(LogLevel level, string category, string message)
     {
@@ -61,8 +83,9 @@ public sealed class LogService : IDisposable
                 _entries.RemoveRange(0, _entries.Count - MaxEntries);
         }
 
-        // 2) Persistir a disco (best-effort, no bloquea la UI).
-        WriteToFile(entry);
+        // 2) Encolar la persistencia para no hacer I/O en el hilo llamador.
+        if (!_fileQueue.Writer.TryWrite(entry))
+            Trace.TraceError("No se pudo encolar entrada de log [{0}] {1}", category, message);
 
         // 3) Notificar a los suscriptores (UI).
         try { EntryAdded?.Invoke(this, entry); } catch { }
@@ -120,10 +143,7 @@ public sealed class LogService : IDisposable
 
                     // Append: si la app se reinicia el mismo dia, sigue
                     // escribiendo al mismo archivo sin borrar lo anterior.
-                    _fileWriter = new StreamWriter(path, append: true)
-                    {
-                        AutoFlush = true
-                    };
+                    _fileWriter = new StreamWriter(path, append: true) { AutoFlush = false };
 
                     _currentLogDate = today;
                     CurrentLogFilePath = path;
@@ -137,12 +157,35 @@ public sealed class LogService : IDisposable
 
                 _fileWriter.WriteLine(line);
             }
-            catch
+            catch (Exception ex)
             {
-                // Best-effort: si falla la escritura a disco (permisos, disco
-                // lleno, etc.), la app sigue funcionando. El log en memoria
-                // sigue disponible.
+                // No propagar errores de almacenamiento al hilo de audio/UI.
+                Trace.TraceError("Fallo al escribir el log en disco ({0}): {1}",
+                    CurrentLogFilePath ?? LogFolder, ex);
             }
+        }
+    }
+
+    private async Task ProcessFileQueueAsync()
+    {
+        try
+        {
+            await foreach (var first in _fileQueue.Reader.ReadAllAsync())
+            {
+                WriteToFile(first);
+                while (_fileQueue.Reader.TryRead(out var next))
+                    WriteToFile(next);
+
+                lock (_fileGate)
+                {
+                    try { _fileWriter?.Flush(); }
+                    catch (Exception ex) { Trace.TraceError("Fallo al vaciar el log: {0}", ex); }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Trace.TraceError("El worker del log finalizo con error: {0}", ex);
         }
     }
 
@@ -159,6 +202,9 @@ public sealed class LogService : IDisposable
     /// -------------
     public void Dispose()
     {
+        _fileQueue.Writer.TryComplete();
+        try { _fileWriterTask.GetAwaiter().GetResult(); } catch { }
+
         lock (_fileGate)
         {
             CloseWriterInternal();

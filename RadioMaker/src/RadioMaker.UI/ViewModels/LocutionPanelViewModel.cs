@@ -579,6 +579,19 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
 
     private void OnSettingsChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
+        var settingValue = e.PropertyName switch
+        {
+            nameof(LocutionSettings.OutputBusId) => _settings.OutputBusId,
+            nameof(LocutionSettings.ButtonLocutionVolume) => _settings.ButtonLocutionVolume.ToString("P0"),
+            nameof(LocutionSettings.ButtonDuckEnabled) => _settings.ButtonDuckEnabled.ToString(),
+            nameof(LocutionSettings.ButtonDuckLevel) => _settings.ButtonDuckLevel.ToString("P0"),
+            nameof(LocutionSettings.AutoRefreshEnabled) => _settings.AutoRefreshEnabled.ToString(),
+            nameof(LocutionSettings.WeatherRefreshMinutes) => _settings.WeatherRefreshMinutes.ToString(),
+            _ => null
+        };
+        if (settingValue is not null)
+            AppLogger.Info("SETTINGS LOCUTION", $"{e.PropertyName}={settingValue}.");
+
         if (e.PropertyName == nameof(LocutionSettings.AutoRefreshEnabled) ||
             e.PropertyName == nameof(LocutionSettings.WeatherRefreshMinutes))
         {

@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.Core.Logging;
 
 namespace RadioMaker.UI.Configuration;
 
@@ -52,7 +53,7 @@ public static class DuckingSettingsStore
                 if (s is not null) return s;
             }
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Warning("SETTINGS DUCKING", "No se pudo leer la configuración guardada.", ex); }
         return new DuckingSettings();
     }
 
@@ -64,7 +65,7 @@ public static class DuckingSettingsStore
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(ConfigPath, JsonSerializer.Serialize(settings, Options));
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Error("SETTINGS DUCKING", "No se pudo guardar la configuración.", ex); }
     }
 
     private static string BuildPath()

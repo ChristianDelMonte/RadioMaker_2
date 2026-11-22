@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.Core.Logging;
 
 namespace RadioMaker.Core.Configuration;
 
@@ -29,7 +30,7 @@ public static class BusExclusivityConfigStore
                 }
             }
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Warning("SETTINGS EXCLUSIVITY", "No se pudo leer la configuración guardada.", ex); }
         return new BusExclusivityConfig();
     }
 
@@ -41,7 +42,7 @@ public static class BusExclusivityConfigStore
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(ConfigPath, JsonSerializer.Serialize(config, Options));
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Error("SETTINGS EXCLUSIVITY", "No se pudo guardar la configuración.", ex); }
     }
 
     private static string BuildPath()

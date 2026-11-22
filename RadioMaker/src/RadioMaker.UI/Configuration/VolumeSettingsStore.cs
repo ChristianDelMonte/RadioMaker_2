@@ -1,4 +1,5 @@
 using System.Text.Json;
+using RadioMaker.Core.Logging;
 
 namespace RadioMaker.UI.Configuration;
 
@@ -28,7 +29,7 @@ public static class VolumeSettingsStore
                     return Math.Clamp(state.Volume, 0.0, 1.0);
             }
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Warning("SETTINGS VOLUME", "No se pudo leer el volumen guardado; se usará 100%.", ex); }
 
         return 1.0;
     }
@@ -43,7 +44,7 @@ public static class VolumeSettingsStore
             var state = new VolumeState { Volume = Math.Clamp(volume, 0.0, 1.0) };
             File.WriteAllText(ConfigPath, JsonSerializer.Serialize(state, Options));
         }
-        catch { }
+        catch (Exception ex) { AppLogger.Error("SETTINGS VOLUME", "No se pudo guardar el volumen", ex); }
     }
 
     private static string BuildPath()
