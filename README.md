@@ -41,7 +41,7 @@ distribuyen juntos en un mismo paquete. Escrita en **C# / .NET 8** con
 ---
 
 <p align="center">
-	<img alt="RadioMaker" height="50" src="imagenes/Radiomaker_UI.jpg"/>
+	<img alt="RadioMaker" height="850" src="imagenes/Radiomaker_UI.jpg"/>
 </p>
 
 ## ✨ Características
