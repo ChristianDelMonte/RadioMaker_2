@@ -248,6 +248,9 @@
                                           Click="OnMenuGeneratePlaylist" />
                             </MenuItem>
 
+                            <MenuItem Header="Planificador AutoDJ..."
+                                      Click="OnMenuOpenAutoDjClock" />
+
                             <Separator />
 
                             <MenuItem Header="Configuracion..." Click="OnConfigureAudioClick" />

@@ -252,6 +252,14 @@ public sealed class BusExclusivityCoordinator
                     Priority = ModulePriority.High,
                     Behavior = InterruptionBehavior.Stop
                 },
+                // AutoDJ solo toma un bus libre; las fuentes normales y el
+                // Scheduler pueden tomarle el aire si están activas.
+                ModuleRole.AutoDj => new ModuleExclusivityPolicy
+                {
+                    IsExclusive = true,
+                    Priority = ModulePriority.Low,
+                    Behavior = InterruptionBehavior.AutoResume
+                },
                 // Cart / Playlist / Manual: Stop. Cuando un Cart saca a otro
                 // Cart, lo detiene (como hoy). Cuando una Playlist saca a otra
                 // Playlist, la detiene.

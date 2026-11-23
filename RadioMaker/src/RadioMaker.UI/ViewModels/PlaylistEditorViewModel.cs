@@ -31,6 +31,8 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     /// bus persistido en el .rmf ya no existe. Lo inyecta el TabHost.
     /// -------------
     private readonly Func<IAudioBus?>? _schedulerBusProvider;
+    private Action? _stopPlaybackAction;
+    private Func<bool>? _autoDjEnabledProvider;
 
     // ───── Estado ────────────────────────────────────────────────────────
 
@@ -50,6 +52,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
     /// -------------Estado de reproduccion de ESTA playlist (viene del player).</summary>
     [ObservableProperty] private PlaylistPlayerState _playerState = PlaylistPlayerState.Stopped;
+    [ObservableProperty] private bool _isAutoDjPlaylist;
     public ObservableCollection<PlaylistTrackViewModel> Tracks { get; } = new();
 
     public PlaylistMode[] AvailableModes { get; } =
@@ -128,9 +131,11 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
     /// -------------True si esta playlist en particular es la que esta sonando.</summary>
     public bool IsThisPlaylistPlaying =>
-        _player is not null && ReferenceEquals(_player.CurrentPlaylist, _playlist);
+        _player is not null && (ReferenceEquals(_player.CurrentPlaylist, _playlist) ||
+            (IsAutoDjPlaylist && (_autoDjEnabledProvider?.Invoke() ?? false)));
 
-    public bool CanStartPlayback => HasTracks && !IsThisPlaylistPlaying;
+    public bool CanStartPlayback => !IsAutoDjPlaylist && HasTracks && !IsThisPlaylistPlaying;
+    public bool ShowBusSelector => !IsAutoDjPlaylist;
 
     public bool CanPausePlayback =>
         IsThisPlaylistPlaying && PlayerState.Status == PlaylistPlayerStatus.Playing;
@@ -140,14 +145,16 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         (PlayerState.Status == PlaylistPlayerStatus.Paused ||
          PlayerState.Status == PlaylistPlayerStatus.PausedByScheduler);
 
-    public bool CanStopPlayback => IsThisPlaylistPlaying;
+    public bool CanStopPlayback => IsThisPlaylistPlaying &&
+        (!IsAutoDjPlaylist || (_autoDjEnabledProvider?.Invoke() ?? PlayerState.Status != PlaylistPlayerStatus.Stopped));
 
-    public bool CanNextPlayback => IsThisPlaylistPlaying;
-    public bool CanPrevPlayback => IsThisPlaylistPlaying;
+    public bool CanNextPlayback => IsThisPlaylistPlaying && PlayerState.Status != PlaylistPlayerStatus.Stopped;
+    public bool CanPrevPlayback => IsThisPlaylistPlaying && PlayerState.Status != PlaylistPlayerStatus.Stopped;
 
-    public string PlayerStateText => !IsThisPlaylistPlaying
-        ? "Detenido"
-        : PlayerState.StatusText;
+    public string PlayerStateText => IsAutoDjPlaylist &&
+        (_autoDjEnabledProvider?.Invoke() ?? false) && PlayerState.Status == PlaylistPlayerStatus.Stopped
+            ? "Esperando aire"
+            : !IsThisPlaylistPlaying ? "Detenido" : PlayerState.StatusText;
 
     public string PlayerStateColor => !IsThisPlaylistPlaying
         ? "#6B7280"
@@ -165,7 +172,8 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     public PlaylistEditorViewModel(
         Playlist playlist,
         PlaylistPlayer? player,
-        Func<IAudioBus?>? schedulerBusProvider = null)
+        Func<IAudioBus?>? schedulerBusProvider = null,
+        Action? stopPlaybackAction = null)
     {
         _playlist = playlist ?? new Playlist();
         _playlistName = _playlist.Name;
@@ -173,6 +181,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         _mode = _playlist.Mode;
         _player = player;
         _schedulerBusProvider = schedulerBusProvider;
+        _stopPlaybackAction = stopPlaybackAction;
 
         RebuildTracksFromModel();
 
@@ -211,6 +220,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     [RelayCommand]
     private void StartPlayback()
     {
+        if (IsAutoDjPlaylist) return;
         if (_player is null) return;
         if (!HasTracks) return;
 
@@ -252,7 +262,26 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     private void StopPlayback()
     {
         if (_player is null) return;
+        if (IsAutoDjPlaylist && _stopPlaybackAction is not null)
+        {
+            _stopPlaybackAction();
+            return;
+        }
         try { _player.Stop(); } catch { }
+    }
+
+    public void SetStopPlaybackAction(Action action) => _stopPlaybackAction = action;
+    public void SetAutoDjEnabledProvider(Func<bool> provider)
+    {
+        _autoDjEnabledProvider = provider;
+        RefreshTransportState();
+        OnPropertyChanged(nameof(PlayerStateText));
+    }
+
+    public void RefreshAutoDjState()
+    {
+        RefreshTransportState();
+        OnPropertyChanged(nameof(PlayerStateText));
     }
 
     [RelayCommand]
@@ -496,6 +525,26 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         IsDirty = true;
         StatusMessage = $"Playlist generada automaticamente: {Tracks.Count} pista(s).";
         RefreshSummary();
+        RefreshTransportState();
+    }
+
+    /// <summary>Displays a generated AutoDJ preview on its dedicated, non-routable tab.</summary>
+    public void SetAutoDjPlaylist(Playlist playlist, string statusMessage)
+    {
+        if (playlist is null) throw new ArgumentNullException(nameof(playlist));
+        if (_player?.IsPlayingNow == true && ReferenceEquals(_player.CurrentPlaylist, _playlist)) return;
+
+        _playlist = playlist;
+        IsAutoDjPlaylist = true;
+        _currentFilePath = null;
+        LoadedFilePath = null;
+        PlaylistName = "AUTODJ";
+        Notes = string.Empty;
+        Mode = playlist.Mode;
+        RebuildTracksFromModel();
+        IsDirty = false;
+        StatusMessage = statusMessage;
+        OnPropertyChanged(nameof(ShowBusSelector));
         RefreshTransportState();
     }
 
@@ -783,6 +832,12 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(HasSelection));
         OnPropertyChanged(nameof(HasNoSelection));
+        OnPropertyChanged(nameof(CanStartPlayback));
+    }
+
+    partial void OnIsAutoDjPlaylistChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowBusSelector));
         OnPropertyChanged(nameof(CanStartPlayback));
     }
 

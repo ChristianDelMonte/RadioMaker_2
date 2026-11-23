@@ -634,38 +634,34 @@ a USD 1.000.000**.
 
 ## 🗺️ Roadmap
 
-### Pendientes técnicos (bug fixes y mejoras)
-
-- □  
-**Panel "Reproduciendo" / "Siguiente" con locuciones**: cuando suena una
-locución o cuando la siguiente pista es una locución, los paneles no la
-muestran.
-- □  
-**P4 — Podar plugins BASS no usados**: revisar si `ManagedBass.Aix`,
-`ManagedBass.Ofr` y `ManagedBass.WA` están realmente referenciados, o si se
-pueden sacar del `.csproj`.
-- □  
-**P5 — EQ de RMWave**: implementar `ApplyEqToStream` con
-`BASS_FX_BFX_PEAKEQ` (cross-platform) para que el ecualizador de RMWave
-aplique al audio.
-- □  
-**P7 — Refactor estructural**: dividir archivos gigantes
-(`MainWindowViewModel`, `PlaylistPlayer`, `PlaybackEngine`,
-`MainWindow.axaml.cs`).
-- □  
-**P8 — RMCast**: decidir si se implementa, se remueve del menú, o se deja
-como placeholder.
-
 ### Features futuras
 
-- □  
-**UI multi-idioma** (actualmente en español).
-- □  
-**Captura de audio de streaming** (Icecast / SHOUTcast).
-- □  
-**Soporte de múltiples monitores** para la preescucha.
-- □  
-**Plugin system** para módulos externos.
+- □ **AutoDJ con relojes y rotaciones**: generar y mantener una grilla de emisión continua a partir de plantillas por hora, categorías y reglas de selección.
+- □ **Biblioteca musical y reglas anti-repetición**: catálogo central con metadatos, intro/outro/cues, búsqueda avanzada y separación por artista, título, género y período.
+- □ **Voice tracking**: grabar, preescuchar y ubicar enlaces de locutor entre la salida de una pista y la entrada de la siguiente.
+- □ **Auditoría de emisión y aircheck**: historial real de lo emitido con hora/duración y grabación continua o segmentada del bus de aire, con retención configurable.
+- □ **Acceso remoto y API de control**: consultar estado, “al aire” y “siguiente”, y permitir controles remotos autenticados.
+- □ **Entradas y retransmisión**: streams y entrada de línea como fuentes programables, incluyendo toma prioritaria y retorno automático a la programación.
+- □ **Comandos y eventos automatizables**: acciones programadas (volumen, iniciar/detener, cargar/generar listas, llamadas HTTP) y cola de eventos manuales.
+- □ **Marcas / sweepers**: insertar identificadores o separadores sobre intros/outros mediante cues, con control de prioridad y mezcla.
+- □ **Programación comercial**: bloques de anuncios, campañas, reportes de emisión y, para una etapa avanzada, reemplazo local de publicidad en retransmisiones.
+- □ **Sincronización y recuperación**: importar automáticamente medios desde carpetas vigiladas, copias de seguridad/restauración y recuperación ante fallos.
+- □ **Multiestación y multiusuario**: servicios distribuidos, permisos por operador y sincronización en red (etapa avanzada, orientada a grupos de emisoras).
+- □ **Integración de estudio**: MIDI/fader start primero; protocolos de consola y GPIO según demanda y disponibilidad multiplataforma.
+- □ **UI multi-idioma** (actualmente en español).
+- □ **Soporte de múltiples monitores** para la preescucha.
+- □ **Plugin system** para módulos externos.
+- □ **Flujo de noticias y producción multimedia**: rundown/editor colaborativo y datos asociados al programa (etapa avanzada; no bloquea el foco inicial de automatización de audio).
+
+#### Priorización sugerida
+
+1. **Base de emisión confiable**: matriz de compilación/validación en Windows, macOS y Linux, instaladores nativos, firma, actualización y recuperación de configuración.
+2. **Automatización musical**: biblioteca, reglas anti-repetición, relojes y AutoDJ.
+3. **Producción y control al aire**: voice tracking, cues/marcas, eventos/comandos y entradas de audio.
+4. **Auditoría e integración**: as-run log, aircheck, now-playing/API y acceso remoto seguro.
+5. **Funciones de escala**: publicidad regional, sincronización multiestudio, multiestación, permisos e integración avanzada de consola.
+
+Estas funciones son propuestas para evaluar; no implican que estén implementadas. Las ideas de newsroom/multimedia, servicios distribuidos y redundancia se inspiran en suites de mayor escala y deben priorizarse solo si RadioMaker apunta a ese mercado.
 
 ### Empaquetado
 

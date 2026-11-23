@@ -447,6 +447,29 @@ public sealed partial class TabHostViewModel : ViewModelBase
         SaveWorkspace();
     }
 
+    /// <summary>Creates or refreshes the dedicated AutoDJ playlist tab.</summary>
+    public void ShowAutoDjPlaylist(PlaylistEditorViewModel vm)
+    {
+        if (Zone != TabZone.Left || vm is null) return;
+
+        var existing = Tabs.FirstOrDefault(t => t.Content is PlaylistEditorViewModel pl && pl.IsAutoDjPlaylist);
+        if (existing is not null)
+        {
+            SelectedTab = existing;
+            TabsChanged?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        var tab = new TabItemViewModel(
+            title: "AUTODJ",
+            kind: TabKind.Playlist,
+            isClosable: false,
+            content: vm);
+        Tabs.Add(tab);
+        SelectedTab = tab;
+        TabsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     [RelayCommand]
     public void AddEncadenadoresTab()
     {

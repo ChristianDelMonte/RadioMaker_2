@@ -8,7 +8,8 @@ public enum ModuleRole
     FileManager = 3,
     FavoriteFolder = 4,
     Manual = 5,
-    Emergency = 6
+    Emergency = 6,
+    AutoDj = 7
 }
 
 public enum InterruptionBehavior

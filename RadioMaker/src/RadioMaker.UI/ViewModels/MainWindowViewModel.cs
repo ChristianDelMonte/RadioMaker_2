@@ -21,6 +21,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     private readonly DispatcherTimer _meterTimer;
     private readonly DispatcherTimer _topPanelTimer;
     private readonly DispatcherTimer _tipTimer;
+    private readonly DispatcherTimer _autoDjTimer;
 
     private IAudioChannel? _currentChannel;
 
@@ -32,6 +33,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     private readonly PlaybackEngine _playback;
     private readonly ChannelConfigurator _configurator;
     private readonly PlaylistPlayer _playlistPlayer;
+    private readonly PlaylistPlayer _autoDjPlayer;
     private readonly CartBoardPlayer _cartPlayer;
     private readonly BusExclusivityCoordinator _coordinator;
     private readonly EncadenadoresRegistry _encadenadoresRegistry = new();
@@ -106,6 +108,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // ───── Archivo / reproduccion ────────────────────────────────────────
     [ObservableProperty] private string _currentFilePath = string.Empty;
     [ObservableProperty] private string _statusMessage = "Listo.";
+    [ObservableProperty] private bool _isAutoDjEnabled;
+    [ObservableProperty] private string _autoDjStatusText = "AutoDJ desactivado.";
     /// -------------Tip de ayuda actual mostrado en la barra de estado inferior.</summary>
     [ObservableProperty] private AppTip _currentTip = AppTips.GetRandom();
 
@@ -339,6 +343,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// la pestaña. (FASE B)
     /// -------------
     private readonly List<PlaylistPlayer> _playlistPlayers = new();
+    private Playlist? _autoDjPlaylist;
+    private Playlist? _autoDjPreparedPlaylist;
+    private PlaylistEditorViewModel? _autoDjEditorVm;
+    private static string AutoDjTemporaryPlaylistPath => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "RadioMaker", "AutoDJ", "AutoDJ-temporal.rmf");
+    private DateTime _autoDjNextStartAttemptUtc;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
     public string PositionText => $"{Position:mm\\:ss\\.f} / {Duration:mm\\:ss\\.f}";
@@ -556,6 +567,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             var pl = GetAnyPlaylistChannel();
             if (pl is not null) return pl;
 
+            if (_autoDjPlayer.CurrentChannel is { } autoDjChannel) return autoDjChannel;
+
             // Cart principal + carts extras.
             var cart = GetAnyActiveCartChannel();
             if (cart is not null) return cart;
@@ -739,6 +752,18 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _configurator.ConfigureChannel(channel, filePath, "PLAYLIST", logDetails);
 
         _playlistPlayer.PrewarmFile = path => _configurator.Prewarm(path);
+
+        _autoDjPlayer = new PlaylistPlayer(
+            _engine,
+            action => Dispatcher.UIThread.Post(action),
+            _locution,
+            _coordinator,
+            _encadenadoresRegistry,
+            ModuleRole.AutoDj);
+        _autoDjPlayer.ConfigureChannel = (channel, filePath, logDetails) =>
+            _configurator.ConfigureChannel(channel, filePath, "AUTODJ", logDetails);
+        _autoDjPlayer.PrewarmFile = path => _configurator.Prewarm(path);
+        _autoDjPlayer.StateChanged += OnAutoDjPlayerStateChanged;
 
         // 7) ViewModels de paneles.
         Equalizer = new EqualizerPanelViewModel(EqSettings);
@@ -970,6 +995,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         _meterTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(33) };
         _meterTimer.Tick += (_, _) => RefreshMeter();
+
+        _autoDjTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+        _autoDjTimer.Tick += (_, _) => TryStartAutoDjWhenAirIsFree();
 
         // Timer dedicado al panel superior (LED de tiempo + fecha/hora).
         // Corre SIEMPRE, independiente de si hay reproduccion o no, porque
@@ -1265,6 +1293,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         // 2) Canal del scheduler.
         try { list.AddRange(_playback.GetActiveChannels()); } catch { }
+
+        // AutoDJ utiliza un player separado, pero comparte el engine y el aire.
+        try { list.AddRange(_autoDjPlayer.GetActiveChannels()); } catch { }
 
         // 3) Playlist principal.
         try { list.AddRange(_playlistPlayer.GetActiveChannels()); } catch { }
@@ -1897,6 +1928,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private bool AnyPlaylistPlayerPlaying()
     {
+        try { if (_autoDjPlayer.IsPlayingNow) return true; } catch { }
         foreach (var p in _playlistPlayers)
         {
             try { if (p.IsPlayingNow) return true; } catch { }
@@ -1929,8 +1961,305 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// activa, scheduler y canal manual. Se invoca desde el menu
     /// "Reproduccion -> Detener todo".
     /// -------------
+    public void PrepareAutoDjPlaylist(AutoDjClock clock, IReadOnlyList<AutoDjClockTrack> tracks)
+    {
+        if (clock is null || tracks is null || tracks.Count == 0) return;
+        var playlist = CreateAutoDjPlaylist(clock, tracks);
+        _autoDjPreparedPlaylist = playlist;
+
+        string status;
+        try
+        {
+            PlaylistStore.Save(playlist, AutoDjTemporaryPlaylistPath);
+            status = $"Vista previa AutoDJ guardada temporalmente ({tracks.Count} pistas).";
+        }
+        catch (Exception ex)
+        {
+            status = $"Vista previa AutoDJ lista ({tracks.Count} pistas), pero no se pudo guardar temporalmente: {ex.Message}";
+            _logService.Warning("AUTODJ", status);
+        }
+
+        NotifyAutoDjButtonChanged();
+        if (_autoDjPlayer.IsPlayingNow) return;
+        ShowAutoDjPlaylist(playlist, status);
+        RefreshNowPlayingPanel();
+        RefreshNextPlayingPanel();
+    }
+
+    private Playlist CreateAutoDjPlaylist(AutoDjClock clock, IReadOnlyList<AutoDjClockTrack> tracks)
+    {
+        var airBus = GetSchedulerBus();
+        return new Playlist
+        {
+            Name = "AUTODJ",
+            Mode = PlaylistMode.Loop,
+            OutputBusId = airBus?.Id ?? string.Empty,
+            Tracks = tracks.Select(item => new PlaylistTrack
+            {
+                FilePath = item.Candidate.FilePath,
+                Title = !string.IsNullOrWhiteSpace(item.Candidate.Tags.DisplayTitle)
+                    ? item.Candidate.Tags.DisplayTitle
+                    : item.Candidate.DisplayName,
+                DurationSeconds = item.Candidate.DurationSeconds
+            }).ToList()
+        };
+    }
+
+    private void ShowAutoDjPlaylist(Playlist playlist, string status)
+    {
+        _autoDjEditorVm ??= new PlaylistEditorViewModel(
+            playlist, _autoDjPlayer, schedulerBusProvider: GetSchedulerBus, stopPlaybackAction: StopAutoDj);
+        _autoDjEditorVm.SetStopPlaybackAction(StopAutoDj);
+        _autoDjEditorVm.SetAutoDjEnabledProvider(() => IsAutoDjEnabled);
+        _autoDjEditorVm.SetAutoDjPlaylist(playlist, status);
+        TabHost.ShowAutoDjPlaylist(_autoDjEditorVm);
+    }
+
+    [RelayCommand]
+    private void ToggleAutoDj()
+    {
+        if (IsAutoDjEnabled)
+        {
+            StopAutoDj();
+            return;
+        }
+
+        if (_autoDjPreparedPlaylist is not { Tracks.Count: > 0 })
+        {
+            var saved = PlaylistStore.Load(AutoDjTemporaryPlaylistPath);
+            if (saved is { Tracks.Count: > 0 })
+            {
+                _autoDjPreparedPlaylist = saved;
+                ShowAutoDjPlaylist(saved, "Lista AutoDJ recuperada del guardado temporal.");
+                NotifyAutoDjButtonChanged();
+            }
+        }
+
+        if (_autoDjPreparedPlaylist is not { Tracks.Count: > 0 })
+        {
+            OpenAutoDjPlannerRequested?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        StartPreparedAutoDj("lista AutoDJ", _autoDjPreparedPlaylist.Tracks.Count);
+    }
+
+    private bool StartPreparedAutoDj(string sourceName, int trackCount)
+    {
+        if (_autoDjPreparedPlaylist is not { Tracks.Count: > 0 }) return false;
+        var airBus = GetSchedulerBus();
+        if (airBus is null)
+        {
+            AutoDjStatusText = "No hay un bus de aire disponible para AutoDJ.";
+            StatusMessage = AutoDjStatusText;
+            return false;
+        }
+
+        _autoDjPlaylist = _autoDjPreparedPlaylist;
+        _autoDjPlaylist.OutputBusId = airBus.Id;
+        ShowAutoDjPlaylist(_autoDjPlaylist, "AutoDJ habilitado; esperando un punto seguro para tomar el aire.");
+        IsAutoDjEnabled = true;
+        AutoDjStatusText = "AutoDJ habilitado; esperando un punto seguro para tomar el aire.";
+        _autoDjNextStartAttemptUtc = DateTime.MinValue;
+
+        if (_autoDjPlayer.IsPlayingNow)
+        {
+            _autoDjPlayer.StopAfterCurrentTrack();
+            AutoDjStatusText = "El nuevo reloj AutoDJ tomará el aire al terminar la pista actual.";
+        }
+        else
+        {
+            _autoDjPlayer.SetBus(airBus);
+            RequestActivePlaylistsToYield(airBus);
+        }
+
+        _autoDjTimer.Start();
+        _logService.Info("AUTODJ", $"'{sourceName}' habilitado con {trackCount} pista(s). Se esperará el final de la pista actual y el bus libre.");
+        TryStartAutoDjWhenAirIsFree();
+        return true;
+    }
+
+    public Task<bool> TakeAutoDjAirAsync(AutoDjClock clock, IReadOnlyList<AutoDjClockTrack> tracks)
+    {
+        if (clock is null || tracks is null || tracks.Count == 0)
+        {
+            AutoDjStatusText = "El reloj no contiene pistas reproducibles. Genera primero una vista previa válida.";
+            _logService.Warning("AUTODJ", AutoDjStatusText);
+            return Task.FromResult(false);
+        }
+
+        if (_autoDjPreparedPlaylist is not { Tracks.Count: > 0 } prepared ||
+            !prepared.Tracks.Select(t => t.FilePath).SequenceEqual(
+                tracks.Select(t => t.Candidate.FilePath), StringComparer.OrdinalIgnoreCase))
+        {
+            _autoDjPreparedPlaylist = CreateAutoDjPlaylist(clock, tracks);
+            try { PlaylistStore.Save(_autoDjPreparedPlaylist, AutoDjTemporaryPlaylistPath); }
+            catch (Exception ex) { _logService.Warning("AUTODJ", $"No se pudo actualizar el guardado temporal: {ex.Message}"); }
+        }
+
+        return Task.FromResult(StartPreparedAutoDj($"reloj '{clock.Name}'", tracks.Count));
+    }
+
+    public void StopAutoDj()
+    {
+        if (!IsAutoDjEnabled && _autoDjPlaylist is null) return;
+        IsAutoDjEnabled = false;
+        _autoDjTimer.Stop();
+        try { _autoDjPlayer.Stop(); } catch { }
+        try { _playlistPlayer.CancelStopAfterCurrentTrack(); } catch { }
+        foreach (var player in _playlistPlayers)
+        {
+            try { player.CancelStopAfterCurrentTrack(); } catch { }
+        }
+        _autoDjPlaylist = null;
+        AutoDjStatusText = "AutoDJ desactivado.";
+        NotifyAutoDjButtonChanged();
+        _logService.Info("AUTODJ", "AutoDJ desactivado por el operador.");
+    }
+
+    private void TryStartAutoDjWhenAirIsFree()
+    {
+        if (!IsAutoDjEnabled || _autoDjPlaylist is null) return;
+        var airBus = GetSchedulerBus();
+        if (airBus is null) return;
+
+        if (_autoDjPlayer.IsPlayingNow)
+        {
+            if (!string.Equals(_autoDjPlayer.TargetBus?.Id, airBus.Id, StringComparison.OrdinalIgnoreCase))
+            {
+                _autoDjPlayer.StopAfterCurrentTrack();
+                AutoDjStatusText = "AutoDJ cambiará al nuevo bus al terminar la pista actual.";
+            }
+            return;
+        }
+        if (_autoDjPlayer.CurrentStatus is PlaylistPlayerStatus.Paused or PlaylistPlayerStatus.PausedByScheduler) return;
+
+        if (!string.Equals(_autoDjPlayer.TargetBus?.Id, airBus.Id, StringComparison.OrdinalIgnoreCase))
+            _autoDjPlayer.SetBus(airBus);
+
+        RequestActivePlaylistsToYield(airBus);
+
+        var currentOwner = _coordinator.GetCurrentOwnerId(airBus.Id);
+        if (!string.IsNullOrEmpty(currentOwner))
+        {
+            AutoDjStatusText = "AutoDJ habilitado; esperando que se libere el bus de aire.";
+            return;
+        }
+
+        if (DateTime.UtcNow < _autoDjNextStartAttemptUtc) return;
+        _autoDjNextStartAttemptUtc = DateTime.UtcNow.AddSeconds(5);
+        if (_autoDjEditorVm is null)
+        {
+            _autoDjEditorVm = new PlaylistEditorViewModel(
+                _autoDjPlaylist, _autoDjPlayer, schedulerBusProvider: GetSchedulerBus, stopPlaybackAction: StopAutoDj);
+        }
+        _autoDjEditorVm.SetStopPlaybackAction(StopAutoDj);
+        _autoDjEditorVm.SetAutoDjEnabledProvider(() => IsAutoDjEnabled);
+        _autoDjEditorVm.SetAutoDjPlaylist(_autoDjPlaylist, "AutoDJ listo para salir al aire.");
+        TabHost.ShowAutoDjPlaylist(_autoDjEditorVm);
+        _autoDjPlayer.Play(_autoDjPlaylist);
+        if (_autoDjPlayer.IsPlayingNow)
+        {
+            AutoDjStatusText = $"AutoDJ al aire: {_autoDjPlaylist.Name}.";
+            _logService.Info("AUTODJ", $"Tomó el aire en '{airBus.DisplayName}'.");
+        }
+        else
+        {
+            AutoDjStatusText = "AutoDJ habilitado; no se pudo iniciar. Reintentará cuando el bus esté disponible.";
+        }
+    }
+
+    private void RequestActivePlaylistsToYield(IAudioBus airBus)
+    {
+        IEnumerable<PlaylistPlayer> players = new[] { _playlistPlayer }.Concat(_playlistPlayers);
+        foreach (var player in players)
+        {
+            try
+            {
+                var playerBus = player.TargetBus ?? _engine.PrimaryBus;
+                if (player.IsPlayingNow &&
+                    string.Equals(playerBus.Id, airBus.Id, StringComparison.OrdinalIgnoreCase))
+                    player.StopAfterCurrentTrack();
+            }
+            catch { }
+        }
+    }
+
+    private void OnAutoDjPlayerStateChanged(object? sender, PlaylistPlayerState state)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (IsAutoDjEnabled)
+            {
+                AutoDjStatusText = state.Status switch
+                {
+                    PlaylistPlayerStatus.Playing => $"AutoDJ al aire: {_autoDjPlaylist?.Name ?? "AutoDJ"}.",
+                    PlaylistPlayerStatus.PausedByScheduler => "AutoDJ pausado por un programado; se reanudará al terminar.",
+                    PlaylistPlayerStatus.Paused => "AutoDJ pausado.",
+                    _ => "AutoDJ habilitado; esperando un punto seguro para tomar el aire."
+                };
+            }
+
+            if (state.Status == PlaylistPlayerStatus.Playing)
+            {
+                if (!_positionTimer.IsEnabled) _positionTimer.Start();
+                if (!_meterTimer.IsEnabled) _meterTimer.Start();
+            }
+            else if (state.Status is PlaylistPlayerStatus.Stopped or PlaylistPlayerStatus.Error)
+            {
+                if (HasPlaybackWithoutAutoDj())
+                {
+                    if (!_meterTimer.IsEnabled) _meterTimer.Start();
+                    RefreshMeter();
+                }
+                else
+                {
+                    _meterTimer.Stop();
+                    ResetMeter();
+                }
+            }
+
+            try { UpdateSpectrumChannel(); } catch { }
+            try { RefreshNowPlayingPanel(); } catch { }
+            try { RefreshNextPlayingPanel(); } catch { }
+            OnPropertyChanged(nameof(NowPlayingSpectrum));
+            SyncPlaybackState();
+        });
+    }
+
+    private bool HasPlaybackWithoutAutoDj()
+    {
+        if (_locution.IsPlaying) return true;
+
+        try { if (_playlistPlayer.IsPlayingNow) return true; } catch { }
+        foreach (var player in _playlistPlayers)
+        {
+            try { if (player.IsPlayingNow) return true; } catch { }
+        }
+
+        foreach (var channel in GetAllActiveChannels())
+        {
+            if (ReferenceEquals(channel, _autoDjPlayer.CurrentChannel)) continue;
+            try
+            {
+                if (channel.State is PlaybackState.Playing or PlaybackState.Stalled)
+                    return true;
+            }
+            catch { }
+        }
+
+        return false;
+    }
+
+    partial void OnIsAutoDjEnabledChanged(bool value)
+    {
+        _autoDjEditorVm?.RefreshAutoDjState();
+        NotifyAutoDjButtonChanged();
+    }
+
     public void StopAllPlayback()
     {
+        StopAutoDj();
         try { _cartPlayer.StopAll(); } catch { }
         try { _playlistPlayer.Stop(); } catch { }
         try { _playback.StopAll(); } catch { }
@@ -1998,6 +2327,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         double sec = Fade.CartCrossfadeEnabled ? Fade.CartCrossfadeSeconds : 0;
         try { _playlistPlayer?.SetCrossfadeSeconds(sec); } catch { }
+        try { _autoDjPlayer?.SetCrossfadeSeconds(sec); } catch { }
         foreach (var p in _playlistPlayers)
         {
             try { p.SetCrossfadeSeconds(sec); } catch { }
@@ -2714,6 +3044,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (pl is not null && pl.State == PlaybackState.Playing)
             return pl;
 
+        try
+        {
+            var autoDj = _autoDjPlayer.CurrentChannel;
+            if (autoDj is not null && autoDj.State == PlaybackState.Playing) return autoDj;
+        }
+        catch { }
+
         var cart = GetAnyActiveCartChannel();
         if (cart is not null) return cart;
 
@@ -2829,23 +3166,29 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 }
                 else
                 {
-                    var cart = GetAnyActiveCartChannel();
-                    if (cart is not null)
+                    var autoDj = _autoDjPlayer.CurrentChannel;
+                    if (autoDj is not null)
                     {
-                        active = cart;
-                        source = "CART";
+                        active = autoDj;
+                        source = "AUTODJ";
                     }
                     else
                     {
-                        // ── Presentación inicial (onboarding): si no hay
-                        // nada más sonando, alimentar el Spectrum con el
-                        // canal de la demo. Prioridad más baja que todo
-                        // para no tapar audio real en paralelo.
-                        var demoCh = Demo?.GetCurrentChannel();
-                        if (demoCh is not null)
+                        var cart = GetAnyActiveCartChannel();
+                        if (cart is not null)
                         {
-                            active = demoCh;
-                            source = "DEMO";
+                            active = cart;
+                            source = "CART";
+                        }
+                        else
+                        {
+                            // Demo de bienvenida: prioridad más baja que todo.
+                            var demoCh = Demo?.GetCurrentChannel();
+                            if (demoCh is not null)
+                            {
+                                active = demoCh;
+                                source = "DEMO";
+                            }
                         }
                     }
                 }
@@ -2939,7 +3282,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 _locution.IsPlaying)
                 anyPlaying = true;
 
-            var playlistPlayers = new List<PlaylistPlayer> { _playlistPlayer };
+            var playlistPlayers = new List<PlaylistPlayer> { _playlistPlayer, _autoDjPlayer };
             playlistPlayers.AddRange(_playlistPlayers);
             foreach (var player in playlistPlayers)
             {
@@ -3443,6 +3786,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// en una seccion concreta.
     /// -------------
     public event EventHandler<string>? OpenSettingsRequested;
+    public event EventHandler? OpenAutoDjPlannerRequested;
 
     /// -------------
     /// Devuelve el PlaylistPlayer que este REALMENTE reproduciendo. Si
@@ -3451,6 +3795,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// -------------
     private PlaylistPlayer? GetActivePlaylistPlayer()
     {
+        // AutoDJ usa un reproductor dedicado, fuera de la lista de playlists normales.
+        try
+        {
+            if (_autoDjPlayer.IsPlayingNow) return _autoDjPlayer;
+        }
+        catch { }
+
         // Primera pasada: buscar uno que este PLAYING NOW.
         foreach (var p in _playlistPlayers)
         {
@@ -3462,6 +3813,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         // Segunda pasada: aceptar uno activo (pausado o preparado).
+        try
+        {
+            if (_autoDjPlayer.IsActive && _autoDjPlayer.CurrentChannel is not null)
+                return _autoDjPlayer;
+        }
+        catch { }
+
         foreach (var p in _playlistPlayers)
         {
             try
@@ -3717,6 +4075,27 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     //  Ducking (botón de micrófono en la toolbar)
     // ═════════════════════════════════════════════════════════════════════
 
+    public string AutoDjButtonTooltip => IsAutoDjEnabled
+        ? "Desactivar AutoDJ"
+        : _autoDjPreparedPlaylist is { Tracks.Count: > 0 } || File.Exists(AutoDjTemporaryPlaylistPath)
+            ? "Activar la lista AutoDJ preparada"
+            : "Generar una lista AutoDJ";
+
+    public IBrush AutoDjButtonBackground => IsAutoDjEnabled
+        ? new SolidColorBrush(Color.Parse("#16A34A"))
+        : ResolveThemeBrush("BgPrimary") ?? new SolidColorBrush(Colors.Transparent);
+
+    public IBrush AutoDjButtonForeground => IsAutoDjEnabled
+        ? new SolidColorBrush(Colors.White)
+        : ResolveThemeBrush("FgPrimary") ?? new SolidColorBrush(Colors.Gray);
+
+    private void NotifyAutoDjButtonChanged()
+    {
+        OnPropertyChanged(nameof(AutoDjButtonTooltip));
+        OnPropertyChanged(nameof(AutoDjButtonBackground));
+        OnPropertyChanged(nameof(AutoDjButtonForeground));
+    }
+
     /// -------------
     /// True si el ducking por micrófono está activo. Bindea al botón de la
     /// toolbar como estado y a las propiedades visuales (color/ícono/tooltip).
@@ -3908,6 +4287,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // ───── Dispose ───────────────────────────────────────────────────────
     public void Dispose()
     {
+        try { _autoDjTimer.Stop(); } catch { }
+        try { _autoDjPlayer.StateChanged -= OnAutoDjPlayerStateChanged; } catch { }
+        try { StopAutoDj(); } catch { }
+        try { _autoDjPlayer.Dispose(); } catch { }
+
         // Presentación inicial
         try
         {

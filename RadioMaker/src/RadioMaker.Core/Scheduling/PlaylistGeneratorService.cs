@@ -13,6 +13,14 @@ public sealed record PlaylistGeneratorProgress(
     int Current,
     int Total);
 
+/// <summary>Resultado del escaneo reutilizable por el generador y AutoDJ.</summary>
+public sealed record PlaylistLibraryScanResult(
+    bool Success,
+    string? ErrorMessage,
+    IReadOnlyList<AudioCandidate> Candidates,
+    int FilesFound,
+    int SkippedUnreadable);
+
 /// -------------
 /// Candidato de audio encontrado durante el escaneo de carpeta.
 /// Lleva path, duracion y (opcionalmente) los tags del archivo.
@@ -123,6 +131,8 @@ public static class PlaylistGeneratorService
     {
         public double Duration;
         public AudioTagInfo? Tags;
+        public long FileLength = -1;
+        public DateTime LastWriteUtc;
     }
 
     private static readonly ConcurrentDictionary<string, CachedInfo> _infoCache
@@ -131,6 +141,54 @@ public static class PlaylistGeneratorService
             : StringComparer.Ordinal);
 
     public static void ClearCache() => _infoCache.Clear();
+
+    /// <summary>Escanea una carpeta y devuelve el inventario con sus tags y duraciones.</summary>
+    public static PlaylistLibraryScanResult ScanLibrary(
+        string folder,
+        bool includeSubfolders,
+        IEnumerable<string>? supportedExtensions = null,
+        IProgress<PlaylistGeneratorProgress>? progress = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(folder))
+            return new(false, "No se especificó una carpeta de biblioteca.", Array.Empty<AudioCandidate>(), 0, 0);
+        if (!Directory.Exists(folder))
+            return new(false, "La carpeta seleccionada no existe.", Array.Empty<AudioCandidate>(), 0, 0);
+
+        progress?.Report(new PlaylistGeneratorProgress("Buscando archivos de audio...", 0, 0));
+        var files = EnumerateAudioFiles(folder, includeSubfolders, ct, supportedExtensions);
+        if (files.Count == 0)
+            return new(false, "No se encontraron archivos de audio compatibles.", Array.Empty<AudioCandidate>(), 0, 0);
+
+        var candidates = new List<AudioCandidate>(files.Count);
+        int skipped = 0;
+        for (int i = 0; i < files.Count; i++)
+        {
+            ct.ThrowIfCancellationRequested();
+            var info = GetOrLoadInfo(files[i], loadTags: true, ct);
+            if (info.Duration <= 0.5)
+            {
+                skipped++;
+            }
+            else
+            {
+                candidates.Add(new AudioCandidate
+                {
+                    FilePath = files[i],
+                    DurationSeconds = info.Duration,
+                    Tags = info.Tags ?? AudioTagInfo.Empty
+                });
+            }
+
+            if ((i + 1) % 10 == 0 || i + 1 == files.Count)
+                progress?.Report(new PlaylistGeneratorProgress($"Leyendo biblioteca {i + 1}/{files.Count}...", i + 1, files.Count));
+        }
+
+        AppLogger.Info("AUDIO LIBRARY", $"Escaneo de '{folder}': {candidates.Count} pista(s) válidas; {skipped} ilegible(s).");
+        return candidates.Count == 0
+            ? new(false, "No se pudo leer la duración de ningún archivo de audio.", candidates, files.Count, skipped)
+            : new(true, null, candidates, files.Count, skipped);
+    }
 
     // ───── API principal ────────────────────────────────────────────────
 
@@ -250,9 +308,16 @@ public static class PlaylistGeneratorService
 
     // ───── Paso 1: enumeracion ──────────────────────────────────────────
 
-    private static List<string> EnumerateAudioFiles(string folder, bool includeSubdirs, CancellationToken ct)
+    private static List<string> EnumerateAudioFiles(
+        string folder,
+        bool includeSubdirs,
+        CancellationToken ct,
+        IEnumerable<string>? supportedExtensions = null)
     {
         var result = new List<string>();
+        var extensionSet = supportedExtensions is null
+            ? null
+            : new HashSet<string>(supportedExtensions.Select(NormalizeExtension), StringComparer.OrdinalIgnoreCase);
 
         var searchOpt = includeSubdirs
             ? SearchOption.AllDirectories
@@ -267,7 +332,7 @@ public static class PlaylistGeneratorService
                 var ext = Path.GetExtension(path);
                 if (string.IsNullOrEmpty(ext)) continue;
 
-                if (IsSupportedAudioExtension(ext))
+                if (extensionSet?.Contains(NormalizeExtension(ext)) ?? IsSupportedAudioExtension(ext))
                     result.Add(path);
             }
         }
@@ -278,6 +343,12 @@ public static class PlaylistGeneratorService
         }
 
         return result;
+    }
+
+    private static string NormalizeExtension(string extension)
+    {
+        var value = extension.Trim();
+        return value.StartsWith('.') ? value : "." + value;
     }
 
     private static bool IsSupportedAudioExtension(string ext)
@@ -303,6 +374,24 @@ public static class PlaylistGeneratorService
 
         lock (info)
         {
+            try
+            {
+                var file = new FileInfo(path);
+                if (!file.Exists) return info;
+                if (info.FileLength != file.Length || info.LastWriteUtc != file.LastWriteTimeUtc)
+                {
+                    info.Duration = 0;
+                    info.Tags = null;
+                    info.FileLength = file.Length;
+                    info.LastWriteUtc = file.LastWriteTimeUtc;
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warning("AUDIO LIBRARY", $"No se pudo consultar el archivo '{path}': {ex.Message}");
+                return info;
+            }
+
             if (info.Duration <= 0)
             {
                 try { info.Duration = AudioFileInfoReader.GetDurationSeconds(path); }
@@ -311,7 +400,12 @@ public static class PlaylistGeneratorService
 
             if (loadTags && info.Tags is null)
             {
-                try { info.Tags = AudioTagReader.Read(path); }
+                try
+                {
+                    info.Tags = path.EndsWith(".rmw", StringComparison.OrdinalIgnoreCase)
+                        ? AudioTagInfo.Empty
+                        : AudioTagReader.Read(path);
+                }
                 catch { info.Tags = AudioTagInfo.Empty; }
             }
         }

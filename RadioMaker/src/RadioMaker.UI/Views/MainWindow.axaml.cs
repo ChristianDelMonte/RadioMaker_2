@@ -84,6 +84,9 @@ public partial class MainWindow : Window
                 vm.OpenEmergencySettingsRequested -= OnOpenEmergencySettingsRequested;
                 vm.OpenEmergencySettingsRequested += OnOpenEmergencySettingsRequested;
 
+                vm.OpenAutoDjPlannerRequested -= OnOpenAutoDjPlannerRequested;
+                vm.OpenAutoDjPlannerRequested += OnOpenAutoDjPlannerRequested;
+
                 vm.ConfirmStopEmergencyRequested -= OnConfirmStopEmergencyRequested;
                 vm.ConfirmStopEmergencyRequested += OnConfirmStopEmergencyRequested;
             }
@@ -202,6 +205,30 @@ public partial class MainWindow : Window
     private void OnMenuExit(object? sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    private async void OnMenuOpenAutoDjClock(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel vm) return;
+        await OpenAutoDjClockAsync(vm);
+    }
+
+    private async void OnOpenAutoDjPlannerRequested(object? sender, EventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel vm) return;
+        await OpenAutoDjClockAsync(vm);
+    }
+
+    private async Task OpenAutoDjClockAsync(MainWindowViewModel vm)
+    {
+        var window = new AutoDjClockWindow
+        {
+            DataContext = new AutoDjClockWindowViewModel(
+                vm.SupportedExtensions,
+                vm.TakeAutoDjAirAsync,
+                vm.PrepareAutoDjPlaylist)
+        };
+        await window.ShowDialog(this);
     }
 
     // ═════════════════════════════════════════════════════════════════════

@@ -53,6 +53,8 @@ public sealed class PlaylistPlayer : IDisposable
     private IAudioBus? _targetBus;
     private PlaylistInterruptionBehavior _interruptionBehavior = PlaylistInterruptionBehavior.Continue;
     private bool _advanceOnResume = false;
+    private bool _stopAfterCurrentTrack;
+    private readonly ModuleRole _moduleRole;
     private int _currentStatus = (int)PlaylistPlayerStatus.Stopped;
 
     /// -------------
@@ -139,13 +141,15 @@ public sealed class PlaylistPlayer : IDisposable
         Action<Action> dispatch,
         LocutionService? locution = null,
         BusExclusivityCoordinator? coordinator = null,
-        EncadenadoresRegistry? encadenadores = null)
+        EncadenadoresRegistry? encadenadores = null,
+        ModuleRole moduleRole = ModuleRole.Playlist)
     {
         _audioEngine = audioEngine ?? throw new ArgumentNullException(nameof(audioEngine));
         _dispatch = dispatch ?? throw new ArgumentNullException(nameof(dispatch));
         _locution = locution;
         _coordinator = coordinator;
         _encadenadores = encadenadores;
+        _moduleRole = moduleRole;
 
         if (_coordinator is not null)
         {
@@ -318,6 +322,7 @@ public sealed class PlaylistPlayer : IDisposable
         {
             _isPausedByCoordinator = false;
             _isCrossfading = false;
+            _stopAfterCurrentTrack = false;
             CancelCurrentLocution();
             var enabledIndexes = GetEnabledIndexes(playlist);
             if (enabledIndexes.Count == 0)
@@ -346,6 +351,57 @@ public sealed class PlaylistPlayer : IDisposable
                 BuildShuffleQueue(playlist, startIndex);
 
             PlayTrackInternal(startIndex);
+        }
+    }
+
+    /// <summary>Solicita terminar la pista audible actual y detener la playlist sin avanzar.</summary>
+    public bool StopAfterCurrentTrack()
+    {
+        lock (_gate)
+        {
+            if (_playlist is null || (_currentChannel is null && _currentLocutionCts is null)) return false;
+            if (_stopAfterCurrentTrack) return true;
+
+            _stopAfterCurrentTrack = true;
+            if (_currentChannel is null)
+            {
+                AppLogger.Info("AUTODJ", $"La playlist '{_playlist.Name}' cederá el aire al terminar la locución actual.");
+                return true;
+            }
+            try { _currentChannel.NearEnd -= OnChannelNearEnd; } catch { }
+            try { _currentChannel.SetCrossfade(0); } catch { }
+
+            // Si suena un encadenador, que complete el corte actual sin lanzar
+            // antes la siguiente pista de la playlist.
+            if (_encadenadorChannel is not null)
+            {
+                try { _encadenadorChannel.NearEnd -= OnEncadenadorNearEnd; } catch { }
+                try { _encadenadorChannel.SetCrossfade(0); } catch { }
+            }
+
+            AppLogger.Info("AUTODJ", $"La playlist '{_playlist.Name}' terminará la pista actual y cederá el aire.");
+            return true;
+        }
+    }
+
+    /// <summary>Cancela una cesión pendiente solicitada por AutoDJ.</summary>
+    public void CancelStopAfterCurrentTrack()
+    {
+        lock (_gate)
+        {
+            if (!_stopAfterCurrentTrack) return;
+            _stopAfterCurrentTrack = false;
+            var channel = _encadenadorChannel ?? _currentChannel;
+            if (channel is null || _crossfadeSeconds <= 0.05) return;
+            try
+            {
+                channel.SetCrossfade(_crossfadeSeconds);
+                if (ReferenceEquals(channel, _encadenadorChannel))
+                    channel.NearEnd += OnEncadenadorNearEnd;
+                else
+                    channel.NearEnd += OnChannelNearEnd;
+            }
+            catch { }
         }
     }
 
@@ -759,6 +815,11 @@ public sealed class PlaylistPlayer : IDisposable
                 {
                     if (_currentIndex != index) return;
                     _currentLocutionCts = null;
+                    if (_stopAfterCurrentTrack)
+                    {
+                        StopAfterTrackBoundaryInternal();
+                        return;
+                    }
                     AdvanceToNext(auto: true);
                 }
             });
@@ -779,6 +840,11 @@ public sealed class PlaylistPlayer : IDisposable
                 {
                     if (_currentIndex != index) return;
                     _currentLocutionCts = null;
+                    if (_stopAfterCurrentTrack)
+                    {
+                        StopAfterTrackBoundaryInternal();
+                        return;
+                    }
                     AdvanceToNext(auto: true);
                 }
             });
@@ -824,6 +890,7 @@ public sealed class PlaylistPlayer : IDisposable
             lock (_gate)
             {
                 if (_disposed) return;
+                if (_stopAfterCurrentTrack) return;
                 if (_playlist is null) return;
                 if (!ReferenceEquals(sender, _currentChannel)) return;
                 if (_isCrossfading) return;
@@ -1021,6 +1088,7 @@ public sealed class PlaylistPlayer : IDisposable
             {
                 if (_disposed || !ReferenceEquals(sender, _encadenadorChannel) || _encadenadorNextStarted)
                     return;
+                if (_stopAfterCurrentTrack) return;
                 StartNextTrackDuringEncadenador();
             }
         });
@@ -1047,7 +1115,14 @@ public sealed class PlaylistPlayer : IDisposable
                 try { channel.Dispose(); } catch { }
 
                 if (!_encadenadorNextStarted)
+                {
+                    if (_stopAfterCurrentTrack)
+                    {
+                        StopAfterTrackBoundaryInternal();
+                        return;
+                    }
                     StartNextTrackDuringEncadenador();
+                }
             }
         });
     }
@@ -1154,6 +1229,12 @@ public sealed class PlaylistPlayer : IDisposable
 
                 TrackEnded?.Invoke(this, endedIndex);
                 TrackCompleted?.Invoke(this, endedIndex);
+
+                if (_stopAfterCurrentTrack)
+                {
+                    StopAfterTrackBoundaryInternal();
+                    return;
+                }
 
                 var nextIndex = GetNextIndex();
                 if (nextIndex >= 0 && TryStartEncadenador(nextIndex, oldChannel: null))
@@ -1403,6 +1484,7 @@ public sealed class PlaylistPlayer : IDisposable
 
     private void StopCurrentChannelInternal(bool keepPlaylist = false, bool preserveEncadenadores = false)
     {
+        _stopAfterCurrentTrack = false;
         _isPausedByCoordinator = false;
         _advanceOnResume = false;
 
@@ -1436,6 +1518,18 @@ public sealed class PlaylistPlayer : IDisposable
             _playlist = null;
             _currentIndex = -1;
         }
+    }
+
+    private void StopAfterTrackBoundaryInternal()
+    {
+        if (!_stopAfterCurrentTrack) return;
+        _stopAfterCurrentTrack = false;
+        StopCurrentChannelInternal();
+        _shuffleQueue.Clear();
+        _shufflePosition = -1;
+        _pausedPositionSeconds = 0;
+        SessionEnded?.Invoke(this, EventArgs.Empty);
+        RaiseState(PlaylistPlayerState.Stopped);
     }
 
     private void StartProgressTimer()
@@ -1799,7 +1893,7 @@ public sealed class PlaylistPlayer : IDisposable
         if (!string.IsNullOrEmpty(_acquiredBusId))
             ReleaseBusInternal();
 
-        var result = _coordinator.TryAcquire(busId, _instanceId, ModuleRole.Playlist, channel);
+        var result = _coordinator.TryAcquire(busId, _instanceId, _moduleRole, channel);
         if (result.Granted)
             _acquiredBusId = busId;
         return result;

@@ -1,0 +1,176 @@
+<controls:CustomChromeWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RadioMaker.UI.ViewModels"
+        xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="RadioMaker.UI.Views.AutoDjClockWindow"
+        x:DataType="vm:AutoDjClockWindowViewModel"
+        Title="Planificador AutoDJ"
+        Width="930" Height="800"
+        MinWidth="760" MinHeight="620"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <controls:ModalTitleBar Grid.Row="0"
+                                WindowTitle="Planificador AutoDJ"
+                                IsVisible="{Binding $parent[controls:CustomChromeWindow].IsCustomChromeEnabled}" />
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}"
+                BorderThickness="0,0,0,1"
+                Padding="8,5">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button Click="OnOpenClockClick" Padding="7,4" ToolTip.Tip="Abrir reloj (.rmclock)">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <materialIcons:MaterialIcon Kind="FolderOpen" Width="15" Height="15" />
+                        <TextBlock Text="Abrir" FontSize="11" />
+                    </StackPanel>
+                </Button>
+                <Button Click="OnSaveClockClick" Padding="7,4" ToolTip.Tip="Guardar reloj">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <materialIcons:MaterialIcon Kind="ContentSave" Width="15" Height="15" />
+                        <TextBlock Text="Guardar reloj" FontSize="11" />
+                    </StackPanel>
+                </Button>
+                <Button Click="OnSaveClockAsClick" Padding="7,4" ToolTip.Tip="Guardar reloj como">
+                    <TextBlock Text="Guardar como..." FontSize="11" />
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="2" Margin="16">
+            <StackPanel Spacing="14">
+                <Border Background="{DynamicResource BgQuaternary}"
+                        BorderBrush="{DynamicResource AccentSoft}"
+                        BorderThickness="1" CornerRadius="5" Padding="10">
+                    <TextBlock TextWrapping="Wrap" FontSize="11"
+                               Foreground="{DynamicResource FgPrimary}"
+                               Text="Esta primera etapa crea y previsualiza una programación. Todavía no activa AutoDJ ni inicia la reproducción. Cada línea del reloj es un espacio; el sistema recorre la secuencia hasta completar aproximadamente la duración objetivo. Usa * para cualquier género." />
+                </Border>
+
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Biblioteca musical" FontSize="13" FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgPrimary}" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <TextBox Grid.Column="0" Text="{Binding SourceFolder}"
+                                 PlaceholderText="Selecciona la carpeta de música..." FontSize="11" />
+                        <Button Grid.Column="1" Click="OnBrowseFolderClick" Padding="9,5">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <materialIcons:MaterialIcon Kind="FolderOpen" Width="15" Height="15" />
+                                <TextBlock Text="Examinar..." FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <CheckBox Content="Incluir subcarpetas" IsChecked="{Binding IncludeSubfolders}"
+                              FontSize="11" Foreground="{DynamicResource FgPrimary}" />
+                </StackPanel>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="18">
+                    <StackPanel Grid.Column="0" Spacing="6">
+                        <TextBlock Text="Duración objetivo" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}" />
+                        <NumericUpDown Value="{Binding TargetDurationMinutes}" Minimum="5" Maximum="1440"
+                                       Increment="5" FormatString="0" Width="150" />
+                        <TextBlock Text="minutos (hasta 24 horas). No se cortan canciones; la duración real puede exceder el objetivo."
+                                   FontSize="10" TextWrapping="Wrap" Foreground="{DynamicResource FgSecondary}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="6">
+                        <TextBlock Text="Separación de artista" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}" />
+                        <NumericUpDown Value="{Binding MinTracksBetweenSameArtist}" Minimum="0" Maximum="50"
+                                       Increment="1" FormatString="0" Width="150" />
+                        <TextBlock Text="pistas entre repeticiones. 0 desactiva esta regla."
+                                   FontSize="10" TextWrapping="Wrap" Foreground="{DynamicResource FgSecondary}" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Secuencia del reloj" FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource FgPrimary}" />
+                    <TextBox Text="{Binding ClockSequenceText}"
+                             AcceptsReturn="True" Height="120" FontSize="11"
+                             TextWrapping="NoWrap"
+                             PlaceholderText="Una categoría por línea; por ejemplo: Rock, Pop, Rock, *" />
+                    <TextBlock Text="Escribe el género tal como aparece en las etiquetas de audio. Puedes repetirlo para darle más turnos. * significa cualquier género. Si el género no coincide exactamente, ese espacio se omite."
+                               FontSize="10" TextWrapping="Wrap" Foreground="{DynamicResource FgSecondary}" />
+                </StackPanel>
+
+                <Separator />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <StackPanel Spacing="3" VerticalAlignment="Center">
+                        <TextBlock Text="Vista previa de la hora" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource FgPrimary}" />
+                        <TextBlock Text="{Binding PreviewSummaryText}" FontSize="11"
+                                   Foreground="{DynamicResource AccentText}" IsVisible="{Binding HasPreview}" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Command="{Binding GenerateCommand}" Padding="11,6">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <materialIcons:MaterialIcon Kind="AutoFix" Width="15" Height="15" />
+                            <TextBlock Text="Generar vista previa" FontSize="11" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <StackPanel Spacing="4" IsVisible="{Binding IsGenerating}">
+                    <ProgressBar Minimum="0" Maximum="100"
+                                 Value="{Binding GenerationProgress}"
+                                 IsIndeterminate="{Binding IsProgressIndeterminate}"
+                                 Height="8" />
+                    <TextBlock Text="{Binding GenerationProgressText}" FontSize="10"
+                               Foreground="{DynamicResource FgSecondary}"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <Border BorderBrush="{DynamicResource BorderPrimary}" BorderThickness="1"
+                        CornerRadius="5" Padding="5" MinHeight="180">
+                    <ScrollViewer MaxHeight="300" HorizontalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding PreviewTracks}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:AutoDjClockPreviewItem">
+                                    <Grid ColumnDefinitions="38,*,150,130,85" ColumnSpacing="8" Margin="0,3">
+                                        <TextBlock Grid.Column="0" Text="{Binding Number}" FontSize="10"
+                                                   Foreground="{DynamicResource FgSecondary}" />
+                                        <StackPanel Grid.Column="1" Spacing="1">
+                                            <TextBlock Text="{Binding Title}" FontSize="11"
+                                                       Foreground="{DynamicResource FgPrimary}" />
+                                            <TextBlock Text="{Binding Artist}" FontSize="10"
+                                                       Foreground="{DynamicResource FgSecondary}" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding GenreSlot}" FontSize="10"
+                                                   Foreground="{DynamicResource AccentText}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="3" Text="{Binding DurationText}" FontSize="10"
+                                                   Foreground="{DynamicResource FgSecondary}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="4" Text="{Binding FilePath}" FontSize="9"
+                                                   Foreground="{DynamicResource FgSecondary}" VerticalAlignment="Center"
+                                                   ToolTip.Tip="{Binding FilePath}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="3" Background="{DynamicResource BgSecondary}"
+                BorderBrush="{DynamicResource BorderPrimary}" BorderThickness="0,1,0,0" Padding="10,7">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+                <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" FontSize="10"
+                           Foreground="{DynamicResource FgSecondary}" VerticalAlignment="Center"
+                           TextWrapping="Wrap" />
+                <Button Grid.Column="1" Click="OnSavePlaylistClick" IsEnabled="{Binding CanSavePlaylist}"
+                        Padding="9,5">
+                    <TextBlock Text="Guardar playlist (.rmf)" FontSize="11" />
+                </Button>
+                <Button Grid.Column="2" Click="OnTakeAirClick" Padding="10,5"
+                        IsEnabled="{Binding CanTakeAir}">
+                    <TextBlock Text="Tomar el aire" FontSize="11" />
+                </Button>
+                <Button Grid.Column="3" Click="OnCloseClick" Padding="10,5">
+                    <TextBlock Text="Cerrar" FontSize="11" />
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</controls:CustomChromeWindow>

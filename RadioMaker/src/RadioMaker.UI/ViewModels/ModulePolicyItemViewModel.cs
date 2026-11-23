@@ -84,6 +84,7 @@ public sealed partial class ModulePolicyItemViewModel : ViewModelBase
         ModuleRole.FileManager => "Explorador de archivos",
         ModuleRole.FavoriteFolder => "Carpetas favoritas",
         ModuleRole.Manual => "Reproduccion manual",
+        ModuleRole.AutoDj => "AutoDJ",
         _ => role.ToString()
     };
 }

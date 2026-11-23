@@ -106,10 +106,11 @@
                                                      Margin="6,0,0,0" />
 
                 <!-- Selector de bus de salida de la playlist -->
-                <controls:BusSelectorButton Grid.Column="2"
-                                            DataContext="{Binding BusSelector}"
-                                            VerticalAlignment="Center"
-                                            Margin="6,0,0,0" />
+                <Border Grid.Column="2" IsVisible="{Binding ShowBusSelector}">
+                    <controls:BusSelectorButton DataContext="{Binding BusSelector}"
+                                                VerticalAlignment="Center"
+                                                Margin="6,0,0,0" />
+                </Border>
             </Grid>
         </Border>
 
