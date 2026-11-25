@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using RadioMaker.Core.Configuration;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -15,9 +16,9 @@ public sealed class EmergencySourceModeLabelConverter : IValueConverter
         {
             return m switch
             {
-                EmergencySourceMode.Prearmed => "Pre lista (.rmf)",
-                EmergencySourceMode.Folder => "Carpeta (shuffle)",
-                EmergencySourceMode.Hybrid => "Hibrido (pre lista + carpeta)",
+                EmergencySourceMode.Prearmed => LocalizationService.GetString("Loc.Label.EmergencySource.Prearmed"),
+                EmergencySourceMode.Folder => LocalizationService.GetString("Loc.Label.EmergencySource.Folder"),
+                EmergencySourceMode.Hybrid => LocalizationService.GetString("Loc.Label.EmergencySource.Hybrid"),
                 _ => m.ToString()
             };
         }

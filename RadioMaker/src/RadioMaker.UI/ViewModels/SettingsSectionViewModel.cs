@@ -1,4 +1,5 @@
 using Material.Icons;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -13,7 +14,7 @@ public sealed class SettingsSectionViewModel : ViewModelBase
     public string Key { get; }
 
     /// -------------Titulo que se muestra en la barra lateral.</summary>
-    public string Title { get; }
+    public string Title => LocalizationService.GetString($"Loc.Settings.Section.{Key}");
 
     /// -------------Icono de Material Design para la barra lateral.</summary>
     public MaterialIconKind IconKind { get; }
@@ -21,11 +22,12 @@ public sealed class SettingsSectionViewModel : ViewModelBase
     /// -------------VM real que se renderiza en el panel derecho.</summary>
     public object Content { get; }
 
-    public SettingsSectionViewModel(string key, string title, MaterialIconKind iconKind, object content)
+    public SettingsSectionViewModel(string key, MaterialIconKind iconKind, object content)
     {
         Key = key ?? string.Empty;
-        Title = title ?? string.Empty;
         IconKind = iconKind;
         Content = content;
     }
+
+    public void RefreshLocalization() => OnPropertyChanged(nameof(Title));
 }

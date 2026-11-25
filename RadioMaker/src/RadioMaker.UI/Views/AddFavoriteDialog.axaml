@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
         x:Class="RadioMaker.UI.Views.AddFavoriteDialog"
         x:DataType="vm:AddFavoriteDialogViewModel"
-        Title="Agregar a Favoritos"
+        Title="{DynamicResource Loc.Window.AddFavorite.Title}"
         Width="500" Height="280"
         MinWidth="440" MinHeight="260"
         WindowStartupLocation="CenterOwner"
@@ -22,7 +22,7 @@
 
             <!-- Carpeta -->
             <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,14">
-                <TextBlock Text="Carpeta a agregar"
+                <TextBlock Text="{DynamicResource Loc.Views.FavoriteDialog.Folder}"
                            FontSize="11"
                            Foreground="{DynamicResource FgSecondary}" />
                 <TextBlock Text="{Binding FolderPath}"
@@ -35,17 +35,19 @@
 
             <!-- Nombre personalizado -->
             <StackPanel Grid.Row="1" Spacing="4">
-                <TextBlock Text="Nombre personalizado (opcional)"
+                <TextBlock Text="{DynamicResource Loc.Views.FavoriteDialog.CustomName}"
                            FontSize="11"
                            Foreground="{DynamicResource FgSecondary}" />
                 <TextBox Text="{Binding CustomName}"
-                         PlaceholderText="{Binding DefaultName, StringFormat='(por defecto: {0})'}"
+                         PlaceholderText="{DynamicResource Loc.Views.FavoriteDialog.DefaultNamePlaceholder}"
                          FontSize="12"
                          Padding="6,4" />
-                <TextBlock Text="{Binding EffectiveName, StringFormat='Se guardara como: {0}'}"
-                           FontSize="10"
+                <TextBlock FontSize="10"
                            Foreground="{DynamicResource FgMuted}"
-                           Margin="0,2,0,0" />
+                           Margin="0,2,0,0">
+                    <Run Text="{DynamicResource Loc.Views.FavoriteDialog.SavedAs}" />
+                    <Run Text="{Binding EffectiveName}" />
+                </TextBlock>
             </StackPanel>
 
             <!-- Botones -->
@@ -54,11 +56,11 @@
                         HorizontalAlignment="Right"
                         Spacing="8"
                         Margin="0,14,0,0">
-                <Button Content="Cancelar"
+                <Button Content="{DynamicResource Loc.Views.FavoriteDialog.Cancel}"
                         x:Name="CancelButton"
                         Click="OnCancelClick"
                         MinWidth="100" />
-                <Button Content="Agregar"
+                <Button Content="{DynamicResource Loc.Views.FavoriteDialog.Add}"
                         x:Name="AddButton"
                         Click="OnAddClick"
                         MinWidth="100"

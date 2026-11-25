@@ -1,6 +1,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using RadioMaker.Core.Playback;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -14,8 +15,8 @@ public sealed class InterruptionBehaviorLabelConverter : IValueConverter
         {
             return b switch
             {
-                PlaylistInterruptionBehavior.Continue => "Continuar donde quedo",
-                PlaylistInterruptionBehavior.SkipToNext => "Saltar al siguiente",
+                PlaylistInterruptionBehavior.Continue => LocalizationService.GetString("Loc.Settings.Body.BehaviorContinue"),
+                PlaylistInterruptionBehavior.SkipToNext => LocalizationService.GetString("Loc.Settings.Body.BehaviorSkipShort"),
                 _ => b.ToString()
             };
         }

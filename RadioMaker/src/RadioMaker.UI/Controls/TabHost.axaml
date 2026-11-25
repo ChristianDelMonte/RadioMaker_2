@@ -29,7 +29,7 @@
                             VerticalAlignment="Center"
                             Background="Transparent"
                             BorderThickness="0"
-                            ToolTip.Tip="Desplazar pestañas a la izquierda"
+                            ToolTip.Tip="{DynamicResource Loc.Tabs.ScrollLeft}"
                             Click="OnScrollLeftClick">
                         <materialIcons:MaterialIcon Kind="ChevronLeft"
                                                     Width="14" Height="14"
@@ -114,7 +114,7 @@
                                                                FontSize="12"
                                                                FontWeight="SemiBold"
                                                                VerticalAlignment="Center"
-                                                               ToolTip.Tip="Doble clic para renombrar" />
+                                                               ToolTip.Tip="{DynamicResource Loc.Tabs.RenameTooltip}" />
                                                 </StackPanel>
 
                                                 <!-- Modo edicion: textbox -->
@@ -133,7 +133,7 @@
                                                     BorderThickness="0"
                                                     IsVisible="{Binding IsClosable}"
                                                     Command="{Binding RequestCloseCommand}"
-                                                    ToolTip.Tip="Cerrar pestaña">
+                                                    ToolTip.Tip="{DynamicResource Loc.Common.CloseTab}">
                                                 <materialIcons:MaterialIcon Kind="Close"
                                                                             Classes="tabIcon"
                                                                             Width="11" Height="11"
@@ -155,7 +155,7 @@
                             VerticalAlignment="Center"
                             Background="Transparent"
                             BorderThickness="0"
-                            ToolTip.Tip="Desplazar pestañas a la derecha"
+                            ToolTip.Tip="{DynamicResource Loc.Tabs.ScrollRight}"
                             Click="OnScrollRightClick">
                         <materialIcons:MaterialIcon Kind="ChevronRight"
                                                     Width="14" Height="14"
@@ -167,14 +167,14 @@
                         Padding="8,3"
                         Margin="8,0,0,0"
                         VerticalAlignment="Center"
-                        ToolTip.Tip="Agregar nueva pestaña">
+                        ToolTip.Tip="{DynamicResource Loc.Tabs.AddTooltip}">
                         <materialIcons:MaterialIcon Kind="Plus"
                                                     Width="14" Height="14"
                                                     Foreground="{DynamicResource FgPrimary}" />
 
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                <MenuItem Header="Nuevo Programado"
+                                <MenuItem Header="{DynamicResource Loc.Menu.New.Scheduled}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddScheduledTabCommand}">
                                     <MenuItem.Icon>
@@ -184,7 +184,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem Header="Nueva Tanda"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.NewSequence}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddTandaTabCommand}">
                                     <MenuItem.Icon>
@@ -194,7 +194,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem Header="Nueva Playlist"
+                                <MenuItem Header="{DynamicResource Loc.Menu.New.Playlist}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddPlaylistTabCommand}">
                                     <MenuItem.Icon>
@@ -204,7 +204,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem Header="Nuevo Encadenador"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.NewChainer}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddEncadenadoresTabCommand}">
                                     <MenuItem.Icon>
@@ -216,7 +216,7 @@
 
                                 <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}" />
 
-                                <MenuItem Header="Nueva Nota"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.NewNote}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddNotesTabCommand}">
                                     <MenuItem.Icon>
@@ -229,7 +229,7 @@
                                 <!-- Separador + Nuevo Cart: solo en la zona central -->
                                 <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).CanAddCartTab}" />
 
-                                <MenuItem Header="Nuevo Cart"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.NewCart}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).CanAddCartTab}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddCartTabCommand}">
                                     <MenuItem.Icon>
@@ -242,7 +242,7 @@
                                 <!-- Submenu de carpetas favoritas: solo en la zona derecha -->
                                 <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).IsRightZone}" />
 
-                                <MenuItem Header="Carpetas favoritas"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.FavoriteFolders}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).IsRightZone}">
                                     <MenuItem.Icon>
                                         <materialIcons:MaterialIcon Kind="FolderStar"

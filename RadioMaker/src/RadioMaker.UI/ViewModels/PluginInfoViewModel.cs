@@ -1,4 +1,5 @@
 using RadioMaker.Core.Abstractions;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -14,7 +15,7 @@ public sealed class PluginInfoViewModel
     public bool IsLoaded { get; }
 
     // Propiedades para bindear colores/estado en XAML sin converters.
-    public string StatusText => IsLoaded ? "Cargado" : "No disponible";
+    public string StatusText => LocalizationService.GetString(IsLoaded ? "Loc.Plugins.Loaded" : "Loc.Plugins.Unavailable");
     public string StatusColor => IsLoaded ? "#10B981" : "#EF4444";
     public string StatusIcon => IsLoaded ? "\u2713" : "\u2717"; // check / cross
 
@@ -25,7 +26,7 @@ public sealed class PluginInfoViewModel
 
         ExtensionsText = info.Extensions.Count > 0
             ? string.Join("  ", info.Extensions)
-            : "(sin extensiones)";
+            : LocalizationService.GetString("Loc.Plugins.NoExtensions");
 
         VersionText = info.IsLoaded && info.Version != new Version(0, 0)
             ? $"v{info.Version}"

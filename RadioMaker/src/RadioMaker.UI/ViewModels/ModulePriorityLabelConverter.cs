@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -15,10 +16,10 @@ public sealed class ModulePriorityLabelConverter : IValueConverter
         {
             return p switch
             {
-                ModulePriority.Low => "Baja",
-                ModulePriority.Normal => "Normal",
-                ModulePriority.High => "Alta",
-                ModulePriority.Air => "AIRE",
+                ModulePriority.Low => LocalizationService.GetString("Loc.Label.Priority.Low"),
+                ModulePriority.Normal => LocalizationService.GetString("Loc.Label.Priority.Normal"),
+                ModulePriority.High => LocalizationService.GetString("Loc.Label.Priority.High"),
+                ModulePriority.Air => LocalizationService.GetString("Loc.Label.Priority.Air"),
                 _ => p.ToString()
             };
         }

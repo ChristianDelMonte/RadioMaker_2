@@ -35,11 +35,11 @@
                                                 Foreground="{DynamicResource Accent}"
                                                 VerticalAlignment="Center" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Presentación inicial"
+                        <TextBlock Text="{DynamicResource Loc.Demo.Header.Title}"
                                    FontSize="15"
                                    FontWeight="Bold"
                                    Foreground="{DynamicResource FgPrimary}" />
-                        <TextBlock Text="Conoce las funciones de RadioMaker"
+                        <TextBlock Text="{DynamicResource Loc.Demo.Header.Subtitle}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}" />
                     </StackPanel>
@@ -52,7 +52,7 @@
                         CornerRadius="4"
                         Padding="10,8">
                     <StackPanel Spacing="4">
-                        <TextBlock Text="REPRODUCIENDO"
+                        <TextBlock Text="{DynamicResource Loc.Demo.Playing}"
                                    FontSize="9"
                                    FontWeight="Bold"
                                    LetterSpacing="1"
@@ -77,9 +77,9 @@
                 <TextBlock FontSize="10"
                            Foreground="{DynamicResource FgMuted}"
                            HorizontalAlignment="Center">
-                    <Run Text="Audio " />
+                    <Run Text="{DynamicResource Loc.Demo.Counter.Audio}" />
                     <Run Text="{Binding CurrentIndex}" />
-                    <Run Text=" de " />
+                    <Run Text="{DynamicResource Loc.Demo.Counter.Of}" />
                     <Run Text="{Binding TotalCount}" />
                 </TextBlock>
 
@@ -114,10 +114,10 @@
                                                         Width="14" Height="14"
                                                         VerticalAlignment="Center"
                                                         IsVisible="{Binding IsPaused}" />
-                            <TextBlock Text="Pausa"
+                            <TextBlock Text="{DynamicResource Loc.Demo.Button.Pause}"
                                        VerticalAlignment="Center"
                                        IsVisible="{Binding !IsPaused}" />
-                            <TextBlock Text="Reanudar"
+                            <TextBlock Text="{DynamicResource Loc.Demo.Button.Resume}"
                                        VerticalAlignment="Center"
                                        IsVisible="{Binding IsPaused}" />
                         </StackPanel>
@@ -132,7 +132,7 @@
                             <materialIcons:MaterialIcon Kind="SkipNext"
                                                         Width="14" Height="14"
                                                         VerticalAlignment="Center" />
-                            <TextBlock Text="Saltar"
+                            <TextBlock Text="{DynamicResource Loc.Demo.Button.Skip}"
                                        VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>

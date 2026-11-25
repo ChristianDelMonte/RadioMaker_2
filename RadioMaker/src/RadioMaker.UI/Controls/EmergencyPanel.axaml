@@ -20,13 +20,13 @@
                                   OnContent=""
                                   OffContent=""
                                   VerticalAlignment="Center" />
-                    <TextBlock Text="Habilitar vigilancia de silencio"
+                    <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Enable}"
                                FontSize="12"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource FgPrimary}"
                                VerticalAlignment="Center" />
                 </StackPanel>
-                <TextBlock Text="Si esta activo, RadioMaker monitorea el bus de AIRE. Si detecta silencio prolongado, reproduce automaticamente una playlist de emergencia hasta que el operador la detenga."
+                <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Description}"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
                            TextWrapping="Wrap" />
@@ -41,16 +41,16 @@
                 Padding="12"
                 IsEnabled="{Binding IsEnabled}">
             <StackPanel Spacing="8">
-                <TextBlock Text="Deteccion"
+                <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Detection}"
                            FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource FgPrimary}" />
 
                 <StackPanel Spacing="4">
                     <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
-                        <Run Text="Umbral de silencio:" />
+                        <Run Text="{DynamicResource Loc.Controls.Emergency.SilenceThreshold}" />
                         <Run Text="{Binding SilenceThresholdSeconds}" FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" />
-                        <Run Text=" segundos" />
+                        <Run Text="{DynamicResource Loc.Controls.Emergency.Seconds}" />
                     </TextBlock>
                     <Slider Minimum="5" Maximum="300"
                             Value="{Binding SilenceThresholdSeconds}"
@@ -59,7 +59,7 @@
 
                 <StackPanel Spacing="4">
                     <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
-                        <Run Text="Nivel minimo (dBFS):" />
+                        <Run Text="{DynamicResource Loc.Controls.Emergency.MinimumLevel}" />
                         <Run Text="{Binding ThresholdDb, StringFormat='{}{0:F0} dB'}" FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" />
                     </TextBlock>
                     <Slider Minimum="-100" Maximum="-20"
@@ -69,12 +69,12 @@
 
                 <Separator Margin="0,4" />
 
-                <CheckBox Content="Detectar cuando NO hay ningun canal activo en el bus de AIRE"
+                <CheckBox Content="{DynamicResource Loc.Controls.Emergency.NoChannel}"
                           FontSize="11"
                           Foreground="{DynamicResource FgPrimary}"
                           IsChecked="{Binding DetectNoChannels}" />
 
-                <CheckBox Content="Detectar cuando hay canales activos pero estan por debajo del umbral (silencio digital)"
+                <CheckBox Content="{DynamicResource Loc.Controls.Emergency.BelowThreshold}"
                           FontSize="11"
                           Foreground="{DynamicResource FgPrimary}"
                           IsChecked="{Binding DetectSilence}" />
@@ -89,7 +89,7 @@
                 Padding="12"
                 IsEnabled="{Binding IsEnabled}">
             <StackPanel Spacing="8">
-                <TextBlock Text="Origen de archivos de emergencia"
+                <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Source}"
                            FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource FgPrimary}" />
@@ -108,14 +108,14 @@
 
                 <!-- Prearmed (visible si Mode lo incluye) -->
                 <StackPanel Spacing="4" IsVisible="{Binding IsPrearmed}">
-                    <TextBlock Text="Playlist pre-armada (.rmf)"
+                    <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Playlist}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}" />
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBox Grid.Column="0"
                                  Text="{Binding PrearmedPlaylistPath}"
                                  IsReadOnly="True"
-                                 PlaceholderText="(sin playlist)" />
+                                 PlaceholderText="{DynamicResource Loc.Controls.Emergency.NoPlaylist}" />
                         <Button Grid.Column="1"
                                 Command="{Binding BrowsePrearmedPlaylistCommand}"
                                 Margin="8,0,0,0"
@@ -123,7 +123,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <materialIcons:MaterialIcon Kind="FolderOpen" Width="15" Height="15"
                                                             Foreground="{DynamicResource FgPrimary}" />
-                                <TextBlock Text="Elegir..." FontSize="11" />
+                                <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Choose}" FontSize="11" />
                             </StackPanel>
                         </Button>
                     </Grid>
@@ -131,14 +131,14 @@
 
                 <!-- Folder (visible si Mode lo incluye) -->
                 <StackPanel Spacing="4" IsVisible="{Binding IsFolder}">
-                    <TextBlock Text="Carpeta con audios (shuffle)"
+                    <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Folder}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}" />
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBox Grid.Column="0"
                                  Text="{Binding EmergencyFolder}"
                                  IsReadOnly="True"
-                                 PlaceholderText="(sin carpeta)" />
+                                 PlaceholderText="{DynamicResource Loc.Controls.Emergency.NoFolder}" />
                         <Button Grid.Column="1"
                                 Command="{Binding BrowseEmergencyFolderCommand}"
                                 Margin="8,0,0,0"
@@ -146,17 +146,17 @@
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <materialIcons:MaterialIcon Kind="FolderOpen" Width="15" Height="15"
                                                             Foreground="{DynamicResource FgPrimary}" />
-                                <TextBlock Text="Elegir..." FontSize="11" />
+                                <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Choose}" FontSize="11" />
                             </StackPanel>
                         </Button>
                     </Grid>
-                    <CheckBox Content="Incluir subcarpetas"
+                    <CheckBox Content="{DynamicResource Loc.Controls.Emergency.IncludeSubfolders}"
                               FontSize="11"
                               Foreground="{DynamicResource FgPrimary}"
                               IsChecked="{Binding IncludeSubfolders}" />
                 </StackPanel>
 
-                <TextBlock Text="Las pistas se reproducen en loop hasta que el operador detenga la emergencia."
+                <TextBlock Text="{DynamicResource Loc.Controls.Emergency.LoopHelp}"
                            FontSize="10"
                            FontStyle="Italic"
                            Foreground="{DynamicResource FgMuted}"
@@ -172,21 +172,21 @@
                 Padding="12"
                 IsEnabled="{Binding IsEnabled}">
             <StackPanel Spacing="8">
-                <TextBlock Text="Alarma sonora"
+                <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Alarm}"
                            FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource FgPrimary}" />
 
-                <CheckBox Content="Emitir beep periodicamente para alertar al operador"
+                <CheckBox Content="{DynamicResource Loc.Controls.Emergency.BeepEnabled}"
                           FontSize="11"
                           Foreground="{DynamicResource FgPrimary}"
                           IsChecked="{Binding BeepEnabled}" />
 
                 <StackPanel Spacing="4" IsEnabled="{Binding BeepEnabled}">
                     <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
-                        <Run Text="Beep cada" />
+                        <Run Text="{DynamicResource Loc.Controls.Emergency.BeepEvery}" />
                         <Run Text="{Binding BeepEveryNTracks}" FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" />
-                        <Run Text="pista(s)" />
+                        <Run Text="{DynamicResource Loc.Controls.Emergency.Tracks}" />
                     </TextBlock>
                     <NumericUpDown Value="{Binding BeepEveryNTracks}"
                                    Minimum="1" Maximum="20"
@@ -209,22 +209,22 @@
                     <Button Command="{Binding TestNowCommand}"
                             Padding="10,5"
                             FontSize="11"
-                            ToolTip.Tip="Dispara la emergencia manualmente para probar la configuracion">
+                            ToolTip.Tip="{DynamicResource Loc.Controls.Emergency.TestConfigTooltip}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <materialIcons:MaterialIcon Kind="Alert" Width="14" Height="14"
                                                         Foreground="{DynamicResource Warning}" />
-                            <TextBlock Text="Probar emergencia ahora" FontSize="11" />
+                            <TextBlock Text="{DynamicResource Loc.Controls.Emergency.TestNow}" FontSize="11" />
                         </StackPanel>
                     </Button>
 
                     <Button Command="{Binding TestBeepCommand}"
                             Padding="10,5"
                             FontSize="11"
-                            ToolTip.Tip="Reproduce el beep de alarma sin disparar la emergencia">
+                            ToolTip.Tip="{DynamicResource Loc.Controls.Emergency.TestBeepTooltip}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <materialIcons:MaterialIcon Kind="Bell" Width="14" Height="14"
                                                         Foreground="{DynamicResource AccentText}" />
-                            <TextBlock Text="Probar beep" FontSize="11" />
+                            <TextBlock Text="{DynamicResource Loc.Controls.Emergency.TestBeep}" FontSize="11" />
                         </StackPanel>
                     </Button>
 
@@ -237,7 +237,7 @@
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <materialIcons:MaterialIcon Kind="Stop" Width="14" Height="14"
                                                         Foreground="White" />
-                            <TextBlock Text="DETENER EMERGENCIA" FontSize="11" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="{DynamicResource Loc.Controls.Emergency.Stop}" FontSize="11" FontWeight="Bold" Foreground="White" />
                         </StackPanel>
                     </Button>
                 </StackPanel>

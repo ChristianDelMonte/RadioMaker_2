@@ -244,6 +244,15 @@ foreach ($candidate in $readmeCandidates) {
 if (-not $readmeCopied) {
     Write-Host "  ADVERTENCIA: no se encontró README-MAC.md (se omite)" -ForegroundColor Yellow
 }
+$englishReadme = Join-Path $root "distribution\README-MAC.en.md"
+if (Test-Path $englishReadme) {
+    Copy-Item $englishReadme (Join-Path $radioMakerOut "README-MAC.en.md") -Force
+    Write-Host "  README-MAC.en.md copied" -ForegroundColor Green
+}
+$manualOut = Join-Path $radioMakerOut "docs"
+New-Item -ItemType Directory -Path $manualOut -Force | Out-Null
+Copy-Item (Join-Path $root "RadioMaker\docs\manual-usuario.md") (Join-Path $manualOut "manual-usuario.md") -Force
+Copy-Item (Join-Path $root "RadioMaker\docs\user-manual.en.md") (Join-Path $manualOut "user-manual.en.md") -Force
 
 # --- 7. Empaquetar como .tar.gz ---
 Write-Host "`n[7/7] Empaquetando como .tar.gz..." -ForegroundColor Cyan

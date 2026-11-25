@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Tags;
 using Avalonia.Media.Imaging;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -113,7 +114,7 @@ public sealed partial class AudioTagEditorViewModel : ViewModelBase
             if (!result.Success)
             {
                 HasError = true;
-                StatusMessage = $"Error al guardar: {result.ErrorMessage}";
+                StatusMessage = string.Format(LocalizationService.GetString("Loc.AudioTags.Status.SaveError"), result.ErrorMessage);
                 return false;
             }
 
@@ -121,13 +122,13 @@ public sealed partial class AudioTagEditorViewModel : ViewModelBase
             await _file.ReloadTagsAsync();
 
             HasError = false;
-            StatusMessage = "Tags guardados correctamente.";
+            StatusMessage = LocalizationService.GetString("Loc.AudioTags.Status.Saved");
             return true;
         }
         catch (Exception ex)
         {
             HasError = true;
-            StatusMessage = $"Error inesperado: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AudioTags.Status.UnexpectedError"), ex.Message);
             return false;
         }
     }

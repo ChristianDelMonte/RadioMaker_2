@@ -26,7 +26,7 @@
                                 Spacing="0">
                         <Button x:Name="NewButton" Click="OnNewClick"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Nueva botonera">
+                                ToolTip.Tip="{DynamicResource Loc.Views.CartBoard.New}">
                             <materialIcons:MaterialIcon Kind="FilePlus"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -34,7 +34,7 @@
 
                         <Button x:Name="OpenButton" Click="OnOpenClick"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Abrir botonera .rcb">
+                                ToolTip.Tip="{DynamicResource Loc.Views.CartBoard.Open}">
                             <materialIcons:MaterialIcon Kind="FolderOpen"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -42,7 +42,7 @@
 
                         <Button x:Name="SaveButton" Click="OnSaveClick"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Guardar en el archivo actual">
+                                ToolTip.Tip="{DynamicResource Loc.Views.CartBoard.Save}">
                             <materialIcons:MaterialIcon Kind="ContentSave"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -50,7 +50,7 @@
 
                         <Button x:Name="SaveAsButton" Click="OnSaveAsClick"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Guardar como...">
+                                ToolTip.Tip="{DynamicResource Loc.Views.CartBoard.SaveAs}">
                             <materialIcons:MaterialIcon Kind="ContentSaveEdit"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -61,7 +61,7 @@
                         <!-- Play del boton seleccionado -->
                         <Button Command="{Binding PlaySelectedCommand}"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Reproducir el boton seleccionado">
+                                ToolTip.Tip="{DynamicResource Loc.Views.CartBoard.PlaySelected}">
                             <materialIcons:MaterialIcon Kind="Play"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource Success}" />
@@ -71,7 +71,7 @@
                         <Button Command="{Binding StopAllCommand}"
                                 IsEnabled="{Binding IsAnyPlaying}"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Detener todos los botones">
+                                ToolTip.Tip="{DynamicResource Loc.Views.CartBoard.StopAll}">
                             <materialIcons:MaterialIcon Kind="Stop"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource Error}" />
@@ -80,7 +80,7 @@
                         <!-- Toggle de crossfade -->
                         <Button Command="{Binding ToggleCrossfadeCommand}"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Activar/desactivar crossfade entre carts">
+                                ToolTip.Tip="{DynamicResource Loc.Views.CartBoard.Crossfade}">
                             <Panel>
                                 <materialIcons:MaterialIcon Kind="SwapHorizontal"
                                                             Width="15" Height="15"
@@ -99,7 +99,7 @@
                                                 DataContext="{Binding BusSelector}"
                                                 VerticalAlignment="Center"
                                                 Margin="6,0,0,0"
-                                                ToolTip.Tip="Bus de salida de la botonera" />
+                                                ToolTip.Tip="{DynamicResource Loc.Views.CartBoard.OutputBus}" />
                 </Grid>
             </Border>
 
@@ -132,21 +132,21 @@
                                     ToolTip.Tip="{Binding FilePath}">
                                 <Border.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Editar..." Click="OnContextEditClick" />
-                                        <MenuItem Header="Editar tags..."
+                                        <MenuItem Header="{DynamicResource Loc.Views.CartBoard.Edit}" Click="OnContextEditClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.CartBoard.EditTags}"
                                                   IsVisible="{Binding HasFile}"
                                                   Click="OnContextEditTagsClick"
                                                   IsEnabled="{Binding FilePath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}" />
                                         <Separator />
-                                        <MenuItem Header="Editar en RMWave..."
+                                        <MenuItem Header="{DynamicResource Loc.Views.CartBoard.EditRmw}"
                                                   Click="OnContextEditInRMWaveClick"
                                                   IsVisible="{Binding FilePath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                                   IsEnabled="{Binding FilePath, Converter={x:Static vm:IsRmwFileConverter.Instance}}" />
                                         <Separator />
-                                        <MenuItem Header="Reproducir" Click="OnContextPlayClick" />
-                                        <MenuItem Header="Detener" Click="OnContextStopClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.CartBoard.Play}" Click="OnContextPlayClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.CartBoard.Stop}" Click="OnContextStopClick" />
                                         <Separator />
-                                        <MenuItem Header="Limpiar boton" Click="OnContextClearClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.CartBoard.Clear}" Click="OnContextClearClick" />
                                     </ContextMenu>
                                 </Border.ContextMenu>
 
@@ -178,7 +178,7 @@
                                                 Padding="6,2"
                                                 HorizontalAlignment="Center"
                                                 IsVisible="{Binding IsPlaying}">
-                                            <TextBlock Text="REPRODUCIENDO"
+                                            <TextBlock Text="{DynamicResource Loc.Views.CartBoard.Playing}"
                                                        FontSize="7"
                                                        FontWeight="Bold"
                                                        LetterSpacing="0.5"

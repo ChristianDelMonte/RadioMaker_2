@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Controls;
 using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
@@ -171,7 +172,7 @@ public partial class ScheduledItemEditorWindow : CustomChromeWindow
         var vm = GetVm();
         if (vm?.WorkingItem is null) return;
 
-        var path = await PickAudioFileAsync("Seleccionar archivo de audio");
+        var path = await PickAudioFileAsync(LocalizationService.GetString("Loc.Dialog.SelectAudioFile"));
         if (string.IsNullOrEmpty(path)) return;
 
         vm.WorkingItem.FilePath = path;
@@ -226,7 +227,7 @@ public partial class ScheduledItemEditorWindow : CustomChromeWindow
         {
             ScheduledItemKind.Playlist => await PickPlaylistAsync(),
             ScheduledItemKind.Tanda => await PickTandaAsync(),
-            _ => await PickAudioFileAsync("Seleccionar archivo de audio")
+            _ => await PickAudioFileAsync(LocalizationService.GetString("Loc.Dialog.SelectAudioFile"))
         };
 
         if (string.IsNullOrEmpty(path)) return;
@@ -265,14 +266,14 @@ public partial class ScheduledItemEditorWindow : CustomChromeWindow
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return null;
 
-        var filter = new FilePickerFileType("Playlist .rmf")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.Playlist"))
         {
             Patterns = new[] { "*" + PlaylistStore.FileExtension }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Seleccionar playlist (.rmf)",
+            Title = LocalizationService.GetString("Loc.Dialog.SelectPlaylist.Title"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -286,14 +287,14 @@ public partial class ScheduledItemEditorWindow : CustomChromeWindow
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return null;
 
-        var filter = new FilePickerFileType("Tanda")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.Sequence"))
         {
             Patterns = new[] { "*" + TandaStore.FileExtension }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Seleccionar tanda (.tnd)",
+            Title = LocalizationService.GetString("Loc.Dialog.SelectSequence.Title"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });

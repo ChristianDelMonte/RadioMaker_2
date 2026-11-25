@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -89,7 +90,7 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
     // ───── Estado ────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _isAnalyzing;
-    [ObservableProperty] private string _statusMessage = "Esperando a que se cargue un archivo...";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Controls.Silence.Status.Waiting");
     [ObservableProperty] private SilenceAnalysisResult _result = SilenceAnalysisResult.NotAnalyzed;
 
     // ───── Textos formateados ────────────────────────────────────────────
@@ -103,7 +104,7 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
 
     public string InternalSilenceCountText =>
         Result.InternalSilenceCount == 0
-            ? "Ninguno"
+            ? LocalizationService.GetString("Loc.Controls.Silence.None")
             : $"{Result.InternalSilenceCount}";
 
     public bool HasResult => Result.IsAnalyzed;
@@ -115,10 +116,10 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
     {
         get
         {
-            if (!AutoTrimEnabled) return "Auto-trim desactivado.";
-            if (!Result.IsAnalyzed) return "Auto-trim activo - esperando analisis.";
-            if (!Result.HasSignificantTrim) return "Auto-trim activo - sin recortes significativos.";
-            return $"Auto-trim activo: -{FormatMs(Result.StartSilence)} al inicio, -{FormatMs(Result.EndSilence)} al final.";
+            if (!AutoTrimEnabled) return LocalizationService.GetString("Loc.Controls.Silence.Trim.Disabled");
+            if (!Result.IsAnalyzed) return LocalizationService.GetString("Loc.Controls.Silence.Trim.Waiting");
+            if (!Result.HasSignificantTrim) return LocalizationService.GetString("Loc.Controls.Silence.Trim.NoTrim");
+            return string.Format(LocalizationService.GetString("Loc.Controls.Silence.Trim.Applied"), FormatMs(Result.StartSilence), FormatMs(Result.EndSilence));
         }
     }
 
@@ -132,6 +133,7 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
     public SilencePanelViewModel(SilencePanelSettings settings)
     {
         _settings = settings;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
     }
 
     // ───── Attach ────────────────────────────────────────────────────────
@@ -146,8 +148,8 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
 
         Result = SilenceAnalysisResult.NotAnalyzed;
         StatusMessage = channel is null
-            ? "Sin canal cargado."
-            : "Analizando silencios...";
+            ? LocalizationService.GetString("Loc.Controls.Silence.Status.NoChannel")
+            : LocalizationService.GetString("Loc.Controls.Silence.Status.Analyzing");
 
         OnPropertyChanged(nameof(HasChannel));
         RefreshTexts();
@@ -181,14 +183,14 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
             Result = result;
 
             StatusMessage = result.IsAnalyzed
-                ? $"Analisis completado. Silencio inicial: {FormatMs(result.StartSilence)}, final: {FormatMs(result.EndSilence)}."
-                : "No se pudo analizar el archivo.";
+                ? string.Format(LocalizationService.GetString("Loc.Controls.Silence.Status.Completed"), FormatMs(result.StartSilence), FormatMs(result.EndSilence))
+                : LocalizationService.GetString("Loc.Controls.Silence.Status.Failed");
 
             ApplyTrimToChannel();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Silence.Status.Error"), ex.Message);
             Result = SilenceAnalysisResult.NotAnalyzed;
         }
         finally
@@ -217,7 +219,7 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al aplicar auto-trim: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Silence.Status.TrimError"), ex.Message);
         }
 
         OnPropertyChanged(nameof(TrimStatusText));
@@ -245,6 +247,18 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasSignificantTrim));
         OnPropertyChanged(nameof(NoSignificantTrim));
         OnPropertyChanged(nameof(TrimStatusText));
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        StatusMessage = IsAnalyzing
+            ? LocalizationService.GetString("Loc.Controls.Silence.Status.Analyzing")
+            : _channel is null
+                ? LocalizationService.GetString("Loc.Controls.Silence.Status.NoChannel")
+                : Result.IsAnalyzed
+                    ? string.Format(LocalizationService.GetString("Loc.Controls.Silence.Status.Completed"), FormatMs(Result.StartSilence), FormatMs(Result.EndSilence))
+                    : LocalizationService.GetString("Loc.Controls.Silence.Status.Waiting");
+        RefreshTexts();
     }
 
     partial void OnResultChanged(SilenceAnalysisResult value) => RefreshTexts();

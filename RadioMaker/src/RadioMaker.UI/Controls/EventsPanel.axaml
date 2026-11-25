@@ -35,16 +35,16 @@
                             Spacing="10"
                             VerticalAlignment="Center">
                     <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
-                        <Run Text="Activas:" />
+                        <Run Text="{DynamicResource Loc.Controls.Events.Active}" />
                         <Run Text="{Binding ActiveListCount}" FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" />
                     </TextBlock>
                     <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}"
                                IsVisible="{Binding DisabledListCount, Converter={x:Static vm:IntPositiveConverter.Instance}}">
-                        <Run Text="Desactivadas:" />
+                        <Run Text="{DynamicResource Loc.Controls.Events.Disabled}" />
                         <Run Text="{Binding DisabledListCount}" FontWeight="Bold" Foreground="{DynamicResource Warning}" />
                     </TextBlock>
                     <TextBlock FontSize="10" Foreground="{DynamicResource FgSecondary}">
-                        <Run Text="Pendientes:" />
+                        <Run Text="{DynamicResource Loc.Controls.Events.Pending}" />
                         <Run Text="{Binding PendingCount}" FontWeight="Bold" Foreground="{DynamicResource AccentText}" />
                     </TextBlock>
                 </StackPanel>
@@ -55,7 +55,7 @@
                         Padding="6,3"
                         Margin="4,0"
                         VerticalAlignment="Center"
-                        ToolTip.Tip="Iniciar / Detener scheduler">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Events.ToggleTooltip}">
                     <materialIcons:MaterialIcon Kind="PlayPause"
                                                 Width="14" Height="14"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -66,7 +66,7 @@
                         Padding="6,3"
                         Margin="4,0"
                         VerticalAlignment="Center"
-                        ToolTip.Tip="Reiniciar estado de disparos (marca todos como no disparados)">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Events.ResetTooltip}">
                     <materialIcons:MaterialIcon Kind="Refresh"
                                                 Width="14" Height="14"
                                                 Foreground="{DynamicResource Warning}" />
@@ -77,7 +77,7 @@
                         Padding="6,3"
                         Margin="4,0"
                         VerticalAlignment="Center"
-                        ToolTip.Tip="Limpiar el log de eventos">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Events.ClearTooltip}">
                     <materialIcons:MaterialIcon Kind="DeleteSweep"
                                                 Width="14" Height="14"
                                                 Foreground="{DynamicResource Error}" />
@@ -218,14 +218,14 @@
             <Grid RowDefinitions="Auto,*">
 
                 <TextBlock Grid.Row="0"
-                           Text="Próximos disparos programados"
+                           Text="{DynamicResource Loc.Controls.Events.Upcoming}"
                            FontWeight="SemiBold"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
                            Margin="8,6,8,3" />
 
                 <TextBlock Grid.Row="1"
-                           Text="No hay items pendientes de disparar."
+                           Text="{DynamicResource Loc.Controls.Events.Empty}"
                            FontSize="11"
                            Foreground="{DynamicResource FgMuted}"
                            HorizontalAlignment="Center"
@@ -334,7 +334,7 @@
                                                                    IsVisible="{Binding HasEndTime}"
                                                                    MinWidth="90"
                                                                    TextAlignment="Right">
-                                                            <Run Text="Fin: " />
+                                                            <Run Text="{DynamicResource Loc.Controls.Events.EndPrefix}" />
                                                             <Run Text="{Binding EndTimeText}" />
                                                         </TextBlock>
 
@@ -368,7 +368,7 @@
             <Grid RowDefinitions="Auto,*">
 
                 <TextBlock Grid.Row="0"
-                           Text="Log de eventos"
+                           Text="{DynamicResource Loc.Controls.Events.LogTitle}"
                            FontWeight="SemiBold"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"

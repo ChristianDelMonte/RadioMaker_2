@@ -17,7 +17,7 @@
             <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,0,0,6">
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8"
                             VerticalAlignment="Center">
-                    <TextBlock Text="Motor de programacion"
+                    <TextBlock Text="{DynamicResource Loc.Controls.Scheduler.Title}"
                                FontWeight="SemiBold"
                                FontSize="12"
                                Foreground="{DynamicResource FgPrimary}"
@@ -36,7 +36,7 @@
                         Command="{Binding ToggleRunCommand}"
                         IsVisible="{Binding !IsRunning}"
                         Padding="4,2" Background="Transparent" BorderThickness="0"
-                        ToolTip.Tip="Iniciar scheduler">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Scheduler.StartTooltip}">
                     <materialIcons:MaterialIcon Kind="Play"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource Success}" />
@@ -47,7 +47,7 @@
                         Command="{Binding ToggleRunCommand}"
                         IsVisible="{Binding IsRunning}"
                         Padding="4,2" Background="Transparent" BorderThickness="0"
-                        ToolTip.Tip="Detener scheduler">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Scheduler.StopTooltip}">
                     <materialIcons:MaterialIcon Kind="Stop"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource Error}" />
@@ -58,7 +58,7 @@
                         Command="{Binding EvaluateNowCommand}"
                         Padding="4,2" Background="Transparent" BorderThickness="0"
                         Margin="2,0,0,0"
-                        ToolTip.Tip="Forzar evaluacion inmediata de todos los items">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Scheduler.EvaluateTooltip}">
                     <materialIcons:MaterialIcon Kind="LightningBolt"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource Warning}" />
@@ -129,7 +129,7 @@
                                 IsVisible="{Binding PlaybackState.IsTanda}">
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 <TextBlock Grid.Column="0"
-                                           Text="TANDA"
+                                           Text="{DynamicResource Loc.Controls.Scheduler.Sequence}"
                                            FontSize="8"
                                            FontWeight="Bold"
                                            Foreground="{DynamicResource AccentText}"
@@ -211,7 +211,7 @@
                                 Padding="5,1"
                                 VerticalAlignment="Center"
                                 IsVisible="{Binding IsPlaylistSuspended}">
-                            <TextBlock Text="EN ESPERA"
+                            <TextBlock Text="{DynamicResource Loc.Controls.Scheduler.WaitingBadge}"
                                        FontSize="8"
                                        FontWeight="Bold"
                                        Foreground="{DynamicResource AccentText}" />
@@ -247,7 +247,7 @@
                     </Grid>
 
                     <!-- ═══ Caso 3: nada reproduciendose ═══ -->
-                    <TextBlock Text="Nada reproduciendose"
+                    <TextBlock Text="{DynamicResource Loc.Controls.Scheduler.NothingPlaying}"
                                FontSize="11"
                                Foreground="{DynamicResource FgMuted}"
                                VerticalAlignment="Center"
@@ -279,7 +279,7 @@
                             Command="{Binding StopPlaybackCommand}"
                             Padding="4,2" Background="Transparent" BorderThickness="0"
                             Margin="0,0,2,0"
-                            ToolTip.Tip="Detener la reproduccion programada actual">
+                            ToolTip.Tip="{DynamicResource Loc.Controls.Scheduler.StopCurrentTooltip}">
                         <materialIcons:MaterialIcon Kind="Stop"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Error}" />
@@ -289,7 +289,7 @@
                             Command="{Binding ResetStateCommand}"
                             Padding="4,2" Background="Transparent" BorderThickness="0"
                             Margin="2,0,0,0"
-                            ToolTip.Tip="Olvidar que items ya se dispararon este minuto">
+                            ToolTip.Tip="{DynamicResource Loc.Controls.Scheduler.ForgetTriggersTooltip}">
                         <materialIcons:MaterialIcon Kind="Refresh"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -299,7 +299,7 @@
                             Command="{Binding ClearLogCommand}"
                             Padding="4,2" Background="Transparent" BorderThickness="0"
                             Margin="2,0,0,0"
-                            ToolTip.Tip="Limpiar el log del scheduler">
+                            ToolTip.Tip="{DynamicResource Loc.Controls.Scheduler.ClearLogTooltip}">
                         <materialIcons:MaterialIcon Kind="Delete"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Error}" />
@@ -326,12 +326,12 @@
                                                     Width="14" Height="14"
                                                     Foreground="{DynamicResource Warning}"
                                                     VerticalAlignment="Center" />
-                        <TextBlock Text="En cola de espera"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Scheduler.QueueTitle}"
                                    FontSize="10"
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource Warning}"
                                    VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding QueuedItems.Count, StringFormat='({0} item/s)'}"
+                        <TextBlock Text="{Binding QueuedItemsCountText}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
@@ -378,7 +378,7 @@
                     Padding="0"
                     MinHeight="140">
                 <Grid>
-                    <TextBlock Text="Sin eventos todavia"
+                    <TextBlock Text="{DynamicResource Loc.Controls.Scheduler.NoEvents}"
                                FontSize="11"
                                Foreground="{DynamicResource FgMuted}"
                                HorizontalAlignment="Center"

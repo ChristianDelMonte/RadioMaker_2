@@ -2,6 +2,7 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Logging;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -78,13 +79,13 @@ public sealed partial class ModulePolicyItemViewModel : ViewModelBase
 
     private static string GetRoleLabel(ModuleRole role) => role switch
     {
-        ModuleRole.Cart => "Botonera",
-        ModuleRole.Playlist => "Playlists",
-        ModuleRole.Scheduler => "Programados",
-        ModuleRole.FileManager => "Explorador de archivos",
-        ModuleRole.FavoriteFolder => "Carpetas favoritas",
-        ModuleRole.Manual => "Reproduccion manual",
-        ModuleRole.AutoDj => "AutoDJ",
+        ModuleRole.Cart => LocalizationService.GetString("Loc.Label.Module.Cart"),
+        ModuleRole.Playlist => LocalizationService.GetString("Loc.Label.Module.Playlist"),
+        ModuleRole.Scheduler => LocalizationService.GetString("Loc.Label.Module.Scheduler"),
+        ModuleRole.FileManager => LocalizationService.GetString("Loc.Label.Module.FileManager"),
+        ModuleRole.FavoriteFolder => LocalizationService.GetString("Loc.Label.Module.FavoriteFolder"),
+        ModuleRole.Manual => LocalizationService.GetString("Loc.Label.Module.Manual"),
+        ModuleRole.AutoDj => LocalizationService.GetString("Loc.Label.Module.AutoDj"),
         _ => role.ToString()
     };
 }

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -35,6 +36,7 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
     public EqualizerPanelViewModel(EqualizerSettings settings)
     {
         _settings = settings;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
         _isEnabled = settings.IsEnabled;
         _selectedPreset = settings.PresetName;
 
@@ -55,6 +57,15 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
 
         _settings.AllBandsChanged += OnSettingsAllBandsChanged;
         _settings.CustomPresetsChanged += (_, _) => RebuildPresets();
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        StatusMessage = _channel is null
+            ? LocalizationService.GetString("Loc.Controls.Equalizer.Status.NoChannel")
+            : LocalizationService.GetString(IsEnabled
+                ? "Loc.Controls.Equalizer.Status.ActiveOnChannel"
+                : "Loc.Controls.Equalizer.Status.DisabledOnChannel");
     }
 
     private void RebuildPresets()
@@ -95,7 +106,7 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
 
         if (channel is null)
         {
-            StatusMessage = "Sin canal cargado. Cargá un archivo para escuchar el EQ.";
+            StatusMessage = LocalizationService.GetString("Loc.Controls.Equalizer.Status.NoChannel");
             return;
         }
 
@@ -107,12 +118,12 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
             channel.Equalizer.ApplyGains(_settings.Gains);
             channel.Equalizer.SetEnabled(IsEnabled);
             StatusMessage = IsEnabled
-                ? "EQ activo sobre el canal actual."
-                : "EQ deshabilitado (activá para escuchar cambios).";
+                ? LocalizationService.GetString("Loc.Controls.Equalizer.Status.ActiveOnChannel")
+                : LocalizationService.GetString("Loc.Controls.Equalizer.Status.DisabledOnChannel");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al aplicar EQ: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Equalizer.Status.ApplyError"), ex.Message);
         }
     }
 
@@ -158,7 +169,7 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
         try { _channel?.Equalizer.ApplyGains(_settings.Gains); }
         catch { }
 
-        StatusMessage = $"Preset aplicado: {_settings.PresetName}";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Equalizer.Status.PresetApplied"), _settings.PresetName);
         OnPropertyChanged(nameof(CanDeletePreset));
 
         // Notificar al exterior.
@@ -177,12 +188,14 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
             if (_channel is not null)
             {
                 _channel.Equalizer.SetEnabled(value);
-                StatusMessage = value ? "EQ activo." : "EQ deshabilitado.";
+                StatusMessage = LocalizationService.GetString(value
+                    ? "Loc.Controls.Equalizer.Status.Active"
+                    : "Loc.Controls.Equalizer.Status.Disabled");
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Equalizer.Status.Error"), ex.Message);
         }
 
         // Notificar al exterior.
@@ -201,7 +214,7 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
         // Persistir el cambio en disco.
         try { EqualizerSettingsStore.Save(_settings); } catch { }
 
-        StatusMessage = $"Preset aplicado: {value}";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Equalizer.Status.PresetApplied"), value);
     }
 
     partial void OnNewPresetNameChanged(string value) =>
@@ -211,7 +224,7 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
     private void Reset()
     {
         _settings.ResetToFlat();
-        StatusMessage = "Todas las bandas reseteadas a 0 dB.";
+        StatusMessage = LocalizationService.GetString("Loc.Controls.Equalizer.Status.Reset");
 
         // Notificar al exterior.
         SettingsChanged?.Invoke(this, EventArgs.Empty);
@@ -223,13 +236,13 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
         var name = NewPresetName?.Trim();
         if (string.IsNullOrWhiteSpace(name))
         {
-            StatusMessage = "Ingresá un nombre para el preset.";
+            StatusMessage = LocalizationService.GetString("Loc.Controls.Equalizer.Status.PresetNameRequired");
             return;
         }
 
         if (EqualizerSettings.Presets.ContainsKey(name))
         {
-            StatusMessage = $"'{name}' es un preset de fabrica. Elegí otro nombre.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Equalizer.Status.FactoryPreset"), name);
             return;
         }
 
@@ -237,7 +250,7 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
         EqualizerSettingsStore.Save(_settings);
 
         NewPresetName = string.Empty;
-        StatusMessage = $"Preset '{name}' guardado.";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Equalizer.Status.PresetSaved"), name);
     }
 
     [RelayCommand]
@@ -246,7 +259,7 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
         if (SelectedPreset is null) return;
         if (!_settings.IsCustomPreset(SelectedPreset))
         {
-            StatusMessage = "Solo se pueden eliminar presets personalizados.";
+            StatusMessage = LocalizationService.GetString("Loc.Controls.Equalizer.Status.CustomPresetOnly");
             return;
         }
 
@@ -254,7 +267,7 @@ public sealed partial class EqualizerPanelViewModel : ViewModelBase
         if (_settings.DeleteCustomPreset(name))
         {
             EqualizerSettingsStore.Save(_settings);
-            StatusMessage = $"Preset '{name}' eliminado.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Equalizer.Status.PresetDeleted"), name);
         }
     }
 }

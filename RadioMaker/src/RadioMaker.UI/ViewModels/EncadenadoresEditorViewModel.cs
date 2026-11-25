@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.Core.Tags;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -30,15 +31,16 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
     private readonly string _ownerId = Guid.NewGuid().ToString("N");
     private EncadenadoresSet _set;
     private bool _updatingActiveFromRegistry;
+    private bool _updatingLanguage;
 
     [ObservableProperty] private string _name;
     [ObservableProperty] private string? _loadedFilePath;
-    [ObservableProperty] private string _statusMessage = "Agrega audios para crear una lista de encadenadores.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Chainers.Status.Initial");
     [ObservableProperty] private bool _isDirty;
     [ObservableProperty] private EncadenadorTrackViewModel? _selectedTrack;
     [ObservableProperty] private int _insertEvery = 1;
-    [ObservableProperty] private string _selectedOrder = "En orden de lista";
-    [ObservableProperty] private string _selectedCounterReset = "Al cambiar de fuente";
+    [ObservableProperty] private string _selectedOrder = LocalizationService.GetString("Loc.Chainers.Order.Sequential");
+    [ObservableProperty] private string _selectedCounterReset = LocalizationService.GetString("Loc.Chainers.CounterReset.OnSourceChange");
     [ObservableProperty] private bool _isActive;
 
     public ObservableCollection<EncadenadorTrackViewModel> Tracks { get; } = new();
@@ -46,14 +48,22 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
     public bool HasTracks => Tracks.Count > 0;
     public bool HasSelection => SelectedTrack is not null;
     public int[] InsertIntervals { get; } = new[] { 1, 2, 3 };
-    public string[] OrderOptions { get; } = new[] { "En orden de lista", "Aleatorio" };
-    public string[] CounterResetOptions { get; } = new[] { "Continuo", "Al cambiar de fuente" };
+    public string[] OrderOptions => new[]
+    {
+        LocalizationService.GetString("Loc.Chainers.Order.Sequential"),
+        LocalizationService.GetString("Loc.Chainers.Order.Random")
+    };
+    public string[] CounterResetOptions => new[]
+    {
+        LocalizationService.GetString("Loc.Chainers.CounterReset.Continuous"),
+        LocalizationService.GetString("Loc.Chainers.CounterReset.OnSourceChange")
+    };
 
     public EncadenadoresEditorViewModel(EncadenadoresRegistry registry, EncadenadoresSet? set = null)
     {
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
-        _set = set ?? new EncadenadoresSet();
-        _name = string.IsNullOrWhiteSpace(_set.Name) ? "Encadenadores" : _set.Name;
+        _set = set ?? new EncadenadoresSet { Name = LocalizationService.GetString("Loc.Chainers.DefaultName") };
+        _name = string.IsNullOrWhiteSpace(_set.Name) ? LocalizationService.GetString("Loc.Chainers.DefaultName") : _set.Name;
         _insertEvery = Math.Clamp(_set.InsertEvery, 1, 3);
         _selectedOrder = _set.Order == EncadenadorOrder.Random ? OrderOptions[1] : OrderOptions[0];
         _selectedCounterReset = _set.CounterReset == EncadenadorCounterReset.Continuous
@@ -61,6 +71,7 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
             : CounterResetOptions[1];
         RebuildTracks();
         _registry.ActiveSetChanged += OnRegistryActiveSetChanged;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
         IsActive = _registry.IsActive(_ownerId);
         if (_set.IsActive && !IsActive) SetActive(true);
     }
@@ -92,6 +103,7 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
 
     partial void OnSelectedOrderChanged(string value)
     {
+        if (_updatingLanguage) return;
         _set.Order = value == OrderOptions[1] ? EncadenadorOrder.Random : EncadenadorOrder.Sequential;
         MarkDirty();
         if (IsActive) _registry.Update(_ownerId, _set);
@@ -99,6 +111,7 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
 
     partial void OnSelectedCounterResetChanged(string value)
     {
+        if (_updatingLanguage) return;
         _set.CounterReset = value == CounterResetOptions[0]
             ? EncadenadorCounterReset.Continuous
             : EncadenadorCounterReset.OnSourceChange;
@@ -188,14 +201,14 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
     {
         if (IsActive) SetActive(false);
         _set = new EncadenadoresSet();
-        Name = "Encadenadores";
+        Name = LocalizationService.GetString("Loc.Chainers.DefaultName");
         LoadedFilePath = null;
         InsertEvery = 1;
         SelectedOrder = OrderOptions[0];
         SelectedCounterReset = CounterResetOptions[1];
         RebuildTracks();
         IsDirty = false;
-        StatusMessage = "Nueva lista de encadenadores.";
+        StatusMessage = LocalizationService.GetString("Loc.Chainers.Status.NewSet");
     }
 
     public bool LoadFromFile(string path)
@@ -203,7 +216,7 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
         var loaded = EncadenadoresStore.Load(path);
         if (loaded is null)
         {
-            StatusMessage = "No se pudo abrir el archivo .rme.";
+            StatusMessage = LocalizationService.GetString("Loc.Chainers.Status.OpenError");
             return false;
         }
 
@@ -218,7 +231,7 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
         LoadedFilePath = path;
         RebuildTracks();
         IsDirty = false;
-        StatusMessage = $"Abierto: {Path.GetFileName(path)}";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.Chainers.Status.Opened"), Path.GetFileName(path));
         if (_set.IsActive) SetActive(true);
         return true;
     }
@@ -242,13 +255,13 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
                 ? target
                 : target + EncadenadoresStore.FileExtension;
             IsDirty = false;
-            StatusMessage = $"Guardado: {Path.GetFileName(LoadedFilePath)}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Chainers.Status.Saved"), Path.GetFileName(LoadedFilePath));
             if (IsActive) _registry.Update(_ownerId, _set);
             return true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error guardando: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Chainers.Status.SaveError"), ex.Message);
             return false;
         }
     }
@@ -291,6 +304,26 @@ public sealed partial class EncadenadoresEditorViewModel : ViewModelBase
     public void Dispose()
     {
         _registry.ActiveSetChanged -= OnRegistryActiveSetChanged;
+        LocalizationService.LanguageChanged -= OnLanguageChanged;
         if (IsActive) _registry.Deactivate(_ownerId);
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        _updatingLanguage = true;
+        try
+        {
+            SelectedOrder = _set.Order == EncadenadorOrder.Random
+                ? LocalizationService.GetString("Loc.Chainers.Order.Random")
+                : LocalizationService.GetString("Loc.Chainers.Order.Sequential");
+            SelectedCounterReset = _set.CounterReset == EncadenadorCounterReset.Continuous
+                ? LocalizationService.GetString("Loc.Chainers.CounterReset.Continuous")
+                : LocalizationService.GetString("Loc.Chainers.CounterReset.OnSourceChange");
+        }
+        finally { _updatingLanguage = false; }
+        OnPropertyChanged(nameof(OrderOptions));
+        OnPropertyChanged(nameof(CounterResetOptions));
+        if (!HasTracks)
+            StatusMessage = LocalizationService.GetString("Loc.Chainers.Status.Initial");
     }
 }

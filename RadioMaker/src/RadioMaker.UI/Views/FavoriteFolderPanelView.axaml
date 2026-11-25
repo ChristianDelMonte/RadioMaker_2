@@ -39,7 +39,7 @@
                                                 DataContext="{Binding BusSelector}"
                                                 VerticalAlignment="Center"
                                                 Margin="8,0,6,0"
-                                                ToolTip.Tip="Bus de salida para reproduccion directa" />
+                                                ToolTip.Tip="{DynamicResource Loc.Views.FavoriteFolder.PlayBus}" />
 
                     <!-- Boton detener (visible solo si algo esta sonando) -->
                     <Button Grid.Column="3"
@@ -49,7 +49,7 @@
                             Background="Transparent"
                             BorderThickness="0"
                             VerticalAlignment="Center"
-                            ToolTip.Tip="Detener reproduccion">
+                            ToolTip.Tip="{DynamicResource Loc.Views.FavoriteFolder.Stop}">
                         <materialIcons:MaterialIcon Kind="Stop"
                                                     Width="13" Height="13"
                                                     Foreground="{DynamicResource Error}" />
@@ -102,10 +102,10 @@
                                 ToolTip.Tip="{Binding FullPath}">
                             <Border.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Editar tags..."
+                                    <MenuItem Header="{DynamicResource Loc.Views.FavoriteFolder.EditTags}"
                                               Click="OnFileContextEditTags"
                                               IsEnabled="{Binding FullPath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}" />
-                                    <MenuItem Header="Editar en RMWave..."
+                                    <MenuItem Header="{DynamicResource Loc.Views.FavoriteFolder.EditRmw}"
                                               Click="OnFileContextEditInRMWave"
                                               IsEnabled="{Binding FullPath, Converter={x:Static vm:IsRmwFileConverter.Instance}}" />
                                 </ContextMenu>
@@ -170,7 +170,7 @@
                             CornerRadius="4"
                             ClipToBounds="True">
                         <Panel>
-                            <TextBlock Text="Sin&#10;caratula"
+                            <TextBlock Text="{DynamicResource Loc.Views.FavoriteFolder.NoCover}"
                                        FontSize="9"
                                        Foreground="{DynamicResource FgMuted}"
                                        TextAlignment="Center"

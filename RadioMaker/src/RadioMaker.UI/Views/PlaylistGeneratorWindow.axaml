@@ -6,7 +6,7 @@
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         x:Class="RadioMaker.UI.Views.PlaylistGeneratorWindow"
         x:DataType="vm:PlaylistGeneratorWindowViewModel"
-        Title="Generar Playlist Automaticamente"
+        Title="{DynamicResource Loc.Window.PlaylistGenerator.Title}"
         Width="880" Height="860"
         MinWidth="760" MinHeight="680"
         WindowStartupLocation="CenterOwner">
@@ -27,7 +27,7 @@
             <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto">
 
                 <TextBlock Grid.Column="0"
-                           Text="Preset:"
+                           Text="{DynamicResource Loc.Views.Generator.Preset}"
                            FontSize="11"
                            Foreground="{DynamicResource FgSecondary}"
                            VerticalAlignment="Center"
@@ -59,7 +59,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         VerticalAlignment="Center"
-                        ToolTip.Tip="Preset nuevo (resetear formulario)">
+                        ToolTip.Tip="{DynamicResource Loc.Views.Generator.NewPreset}">
                     <materialIcons:MaterialIcon Kind="FilePlus"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -73,7 +73,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         VerticalAlignment="Center"
-                        ToolTip.Tip="Abrir preset (.rpg)">
+                        ToolTip.Tip="{DynamicResource Loc.Views.Generator.OpenPreset}">
                     <materialIcons:MaterialIcon Kind="FolderOpen"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -89,7 +89,7 @@
                             Background="Transparent"
                             BorderThickness="0"
                             VerticalAlignment="Center"
-                            ToolTip.Tip="Guardar preset (sobrescribir)">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Generator.SavePreset}">
                         <materialIcons:MaterialIcon Kind="ContentSave"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -101,7 +101,7 @@
                             Background="Transparent"
                             BorderThickness="0"
                             VerticalAlignment="Center"
-                            ToolTip.Tip="Guardar preset como...">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Generator.SavePresetAs}">
                         <materialIcons:MaterialIcon Kind="ContentSaveEdit"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -130,7 +130,7 @@
                                    Foreground="{DynamicResource FgPrimary}"
                                    TextWrapping="Wrap"
                                    VerticalAlignment="Center"
-                                   Text="{Binding ExistingTrackCount, StringFormat='La playlist actual tiene {0} pista(s). Se van a REEMPLAZAR por las pistas generadas.'}" />
+                                   Text="{Binding ExistingTrackWarningText}" />
                     </StackPanel>
                 </Border>
 
@@ -146,7 +146,7 @@
                                                     Width="13" Height="13"
                                                     Foreground="{DynamicResource AccentText}"
                                                     VerticalAlignment="Center" />
-                        <TextBlock Text="Preset actual:"
+                        <TextBlock Text="{DynamicResource Loc.Views.Generator.CurrentPreset}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
@@ -160,7 +160,7 @@
 
                 <!-- Origen -->
                 <StackPanel Spacing="6">
-                    <TextBlock Text="Carpeta de origen"
+                    <TextBlock Text="{DynamicResource Loc.Views.Generator.SourceFolder}"
                                FontSize="12"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource FgPrimary}" />
@@ -168,7 +168,7 @@
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBox Grid.Column="0"
                                  Text="{Binding SourceFolder}"
-                                 PlaceholderText="Selecciona una carpeta..."
+                                 PlaceholderText="{DynamicResource Loc.Views.Generator.SelectFolder}"
                                  FontSize="11" />
                         <Button Grid.Column="1"
                                 x:Name="BrowseFolderButton"
@@ -179,14 +179,14 @@
                                 <materialIcons:MaterialIcon Kind="FolderOpen"
                                                             Width="15" Height="15"
                                                             Foreground="{DynamicResource FgPrimary}" />
-                                <TextBlock Text="Examinar..."
+                                <TextBlock Text="{DynamicResource Loc.Views.Generator.Browse}"
                                            FontSize="11"
                                            Foreground="{DynamicResource FgPrimary}" />
                             </StackPanel>
                         </Button>
                     </Grid>
 
-                    <CheckBox Content="Incluir subcarpetas"
+                    <CheckBox Content="{DynamicResource Loc.Views.Generator.IncludeSubfolders}"
                               FontSize="11"
                               Foreground="{DynamicResource FgPrimary}"
                               IsChecked="{Binding IncludeSubfolders}" />
@@ -194,13 +194,13 @@
 
                 <!-- Contenido -->
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Contenido"
+                    <TextBlock Text="{DynamicResource Loc.Views.Generator.Content}"
                                FontSize="12"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource FgPrimary}" />
 
                     <RadioButton GroupName="GenMode"
-                                 Content="Cantidad de pistas"
+                                 Content="{DynamicResource Loc.Views.Generator.TrackCount}"
                                  FontSize="11"
                                  Foreground="{DynamicResource FgPrimary}"
                                  IsChecked="{Binding IsTrackCountMode, Mode=OneWay}"
@@ -211,7 +211,7 @@
                           Margin="24,0,0,0"
                           IsEnabled="{Binding IsTrackCountMode}">
                         <TextBlock Grid.Column="0"
-                                   Text="Cantidad:"
+                                   Text="{DynamicResource Loc.Views.Generator.Quantity}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
@@ -222,14 +222,14 @@
                                        HorizontalAlignment="Stretch"
                                        ShowButtonSpinner="True" />
                         <TextBlock Grid.Column="2"
-                                   Text="pistas"
+                                   Text="{DynamicResource Loc.Views.Generator.Tracks}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
                     </Grid>
 
                     <RadioButton GroupName="GenMode"
-                                 Content="Duración objetivo"
+                                 Content="{DynamicResource Loc.Views.Generator.TargetDuration}"
                                  FontSize="11"
                                  Foreground="{DynamicResource FgPrimary}"
                                  IsChecked="{Binding IsDurationMode, Mode=OneWay}"
@@ -243,7 +243,7 @@
                           IsEnabled="{Binding IsDurationMode}">
 
                         <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="Duración objetivo:"
+                                   Text="{DynamicResource Loc.Views.Generator.TargetDurationLabel}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
@@ -254,13 +254,13 @@
                                        HorizontalAlignment="Stretch"
                                        ShowButtonSpinner="True" />
                         <TextBlock Grid.Row="0" Grid.Column="2"
-                                   Text="minutos"
+                                   Text="{DynamicResource Loc.Views.Generator.Minutes}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0"
-                                   Text="Tolerancia (±):"
+                                   Text="{DynamicResource Loc.Views.Generator.Tolerance}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
@@ -271,7 +271,7 @@
                                        HorizontalAlignment="Stretch"
                                        ShowButtonSpinner="True" />
                         <TextBlock Grid.Row="1" Grid.Column="2"
-                                   Text="minutos"
+                                   Text="{DynamicResource Loc.Views.Generator.Minutes}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
@@ -279,7 +279,7 @@
                 </StackPanel>
 
                 <!-- Filtros -->
-                <Expander Header="Filtros (opcional)"
+                <Expander Header="{DynamicResource Loc.Views.Generator.Filters}"
                           IsExpanded="False"
                           HorizontalAlignment="Stretch"
                           FontSize="12">
@@ -292,37 +292,37 @@
 
                         <Grid ColumnDefinitions="140,*" ColumnSpacing="8">
                             <TextBlock Grid.Column="0"
-                                       Text="Género contiene:"
+                                       Text="{DynamicResource Loc.Views.Generator.GenreContains}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}"
                                        VerticalAlignment="Center" />
                             <TextBox Grid.Column="1"
                                      Text="{Binding FilterGenre}"
-                                     PlaceholderText="(vacio = sin filtro)"
+                                     PlaceholderText="{DynamicResource Loc.Views.Generator.EmptyFilter}"
                                      FontSize="11" />
                         </Grid>
 
                         <Grid ColumnDefinitions="140,*" ColumnSpacing="8">
                             <TextBlock Grid.Column="0"
-                                       Text="Artista contiene:"
+                                       Text="{DynamicResource Loc.Views.Generator.ArtistContains}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}"
                                        VerticalAlignment="Center" />
                             <TextBox Grid.Column="1"
                                      Text="{Binding FilterArtist}"
-                                     PlaceholderText="(vacio = sin filtro)"
+                                     PlaceholderText="{DynamicResource Loc.Views.Generator.EmptyFilter}"
                                      FontSize="11" />
                         </Grid>
 
                         <Grid ColumnDefinitions="140,*" ColumnSpacing="8">
                             <TextBlock Grid.Column="0"
-                                       Text="Álbum contiene:"
+                                       Text="{DynamicResource Loc.Views.Generator.AlbumContains}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}"
                                        VerticalAlignment="Center" />
                             <TextBox Grid.Column="1"
                                      Text="{Binding FilterAlbum}"
-                                     PlaceholderText="(vacio = sin filtro)"
+                                     PlaceholderText="{DynamicResource Loc.Views.Generator.EmptyFilter}"
                                      FontSize="11" />
                         </Grid>
 
@@ -330,7 +330,7 @@
                               ColumnSpacing="8"
                               Margin="0,4,0,0">
                             <CheckBox Grid.Column="0"
-                                      Content="Rango de año:"
+                                      Content="{DynamicResource Loc.Views.Generator.YearRange}"
                                       FontSize="11"
                                       Foreground="{DynamicResource FgSecondary}"
                                       VerticalAlignment="Center"
@@ -360,7 +360,7 @@
                               ColumnSpacing="8"
                               Margin="0,4,0,0">
                             <CheckBox Grid.Column="0"
-                                      Content="Duración por pista:"
+                                      Content="{DynamicResource Loc.Views.Generator.TrackDuration}"
                                       FontSize="11"
                                       Foreground="{DynamicResource FgSecondary}"
                                       VerticalAlignment="Center"
@@ -387,7 +387,7 @@
                                            IsEnabled="{Binding IsDurationRangeFilterEnabled}"
                                            ShowButtonSpinner="True" />
                             <TextBlock Grid.Column="4"
-                                       Text="min"
+                                       Text="{DynamicResource Loc.Views.Generator.MinutesShort}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}"
                                        VerticalAlignment="Center" />
@@ -402,13 +402,13 @@
                             <TextBlock FontSize="10"
                                        Foreground="{DynamicResource FgSecondary}"
                                        TextWrapping="Wrap"
-                                       Text="Los filtros por género, artista, álbum y año requieren leer las etiquetas de cada archivo. Los archivos sin el tag correspondiente se excluyen." />
+                                       Text="{DynamicResource Loc.Views.Generator.FilterHelp}" />
                         </Border>
                     </StackPanel>
                 </Expander>
 
                 <!-- Variedad -->
-                <Expander Header="Variedad (opcional)"
+                <Expander Header="{DynamicResource Loc.Views.Generator.Variety}"
                           IsExpanded="False"
                           HorizontalAlignment="Stretch"
                           FontSize="12">
@@ -419,7 +419,7 @@
                                    Foreground="{DynamicResource FgSecondary}"
                                    Margin="0,0,0,4" />
 
-                        <CheckBox Content="Evitar mismo artista consecutivo"
+                        <CheckBox Content="{DynamicResource Loc.Views.Generator.AvoidConsecutiveArtist}"
                                   FontSize="11"
                                   Foreground="{DynamicResource FgPrimary}"
                                   IsChecked="{Binding AvoidSameArtistConsecutive}" />
@@ -428,7 +428,7 @@
                               ColumnSpacing="8"
                               Margin="0,2,0,0">
                             <CheckBox Grid.Column="0"
-                                      Content="Mínimo de pistas entre mismo artista:"
+                                      Content="{DynamicResource Loc.Views.Generator.MinimumArtistGap}"
                                       FontSize="11"
                                       Foreground="{DynamicResource FgPrimary}"
                                       VerticalAlignment="Center"
@@ -441,25 +441,25 @@
                                            IsEnabled="{Binding IsMinTracksBetweenEnabled}"
                                            ShowButtonSpinner="True" />
                             <TextBlock Grid.Column="2"
-                                       Text="pistas"
+                                       Text="{DynamicResource Loc.Views.Generator.Tracks}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}"
                                        VerticalAlignment="Center" />
                         </Grid>
 
-                        <CheckBox Content="Balance por artista (round-robin)"
+                        <CheckBox Content="{DynamicResource Loc.Views.Generator.BalanceArtists}"
                                   FontSize="11"
                                   Foreground="{DynamicResource FgPrimary}"
                                   IsChecked="{Binding BalanceByArtist}"
-                                  ToolTip.Tip="Reparte los temas de cada artista de forma equitativa a lo largo de la playlist" />
+                                  ToolTip.Tip="{DynamicResource Loc.Views.Generator.BalanceTooltip}" />
 
                         <Separator Margin="0,4,0,4" />
 
-                        <CheckBox Content="Relajar reglas si no alcanza para llegar al objetivo"
+                        <CheckBox Content="{DynamicResource Loc.Views.Generator.RelaxRules}"
                                   FontSize="11"
                                   Foreground="{DynamicResource FgPrimary}"
                                   IsChecked="{Binding RelaxIfNotEnough}"
-                                  ToolTip.Tip="Si las reglas de variedad impiden llegar a la cantidad/duración pedida, se completa con las pistas descartadas." />
+                                  ToolTip.Tip="{DynamicResource Loc.Views.Generator.RelaxTooltip}" />
 
                         <Border Background="{DynamicResource BgQuaternary}"
                                 BorderBrush="{DynamicResource AccentSoft}"
@@ -470,14 +470,14 @@
                             <TextBlock FontSize="10"
                                        Foreground="{DynamicResource FgSecondary}"
                                        TextWrapping="Wrap"
-                                       Text="Las reglas de variedad dependen del tag de artista. Las pistas sin ese tag son wildcard: nunca bloquean a otras y nunca son bloqueadas." />
+                                       Text="{DynamicResource Loc.Views.Generator.VarietyHelp}" />
                         </Border>
                     </StackPanel>
                 </Expander>
 
                 <!-- Orden -->
                 <StackPanel Spacing="6" IsVisible="{Binding !BalanceByArtist}">
-                    <TextBlock Text="Orden"
+                    <TextBlock Text="{DynamicResource Loc.Views.Generator.Order}"
                                FontSize="12"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource FgPrimary}" />
@@ -503,7 +503,7 @@
                     <TextBlock FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
                                TextWrapping="Wrap"
-                               Text="El balance por artista reemplaza al orden manual. Las pistas se intercalan por artista para máxima distribución." />
+                               Text="{DynamicResource Loc.Views.Generator.OrderHelp}" />
                 </Border>
 
                 <!-- Preview -->
@@ -511,7 +511,7 @@
 
                 <Grid ColumnDefinitions="*,Auto">
                     <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                        <TextBlock Text="Preview"
+                        <TextBlock Text="{DynamicResource Loc.Views.Generator.Preview}"
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource FgPrimary}" />
@@ -529,12 +529,12 @@
                             <materialIcons:MaterialIcon Kind="AutoFix"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource AccentText}" />
-                            <TextBlock Text="Generar"
+                            <TextBlock Text="{DynamicResource Loc.Views.Generator.Generate}"
                                        FontSize="11"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource FgPrimary}"
                                        IsVisible="{Binding !HasPreview}" />
-                            <TextBlock Text="Regenerar"
+                            <TextBlock Text="{DynamicResource Loc.Views.Generator.Regenerate}"
                                        FontSize="11"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource FgPrimary}"
@@ -550,7 +550,7 @@
                         MinHeight="180"
                         MaxHeight="240">
                     <Panel>
-                        <TextBlock Text="Presiona Generar para ver el resultado."
+                        <TextBlock Text="{DynamicResource Loc.Views.Generator.PressGenerate}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgMuted}"
                                    HorizontalAlignment="Center"
@@ -626,12 +626,12 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Spacing="8">
-                <Button Content="Cancelar"
+                <Button Content="{DynamicResource Loc.Views.Generator.Cancel}"
                         x:Name="CancelButton"
                         Click="OnCancelClick"
                         MinWidth="100"
                         FontSize="11" />
-                <Button Content="Aceptar"
+                <Button Content="{DynamicResource Loc.Views.Generator.Accept}"
                         x:Name="AcceptButton"
                         Click="OnAcceptClick"
                         IsEnabled="{Binding HasPreview}"

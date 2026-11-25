@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -28,13 +29,13 @@ public sealed class PluginsWindowViewModel : ViewModelBase
         int total = Plugins.Count;
 
         HasAnyPlugin = loaded > 0;
-        SummaryText = $"{loaded} de {total} plugins cargados correctamente.";
+        SummaryText = string.Format(LocalizationService.GetString("Loc.Plugins.Summary"), loaded, total);
     }
 
     /// -------------Constructor sin engine para el diseñador de XAML.</summary>
     public PluginsWindowViewModel()
     {
-        SummaryText = "0 de 0 plugins cargados.";
+        SummaryText = LocalizationService.GetString("Loc.Plugins.EmptySummary");
         HasAnyPlugin = false;
     }
 
@@ -55,7 +56,7 @@ public sealed class PluginsWindowViewModel : ViewModelBase
             .ToList();
 
         if (nativeExts.Count > 0)
-            FormatGroups.Add(new FormatGroupViewModel("Nativo BASS", nativeExts));
+            FormatGroups.Add(new FormatGroupViewModel(LocalizationService.GetString("Loc.Plugins.NativeBass"), nativeExts));
 
         // Un grupo por cada plugin cargado con exito.
         foreach (var plugin in engine.LoadedPlugins
@@ -81,6 +82,6 @@ public sealed class FormatGroupViewModel
         Name = name;
         ExtensionsText = extensions.Count > 0
             ? "(" + string.Join("; ", extensions.Select(e => "*" + e)) + ")"
-            : "(sin extensiones)";
+            : LocalizationService.GetString("Loc.Plugins.NoExtensions");
     }
 }

@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:RMVoice.UI.Controls"  
         x:Class="RMVoice.UI.Views.MainWindow"
-        Title="RadioMaker Voice addon"
+        Title="{DynamicResource Loc.RMVoice.Main.Title}"
         Width="960" Height="700"
         MinWidth="820" MinHeight="560">
 
@@ -95,7 +95,7 @@
                   Stretch="Uniform"
                   Width="18" Height="18"
                   VerticalAlignment="Center" />
-            <TextBlock Text="RadioMaker Voice addon"
+            <TextBlock Text="{DynamicResource Loc.RMVoice.Main.Title}"
                        FontSize="14"
                        FontWeight="Bold"
                        Foreground="{DynamicResource RMVCardForeground}"
@@ -112,7 +112,7 @@
                     Padding="10,4"
                     Background="Transparent"
                     BorderThickness="0"
-                    ToolTip.Tip="Minimizar">
+                    ToolTip.Tip="{DynamicResource Loc.RMVoice.Chrome.Minimize}">
                   <Rectangle Width="10" Height="1.5"
                              Fill="{DynamicResource RMVCardForeground}"
                              HorizontalAlignment="Center"
@@ -124,7 +124,7 @@
                     Padding="10,4"
                     Background="Transparent"
                     BorderThickness="0"
-                    ToolTip.Tip="Maximizar">
+                    ToolTip.Tip="{DynamicResource Loc.RMVoice.Chrome.Maximize}">
               <Path Name="MaximizeIconPath"
                     Data="M 2 2 L 12 2 L 12 12 L 2 12 Z"
                     Stroke="{DynamicResource RMVCardForeground}"
@@ -139,7 +139,7 @@
                     Padding="10,4"
                     Background="Transparent"
                     BorderThickness="0"
-                    ToolTip.Tip="Cerrar">
+                    ToolTip.Tip="{DynamicResource Loc.RMVoice.Chrome.Close}">
               <Path Data="M 3 3 L 11 11 M 11 3 L 3 11"
                     Stroke="{DynamicResource RMVCardForeground}"
                     StrokeThickness="1.5"
@@ -183,7 +183,7 @@
           <!-- Fila superior: etiqueta + boton de tema -->
           <Grid ColumnDefinitions="*,Auto">
             <TextBlock Grid.Column="0"
-                       Text="Perfil de voz"
+                       Text="{DynamicResource Loc.RMVoice.Main.ProfileTitle}"
                        Foreground="#94A3B8"
                        FontSize="11"
                        VerticalAlignment="Center" />
@@ -192,7 +192,7 @@
                     Padding="6,3"
                     Background="Transparent"
                     BorderThickness="0"
-                    ToolTip.Tip="Cambiar entre tema claro y oscuro">
+                    ToolTip.Tip="{DynamicResource Loc.RMVoice.Main.ThemeTooltip}">
               <Panel Width="16" Height="16">
                 <!-- Sol: se muestra cuando el tema actual es oscuro -->
                 <Path Data="M 8 1 L 8 3 M 8 13 L 8 15 M 1 8 L 3 8 M 13 8 L 15 8 M 3 3 L 4.4 4.4 M 11.6 11.6 L 13 13 M 3 13 L 4.4 11.6 M 11.6 4.4 L 13 3 M 5 8 A 3 3 0 1 1 11 8 A 3 3 0 1 1 5 8 Z"
@@ -229,9 +229,9 @@
           </ComboBox>
 
           <StackPanel Orientation="Horizontal" Spacing="6">
-            <Button Content="Añadir" Command="{Binding AddProfileCommand}" />
-            <Button Content="Duplicar" Command="{Binding DuplicateProfileCommand}" />
-            <Button Content="Eliminar" Command="{Binding RemoveProfileCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.Add}" Command="{Binding AddProfileCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.Duplicate}" Command="{Binding DuplicateProfileCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.Delete}" Command="{Binding RemoveProfileCommand}" />
           </StackPanel>
         </StackPanel>
       </Grid>
@@ -241,58 +241,58 @@
     <TabControl Grid.Row="1">
 
       <!--  Pestaña: Reproducción  -->
-      <TabItem Header="Reproducción">
+      <TabItem Header="{DynamicResource Loc.RMVoice.Main.Playback}">
         <ScrollViewer>
           <StackPanel Spacing="10" Margin="0,8,0,0">
 
             <Border Classes="card">
               <StackPanel Spacing="8">
-                <TextBlock Classes="section" Text="Archivos del perfil" />
+                <TextBlock Classes="section" Text="{DynamicResource Loc.RMVoice.Main.ProfileFiles}" />
 
                 <Grid ColumnDefinitions="120,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
-                  <TextBlock Grid.Row="0" Grid.Column="0" Classes="fieldLabel" Text="Audio HORAS" />
+                  <TextBlock Grid.Row="0" Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.HourAudio}" />
                   <TextBox   Grid.Row="0" Grid.Column="1" Margin="6,2"
                              Text="{Binding SelectedProfile.HourAudioPath}" />
                   <Button    Grid.Row="0" Grid.Column="2" Margin="3" Width="34" Content="…"
                              Command="{Binding BrowseHourAudioCommand}" />
 
-                  <TextBlock Grid.Row="1" Grid.Column="0" Classes="fieldLabel" Text="Tabla HORAS" />
+                  <TextBlock Grid.Row="1" Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.HourTable}" />
                   <TextBox   Grid.Row="1" Grid.Column="1" Margin="6,2"
                              Text="{Binding SelectedProfile.HourTablePath}" />
                   <Button    Grid.Row="1" Grid.Column="2" Margin="3" Width="34" Content="…"
                              Command="{Binding BrowseHourTableCommand}" />
 
-                  <TextBlock Grid.Row="2" Grid.Column="0" Classes="fieldLabel" Text="Audio MINUTOS" />
+                  <TextBlock Grid.Row="2" Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.MinuteAudio}" />
                   <TextBox   Grid.Row="2" Grid.Column="1" Margin="6,2"
                              Text="{Binding SelectedProfile.MinuteAudioPath}" />
                   <Button    Grid.Row="2" Grid.Column="2" Margin="3" Width="34" Content="…"
                              Command="{Binding BrowseMinuteAudioCommand}" />
 
-                  <TextBlock Grid.Row="3" Grid.Column="0" Classes="fieldLabel" Text="Tabla MINUTOS" />
+                  <TextBlock Grid.Row="3" Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.MinuteTable}" />
                   <TextBox   Grid.Row="3" Grid.Column="1" Margin="6,2"
                              Text="{Binding SelectedProfile.MinuteTablePath}" />
                   <Button    Grid.Row="3" Grid.Column="2" Margin="3" Width="34" Content="…"
                              Command="{Binding BrowseMinuteTableCommand}" />
 
-                  <TextBlock Grid.Row="4" Grid.Column="0" Classes="fieldLabel" Text="Audio TEMPERATURA" />
+                  <TextBlock Grid.Row="4" Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.TemperatureAudio}" />
                   <TextBox   Grid.Row="4" Grid.Column="1" Margin="6,2"
                              Text="{Binding SelectedProfile.TemperatureAudioPath}" />
                   <Button    Grid.Row="4" Grid.Column="2" Margin="3" Width="34" Content="…"
                              Command="{Binding BrowseTemperatureAudioCommand}" />
 
-                  <TextBlock Grid.Row="5" Grid.Column="0" Classes="fieldLabel" Text="Tabla TEMPERATURA" />
+                  <TextBlock Grid.Row="5" Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.TemperatureTable}" />
                   <TextBox   Grid.Row="5" Grid.Column="1" Margin="6,2"
                              Text="{Binding SelectedProfile.TemperatureTablePath}" />
                   <Button    Grid.Row="5" Grid.Column="2" Margin="3" Width="34" Content="…"
                              Command="{Binding BrowseTemperatureTableCommand}" />
 
-                  <TextBlock Grid.Row="6" Grid.Column="0" Classes="fieldLabel" Text="Audio HUMEDAD" />
+                  <TextBlock Grid.Row="6" Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.HumidityAudio}" />
                   <TextBox   Grid.Row="6" Grid.Column="1" Margin="6,2"
                              Text="{Binding SelectedProfile.HumidityAudioPath}" />
                   <Button    Grid.Row="6" Grid.Column="2" Margin="3" Width="34" Content="…"
                              Command="{Binding BrowseHumidityAudioCommand}" />
 
-                  <TextBlock Grid.Row="7" Grid.Column="0" Classes="fieldLabel" Text="Tabla HUMEDAD" />
+                  <TextBlock Grid.Row="7" Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.HumidityTable}" />
                   <TextBox   Grid.Row="7" Grid.Column="1" Margin="6,2"
                              Text="{Binding SelectedProfile.HumidityTablePath}" />
                   <Button    Grid.Row="7" Grid.Column="2" Margin="3" Width="34" Content="…"
@@ -300,28 +300,28 @@
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                  <Button Content="Recargar perfil" Command="{Binding ReloadProfileCommand}" />
-                  <Button Content="Guardar perfiles" Command="{Binding SaveProfilesCommand}" />
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.ReloadProfile}" Command="{Binding ReloadProfileCommand}" />
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.SaveProfiles}" Command="{Binding SaveProfilesCommand}" />
                 </StackPanel>
               </StackPanel>
             </Border>
 
             <Border Classes="card">
               <StackPanel Spacing="8">
-                <TextBlock Classes="section" Text="Prueba manual" />
+                <TextBlock Classes="section" Text="{DynamicResource Loc.RMVoice.Main.ManualTest}" />
 
                 <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto">
-                  <TextBlock Grid.Column="0" Classes="fieldLabel" Text="Hora" Margin="0,0,6,0" />
+                  <TextBlock Grid.Column="0" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.Hour}" Margin="0,0,6,0" />
                   <ComboBox  Grid.Column="1" ItemsSource="{Binding Hours}"
                              SelectedItem="{Binding SelectedHour}"
                              Width="70" Margin="0,0,12,0" FontSize="11" />
 
-                  <TextBlock Grid.Column="2" Classes="fieldLabel" Text="Minuto" Margin="0,0,6,0" />
+                  <TextBlock Grid.Column="2" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.Minute}" Margin="0,0,6,0" />
                   <ComboBox  Grid.Column="3" ItemsSource="{Binding Minutes}"
                              SelectedItem="{Binding SelectedMinute}"
                              Width="70" Margin="0,0,12,0" FontSize="11" />
 
-                  <TextBlock Grid.Column="4" Classes="fieldLabel" Text="Temperatura (°C)" Margin="0,0,6,0" />
+                  <TextBlock Grid.Column="4" Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.Temperature}" Margin="0,0,6,0" />
                   <NumericUpDown Grid.Column="5"
                                  Value="{Binding Temperature}"
                                  Minimum="-30" Maximum="50"
@@ -332,7 +332,7 @@
 
                 <StackPanel Orientation="Horizontal" Spacing="12">
                   <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Classes="fieldLabel" Text="Humedad (%)" />
+                    <TextBlock Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.Humidity}" />
                     <NumericUpDown Value="{Binding Humidity}"
                                    Minimum="0" Maximum="100"
                                    Increment="1"
@@ -340,42 +340,42 @@
                                    Width="100" FontSize="11" />
                   </StackPanel>
 
-                  <TextBlock Classes="fieldLabel" Text="Modo:" />
+                  <TextBlock Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.Mode}" />
                   <ComboBox ItemsSource="{Binding AnnounceModes}"
                             SelectedItem="{Binding ManualMode}"
                             Width="220" FontSize="11" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                  <Button Content="▶  Reproducir selección" Command="{Binding PlayManualCommand}" />
-                  <Button Content="■  Detener" Command="{Binding StopCommand}" />
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.PlaySelection}" Command="{Binding PlayManualCommand}" />
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.Stop}" Command="{Binding StopCommand}" />
                 </StackPanel>
               </StackPanel>
             </Border>
 
             <Border Classes="card">
               <StackPanel Spacing="8">
-                <TextBlock Classes="section" Text="Anuncio rápido" />
+                <TextBlock Classes="section" Text="{DynamicResource Loc.RMVoice.Main.QuickAnnouncement}" />
 
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                  <Button Content="🔊  Hora actual" Command="{Binding PlayCurrentTimeCommand}" />
-                  <Button Content="🌡  Solo clima" Command="{Binding PlayCurrentClimateCommand}" />
-                  <Button Content="🔊🌡  Hora + clima" Command="{Binding PlayCurrentTimeAndClimateCommand}" />
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.CurrentTime}" Command="{Binding PlayCurrentTimeCommand}" />
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.WeatherOnly}" Command="{Binding PlayCurrentClimateCommand}" />
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.TimeAndWeather}" Command="{Binding PlayCurrentTimeAndClimateCommand}" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                  <CheckBox Content="Anunciar automáticamente cada minuto"
+                  <CheckBox Content="{DynamicResource Loc.RMVoice.Main.EveryMinute}"
                             IsChecked="{Binding AutoAnnounce}"
                             VerticalAlignment="Center"
                             FontSize="11" />
-                  <TextBlock Classes="fieldLabel" Text="Modo automático:" />
+                  <TextBlock Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.AutomaticMode}" />
                   <ComboBox ItemsSource="{Binding AnnounceModes}"
                             SelectedItem="{Binding AutoAnnounceMode}"
                             Width="220" FontSize="11" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                  <TextBlock Classes="fieldLabel" Text="Volumen" />
+                  <TextBlock Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.Volume}" />
                   <Slider Minimum="0" Maximum="100" Width="280"
                           Value="{Binding Volume}" />
                   <TextBlock Text="{Binding VolumeText}" VerticalAlignment="Center" Width="52" FontSize="11" />
@@ -385,14 +385,14 @@
 
             <Border Classes="card">
               <StackPanel Spacing="6">
-                <TextBlock Classes="section" Text="Estado" />
+                <TextBlock Classes="section" Text="{DynamicResource Loc.RMVoice.Main.Status}" />
                 <TextBlock Text="{Binding StatusMessage}"
                            TextWrapping="Wrap"
                            FontSize="11"
                            Foreground="{DynamicResource RMVCardForeground}" />
                 <TextBlock Classes="hint"
                            TextWrapping="Wrap"
-                           Text="Modos disponibles: HourMinute (solo hora y minutos), ClimateOnly (solo temperatura y humedad) y HourMinuteAndClimate (todo). El clima se puede obtener automáticamente desde Open-Meteo en la pestaña «Clima (Open-Meteo)»." />
+                           Text="{DynamicResource Loc.RMVoice.Main.ModeHelp}" />
               </StackPanel>
             </Border>
 
@@ -401,22 +401,22 @@
       </TabItem>
 
       <!--  Pestaña: Clima (Open-Meteo)  -->
-      <TabItem Header="Clima">
+      <TabItem Header="{DynamicResource Loc.RMVoice.Main.WeatherTab}">
         <ScrollViewer>
           <StackPanel Spacing="10" Margin="0,8,0,0">
 
             <Border Classes="card">
               <StackPanel Spacing="8">
-                <TextBlock Classes="section" Text="Buscar ubicación" />
+                <TextBlock Classes="section" Text="{DynamicResource Loc.RMVoice.Main.SearchLocation}" />
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
                   <TextBox Text="{Binding Weather.SearchQuery, Mode=TwoWay}"
-                           PlaceholderText="Ciudad, región o país…"
+                           PlaceholderText="{DynamicResource Loc.RMVoice.Main.LocationHint}"
                            Width="320" FontSize="11" />
-                  <Button Content="Buscar"
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.Search}"
                           Command="{Binding Weather.SearchCommand}"
                           IsEnabled="{Binding !Weather.IsSearching}" />
-                  <TextBlock Text="Buscando…"
+                  <TextBlock Text="{DynamicResource Loc.RMVoice.Main.Searching}"
                              IsVisible="{Binding Weather.IsSearching}"
                              VerticalAlignment="Center"
                              FontSize="11"
@@ -440,7 +440,7 @@
                 </ListBox>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                  <Button Content="Usar esta ubicación"
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.UseLocation}"
                           Command="{Binding Weather.ApplyLocationCommand}" />
                   <TextBlock Classes="hint"
                              VerticalAlignment="Center"
@@ -452,7 +452,7 @@
 
             <Border Classes="card">
               <StackPanel Spacing="8">
-                <TextBlock Classes="section" Text="Ubicación activa" />
+                <TextBlock Classes="section" Text="{DynamicResource Loc.RMVoice.Main.ActiveLocation}" />
 
                 <StackPanel Spacing="2">
                   <TextBlock Text="{Binding Weather.ActiveLocationDisplay}"
@@ -464,12 +464,12 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                  <Button Content="🌦  Obtener ahora"
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.GetNow}"
                           Command="{Binding Weather.FetchNowCommand}"
                           IsEnabled="{Binding !Weather.IsFetching}" />
-                  <Button Content="Limpiar"
+                  <Button Content="{DynamicResource Loc.RMVoice.Main.Clear}"
                           Command="{Binding Weather.ClearLocationCommand}" />
-                  <TextBlock Text="Obteniendo datos…"
+                  <TextBlock Text="{DynamicResource Loc.RMVoice.Main.Fetching}"
                              IsVisible="{Binding Weather.IsFetching}"
                              VerticalAlignment="Center"
                              FontSize="11"
@@ -480,23 +480,23 @@
 
             <Border Classes="card">
               <StackPanel Spacing="8">
-                <TextBlock Classes="section" Text="Actualización automática" />
+                <TextBlock Classes="section" Text="{DynamicResource Loc.RMVoice.Main.WeatherUpdate}" />
 
-                <CheckBox Content="Actualizar automáticamente el clima"
+                <CheckBox Content="{DynamicResource Loc.RMVoice.Main.AutoUpdateWeather}"
                           IsChecked="{Binding Weather.AutoRefresh}"
                           FontSize="11" />
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                  <TextBlock Classes="fieldLabel" Text="Cada" />
+                  <TextBlock Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.Every}" />
                   <NumericUpDown Value="{Binding Weather.RefreshMinutes}"
                                  Minimum="1" Maximum="180"
                                  Increment="1"
                                  FormatString="0"
                                  Width="100" FontSize="11" />
-                  <TextBlock Classes="fieldLabel" Text="minutos" />
+                  <TextBlock Classes="fieldLabel" Text="{DynamicResource Loc.RMVoice.Main.Minutes}" />
                 </StackPanel>
 
-                <CheckBox Content="Anunciar por voz después de cada actualización"
+                <CheckBox Content="{DynamicResource Loc.RMVoice.Main.AnnounceAfterUpdate}"
                           IsChecked="{Binding Weather.AnnounceAfterFetch}"
                           FontSize="11" />
               </StackPanel>
@@ -504,14 +504,14 @@
 
             <Border Classes="card">
               <StackPanel Spacing="6">
-                <TextBlock Classes="section" Text="Estado del clima" />
+                <TextBlock Classes="section" Text="{DynamicResource Loc.RMVoice.Main.WeatherStatus}" />
                 <TextBlock Text="{Binding Weather.LastUpdateText}"
                            FontSize="11"
                            TextWrapping="Wrap"
                            Foreground="{DynamicResource RMVCardForeground}" />
                 <TextBlock Classes="hint"
                            TextWrapping="Wrap"
-                           Text="Open-Meteo no requiere API key. Si actualizas automáticamente y marcas «Anunciar por voz…», la app reproducirá el anuncio en cada refresco con los valores obtenidos." />
+                           Text="{DynamicResource Loc.RMVoice.Main.OpenMeteoHelp}" />
               </StackPanel>
             </Border>
 
@@ -520,12 +520,12 @@
       </TabItem>
 
       <!--  Pestaña: Tabla HORAS  -->
-      <TabItem Header="Tabla HORAS">
+      <TabItem Header="{DynamicResource Loc.RMVoice.Main.HourTable}">
         <DockPanel Margin="0,8,0,0">
           <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
-            <Button Content="Guardar" Command="{Binding SaveHourTableCommand}" />
-            <Button Content="Guardar como…" Command="{Binding SaveHourTableAsCommand}" />
-            <Button Content="Recargar desde archivo" Command="{Binding ReloadHourTableCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.Save}" Command="{Binding SaveHourTableCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.SaveAs}" Command="{Binding SaveHourTableAsCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.ReloadFromFile}" Command="{Binding ReloadHourTableCommand}" />
             <TextBlock Classes="hint" VerticalAlignment="Center"
                        Text="{Binding SelectedProfile.HourTablePath}" />
           </StackPanel>
@@ -536,22 +536,22 @@
                     GridLinesVisibility="Horizontal"
                     HeadersVisibility="Column">
             <DataGrid.Columns>
-              <DataGridTextColumn Header="Índice" Binding="{Binding Index}" Width="80" />
-              <DataGridTextColumn Header="Inicio (HH:MM:SS.f)" Binding="{Binding StartText}" Width="*" />
-              <DataGridTextColumn Header="Fin (HH:MM:SS.f)" Binding="{Binding EndText}" Width="*" />
-              <DataGridTextColumn Header="Duración (s)" Binding="{Binding DurationText}" Width="120" IsReadOnly="True" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Index}" Binding="{Binding Index}" Width="80" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Start}" Binding="{Binding StartText}" Width="*" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.End}" Binding="{Binding EndText}" Width="*" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Duration}" Binding="{Binding DurationText}" Width="120" IsReadOnly="True" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
       </TabItem>
 
       <!--  Pestaña: Tabla MINUTOS  -->
-      <TabItem Header="Tabla MINUTOS">
+      <TabItem Header="{DynamicResource Loc.RMVoice.Main.MinuteTable}">
         <DockPanel Margin="0,8,0,0">
           <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
-            <Button Content="Guardar" Command="{Binding SaveMinuteTableCommand}" />
-            <Button Content="Guardar como…" Command="{Binding SaveMinuteTableAsCommand}" />
-            <Button Content="Recargar desde archivo" Command="{Binding ReloadMinuteTableCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.Save}" Command="{Binding SaveMinuteTableCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.SaveAs}" Command="{Binding SaveMinuteTableAsCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.ReloadFromFile}" Command="{Binding ReloadMinuteTableCommand}" />
             <TextBlock Classes="hint" VerticalAlignment="Center"
                        Text="{Binding SelectedProfile.MinuteTablePath}" />
           </StackPanel>
@@ -562,22 +562,22 @@
                     GridLinesVisibility="Horizontal"
                     HeadersVisibility="Column">
             <DataGrid.Columns>
-              <DataGridTextColumn Header="Índice" Binding="{Binding Index}" Width="80" />
-              <DataGridTextColumn Header="Inicio (HH:MM:SS.f)" Binding="{Binding StartText}" Width="*" />
-              <DataGridTextColumn Header="Fin (HH:MM:SS.f)" Binding="{Binding EndText}" Width="*" />
-              <DataGridTextColumn Header="Duración (s)" Binding="{Binding DurationText}" Width="120" IsReadOnly="True" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Index}" Binding="{Binding Index}" Width="80" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Start}" Binding="{Binding StartText}" Width="*" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.End}" Binding="{Binding EndText}" Width="*" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Duration}" Binding="{Binding DurationText}" Width="120" IsReadOnly="True" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
       </TabItem>
 
       <!--  Pestaña: Tabla TEMPERATURA  -->
-      <TabItem Header="Tabla TEMPERATURA">
+      <TabItem Header="{DynamicResource Loc.RMVoice.Main.TemperatureTable}">
         <DockPanel Margin="0,8,0,0">
           <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
-            <Button Content="Guardar" Command="{Binding SaveTemperatureTableCommand}" />
-            <Button Content="Guardar como…" Command="{Binding SaveTemperatureTableAsCommand}" />
-            <Button Content="Recargar desde archivo" Command="{Binding ReloadTemperatureTableCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.Save}" Command="{Binding SaveTemperatureTableCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.SaveAs}" Command="{Binding SaveTemperatureTableAsCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.ReloadFromFile}" Command="{Binding ReloadTemperatureTableCommand}" />
             <TextBlock Classes="hint" VerticalAlignment="Center"
                        Text="{Binding SelectedProfile.TemperatureTablePath}" />
           </StackPanel>
@@ -588,22 +588,22 @@
                     GridLinesVisibility="Horizontal"
                     HeadersVisibility="Column">
             <DataGrid.Columns>
-              <DataGridTextColumn Header="Índice" Binding="{Binding Index}" Width="80" />
-              <DataGridTextColumn Header="Inicio (HH:MM:SS.f)" Binding="{Binding StartText}" Width="*" />
-              <DataGridTextColumn Header="Fin (HH:MM:SS.f)" Binding="{Binding EndText}" Width="*" />
-              <DataGridTextColumn Header="Duración (s)" Binding="{Binding DurationText}" Width="120" IsReadOnly="True" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Index}" Binding="{Binding Index}" Width="80" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Start}" Binding="{Binding StartText}" Width="*" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.End}" Binding="{Binding EndText}" Width="*" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Duration}" Binding="{Binding DurationText}" Width="120" IsReadOnly="True" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
       </TabItem>
 
       <!--  Pestaña: Tabla HUMEDAD  -->
-      <TabItem Header="Tabla HUMEDAD">
+      <TabItem Header="{DynamicResource Loc.RMVoice.Main.HumidityTable}">
         <DockPanel Margin="0,8,0,0">
           <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
-            <Button Content="Guardar" Command="{Binding SaveHumidityTableCommand}" />
-            <Button Content="Guardar como…" Command="{Binding SaveHumidityTableAsCommand}" />
-            <Button Content="Recargar desde archivo" Command="{Binding ReloadHumidityTableCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.Save}" Command="{Binding SaveHumidityTableCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.SaveAs}" Command="{Binding SaveHumidityTableAsCommand}" />
+            <Button Content="{DynamicResource Loc.RMVoice.Main.ReloadFromFile}" Command="{Binding ReloadHumidityTableCommand}" />
             <TextBlock Classes="hint" VerticalAlignment="Center"
                        Text="{Binding SelectedProfile.HumidityTablePath}" />
           </StackPanel>
@@ -614,10 +614,10 @@
                     GridLinesVisibility="Horizontal"
                     HeadersVisibility="Column">
             <DataGrid.Columns>
-              <DataGridTextColumn Header="Índice" Binding="{Binding Index}" Width="80" />
-              <DataGridTextColumn Header="Inicio (HH:MM:SS.f)" Binding="{Binding StartText}" Width="*" />
-              <DataGridTextColumn Header="Fin (HH:MM:SS.f)" Binding="{Binding EndText}" Width="*" />
-              <DataGridTextColumn Header="Duración (s)" Binding="{Binding DurationText}" Width="120" IsReadOnly="True" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Index}" Binding="{Binding Index}" Width="80" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Start}" Binding="{Binding StartText}" Width="*" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.End}" Binding="{Binding EndText}" Width="*" />
+              <DataGridTextColumn Header="{DynamicResource Loc.RMVoice.Main.Duration}" Binding="{Binding DurationText}" Width="120" IsReadOnly="True" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
@@ -640,7 +640,8 @@
         <TextBlock Grid.Column="2"
                    VerticalAlignment="Center"
                    Classes="hint"
-                   Text="{Binding IsPlaying, StringFormat='Reproduciendo: {0}'}" />
+                   Text="{DynamicResource Loc.RMVoice.StatusIndicator.Playing}"
+                   IsVisible="{Binding IsPlaying}" />
       </Grid>
     </Border>
 

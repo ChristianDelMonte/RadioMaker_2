@@ -1,6 +1,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using RadioMaker.Core.Playback;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -18,9 +19,9 @@ public sealed class LocutionCommandLabelConverter : IValueConverter
         {
             return cmd switch
             {
-                LocutionCommand.HourAndMinute => "Hora + minutos",
-                LocutionCommand.Climate => "Temperatura y humedad",
-                LocutionCommand.HourAndClimate => "Hora + temperatura y humedad",
+                LocutionCommand.HourAndMinute => LocalizationService.GetString("Loc.Label.Locution.HourMinute"),
+                LocutionCommand.Climate => LocalizationService.GetString("Loc.Label.Locution.Climate"),
+                LocutionCommand.HourAndClimate => LocalizationService.GetString("Loc.Label.Locution.HourClimate"),
                 _ => cmd.ToString()
             };
         }

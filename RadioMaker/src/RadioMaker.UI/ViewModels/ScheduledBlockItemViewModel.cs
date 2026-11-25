@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -50,13 +51,13 @@ public sealed partial class ScheduledBlockItemViewModel : ViewModelBase
                 ? (Kind == ScheduledItemKind.SingleFile
                     ? Path.GetFileName(FilePath)
                     : Path.GetFileNameWithoutExtension(FilePath))
-                : "(sin contenido)");
+                : LocalizationService.GetString("Loc.ScheduledItem.File.None"));
 
     public string KindText => Kind switch
     {
-        ScheduledItemKind.Playlist => "PLAYLIST",
-        ScheduledItemKind.Tanda => "TANDA",
-        _ => "ARCHIVO"
+        ScheduledItemKind.Playlist => LocalizationService.GetString("Loc.ScheduledItem.Kind.Playlist"),
+        ScheduledItemKind.Tanda => LocalizationService.GetString("Loc.ScheduledItem.Kind.Sequence"),
+        _ => LocalizationService.GetString("Loc.ScheduledItem.Kind.File")
     };
 
     public string KindColor => Kind switch
@@ -67,6 +68,8 @@ public sealed partial class ScheduledBlockItemViewModel : ViewModelBase
     };
 
     public bool HasContent => !string.IsNullOrWhiteSpace(FilePath);
+
+    public void RefreshLanguage() => OnPropertyChanged(nameof(KindText));
 
     /// -------------Duracion formateada como HH:MM:SS.</summary>
     public string DurationText =>

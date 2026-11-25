@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 using System.IO;
 
@@ -403,7 +404,7 @@ public partial class TabHost : UserControl
 
         if (!entry.ExistsNow)
         {
-            host.StatusMessage = $"La carpeta ya no existe: {entry.Path}";
+            host.StatusMessage = string.Format(LocalizationService.GetString("Loc.Tabs.FavoriteFolderMissing"), entry.Path);
             return;
         }
 

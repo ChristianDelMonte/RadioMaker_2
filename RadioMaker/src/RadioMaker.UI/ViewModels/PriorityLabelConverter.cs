@@ -1,6 +1,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -14,7 +15,9 @@ public sealed class PriorityLabelConverter : IValueConverter
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is SchedulePriority p)
-            return p == SchedulePriority.High ? "Alta" : "Baja";
+            return LocalizationService.GetString(p == SchedulePriority.High
+                ? "Loc.ScheduledItem.Priority.High"
+                : "Loc.ScheduledItem.Priority.Low");
         return string.Empty;
     }
 

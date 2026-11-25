@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -54,12 +55,12 @@ public sealed partial class AudioBusesWindowViewModel : ViewModelBase
             vm.RemoveRequested -= OnRemoveRequested;
             Buses.Remove(vm);
             SelectedBus = Buses.FirstOrDefault();
-            StatusMessage = $"Bus '{vm.DisplayName}' eliminado.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AudioBuses.Status.Removed"), vm.DisplayName);
             BusesChanged?.Invoke(this, EventArgs.Empty);
         }
         else
         {
-            StatusMessage = "No se puede eliminar ese bus.";
+            StatusMessage = LocalizationService.GetString("Loc.AudioBuses.Status.CannotRemove");
         }
     }
 
@@ -68,17 +69,17 @@ public sealed partial class AudioBusesWindowViewModel : ViewModelBase
     {
         try
         {
-            var newBus = _engine.CreateBus("Nuevo Bus", deviceIndex: -1);
+            var newBus = _engine.CreateBus(LocalizationService.GetString("Loc.AudioBuses.NewBus"), deviceIndex: -1);
             var vm = new BusViewModel(newBus, isPrimary: false, _engine.EnumerateDevices);
             vm.RemoveRequested += OnRemoveRequested;
             Buses.Add(vm);
             SelectedBus = vm;
-            StatusMessage = "Bus agregado. Asignale un nombre y un dispositivo.";
+            StatusMessage = LocalizationService.GetString("Loc.AudioBuses.Status.Added");
             BusesChanged?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al crear bus: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AudioBuses.Status.CreateError"), ex.Message);
         }
     }
 
@@ -88,7 +89,7 @@ public sealed partial class AudioBusesWindowViewModel : ViewModelBase
         foreach (var bus in Buses)
             bus.RefreshDevices();
 
-        StatusMessage = "Lista de dispositivos actualizada.";
+        StatusMessage = LocalizationService.GetString("Loc.AudioBuses.Status.DevicesUpdated");
     }
 
     /// -------------Genera la lista de configuración serializable a partir del estado actual.</summary>

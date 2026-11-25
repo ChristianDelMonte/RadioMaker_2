@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Controls;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
 
@@ -39,7 +40,7 @@ public partial class EncadenadoresEditorView : UserControl
 
         if (!File.Exists(track.FilePath))
         {
-            vm!.StatusMessage = $"Archivo no encontrado: {Path.GetFileName(track.FilePath)}";
+            vm!.StatusMessage = string.Format(LocalizationService.GetString("Loc.Chainers.Status.FileNotFound"), Path.GetFileName(track.FilePath));
             return;
         }
 
@@ -53,11 +54,11 @@ public partial class EncadenadoresEditorView : UserControl
             if (owner is null) return;
 
             if (await win.ShowDialog<bool>(owner))
-                vm!.StatusMessage = $"Tags guardados: {Path.GetFileName(track.FilePath)}";
+                vm!.StatusMessage = string.Format(LocalizationService.GetString("Loc.Chainers.Status.TagsSaved"), Path.GetFileName(track.FilePath));
         }
         catch (Exception ex)
         {
-            vm!.StatusMessage = $"Error al editar tags: {ex.Message}";
+            vm!.StatusMessage = string.Format(LocalizationService.GetString("Loc.Chainers.Status.TagsError"), ex.Message);
         }
     }
 
@@ -73,15 +74,15 @@ public partial class EncadenadoresEditorView : UserControl
         if (owner is null) return;
 
         var pathBox = new TextBox { Text = track.FilePath, IsReadOnly = true };
-        var titleBox = new TextBox { Text = track.Model.Title, PlaceholderText = "(usa el nombre del archivo)" };
-        var browseButton = new Button { Content = "Examinar...", Margin = new Avalonia.Thickness(0, 5, 0, 0) };
+        var titleBox = new TextBox { Text = track.Model.Title, PlaceholderText = LocalizationService.GetString("Loc.Chainers.Dialog.UseFileName") };
+        var browseButton = new Button { Content = LocalizationService.GetString("Loc.Chainers.Dialog.Browse"), Margin = new Avalonia.Thickness(0, 5, 0, 0) };
         browseButton.Click += async (_, _) =>
         {
             var audioTypes = AudioFilePickerHelper.CreateAudioFileType(
                 AudioFilePickerHelper.GetSupportedExtensions(this));
             var files = await owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Seleccionar audio encadenador",
+                Title = LocalizationService.GetString("Loc.Chainers.Dialog.SelectAudio"),
                 AllowMultiple = false,
                 FileTypeFilter = new[] { audioTypes, FilePickerFileTypes.All }
             });
@@ -95,8 +96,8 @@ public partial class EncadenadoresEditorView : UserControl
             }
         };
 
-        var saveButton = new Button { Content = "Guardar", MinWidth = 90 };
-        var cancelButton = new Button { Content = "Cancelar", MinWidth = 90 };
+        var saveButton = new Button { Content = LocalizationService.GetString("Loc.Chainers.Dialog.Save"), MinWidth = 90 };
+        var cancelButton = new Button { Content = LocalizationService.GetString("Loc.Chainers.Dialog.Cancel"), MinWidth = 90 };
         var actions = new StackPanel
         {
             Orientation = Avalonia.Layout.Orientation.Horizontal,
@@ -111,14 +112,14 @@ public partial class EncadenadoresEditorView : UserControl
             Margin = new Avalonia.Thickness(16),
             Children =
             {
-                new TextBlock { Text = "Archivo de audio" }, pathBox, browseButton,
-                new TextBlock { Text = "Título (opcional)", Margin = new Avalonia.Thickness(0, 8, 0, 0) },
+                new TextBlock { Text = LocalizationService.GetString("Loc.Chainers.Dialog.AudioFile") }, pathBox, browseButton,
+                new TextBlock { Text = LocalizationService.GetString("Loc.Chainers.Dialog.OptionalTitle"), Margin = new Avalonia.Thickness(0, 8, 0, 0) },
                 titleBox, actions
             }
         };
         var dialog = new EncadenadorTrackEditorWindow
         {
-            Title = "Editar audio encadenador",
+            Title = LocalizationService.GetString("Loc.Chainers.Dialog.EditAudio"),
             Width = 480,
             SizeToContent = SizeToContent.Height,
             MinWidth = 380,
@@ -144,7 +145,7 @@ public partial class EncadenadoresEditorView : UserControl
             if (!string.IsNullOrWhiteSpace(path))
             {
                 vm.UpdateTrack(track, path, titleBox.Text ?? string.Empty);
-                vm.StatusMessage = $"Audio actualizado: {track.DisplayTitle}";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.Chainers.Status.AudioUpdated"), track.DisplayTitle);
             }
         }
     }
@@ -159,11 +160,11 @@ public partial class EncadenadoresEditorView : UserControl
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir Encadenadores (.rme)",
+            Title = LocalizationService.GetString("Loc.Chainers.Dialog.Open"),
             AllowMultiple = false,
             FileTypeFilter = new[]
             {
-                new FilePickerFileType("Encadenadores .rme")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Chainers.Dialog.FileType"))
                 {
                     Patterns = new[] { "*" + EncadenadoresStore.FileExtension }
                 },
@@ -201,12 +202,12 @@ public partial class EncadenadoresEditorView : UserControl
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar Encadenadores (.rme)",
+            Title = LocalizationService.GetString("Loc.Chainers.Dialog.SaveAs"),
             SuggestedFileName = vm.Name + EncadenadoresStore.FileExtension,
             DefaultExtension = EncadenadoresStore.FileExtension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Encadenadores .rme")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Chainers.Dialog.FileType"))
                 {
                     Patterns = new[] { "*" + EncadenadoresStore.FileExtension }
                 }

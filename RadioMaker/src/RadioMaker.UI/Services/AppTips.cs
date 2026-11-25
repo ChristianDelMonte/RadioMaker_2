@@ -1,12 +1,16 @@
 using System;
 using Material.Icons;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.Services;
 
 /// -------------
 /// Un tip de ayuda que se muestra en la barra de estado inferior.
 /// -------------
-public sealed record AppTip(MaterialIconKind Icon, string Message);
+public sealed record AppTip(MaterialIconKind Icon, string ResourceKey)
+{
+    public string Message => LocalizationService.GetString(ResourceKey);
+}
 
 /// -------------
 /// Lista central de tips de ayuda. Se rotan cada 90 segundos en la barra
@@ -18,65 +22,45 @@ public static class AppTips
 {
     private static readonly AppTip[] Tips =
     {
-        new(MaterialIconKind.Microphone,
-            "Configura las locuciones de hora y clima activando el Addon RMVoice."),
+        new(MaterialIconKind.Microphone, "Loc.Tips.RMVoice"),
 
-        new(MaterialIconKind.Waveform,
-            "Crea proyectos multipista con el Addon RMWave y reprodúcelos directamente desde RadioMaker."),
+        new(MaterialIconKind.Waveform, "Loc.Tips.RMWave"),
 
-        new(MaterialIconKind.SwapHorizontal,
-            "Activa el crossfade en Configuración → Fade para transiciones suaves entre pistas de Playlist."),
+        new(MaterialIconKind.SwapHorizontal, "Loc.Tips.Crossfade"),
 
-        new(MaterialIconKind.Drag,
-            "Arrastra archivos desde el explorador a cualquier pestaña para agregarlos rápidamente."),
+        new(MaterialIconKind.Drag, "Loc.Tips.DragDrop"),
 
-        new(MaterialIconKind.CursorDefaultClick,
-            "Click derecho sobre cualquier ítem para editar sus propiedades u opciones adicionales."),
+        new(MaterialIconKind.CursorDefaultClick, "Loc.Tips.ContextMenu"),
 
-        new(MaterialIconKind.Star,
-            "Guarda tus carpetas favoritas para acceso rápido desde el panel derecho del explorador."),
+        new(MaterialIconKind.Star, "Loc.Tips.FavoriteFolders"),
 
-        new(MaterialIconKind.Shield,
-            "Configura las Políticas de exclusividad para evitar solapamientos entre módulos del mismo bus."),
+        new(MaterialIconKind.Shield, "Loc.Tips.Exclusivity"),
 
-        new(MaterialIconKind.Alert,
-            "Activa la Emergencia en Configuración → Comportamiento para evitar silencios al aire."),
+        new(MaterialIconKind.Alert, "Loc.Tips.Emergency"),
 
-        new(MaterialIconKind.Tag,
-            "Click derecho sobre un audio para editar sus tags (ID3, FLAC, M4A, OGG)."),
+        new(MaterialIconKind.Tag, "Loc.Tips.AudioTags"),
 
-        new(MaterialIconKind.AutoFix,
-            "Usa el Generador de Playlist para armar listas por duración o cantidad automáticamente."),
+        new(MaterialIconKind.AutoFix, "Loc.Tips.PlaylistGenerator"),
 
-        new(MaterialIconKind.NoteText,
-            "Las Notas se guardan automáticamente: no pierdas tus ideas."),
+        new(MaterialIconKind.NoteText, "Loc.Tips.Notes"),
 
-        new(MaterialIconKind.SpeakerMultiple,
-            "Crea varios buses de salida para preescuchar en auriculares mientras el aire sigue sonando."),
+        new(MaterialIconKind.SpeakerMultiple, "Loc.Tips.OutputBuses"),
 
-        new(MaterialIconKind.Speedometer,
-            "El análisis de trim y normalización se cachea por archivo: la segunda reproducción es instantánea."),
+        new(MaterialIconKind.Speedometer, "Loc.Tips.AnalysisCache"),
 
-        new(MaterialIconKind.Tune,
-            "Configura el EQ de 10 bandas y guarda tus propios presets personalizados."),
+        new(MaterialIconKind.Tune, "Loc.Tips.Equalizer"),
 
-        new(MaterialIconKind.FileMusic,
-            "En la botonera, cada pestaña tiene su propio bus de salida. Ideal para separar el aire de la preescucha."),
+        new(MaterialIconKind.FileMusic, "Loc.Tips.CartBuses"),
 
-        new(MaterialIconKind.ClockOutline,
-            "En Programados, cada lista puede activarse o desactivarse con el switch de la barra superior."),
+        new(MaterialIconKind.ClockOutline, "Loc.Tips.ScheduledLists"),
 
-        new(MaterialIconKind.MusicNote,
-            "El crossfade entre pistas del Playlist usa el mismo valor configurado en Fade."),
+        new(MaterialIconKind.MusicNote, "Loc.Tips.PlaylistCrossfade"),
 
-        new(MaterialIconKind.FolderOpen,
-            "Presioná el switch \"Activa\" en una lista de Programados mientras la armás para que no se dispare."),
+        new(MaterialIconKind.FolderOpen, "Loc.Tips.DisableScheduledList"),
 
-        new(MaterialIconKind.Bell,
-            "Configura el beep de emergencia cada N pistas para que el operador detecte la alerta."),
+        new(MaterialIconKind.Bell, "Loc.Tips.EmergencyBeep"),
 
-        new(MaterialIconKind.SkipNext,
-            "En Playlist podés usar Saltar al siguiente en lugar de Continuar cuando un programado interrumpe."),
+        new(MaterialIconKind.SkipNext, "Loc.Tips.PlaylistInterrupt"),
     };
 
     private static readonly Random Rng = new();

@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using RMVoice.Core;
 using RMVoice.Core.Models;
 using RMVoice.Core.Services;
+using RMVoice.UI.Localization;
 
 namespace RMVoice.UI.ViewModels;
 
@@ -28,8 +29,8 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
     [ObservableProperty] private WeatherLocation? _candidate;
     [ObservableProperty] private bool _isSearching;
     [ObservableProperty] private bool _isFetching;
-    [ObservableProperty] private string _statusMessage = "Escribe una ciudad y pulsa Buscar.";
-    [ObservableProperty] private string _lastUpdateText = "Sin datos todavía.";
+    [ObservableProperty] private string _statusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.Status.SearchPrompt");
+    [ObservableProperty] private string _lastUpdateText = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.LastUpdate.NoData");
     [ObservableProperty] private bool _autoRefresh;
     [ObservableProperty] private decimal _refreshMinutes = 15m;
     [ObservableProperty] private bool _announceAfterFetch;
@@ -70,14 +71,14 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
     {
         if (string.IsNullOrWhiteSpace(SearchQuery))
         {
-            StatusMessage = "Escribe una ciudad para buscar.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.Status.QueryRequired");
             return;
         }
 
         Results.Clear();
         Candidate = null;
         IsSearching = true;
-        StatusMessage = $"Buscando «{SearchQuery}»…";
+        StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Weather.Status.Searching", SearchQuery);
 
         try
         {
@@ -91,16 +92,16 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
                 Results.Add(loc);
 
             StatusMessage = found.Count == 0
-                ? "No se encontraron resultados para esa búsqueda."
-                : $"{found.Count} resultado(s). Selecciona uno y pulsa «Usar esta ubicación».";
+                ? VoiceLocalizationService.GetString("Loc.RMVoice.Weather.Status.NoResults")
+                : VoiceLocalizationService.Format("Loc.RMVoice.Weather.Status.ResultCount", found.Count);
         }
         catch (OperationCanceledException)
         {
-            StatusMessage = "Búsqueda cancelada por timeout.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.Status.SearchTimeout");
         }
         catch (Exception ex)
         {
-            StatusMessage = "Error en la búsqueda: " + ex.Message;
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Weather.Status.SearchError", ex.Message);
         }
         finally
         {
@@ -117,7 +118,7 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
     {
         if (Candidate is null)
         {
-            StatusMessage = "Selecciona primero un resultado de la lista.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.Status.SelectResult");
             return;
         }
 
@@ -128,7 +129,7 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(ActiveLocationDisplay));
         OnPropertyChanged(nameof(ActiveLocationCoordinates));
 
-        StatusMessage = $"Ubicación aplicada: {Candidate.DisplayName}";
+        StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Weather.Status.LocationApplied", Candidate.DisplayName);
         await FetchNowAsync();
     }
 
@@ -140,8 +141,8 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
 
         Candidate = null;
         Results.Clear();
-        LastUpdateText = "Sin datos todavía.";
-        StatusMessage = "Ubicación y datos limpiados.";
+        LastUpdateText = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.LastUpdate.NoData");
+        StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.Status.Cleared");
 
         OnPropertyChanged(nameof(ActiveLocation));
         OnPropertyChanged(nameof(ActiveLocationDisplay));
@@ -157,12 +158,12 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
     {
         if (_announcer.ActiveWeatherLocation is null)
         {
-            StatusMessage = "No hay ubicación activa. Busca y aplica una primero.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.Status.NoActiveLocation");
             return;
         }
 
         IsFetching = true;
-        StatusMessage = $"Obteniendo clima de {_announcer.ActiveWeatherLocation.Name}…";
+        StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Weather.Status.Fetching", _announcer.ActiveWeatherLocation.Name);
 
         try
         {
@@ -172,22 +173,21 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
 
             var snap = await _announcer.FetchWeatherAsync(_cts.Token);
 
-            LastUpdateText =
-                $"Última actualización: {snap.Timestamp:HH:mm:ss} · " +
-                $"{snap.Temperature:0.#} °C · {snap.Humidity:0} %";
+            LastUpdateText = VoiceLocalizationService.Format(
+                "Loc.RMVoice.Weather.LastUpdate.Summary", snap.Timestamp.ToString("HH:mm:ss"), snap.Temperature, snap.Humidity);
 
-            StatusMessage = $"Datos obtenidos para {_announcer.ActiveWeatherLocation.DisplayName}.";
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Weather.Status.Fetched", _announcer.ActiveWeatherLocation.DisplayName);
 
             WeatherUpdated?.Invoke(snap);
         }
         catch (OperationCanceledException)
         {
-            StatusMessage = "Timeout al obtener el clima.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Weather.Status.FetchTimeout");
             FetchFailed?.Invoke("timeout");
         }
         catch (Exception ex)
         {
-            StatusMessage = "Error: " + ex.Message;
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Weather.Status.Error", ex.Message);
             FetchFailed?.Invoke(ex.Message);
         }
         finally
@@ -244,9 +244,8 @@ public partial class WeatherPanelViewModel : ObservableObject, IDisposable
         // necesidad de volver a consultar Open-Meteo.
         if (_announcer.LastWeather is { } lastSnap)
         {
-            LastUpdateText =
-                $"Última actualización: {lastSnap.Timestamp:HH:mm:ss} · " +
-                $"{lastSnap.Temperature:0.#} °C · {lastSnap.Humidity:0} %";
+            LastUpdateText = VoiceLocalizationService.Format(
+                "Loc.RMVoice.Weather.LastUpdate.Summary", lastSnap.Timestamp.ToString("HH:mm:ss"), lastSnap.Temperature, lastSnap.Humidity);
         }
 
         _suppressPersist = false;

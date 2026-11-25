@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.Services;
 
@@ -29,26 +30,26 @@ public static class RMWaveLauncher
 
         if (string.IsNullOrWhiteSpace(filePath))
         {
-            errorMessage = "Ruta vacía.";
+            errorMessage = LocalizationService.GetString("Loc.RMWaveLauncher.PathEmpty");
             return false;
         }
 
         if (!IsRmwFile(filePath))
         {
-            errorMessage = $"No es un proyecto RMW: {Path.GetFileName(filePath)}";
+            errorMessage = string.Format(LocalizationService.GetString("Loc.RMWaveLauncher.InvalidProject"), Path.GetFileName(filePath));
             return false;
         }
 
         if (!File.Exists(filePath))
         {
-            errorMessage = $"El archivo no existe: {Path.GetFileName(filePath)}";
+            errorMessage = string.Format(LocalizationService.GetString("Loc.RMWaveLauncher.FileMissing"), Path.GetFileName(filePath));
             return false;
         }
 
         var exePath = FindRMWaveExe();
         if (exePath is null)
         {
-            errorMessage = "No se encontró RMWave. Verificá que esté en Addons/RMWave/.";
+            errorMessage = LocalizationService.GetString("Loc.RMWaveLauncher.AddonMissing");
             return false;
         }
 
@@ -85,7 +86,7 @@ public static class RMWaveLauncher
             }
             catch { }
 
-            errorMessage = $"Error al abrir RMWave: {ex.Message}";
+            errorMessage = string.Format(LocalizationService.GetString("Loc.RMWaveLauncher.OpenError"), ex.Message);
             return false;
         }
     }

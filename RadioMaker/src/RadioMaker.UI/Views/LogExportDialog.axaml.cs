@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Controls;
 using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
@@ -56,7 +57,7 @@ public partial class LogExportDialog : CustomChromeWindow
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar log",
+            Title = LocalizationService.GetString("Loc.Dialog.SaveLog.Title"),
             SuggestedFileName = suggestedName,
             DefaultExtension = vm.Extension,
             FileTypeChoices = new[] { fileType, FilePickerFileTypes.All }

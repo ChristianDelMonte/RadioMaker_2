@@ -4,6 +4,7 @@ using Avalonia.Styling;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using RMWave.UI.Localization;
 
 namespace RMWave.UI.Themes;
 
@@ -54,6 +55,15 @@ public class AppTheme
 /// </summary>
 public static class ThemeManager
 {
+    public static string GetDisplayName(AppTheme theme) => theme.Name switch
+    {
+        "Oscuro" => WaveLocalizationService.GetString("Loc.RMWave.Theme.Dark"),
+        "Claro" => WaveLocalizationService.GetString("Loc.RMWave.Theme.Light"),
+        "Azul Medianoche" => WaveLocalizationService.GetString("Loc.RMWave.Theme.MidnightBlue"),
+        "Estudio Cálido" => WaveLocalizationService.GetString("Loc.RMWave.Theme.WarmStudio"),
+        _ => theme.Name
+    };
+
     public static readonly List<AppTheme> Available = new()
     {
         // 1) Oscuro clásico (el actual)

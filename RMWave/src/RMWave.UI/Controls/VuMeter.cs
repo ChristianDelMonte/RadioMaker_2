@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
+using RMWave.UI.Localization;
 
 namespace RMWave.UI.Controls
 {
@@ -291,7 +292,7 @@ namespace RMWave.UI.Controls
         private void BuildViewMenu()
         {
             var menu = new ContextMenu();
-            var viewItem = new MenuItem { Header = "Vista" };
+            var viewItem = new MenuItem { Header = WaveLocalizationService.GetString("Loc.RMWave.VuMeter.View") };
 
             void AddOption(string header, VuDisplayMode mode)
             {
@@ -300,9 +301,9 @@ namespace RMWave.UI.Controls
                 viewItem.Items.Add(item);
             }
 
-            AddOption("Sólido", VuDisplayMode.Solid);
-            AddOption("Segmentado", VuDisplayMode.Segmented);
-            AddOption("Analógico (aguja)", VuDisplayMode.Analog);
+            AddOption(WaveLocalizationService.GetString("Loc.RMWave.VuMeter.Solid"), VuDisplayMode.Solid);
+            AddOption(WaveLocalizationService.GetString("Loc.RMWave.VuMeter.Segmented"), VuDisplayMode.Segmented);
+            AddOption(WaveLocalizationService.GetString("Loc.RMWave.VuMeter.Analog"), VuDisplayMode.Analog);
 
             menu.Items.Add(viewItem);
             ContextMenu = menu;

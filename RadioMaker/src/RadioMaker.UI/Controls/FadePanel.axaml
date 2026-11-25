@@ -14,7 +14,7 @@
 
             <!-- Titulo -->
             <TextBlock Grid.Row="0"
-                       Text="Fade automatico"
+                       Text="{DynamicResource Loc.Controls.Fade.AutoTitle}"
                        FontWeight="SemiBold"
                        FontSize="12"
                        Foreground="{DynamicResource FgPrimary}"
@@ -31,7 +31,7 @@
                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
 
                     <CheckBox Grid.Row="0" Grid.Column="0"
-                              Content="Aplicar fade-in y fade-out automatico a todo audio"
+                              Content="{DynamicResource Loc.Controls.Fade.AutoEnabled}"
                               IsChecked="{Binding IsEnabled}"
                               FontWeight="SemiBold"
                               FontSize="11"
@@ -55,7 +55,7 @@
                   Margin="0,0,0,6">
 
                 <TextBlock Grid.Column="0"
-                           Text="Duracion del fade:"
+                           Text="{DynamicResource Loc.Controls.Fade.Duration}"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
                            VerticalAlignment="Center"
@@ -81,7 +81,7 @@
 
             <!-- Nota del auto-fade -->
             <TextBlock Grid.Row="3"
-                       Text="El fade-out se ejecuta antes del final util del audio. Si el auto-trim esta activo, el fade-out se ubica justo antes del corte."
+                       Text="{DynamicResource Loc.Controls.Fade.AutoHelp}"
                        FontSize="10"
                        Foreground="{DynamicResource FgSecondary}"
                        TextWrapping="Wrap"
@@ -93,7 +93,7 @@
             <!-- ═══════ Crossfade entre carts ═══════ -->
 
             <TextBlock Grid.Row="5"
-                       Text="Crossfade entre carts (botonera)"
+                       Text="{DynamicResource Loc.Controls.Fade.CartCrossfade}"
                        FontWeight="SemiBold"
                        FontSize="12"
                        Foreground="{DynamicResource FgPrimary}"
@@ -110,7 +110,7 @@
                     <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
 
                         <CheckBox Grid.Row="0" Grid.Column="0"
-                                  Content="Hacer crossfade al disparar un cart mientras suena otro"
+                                  Content="{DynamicResource Loc.Controls.Fade.CartCrossfadeEnabled}"
                                   IsChecked="{Binding CartCrossfadeEnabled}"
                                   FontWeight="SemiBold"
                                   FontSize="11"
@@ -133,7 +133,7 @@
                 <Grid ColumnDefinitions="Auto,*,Auto">
 
                     <TextBlock Grid.Column="0"
-                               Text="Duracion del crossfade:"
+                               Text="{DynamicResource Loc.Controls.Fade.CrossfadeDuration}"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center"
@@ -158,7 +158,7 @@
                 </Grid>
 
                 <!-- Nota del crossfade -->
-                <TextBlock Text="Cuando esta activo, al disparar un cart mientras suena otro se hace fade-out del que suena y fade-in del nuevo. Cuando esta desactivado, los carts se superponen (comportamiento clasico)."
+                <TextBlock Text="{DynamicResource Loc.Controls.Fade.CrossfadeHelp}"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
                            TextWrapping="Wrap" />

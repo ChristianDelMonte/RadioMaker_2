@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Playback;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 using System.Collections.ObjectModel;
 
 namespace RadioMaker.UI.ViewModels;
@@ -41,7 +42,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     [ObservableProperty] private string _notes;
     [ObservableProperty] private string? _loadedFilePath;
     [ObservableProperty] private bool _isDirty;
-    [ObservableProperty] private string _statusMessage = "Playlist lista. Agrega pistas o abri un archivo.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.Initial");
     [ObservableProperty] private PlaylistTrackViewModel? _selectedTrack;
 
     /// -------------
@@ -79,13 +80,13 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     public bool HasNoSelection => !HasSelection;
 
     public string SummaryText =>
-        $"{TrackCount} pista(s) — {EnabledCount} activa(s), {MixCount} con mixado · Modo: {ModeText}";
+        string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Summary"), TrackCount, EnabledCount, MixCount, ModeText);
 
     public string ModeText => Mode switch
     {
-        PlaylistMode.Once => "Una vez",
-        PlaylistMode.Loop => "Repetir",
-        PlaylistMode.Shuffle => "Aleatorio",
+        PlaylistMode.Once => LocalizationService.GetString("Loc.PlaylistEditor.Mode.Once"),
+        PlaylistMode.Loop => LocalizationService.GetString("Loc.PlaylistEditor.Mode.Loop"),
+        PlaylistMode.Shuffle => LocalizationService.GetString("Loc.PlaylistEditor.Mode.Shuffle"),
         _ => Mode.ToString()
     };
 
@@ -122,7 +123,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
             int unanalyzed = UnanalyzedEnabledCount;
             return unanalyzed > 0
-                ? $"{baseText}  (+{unanalyzed} sin analizar)"
+                ? string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Duration.Unanalyzed"), baseText, unanalyzed)
                 : baseText;
         }
     }
@@ -153,8 +154,18 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
     public string PlayerStateText => IsAutoDjPlaylist &&
         (_autoDjEnabledProvider?.Invoke() ?? false) && PlayerState.Status == PlaylistPlayerStatus.Stopped
-            ? "Esperando aire"
-            : !IsThisPlaylistPlaying ? "Detenido" : PlayerState.StatusText;
+            ? LocalizationService.GetString("Loc.PlaylistEditor.PlayerState.WaitingOnAir")
+            : !IsThisPlaylistPlaying ? LocalizationService.GetString("Loc.PlaylistEditor.PlayerState.Stopped")
+            : PlayerState.Status switch
+            {
+                PlaylistPlayerStatus.Stopped => LocalizationService.GetString("Loc.PlaylistEditor.PlayerState.Stopped"),
+                PlaylistPlayerStatus.Playing => LocalizationService.GetString("Loc.PlaylistEditor.PlayerState.Playing"),
+                PlaylistPlayerStatus.Paused => LocalizationService.GetString("Loc.PlaylistEditor.PlayerState.Paused"),
+                PlaylistPlayerStatus.PausedByScheduler => LocalizationService.GetString("Loc.PlaylistEditor.PlayerState.PausedByScheduler"),
+                PlaylistPlayerStatus.Delaying => LocalizationService.GetString("Loc.PlaylistEditor.PlayerState.Delaying"),
+                PlaylistPlayerStatus.Error => LocalizationService.GetString("Loc.PlaylistEditor.PlayerState.Error"),
+                _ => "?"
+            };
 
     public string PlayerStateColor => !IsThisPlaylistPlaying
         ? "#6B7280"
@@ -165,7 +176,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
     // ───── Constructor ───────────────────────────────────────────────────
 
     public PlaylistEditorViewModel()
-        : this(new Playlist { Name = "Nueva Playlist" }, null)
+        : this(new Playlist { Name = LocalizationService.GetString("Loc.PlaylistEditor.NewPlaylist") }, null)
     {
     }
 
@@ -240,7 +251,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al reproducir: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.PlayError"), ex.Message);
         }
     }
 
@@ -400,7 +411,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
         SelectedTrack = vm;
         IsDirty = true;
-        StatusMessage = "Pista agregada. Configura el archivo.";
+        StatusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.TrackAdded");
         RefreshSummary();
         RefreshTransportState();
     }
@@ -421,7 +432,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
             SelectedTrack = Tracks.FirstOrDefault();
 
         IsDirty = true;
-        StatusMessage = "Pista eliminada.";
+        StatusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.TrackRemoved");
         RefreshSummary();
         RefreshTransportState();
     }
@@ -456,7 +467,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         if (SelectedTrack is null) return;
 
         SelectedTrack.MixAudioPath = string.Empty;
-        StatusMessage = "Mixado quitado.";
+        StatusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.MixRemoved");
     }
 
     public PlaylistTrackViewModel AddTrackFromFile(string filePath)
@@ -523,7 +534,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
 
         SelectedTrack = Tracks.FirstOrDefault();
         IsDirty = true;
-        StatusMessage = $"Playlist generada automaticamente: {Tracks.Count} pista(s).";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.Generated"), Tracks.Count);
         RefreshSummary();
         RefreshTransportState();
     }
@@ -543,9 +554,26 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         Mode = playlist.Mode;
         RebuildTracksFromModel();
         IsDirty = false;
-        StatusMessage = statusMessage;
+        StatusMessage = statusMessage switch
+        {
+            "AutoDJ listo para salir al aire." => LocalizationService.GetString("Loc.PlaylistEditor.Status.AutoDjReady"),
+            _ when statusMessage.StartsWith("Vista previa AutoDJ guardada temporalmente (", StringComparison.Ordinal) =>
+                string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.AutoDjSaved"),
+                    System.Text.RegularExpressions.Regex.Match(statusMessage, @"\d+").Value),
+            _ when statusMessage.StartsWith("Vista previa AutoDJ lista (", StringComparison.Ordinal) =>
+                string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.AutoDjSaveError"),
+                    System.Text.RegularExpressions.Regex.Match(statusMessage, @"\d+").Value,
+                    statusMessage[(statusMessage.IndexOf(": ", StringComparison.Ordinal) + 2)..]),
+            _ => statusMessage
+        };
         OnPropertyChanged(nameof(ShowBusSelector));
         RefreshTransportState();
+    }
+
+    public void RefreshAutoDjStatus(string resourceKey, params object?[] args)
+    {
+        if (!IsAutoDjPlaylist) return;
+        StatusMessage = string.Format(LocalizationService.GetString(resourceKey), args);
     }
 
     // ───── Apertura / guardado .rmf ──────────────────────────────────────
@@ -555,7 +583,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         var loaded = PlaylistStore.Load(filePath);
         if (loaded is null)
         {
-            StatusMessage = $"No se pudo cargar '{Path.GetFileName(filePath)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.LoadFailed"), Path.GetFileName(filePath));
             return false;
         }
 
@@ -576,7 +604,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         // ── Restaurar el bus elegido por el usuario ─────────────────────
         RestoreBusFromModel();
 
-        StatusMessage = $"Cargada '{Path.GetFileName(filePath)}' con {Tracks.Count} pista(s).";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.Loaded"), Path.GetFileName(filePath), Tracks.Count);
         return true;
     }
 
@@ -601,7 +629,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
             }
 
             // No existe: se cae al default con aviso.
-            StatusMessage = $"El bus guardado ya no existe. Usando el bus del aire.";
+            StatusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.BusMissing");
         }
 
         // 2) Fallback al bus del Scheduler.
@@ -650,7 +678,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         // Aplicar al player.
         ApplyBusToPlayer(bus);
 
-        StatusMessage = $"Bus de salida: {bus.DisplayName}";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.OutputBus"), bus.DisplayName);
     }
 
     /// -------------
@@ -666,7 +694,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         var target = filePath ?? _currentFilePath;
         if (string.IsNullOrWhiteSpace(target))
         {
-            StatusMessage = "No hay ruta de guardado. Usa 'Guardar como...'.";
+            StatusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.NoSavePath");
             return false;
         }
 
@@ -686,13 +714,13 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
             LoadedFilePath = target;
             IsDirty = false;
 
-            StatusMessage = $"Guardada en '{Path.GetFileName(target)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.Saved"), Path.GetFileName(target));
             OnPropertyChanged(nameof(TitleWithDirty));
             return true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al guardar: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.SaveError"), ex.Message);
             return false;
         }
     }
@@ -702,7 +730,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         if (_player is not null && ReferenceEquals(_player.CurrentPlaylist, _playlist))
             _player.Stop();
 
-        _playlist = new Playlist { Name = "Nueva Playlist" };
+        _playlist = new Playlist { Name = LocalizationService.GetString("Loc.PlaylistEditor.NewPlaylist") };
         PlaylistName = _playlist.Name;
         Notes = string.Empty;
         Mode = PlaylistMode.Once;
@@ -718,7 +746,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
             BusSelector.SelectBusSilently(schedulerBus);
         ApplyBusToPlayer(BusSelector?.SelectedBus);
 
-        StatusMessage = "Playlist nueva creada.";
+        StatusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.NewPlaylist");
     }
 
     // ───── Importar / Exportar M3U / PLS ────────────────────────────────
@@ -728,7 +756,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         var imported = PlaylistFormatIO.ImportAuto(filePath);
         if (imported is null || imported.Tracks.Count == 0)
         {
-            StatusMessage = $"No se pudo importar '{Path.GetFileName(filePath)}' o esta vacio.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.ImportFailed"), Path.GetFileName(filePath));
             return false;
         }
 
@@ -753,7 +781,7 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
             BusSelector.SelectBusSilently(schedulerBus);
         ApplyBusToPlayer(BusSelector?.SelectedBus);
 
-        StatusMessage = $"Importadas {Tracks.Count} pista(s) desde '{Path.GetFileName(filePath)}'.";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.Imported"), Tracks.Count, Path.GetFileName(filePath));
         return true;
     }
 
@@ -763,12 +791,12 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         {
             SyncTracksToModel();
             PlaylistFormatIO.ExportM3U(_playlist, filePath);
-            StatusMessage = $"Exportada a '{Path.GetFileName(filePath)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.Exported"), Path.GetFileName(filePath));
             return true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al exportar M3U: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.ExportM3uError"), ex.Message);
             return false;
         }
     }
@@ -779,12 +807,12 @@ public sealed partial class PlaylistEditorViewModel : ViewModelBase
         {
             SyncTracksToModel();
             PlaylistFormatIO.ExportPLS(_playlist, filePath);
-            StatusMessage = $"Exportada a '{Path.GetFileName(filePath)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.Exported"), Path.GetFileName(filePath));
             return true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al exportar PLS: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.ExportPlsError"), ex.Message);
             return false;
         }
     }

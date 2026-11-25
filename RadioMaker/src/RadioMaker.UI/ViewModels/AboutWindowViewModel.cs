@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using RadioMaker.UI.Services;
+using RadioMaker.UI.Localization;
 using Avalonia.Media.Imaging;
 
 namespace RadioMaker.UI.ViewModels;
@@ -36,6 +37,7 @@ public sealed class DependencyInfo
             var l when l.Contains("GPL", StringComparison.OrdinalIgnoreCase) => "Warning",
             var l when l.Contains("Community", StringComparison.OrdinalIgnoreCase) => "Accent",
             var l when l.Contains("Free", StringComparison.OrdinalIgnoreCase) => "Accent",
+            var l when l.Contains("Gratis", StringComparison.OrdinalIgnoreCase) => "Accent",
             var l when l.Contains("Comercial", StringComparison.OrdinalIgnoreCase) => "Error",
             _ => "FgMuted"
         };
@@ -83,20 +85,17 @@ public sealed class QuickLinkInfo
 ///     version, licencia, descripcion y link a la web del proyecto.
 ///   - Comandos para abrir links en el navegador externo.
 /// -------------
-public sealed partial class AboutWindowViewModel : ViewModelBase
+public sealed partial class AboutWindowViewModel : ViewModelBase, IDisposable
 {
     // ───── Info de la app ────────────────────────────────────────────────
 
     public string AppName => "RadioMaker";
     public string AppVersion => Services.AppVersionInfo.VersionText;
     public string AppBuild => Services.AppVersionInfo.BuildText;
-    public string AppSlogan => "Forever FREE Radio Automation Software!";
-    public string AppDescription =>
-        "Software de automatizacion de radio multiplataforma. " +
-        "Reproduccion programada, botonera, tandas, playlists y analisis de audio " +
-        "en un solo entorno profesional.";
+    public string AppSlogan => LocalizationService.GetString("Loc.App.Slogan");
+    public string AppDescription => LocalizationService.GetString("Loc.About.Description");
 
-    public string CopyrightText { get; }
+    public string CopyrightText => string.Format(LocalizationService.GetString("Loc.About.Copyright"), DateTime.Now.Year);
 
     /// -------------
     /// Imagen del header. Es la misma que se mostro en el splash screen
@@ -117,108 +116,123 @@ public sealed partial class AboutWindowViewModel : ViewModelBase
 
     public AboutWindowViewModel()
     {
-        CopyrightText = $"\u00A9 {DateTime.Now.Year} RadioMaker. Todos los derechos reservados.";
-
+        LocalizationService.LanguageChanged += OnLanguageChanged;
         BuildDependencyGroups();
     }
 
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        DependencyGroups.Clear();
+        BuildDependencyGroups();
+        OnPropertyChanged(nameof(DependencyGroups));
+        OnPropertyChanged(nameof(AppVersion));
+        OnPropertyChanged(nameof(AppBuild));
+        OnPropertyChanged(nameof(AppSlogan));
+        OnPropertyChanged(nameof(AppDescription));
+        OnPropertyChanged(nameof(CopyrightText));
+        OnPropertyChanged(nameof(FrameworkText));
+        OnPropertyChanged(nameof(QuickLinks));
+    }
+
+    public void Dispose() => LocalizationService.LanguageChanged -= OnLanguageChanged;
+
     private void BuildDependencyGroups()
     {
+        string DependencyDescription(string name) => LocalizationService.GetString($"Loc.About.Dependency.{name}");
+
         // ── Framework / UI ───────────────────────────────────────────────
         DependencyGroups.Add(new DependencyGroup(
-            "Framework y UI",
+            LocalizationService.GetString("Loc.About.Group.Framework"),
             "\uE30A", // icono generico (no se usa, placeholder)
             new List<DependencyInfo>
             {
                 new("Avalonia", "12.1.3", "MIT",
-                    "Framework de UI multiplataforma para .NET.",
+                    DependencyDescription("Avalonia"),
                     "https://avaloniaui.net"),
 
                 new("Avalonia.Desktop", "12.1.3", "MIT",
-                    "Backend de escritorio para Avalonia.",
+                    DependencyDescription("AvaloniaDesktop"),
                     "https://github.com/AvaloniaUI/Avalonia"),
 
                 new("Avalonia.Themes.Fluent", "12.1.3", "MIT",
-                    "Tema Fluent (Windows 11) para Avalonia.",
+                    DependencyDescription("Fluent"),
                     "https://github.com/AvaloniaUI/Avalonia"),
 
                 new("Avalonia.Fonts.Inter", "12.1.3", "MIT",
-                    "Tipografia Inter empaquetada para Avalonia.",
+                    DependencyDescription("Inter"),
                     "https://github.com/AvaloniaUI/Avalonia"),
 
                 new("AvaloniaUI.DiagnosticsSupport", "2.2.3", "MIT",
-                    "Herramientas de diagnostico y DevTools para Avalonia.",
+                    DependencyDescription("Diagnostics"),
                     "https://github.com/AvaloniaUI/Avalonia"),
             }));
 
         // ── MVVM / Utilidades ────────────────────────────────────────────
         DependencyGroups.Add(new DependencyGroup(
-            "MVVM y utilidades",
+            LocalizationService.GetString("Loc.About.Group.Mvvm"),
             "",
             new List<DependencyInfo>
             {
                 new("CommunityToolkit.Mvvm", "8.4.2", "MIT",
-                    "Helpers MVVM modernos: ObservableProperty, RelayCommand, etc.",
+                    DependencyDescription("Mvvm"),
                     "https://github.com/CommunityToolkit/dotnet"),
 
                 new("Material.Icons.Avalonia", "3.0.2", "MIT",
-                    "Iconografia Material Design para Avalonia.",
+                    DependencyDescription("MaterialIcons"),
                     "https://github.com/SKProCH/Material.Icons"),
             }));
 
         // ── Audio ────────────────────────────────────────────────────────
         DependencyGroups.Add(new DependencyGroup(
-            "Motor de audio",
+            LocalizationService.GetString("Loc.About.Group.Audio"),
             "",
             new List<DependencyInfo>
             {
-                new("BASS", "2.4.x", "Free (no comercial)",
-                    "Motor de audio nativo multiplataforma de Un4seen Developments. " +
-                    "Gratis para uso personal/educativo. Uso comercial requiere licencia.",
+                new("BASS", "2.4.x", LocalizationService.GetString("Loc.About.License.Bass"),
+                    DependencyDescription("Bass"),
                     "https://www.un4seen.com"),
 
                 new("ManagedBass", "4.0.2", "MIT",
-                    "Wrapper .NET multiplataforma de la libreria BASS.",
+                    DependencyDescription("ManagedBass"),
                     "https://github.com/ManagedBass/ManagedBass"),
 
                 new("ManagedBass.Fx", "4.0.2", "MIT",
-                    "AddOn de efectos de audio (EQ, reverb, echo) para BASS.",
+                    DependencyDescription("BassFx"),
                     "https://github.com/ManagedBass/ManagedBass"),
 
                 new("ManagedBass.Flac", "4.0.2", "MIT",
-                    "AddOn de decodificacion FLAC para BASS.",
+                    DependencyDescription("Flac"),
                     "https://github.com/ManagedBass/ManagedBass"),
 
                 new("ManagedBass.Aac", "4.0.2", "MIT",
-                    "AddOn de decodificacion AAC / M4A para BASS.",
+                    DependencyDescription("Aac"),
                     "https://github.com/ManagedBass/ManagedBass"),
 
                 new("ManagedBass.Opus", "4.0.2", "MIT",
-                    "AddOn de decodificacion Opus para BASS.",
+                    DependencyDescription("Opus"),
                     "https://github.com/ManagedBass/ManagedBass"),
 
                 new("ManagedBass.Wv", "4.0.2", "MIT",
-                    "AddOn de decodificacion WavPack para BASS.",
+                    DependencyDescription("WavPack"),
                     "https://github.com/ManagedBass/ManagedBass"),
 
                 new("TagLib#", "2.3.0", "LGPL-2.1 / MIT",
-                    "Lectura y escritura de tags de audio (ID3, Vorbis, FLAC, MP4, APE).",
+                    DependencyDescription("TagLib"),
                     "https://github.com/mono/taglib-sharp"),
             }));
 
         // ── Reportes ─────────────────────────────────────────────────────
         DependencyGroups.Add(new DependencyGroup(
-            "Reportes y exportacion",
+            LocalizationService.GetString("Loc.About.Group.Reports"),
             "",
             new List<DependencyInfo>
             {
                 new("ClosedXML", "0.105.1", "MIT",
-                    "Generacion y manipulacion de archivos Excel (.xlsx).",
+                    DependencyDescription("ClosedXml"),
                     "https://github.com/ClosedXML/ClosedXML"),
 
-                new("QuestPDF", "2024.12.3", "Community License",
-                    "Generacion de documentos PDF. Licencia Community gratuita " +
-                    "para proyectos con facturacion anual menor a USD 1M.",
+                new("QuestPDF", "2024.12.3", LocalizationService.GetString("Loc.About.License.QuestPdf"),
+                    DependencyDescription("QuestPdf"),
                     "https://www.questpdf.com"),
             }));
     }
@@ -228,10 +242,10 @@ public sealed partial class AboutWindowViewModel : ViewModelBase
     /// -------------
     /// Links rapidos que aparecen en el pie del tab "Acerca de".
     /// -------------
-    public IReadOnlyList<QuickLinkInfo> QuickLinks { get; } = new List<QuickLinkInfo>
+    public IReadOnlyList<QuickLinkInfo> QuickLinks => new List<QuickLinkInfo>
     {
-        new("Sitio web de Avalonia", "https://avaloniaui.net"),
-        new("BASS (Un4seen)", "https://www.un4seen.com"),
-        new(".NET 8", "https://dotnet.microsoft.com/download/dotnet/8.0"),
+        new(LocalizationService.GetString("Loc.About.Link.Avalonia"), "https://avaloniaui.net"),
+        new(LocalizationService.GetString("Loc.About.Link.Bass"), "https://www.un4seen.com"),
+        new(LocalizationService.GetString("Loc.About.Link.DotNet"), "https://dotnet.microsoft.com/download/dotnet/8.0"),
     };
 }

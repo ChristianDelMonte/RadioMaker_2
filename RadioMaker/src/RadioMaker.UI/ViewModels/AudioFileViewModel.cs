@@ -2,6 +2,7 @@ using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.Core.Tags;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -63,10 +64,10 @@ public sealed partial class AudioFileViewModel : ViewModelBase
     /// -------------Etiqueta del tipo (vacia para audios).</summary>
     public string KindText => Kind switch
     {
-        AudioFileKind.Playlist => "PLAYLIST",
-        AudioFileKind.Tanda => "TANDA",
-        AudioFileKind.ScheduledList => "PROGRAMADOS",
-        AudioFileKind.CartBoard => "BOTONERA",
+        AudioFileKind.Playlist => LocalizationService.GetString("Loc.ScheduledItem.Kind.Playlist"),
+        AudioFileKind.Tanda => LocalizationService.GetString("Loc.ScheduledItem.Kind.Sequence"),
+        AudioFileKind.ScheduledList => LocalizationService.GetString("Loc.Label.Module.Scheduler"),
+        AudioFileKind.CartBoard => LocalizationService.GetString("Loc.Label.FileKind.CartBoard"),
         _ => string.Empty
     };
 

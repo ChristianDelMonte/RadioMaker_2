@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Services;
@@ -34,7 +35,7 @@ public static class AudioFilePickerHelper
             .Select(ext => "*" + ext)
             .ToArray();
 
-        return new FilePickerFileType("Audio (BASS y addons) y proyectos RMWave")
+        return new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.AudioFileType"))
         {
             Patterns = patterns
         };

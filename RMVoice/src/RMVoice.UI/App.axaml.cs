@@ -5,6 +5,7 @@ using RMVoice.UI.Services;
 using RMVoice.UI.ViewModels;
 using RMVoice.UI.Views;
 using RMVoice.Core;
+using RMVoice.UI.Localization;
 
 namespace RMVoice.UI;
 
@@ -16,6 +17,7 @@ public partial class App : Application
     {
         // Inicializar el servicio de tema ANTES de crear la ventana.
         ThemeService.Initialize();
+        VoiceLocalizationService.Initialize();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

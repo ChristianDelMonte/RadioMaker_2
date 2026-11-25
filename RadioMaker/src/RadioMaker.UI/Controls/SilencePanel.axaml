@@ -12,7 +12,7 @@
 
             <!-- Titulo -->
             <TextBlock Grid.Row="0"
-                       Text="Analisis de silencios"
+                       Text="{DynamicResource Loc.Controls.Silence.Title}"
                        FontWeight="SemiBold"
                        FontSize="12"
                        Foreground="{DynamicResource FgPrimary}"
@@ -28,7 +28,7 @@
                     Margin="0,0,0,6">
                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
                     <CheckBox Grid.Row="0" Grid.Column="0"
-                              Content="Auto-trim activado (saltar silencio inicial/final)"
+                              Content="{DynamicResource Loc.Controls.Silence.Enabled}"
                               IsChecked="{Binding AutoTrimEnabled}"
                               FontWeight="SemiBold"
                               FontSize="11"
@@ -56,7 +56,7 @@
                       RowDefinitions="Auto,Auto">
 
                     <TextBlock Grid.Row="0" Grid.Column="0"
-                               Text="Umbral (dB):"
+                               Text="{DynamicResource Loc.Controls.Silence.Threshold}"
                                VerticalAlignment="Center"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
@@ -75,7 +75,7 @@
                                Margin="6,0,16,0" />
 
                     <TextBlock Grid.Row="1" Grid.Column="0"
-                               Text="Bloque (ms):"
+                               Text="{DynamicResource Loc.Controls.Silence.Block}"
                                VerticalAlignment="Center"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
@@ -89,7 +89,7 @@
                              Margin="0,6,0,0" />
 
                     <TextBlock Grid.Row="1" Grid.Column="2"
-                               Text="Silencio min (ms):"
+                               Text="{DynamicResource Loc.Controls.Silence.Minimum}"
                                VerticalAlignment="Center"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
@@ -111,7 +111,7 @@
                     CornerRadius="6"
                     Padding="8,5"
                     Margin="0,0,0,6">
-                <TextBlock Text="El analisis corre automaticamente al cargar cada archivo. Los resultados se guardan en cache."
+                <TextBlock Text="{DynamicResource Loc.Controls.Silence.Help}"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
                            TextWrapping="Wrap" />
@@ -128,7 +128,7 @@
                     IsVisible="{Binding HasResult}">
                 <Grid ColumnDefinitions="*,*,*">
                     <StackPanel Grid.Column="0" Spacing="1">
-                        <TextBlock Text="Silencio inicial"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Silence.Leading}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBlock Text="{Binding StartSilenceText}"
@@ -137,7 +137,7 @@
                                    Foreground="{DynamicResource AccentText}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Spacing="1">
-                        <TextBlock Text="Duracion efectiva"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Silence.EffectiveDuration}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBlock Text="{Binding EffectiveDurationText}"
@@ -146,7 +146,7 @@
                                    Foreground="{DynamicResource Success}" />
                     </StackPanel>
                     <StackPanel Grid.Column="2" Spacing="1">
-                        <TextBlock Text="Silencio final"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Silence.Trailing}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBlock Text="{Binding EndSilenceText}"

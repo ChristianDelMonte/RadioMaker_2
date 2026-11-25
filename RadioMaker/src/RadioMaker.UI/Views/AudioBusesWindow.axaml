@@ -4,7 +4,7 @@
         xmlns:core="clr-namespace:RadioMaker.Core.Abstractions;assembly=RadioMaker.Core"
         x:Class="RadioMaker.UI.Views.AudioBusesWindow"
         x:DataType="vm:AudioBusesWindowViewModel"
-        Title="Configuración de dispositivos y buses"
+        Title="{DynamicResource Loc.Window.AudioBuses.Title}"
         Width="820" Height="560"
         MinWidth="680" MinHeight="440"
         WindowStartupLocation="CenterOwner">
@@ -16,8 +16,8 @@
     <Grid RowDefinitions="Auto,*,Auto" Margin="16">
 
         <StackPanel Grid.Row="0" Margin="0,0,0,12" Spacing="4">
-            <TextBlock Text="Buses de salida" FontSize="20" FontWeight="SemiBold" />
-            <TextBlock Text="Cada bus apunta a un dispositivo de audio distinto y tiene su propio volumen master."
+            <TextBlock Text="{DynamicResource Loc.Views.AudioBuses.Title}" FontSize="20" FontWeight="SemiBold" />
+            <TextBlock Text="{DynamicResource Loc.Views.AudioBuses.Description}"
                        FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
         </StackPanel>
 
@@ -41,13 +41,13 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="4">
-                        <Button Content="+ Agregar"
+                        <Button Content="{DynamicResource Loc.Views.AudioBuses.Add}"
                                 Command="{Binding AddBusCommand}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
                                 MinWidth="100" />
                         <Button Content="⟳"
-                                ToolTip.Tip="Refrescar lista de dispositivos"
+                                ToolTip.Tip="{DynamicResource Loc.Views.AudioBuses.Refresh}"
                                 Command="{Binding RefreshDevicesCommand}"
                                 MinWidth="40" />
                     </StackPanel>
@@ -62,16 +62,16 @@
                     <StackPanel Spacing="14"
                                 IsVisible="{Binding SelectedBus, Converter={x:Static ObjectConverters.IsNotNull}}">
 
-                        <TextBlock Text="Detalles del bus"
+                        <TextBlock Text="{DynamicResource Loc.Views.AudioBuses.Details}"
                                    FontSize="14" FontWeight="SemiBold" />
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Nombre" FontSize="12" Opacity="0.7" />
+                            <TextBlock Text="{DynamicResource Loc.Views.AudioBuses.Name}" FontSize="12" Opacity="0.7" />
                             <TextBox Text="{Binding SelectedBus.DisplayName}" />
                         </StackPanel>
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Dispositivo de salida" FontSize="12" Opacity="0.7" />
+                            <TextBlock Text="{DynamicResource Loc.Views.AudioBuses.OutputDevice}" FontSize="12" Opacity="0.7" />
                             <ComboBox ItemsSource="{Binding SelectedBus.AvailableDevices}"
                                       SelectedItem="{Binding SelectedBus.SelectedDevice}"
                                       IsEnabled="{Binding SelectedBus.CanChangeDevice}"
@@ -82,12 +82,12 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <TextBlock Text="El bus primario usa el dispositivo elegido al iniciar la app."
+                            <TextBlock Text="{DynamicResource Loc.Views.AudioBuses.PrimaryNote}"
                                        FontSize="11" Opacity="0.6" TextWrapping="Wrap" />
                         </StackPanel>
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Volumen master" FontSize="12" Opacity="0.7" />
+                            <TextBlock Text="{DynamicResource Loc.Views.AudioBuses.MasterVolume}" FontSize="12" Opacity="0.7" />
                             <Grid ColumnDefinitions="*,Auto">
                                 <Slider Grid.Column="0" Minimum="0" Maximum="1"
                                         Value="{Binding SelectedBus.MasterVolume}" />
@@ -99,10 +99,10 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Button Content="▶ Probar salida (440 Hz)"
+                            <Button Content="{DynamicResource Loc.Views.AudioBuses.Test}"
                                     Command="{Binding SelectedBus.TestToneCommand}"
                                     MinWidth="180" />
-                            <Button Content="Eliminar bus"
+                            <Button Content="{DynamicResource Loc.Views.AudioBuses.Remove}"
                                     Command="{Binding SelectedBus.RemoveCommand}"
                                     IsEnabled="{Binding SelectedBus.CanRemove}"
                                     MinWidth="120" />
@@ -123,7 +123,7 @@
                     HorizontalAlignment="Right" Spacing="8" Margin="0,12,0,0">
             <TextBlock Text="{Binding StatusMessage}"
                        VerticalAlignment="Center" Opacity="0.8" FontSize="12" />
-            <Button Content="Cerrar" x:Name="CloseButton" MinWidth="100" Click="OnCloseClick" />
+            <Button Content="{DynamicResource Loc.Views.AudioBuses.Close}" x:Name="CloseButton" MinWidth="100" Click="OnCloseClick" />
         </StackPanel>
 
     </Grid>

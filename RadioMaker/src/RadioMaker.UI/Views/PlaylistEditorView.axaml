@@ -19,28 +19,28 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="0">
                     <!-- Nuevo / Abrir / Guardar -->
                     <Button x:Name="NewButton" Click="OnNewClick"
-                            ToolTip.Tip="Nueva playlist" Padding="3" Background="Transparent" BorderThickness="0">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.New}" Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="FilePlus"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
                     </Button>
 
                     <Button x:Name="OpenButton" Click="OnOpenClick"
-                            ToolTip.Tip="Abrir archivo .rmf" Padding="3" Background="Transparent" BorderThickness="0">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Open}" Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="FolderOpen"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
                     </Button>
 
                     <Button x:Name="SaveButton" Click="OnSaveClick"
-                            ToolTip.Tip="Guardar" Padding="3" Background="Transparent" BorderThickness="0">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Save}" Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="ContentSave"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
                     </Button>
 
                     <Button x:Name="SaveAsButton" Click="OnSaveAsClick"
-                            ToolTip.Tip="Guardar como..." Padding="3" Background="Transparent" BorderThickness="0">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.SaveAs}" Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="ContentSaveEdit"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -50,7 +50,7 @@
 
                     <!-- Agregar / Quitar -->
                     <Button x:Name="GenerateButton" Click="OnGenerateClick"
-                            ToolTip.Tip="Generar playlist automaticamente desde una carpeta"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Generate}"
                             Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="AutoFix"
                                                     Width="15" Height="15"
@@ -58,7 +58,7 @@
                     </Button>
 
                     <Button Command="{Binding AddTrackCommand}"
-                            ToolTip.Tip="Agregar pista" Padding="3" Background="Transparent" BorderThickness="0">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.AddTrack}" Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="Plus"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource AccentText}" />
@@ -66,7 +66,7 @@
 
                     <Button Command="{Binding RemoveTrackCommand}"
                             IsEnabled="{Binding HasSelection}"
-                            ToolTip.Tip="Quitar pista seleccionada" Padding="3" Background="Transparent" BorderThickness="0">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.RemoveTrack}" Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="Close"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Error}" />
@@ -75,26 +75,26 @@
                     <Border Width="1" Background="{DynamicResource BorderPrimary}" Margin="3,2" />
 
                     <!-- Importar / Exportar -->
-                    <Button ToolTip.Tip="Importar playlist" Padding="3" Background="Transparent" BorderThickness="0">
+                    <Button ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Import}" Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="Download"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource AccentText}" />
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
-                                <MenuItem Header="Importar desde M3U / M3U8" Click="OnImportM3uClick" />
-                                <MenuItem Header="Importar desde PLS" Click="OnImportPlsClick" />
+                                <MenuItem Header="{DynamicResource Loc.Views.Playlist.ImportM3u}" Click="OnImportM3uClick" />
+                                <MenuItem Header="{DynamicResource Loc.Views.Playlist.ImportPls}" Click="OnImportPlsClick" />
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
 
-                    <Button ToolTip.Tip="Exportar playlist" Padding="3" Background="Transparent" BorderThickness="0">
+                    <Button ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Export}" Padding="3" Background="Transparent" BorderThickness="0">
                         <materialIcons:MaterialIcon Kind="Upload"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Success}" />
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
-                                <MenuItem Header="Exportar a M3U / M3U8" Click="OnExportM3uClick" />
-                                <MenuItem Header="Exportar a PLS" Click="OnExportPlsClick" />
+                                <MenuItem Header="{DynamicResource Loc.Views.Playlist.ExportM3u}" Click="OnExportM3uClick" />
+                                <MenuItem Header="{DynamicResource Loc.Views.Playlist.ExportPls}" Click="OnExportPlsClick" />
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
@@ -156,7 +156,7 @@
             <Grid RowDefinitions="Auto,*">
 
                 <TextBlock Grid.Row="0"
-                           Text="Pistas de la playlist (clic derecho para editar)"
+                           Text="{DynamicResource Loc.Views.Playlist.TracksHeader}"
                            FontWeight="SemiBold"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
@@ -198,17 +198,17 @@
                                     PointerPressed="OnTrackPointerPressed">
                                 <Border.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Editar..." Click="OnContextEditClick" />
-                                        <MenuItem Header="Editar Tags..."
+                                        <MenuItem Header="{DynamicResource Loc.Views.Playlist.Edit}" Click="OnContextEditClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.Playlist.EditTags}"
                                                   IsVisible="{Binding IsAudioItem}"
                                                   IsEnabled="{Binding FilePath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}"
                                                   Click="OnContextEditTagsClick" />
                                         <Separator />
-                                        <MenuItem Header="Editar en RMWave..."
+                                        <MenuItem Header="{DynamicResource Loc.Views.Playlist.EditRmw}"
                                                   Click="OnContextEditInRMWaveClick"
                                                   IsEnabled="{Binding FilePath, Converter={x:Static vm:IsRmwFileConverter.Instance}}" />
                                         <Separator />
-                                        <MenuItem Header="Eliminar" Click="OnContextDeleteClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.Playlist.Delete}" Click="OnContextDeleteClick" />
                                     </ContextMenu>
                                 </Border.ContextMenu>
                                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
@@ -283,7 +283,7 @@
                                         <Button Padding="2"
                                                 Background="Transparent"
                                                 BorderThickness="0"
-                                                ToolTip.Tip="Subir pista"
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Playlist.MoveUp}"
                                                 Command="{Binding $parent[ListBox].DataContext.MoveTrackUpCommand}"
                                                 CommandParameter="{Binding}">
                                             <materialIcons:MaterialIcon Kind="ChevronUp"
@@ -293,7 +293,7 @@
                                         <Button Padding="2"
                                                 Background="Transparent"
                                                 BorderThickness="0"
-                                                ToolTip.Tip="Bajar pista"
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Playlist.MoveDown}"
                                                 Command="{Binding $parent[ListBox].DataContext.MoveTrackDownCommand}"
                                                 CommandParameter="{Binding}">
                                             <materialIcons:MaterialIcon Kind="ChevronDown"
@@ -327,7 +327,7 @@
 
                     <Button Command="{Binding PrevPlaybackCommand}"
                             IsEnabled="{Binding CanPrevPlayback}"
-                            ToolTip.Tip="Pista anterior"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Previous}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0">
@@ -338,7 +338,7 @@
 
                     <Button Command="{Binding StartPlaybackCommand}"
                             IsEnabled="{Binding CanStartPlayback}"
-                            ToolTip.Tip="Reproducir"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Play}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0"
@@ -350,7 +350,7 @@
 
                     <Button Command="{Binding ResumePlaybackCommand}"
                             IsEnabled="{Binding CanResumePlayback}"
-                            ToolTip.Tip="Reanudar"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Resume}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0"
@@ -362,7 +362,7 @@
 
                     <Button Command="{Binding PausePlaybackCommand}"
                             IsEnabled="{Binding CanPausePlayback}"
-                            ToolTip.Tip="Pausar"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Pause}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0">
@@ -373,7 +373,7 @@
 
                     <Button Command="{Binding StopPlaybackCommand}"
                             IsEnabled="{Binding CanStopPlayback}"
-                            ToolTip.Tip="Detener"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Stop}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0">
@@ -384,7 +384,7 @@
 
                     <Button Command="{Binding NextPlaybackCommand}"
                             IsEnabled="{Binding CanNextPlayback}"
-                            ToolTip.Tip="Pista siguiente"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.Next}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0">
@@ -400,14 +400,14 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Margin="12,0,4,0"
-                            ToolTip.Tip="Duración total de las pistas habilitadas"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Playlist.TotalDuration}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800">
                     <materialIcons:MaterialIcon Kind="ClockOutline"
                                                 Width="13" Height="13"
                                                 Foreground="{DynamicResource FgSecondary}"
                                                 VerticalAlignment="Center" />
-                    <TextBlock Text="Total:"
+                    <TextBlock Text="{DynamicResource Loc.Views.Playlist.Total}"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center" />

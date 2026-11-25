@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Controls;
@@ -73,14 +74,14 @@ public partial class NotesEditorView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return null;
 
-        var txtType = new FilePickerFileType("Texto plano")
+        var txtType = new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.PlainTextFileType"))
         {
             Patterns = new[] { "*.txt" }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir nota",
+            Title = LocalizationService.GetString("Loc.Dialog.OpenNote.Title"),
             AllowMultiple = false,
             FileTypeFilter = new[] { txtType, FilePickerFileTypes.All }
         });
@@ -100,12 +101,12 @@ public partial class NotesEditorView : UserControl
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar nota",
+            Title = LocalizationService.GetString("Loc.Dialog.SaveNote.Title"),
             SuggestedFileName = suggested,
             DefaultExtension = "txt",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Texto plano")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.PlainTextFileType"))
                 {
                     Patterns = new[] { "*.txt" }
                 }

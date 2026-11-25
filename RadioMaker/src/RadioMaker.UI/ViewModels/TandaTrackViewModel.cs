@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -30,7 +31,7 @@ public sealed partial class TandaTrackViewModel : ViewModelBase
 
     public double DurationSeconds => _track.DurationSeconds;
 
-    public string DurationText => $"Duracion: {AudioFileInfoReader.FormatDuration(DurationSeconds)}";
+    public string DurationText => string.Format(LocalizationService.GetString("Loc.Label.Tanda.Duration"), AudioFileInfoReader.FormatDuration(DurationSeconds));
 
     public string DisplayTitle =>
         !string.IsNullOrWhiteSpace(Title)
@@ -46,15 +47,15 @@ public sealed partial class TandaTrackViewModel : ViewModelBase
             : $"{VolumeDb:F1} dB";
 
     public string DelayText => DelayBeforeSeconds <= 0.05
-        ? "Sin espera"
-        : $"Espera {DelayBeforeSeconds:F1} s";
+        ? LocalizationService.GetString("Loc.Label.Tanda.NoDelay")
+        : string.Format(LocalizationService.GetString("Loc.Label.Tanda.Delay"), DelayBeforeSeconds);
 
     // ===== INTEGRACIÓN RMWave =====
     public bool IsRmwProject =>
         !string.IsNullOrWhiteSpace(FilePath)
         && FilePath.EndsWith(".rmw", StringComparison.OrdinalIgnoreCase);
 
-    public string FileTypeBadge => IsRmwProject ? "PROYECTO RMWAVE" : string.Empty;
+    public string FileTypeBadge => IsRmwProject ? LocalizationService.GetString("Loc.Label.Tanda.RmWaveProject") : string.Empty;
     public string FileTypeBadgeColor => IsRmwProject ? "Accent" : "Transparent";
 
     public bool HasFile => !string.IsNullOrWhiteSpace(FilePath);

@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Playback;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -46,6 +47,7 @@ public sealed class BehaviorSettingsViewModel : ViewModelBase
 
             OnPropertyChanged();
             OnPropertyChanged(nameof(InterruptionBehaviorText));
+            OnPropertyChanged(nameof(InterruptionBehaviorSummary));
 
             try { BehaviorChanged?.Invoke(value); } catch { }
         }
@@ -53,10 +55,20 @@ public sealed class BehaviorSettingsViewModel : ViewModelBase
 
     public string InterruptionBehaviorText => InterruptionBehavior switch
     {
-        PlaylistInterruptionBehavior.Continue => "Continuar donde quedo",
-        PlaylistInterruptionBehavior.SkipToNext => "Saltar al siguiente item",
+        PlaylistInterruptionBehavior.Continue => LocalizationService.GetString("Loc.Settings.Body.BehaviorContinue"),
+        PlaylistInterruptionBehavior.SkipToNext => LocalizationService.GetString("Loc.Settings.Body.BehaviorSkip"),
         _ => "?"
     };
+
+    public string InterruptionBehaviorSummary =>
+        $"{LocalizationService.GetString("Loc.Settings.Body.CurrentBehaviorPrefix")}: {InterruptionBehaviorText}";
+
+    public void RefreshLocalization()
+    {
+        OnPropertyChanged(nameof(InterruptionBehaviorText));
+        OnPropertyChanged(nameof(InterruptionBehaviorSummary));
+        OnPropertyChanged(nameof(AvailableInterruptionBehaviors));
+    }
 
     public PlaylistInterruptionBehavior[] AvailableInterruptionBehaviors { get; } =
         { PlaylistInterruptionBehavior.Continue, PlaylistInterruptionBehavior.SkipToNext };

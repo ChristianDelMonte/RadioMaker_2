@@ -15,28 +15,28 @@
                 Padding="4,2">
             <StackPanel Orientation="Horizontal" Spacing="0">
                 <Button x:Name="NewButton" Click="OnNewClick"
-                        ToolTip.Tip="Nueva tanda" Padding="3" Background="Transparent" BorderThickness="0">
+                        ToolTip.Tip="{DynamicResource Loc.Views.Tanda.New}" Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="FilePlus"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
                 </Button>
 
                 <Button x:Name="OpenButton" Click="OnOpenClick"
-                        ToolTip.Tip="Abrir archivo .tnd" Padding="3" Background="Transparent" BorderThickness="0">
+                        ToolTip.Tip="{DynamicResource Loc.Views.Tanda.Open}" Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="FolderOpen"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
                 </Button>
 
                 <Button x:Name="SaveButton" Click="OnSaveClick"
-                        ToolTip.Tip="Guardar en el archivo actual" Padding="3" Background="Transparent" BorderThickness="0">
+                        ToolTip.Tip="{DynamicResource Loc.Views.Tanda.Save}" Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="ContentSave"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
                 </Button>
 
                 <Button x:Name="SaveAsButton" Click="OnSaveAsClick"
-                        ToolTip.Tip="Guardar como..." Padding="3" Background="Transparent" BorderThickness="0">
+                        ToolTip.Tip="{DynamicResource Loc.Views.Tanda.SaveAs}" Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="ContentSaveEdit"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -45,7 +45,7 @@
                 <Border Width="1" Background="{DynamicResource BorderPrimary}" Margin="3,2" />
 
                 <Button Command="{Binding AddTrackCommand}"
-                        ToolTip.Tip="Agregar pista" Padding="3" Background="Transparent" BorderThickness="0">
+                        ToolTip.Tip="{DynamicResource Loc.Views.Tanda.AddTrack}" Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="Plus"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource AccentText}" />
@@ -57,7 +57,7 @@
         <ScrollViewer Grid.Row="1" Padding="6">
             <StackPanel Spacing="4">
 
-                <TextBlock Text="Sin pistas. Presiona '+' en la barra superior para agregar una."
+                <TextBlock Text="{DynamicResource Loc.Views.Tanda.Empty}"
                            FontSize="11"
                            Foreground="{DynamicResource FgSecondary}"
                            HorizontalAlignment="Center"
@@ -79,7 +79,7 @@
                                               Margin="0,0,6,0"
                                               Padding="3,0"
                                               VerticalAlignment="Top"
-                                              ToolTip.Tip="Habilitar / deshabilitar esta pista" />
+                                              ToolTip.Tip="{DynamicResource Loc.Views.Tanda.EnableTrack}" />
 
                                     <StackPanel Grid.Row="0" Grid.Column="1" Spacing="1">
                                         <TextBlock Text="{Binding DisplayTitle}"
@@ -103,21 +103,21 @@
                                         <Button x:Name="BrowseTrackButton"
                                                 Click="OnBrowseTrackClick"
                                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                                ToolTip.Tip="Elegir archivo">
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Tanda.ChooseFile}">
                                             <materialIcons:MaterialIcon Kind="FolderOpen"
                                                                         Width="15" Height="15"
                                                                         Foreground="{DynamicResource FgPrimary}" />
                                         </Button>
                                         <Button Click="OnTrackEditInRMWaveClick"
-                                                Content="Editar en RMWave..."
+                                                Content="{DynamicResource Loc.Views.Tanda.EditRmw}"
                                                 IsEnabled="{Binding FilePath, Converter={x:Static vm:IsRmwFileConverter.Instance}}"
-                                                ToolTip.Tip="Abrir este proyecto .rmw en la app RMWave"
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Tanda.OpenRmwTooltip}"
                                                 VerticalAlignment="Center"
                                                 Margin="4,0,0,0" />
                                         <Button Command="{Binding $parent[ItemsControl].((vm:TandaEditorViewModel)DataContext).MoveTrackUpCommand}"
                                                 CommandParameter="{Binding}"
                                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                                ToolTip.Tip="Mover arriba">
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Tanda.MoveUp}">
                                             <materialIcons:MaterialIcon Kind="ArrowUp"
                                                                         Width="15" Height="15"
                                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -125,7 +125,7 @@
                                         <Button Command="{Binding $parent[ItemsControl].((vm:TandaEditorViewModel)DataContext).MoveTrackDownCommand}"
                                                 CommandParameter="{Binding}"
                                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                                ToolTip.Tip="Mover abajo">
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Tanda.MoveDown}">
                                             <materialIcons:MaterialIcon Kind="ArrowDown"
                                                                         Width="15" Height="15"
                                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -133,7 +133,7 @@
                                         <Button Command="{Binding $parent[ItemsControl].((vm:TandaEditorViewModel)DataContext).RemoveTrackCommand}"
                                                 CommandParameter="{Binding}"
                                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                                ToolTip.Tip="Quitar pista">
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Tanda.Remove}">
                                             <materialIcons:MaterialIcon Kind="Close"
                                                                         Width="15" Height="15"
                                                                         Foreground="{DynamicResource Error}" />
@@ -158,7 +158,7 @@
                                                 Orientation="Horizontal" Spacing="12"
                                                 Margin="18,6,0,0">
                                         <StackPanel Orientation="Horizontal" Spacing="4">
-                                            <TextBlock Text="Volumen:"
+                                            <TextBlock Text="{DynamicResource Loc.Views.Tanda.Volume}"
                                                        FontSize="9"
                                                        Foreground="{DynamicResource FgSecondary}"
                                                        VerticalAlignment="Center" />
@@ -175,7 +175,7 @@
                                                        MinWidth="50" />
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Spacing="4">
-                                            <TextBlock Text="Espera (s):"
+                                            <TextBlock Text="{DynamicResource Loc.Views.Tanda.Wait}"
                                                        FontSize="9"
                                                        Foreground="{DynamicResource FgSecondary}"
                                                        VerticalAlignment="Center" />

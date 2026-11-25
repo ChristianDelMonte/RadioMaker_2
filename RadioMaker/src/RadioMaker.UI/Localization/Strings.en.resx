@@ -1,0 +1,1470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Loc.Window.Main.Title" xml:space="preserve"><value>RadioMaker</value></data>
+  <data name="Loc.App.Slogan" xml:space="preserve"><value>Free Radio Automation Software</value></data>
+  <data name="Loc.Chrome.Minimize" xml:space="preserve"><value>Minimize</value></data>
+  <data name="Loc.Chrome.Maximize" xml:space="preserve"><value>Maximize</value></data>
+  <data name="Loc.Chrome.Restore" xml:space="preserve"><value>Restore</value></data>
+  <data name="Loc.Chrome.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.Menu.File" xml:space="preserve"><value>_File</value></data>
+  <data name="Loc.Menu.New" xml:space="preserve"><value>New</value></data>
+  <data name="Loc.Menu.New.Tanda" xml:space="preserve"><value>Sequence</value></data>
+  <data name="Loc.Menu.New.Scheduled" xml:space="preserve"><value>Scheduled item</value></data>
+  <data name="Loc.Menu.New.Playlist" xml:space="preserve"><value>Playlist</value></data>
+  <data name="Loc.Menu.New.Cart" xml:space="preserve"><value>Cart</value></data>
+  <data name="Loc.Menu.New.Note" xml:space="preserve"><value>Note</value></data>
+  <data name="Loc.Menu.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Loc.Menu.Open.Tanda" xml:space="preserve"><value>Sequence...</value></data>
+  <data name="Loc.Menu.Open.Scheduled" xml:space="preserve"><value>Scheduled item...</value></data>
+  <data name="Loc.Menu.Open.Playlist" xml:space="preserve"><value>Playlist...</value></data>
+  <data name="Loc.Menu.Open.Cart" xml:space="preserve"><value>Cart...</value></data>
+  <data name="Loc.Menu.Open.Note" xml:space="preserve"><value>Note...</value></data>
+  <data name="Loc.Menu.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Menu.Save.Tanda" xml:space="preserve"><value>Sequence...</value></data>
+  <data name="Loc.Menu.Save.Scheduled" xml:space="preserve"><value>Scheduled item...</value></data>
+  <data name="Loc.Menu.Save.Playlist" xml:space="preserve"><value>Playlist...</value></data>
+  <data name="Loc.Menu.Save.Cart" xml:space="preserve"><value>Cart...</value></data>
+  <data name="Loc.Menu.Save.Note" xml:space="preserve"><value>Note...</value></data>
+  <data name="Loc.Menu.Exit" xml:space="preserve"><value>Exit</value></data>
+  <data name="Loc.Menu.Edit" xml:space="preserve"><value>_Edit</value></data>
+  <data name="Loc.Menu.EditItem" xml:space="preserve"><value>Edit</value></data>
+  <data name="Loc.Menu.Edit.Block" xml:space="preserve"><value>Block...</value></data>
+  <data name="Loc.Menu.Edit.Tanda" xml:space="preserve"><value>Sequence...</value></data>
+  <data name="Loc.Menu.Edit.Playlist" xml:space="preserve"><value>Playlist...</value></data>
+  <data name="Loc.Menu.Edit.Tags" xml:space="preserve"><value>Edit tags...</value></data>
+  <data name="Loc.Menu.Playlists" xml:space="preserve"><value>Playlists</value></data>
+  <data name="Loc.Menu.Playlists.Generator" xml:space="preserve"><value>Automatic playlist generator...</value></data>
+  <data name="Loc.Menu.AutoDj" xml:space="preserve"><value>AutoDJ planner...</value></data>
+  <data name="Loc.Menu.Settings" xml:space="preserve"><value>Settings...</value></data>
+  <data name="Loc.Menu.Addons" xml:space="preserve"><value>_Add-ons</value></data>
+  <data name="Loc.Menu.Addons.Wave" xml:space="preserve"><value>RM Wave...</value></data>
+  <data name="Loc.Menu.Addons.Voice" xml:space="preserve"><value>RM Voice...</value></data>
+  <data name="Loc.Menu.Addons.Cast" xml:space="preserve"><value>RM Cast...</value></data>
+  <data name="Loc.Menu.Help" xml:space="preserve"><value>_Help</value></data>
+  <data name="Loc.Menu.Help.About" xml:space="preserve"><value>About...</value></data>
+  <data name="Loc.Toolbar.OnAir.Tooltip" xml:space="preserve"><value>On-air output status</value></data>
+  <data name="Loc.Toolbar.Theme.Tooltip" xml:space="preserve"><value>Switch between light and dark themes</value></data>
+  <data name="Loc.Toolbar.Settings.Tooltip" xml:space="preserve"><value>Settings</value></data>
+  <data name="Loc.Settings.Window.Title" xml:space="preserve"><value>Settings</value></data>
+  <data name="Loc.Settings.Header.Description" xml:space="preserve"><value>Audio processing, output routing, and application behavior.</value></data>
+  <data name="Loc.Settings.Language.Label" xml:space="preserve"><value>Interface language</value></data>
+  <data name="Loc.Settings.Language.Spanish" xml:space="preserve"><value>Español</value></data>
+  <data name="Loc.Settings.Language.English" xml:space="preserve"><value>English</value></data>
+  <data name="Loc.Settings.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.Settings.Section.fade" xml:space="preserve"><value>Fades</value></data>
+  <data name="Loc.Settings.Section.silence" xml:space="preserve"><value>Silence</value></data>
+  <data name="Loc.Settings.Section.normalization" xml:space="preserve"><value>Normalization</value></data>
+  <data name="Loc.Settings.Section.ducking" xml:space="preserve"><value>Ducking</value></data>
+  <data name="Loc.Settings.Section.behavior" xml:space="preserve"><value>Behavior</value></data>
+  <data name="Loc.Settings.Section.buses" xml:space="preserve"><value>Output buses</value></data>
+  <data name="Loc.Settings.Section.routing" xml:space="preserve"><value>Module routing</value></data>
+  <data name="Loc.Settings.Section.climate" xml:space="preserve"><value>Weather data</value></data>
+  <data name="Loc.Settings.Section.vumeter" xml:space="preserve"><value>VU meter</value></data>
+  <data name="Loc.Settings.Section.plugins" xml:space="preserve"><value>Format plugins</value></data>
+  <data name="Loc.Settings.Section.appearance" xml:space="preserve"><value>Appearance</value></data>
+  <data name="Loc.Main.Tab.Spectrum" xml:space="preserve"><value>Spectrum</value></data>
+  <data name="Loc.Main.Tab.Equalizer" xml:space="preserve"><value>Equalizer</value></data>
+  <data name="Loc.Main.Tab.Log" xml:space="preserve"><value>Log</value></data>
+  <data name="Loc.Main.Tip.Tooltip" xml:space="preserve"><value>Click to see another tip</value></data>
+  <data name="Loc.Main.Emergency.Active" xml:space="preserve"><value>EMERGENCY ACTIVE</value></data>
+  <data name="Loc.Main.Emergency.Stop" xml:space="preserve"><value>STOP EMERGENCY</value></data>
+  <data name="Loc.Main.OnAir.Live" xml:space="preserve"><value>ON AIR</value></data>
+  <data name="Loc.Main.OnAir.OffAir" xml:space="preserve"><value>OFF AIR</value></data>
+  <data name="Loc.Main.Playback.Playing" xml:space="preserve"><value>Playing</value></data>
+  <data name="Loc.Main.Playback.Paused" xml:space="preserve"><value>Paused</value></data>
+  <data name="Loc.Main.Playback.Stopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="Loc.Main.Playback.Ended" xml:space="preserve"><value>Playback ended</value></data>
+  <data name="Loc.Main.Playback.Stalled" xml:space="preserve"><value>Stalled</value></data>
+  <data name="Loc.Main.Playback.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Loc.Settings.Body.BehaviorTitle" xml:space="preserve"><value>Behavior</value></data>
+  <data name="Loc.Settings.Body.BehaviorDescription" xml:space="preserve"><value>General options for how the system handles interruptions and transitions between modules.</value></data>
+  <data name="Loc.Settings.Body.PlaylistInterruptTitle" xml:space="preserve"><value>When a scheduled item interrupts a playlist</value></data>
+  <data name="Loc.Settings.Body.PlaylistInterruptDescription" xml:space="preserve"><value>If a scheduled item (or any higher-priority module) interrupts a playing playlist, the engine can resume it when the scheduled item ends. This option selects the resume point.</value></data>
+  <data name="Loc.Settings.Body.CurrentBehavior" xml:space="preserve"><value>Current behavior: {0}</value></data>
+  <data name="Loc.Settings.Body.EmergencyHeader" xml:space="preserve"><value>Emergency (Silence Protection)</value></data>
+  <data name="Loc.Settings.Body.BusesTitle" xml:space="preserve"><value>Output buses</value></data>
+  <data name="Loc.Settings.Body.BusesDescription" xml:space="preserve"><value>Each bus is an independent physical output with its own device, name, and master volume.</value></data>
+  <data name="Loc.Settings.Body.AddBusTooltip" xml:space="preserve"><value>Add a new output bus</value></data>
+  <data name="Loc.Settings.Body.AddBus" xml:space="preserve"><value>Add bus</value></data>
+  <data name="Loc.Settings.Body.RefreshDevicesTooltip" xml:space="preserve"><value>Refresh the system audio device list</value></data>
+  <data name="Loc.Settings.Body.RefreshDevices" xml:space="preserve"><value>Refresh devices</value></data>
+  <data name="Loc.Settings.Body.Name" xml:space="preserve"><value>Name:</value></data>
+  <data name="Loc.Settings.Body.Primary" xml:space="preserve"><value>PRIMARY</value></data>
+  <data name="Loc.Settings.Body.TestTone" xml:space="preserve"><value>Play test tone (440 Hz, 1s)</value></data>
+  <data name="Loc.Settings.Body.RemoveBus" xml:space="preserve"><value>Remove bus</value></data>
+  <data name="Loc.Settings.Body.Device" xml:space="preserve"><value>Device:</value></data>
+  <data name="Loc.Settings.Body.Volume" xml:space="preserve"><value>Volume:</value></data>
+  <data name="Loc.Settings.Body.PrimaryBusNote" xml:space="preserve"><value>Note: the primary bus device cannot be changed here because that could interrupt playback. Create a new bus for an alternate output.</value></data>
+  <data name="Loc.Settings.Body.RoutingTitle" xml:space="preserve"><value>Module routing</value></data>
+  <data name="Loc.Settings.Body.RoutingDescription" xml:space="preserve"><value>Choose whether all modules share one output bus or each can use a different device.</value></data>
+  <data name="Loc.Settings.Body.SingleBus" xml:space="preserve"><value>Use one bus for all modules</value></data>
+  <data name="Loc.Settings.Body.SingleBusDescription" xml:space="preserve"><value>When enabled, all modules share the same bus. When disabled, each module can select its own output bus in its panel.</value></data>
+  <data name="Loc.Settings.Body.OnAirBus" xml:space="preserve"><value>ON-AIR bus</value></data>
+  <data name="Loc.Settings.Body.OnAirBusDescription" xml:space="preserve"><value>The ON AIR indicator and live tabs light up when audio is playing through this bus.</value></data>
+  <data name="Loc.Settings.Body.Bus" xml:space="preserve"><value>Bus:</value></data>
+  <data name="Loc.Settings.Body.RoutingCurrent" xml:space="preserve"><value>Current routing by module</value></data>
+  <data name="Loc.Settings.Body.CartBoard" xml:space="preserve"><value>Cart wall</value></data>
+  <data name="Loc.Settings.Body.Playlists" xml:space="preserve"><value>Playlists</value></data>
+  <data name="Loc.Settings.Body.Scheduled" xml:space="preserve"><value>Scheduled</value></data>
+  <data name="Loc.Settings.Body.FileBrowser" xml:space="preserve"><value>File manager</value></data>
+  <data name="Loc.Settings.Body.RoutingNote" xml:space="preserve"><value>Note: bus changes apply to the next audio items. Anything already playing continues on its previous bus.</value></data>
+  <data name="Loc.Settings.Body.ExclusivityPolicies" xml:space="preserve"><value>Exclusivity policies</value></data>
+  <data name="Loc.Settings.Body.ExclusivityDescription" xml:space="preserve"><value>When two modules request the same bus, the coordinator chooses which one wins. Higher priority wins; if priorities match, the most recently triggered module wins. A non-exclusive module can play in parallel without competing for the bus.</value></data>
+  <data name="Loc.Settings.Body.ResetPolicies" xml:space="preserve"><value>Restore defaults</value></data>
+  <data name="Loc.Settings.Body.ResetPoliciesTooltip" xml:space="preserve"><value>Restore all policies to their original values: Scheduler with AutoResume, Cart/Playlist with Stop.</value></data>
+  <data name="Loc.Settings.Body.Module" xml:space="preserve"><value>Module</value></data>
+  <data name="Loc.Settings.Body.Exclusive" xml:space="preserve"><value>Exclusive</value></data>
+  <data name="Loc.Settings.Body.Priority" xml:space="preserve"><value>Priority</value></data>
+  <data name="Loc.Settings.Body.OnPreempt" xml:space="preserve"><value>On preemption</value></data>
+  <data name="Loc.Settings.Body.OnPreemptTooltip" xml:space="preserve"><value>What this module does to the displaced module when it takes the bus</value></data>
+  <data name="Loc.Settings.Body.ExclusiveTooltip" xml:space="preserve"><value>When checked, the module competes for the bus. Otherwise, it plays in parallel.</value></data>
+  <data name="Loc.Settings.Body.PreemptActionsTooltip" xml:space="preserve"><value>Stop: fade-out and dispose. Pause: fade-out and pause (manual). Pause and resume: fade-out, pause, then resume when the bus is released.</value></data>
+  <data name="Loc.Settings.Body.PolicyHowTitle" xml:space="preserve"><value>How policies work</value></data>
+  <data name="Loc.Settings.Body.PolicyHowDescription" xml:space="preserve"><value>Each audio bus is like a mixing console fader: only one module can control it at a time. When two modules request the same bus, the coordinator decides which one wins based on this table.</value></data>
+  <data name="Loc.Settings.Body.PolicyColumns" xml:space="preserve"><value>What each column controls</value></data>
+  <data name="Loc.Settings.Body.PolicyOperator" xml:space="preserve"><value>How to use it</value></data>
+  <data name="Loc.Settings.Body.CrossfadeNote" xml:space="preserve"><value>Crossfade duration (fade-out + fade-in) comes from the Fade panel, under crossfade between carts.</value></data>
+  <data name="Loc.Settings.Body.AppearanceTitle" xml:space="preserve"><value>Appearance</value></data>
+  <data name="Loc.Settings.Body.AppearanceDescription" xml:space="preserve"><value>Choose the application theme.</value></data>
+  <data name="Loc.Settings.Body.Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="Loc.Settings.Body.FollowSystem" xml:space="preserve"><value>Follow system</value></data>
+  <data name="Loc.Settings.Body.Light" xml:space="preserve"><value>Light</value></data>
+  <data name="Loc.Settings.Body.Dark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Loc.Settings.Body.ThemeRestartNote" xml:space="preserve"><value>The theme is saved automatically and applied after restarting.</value></data>
+  <data name="Loc.Settings.Body.ClimateTitle" xml:space="preserve"><value>Weather data</value></data>
+  <data name="Loc.Settings.Body.ClimateDescription" xml:space="preserve"><value>Settings for the weather panel and announcements triggered from the TopInfoPanel.</value></data>
+  <data name="Loc.Settings.Body.RMVoiceEngine" xml:space="preserve"><value>RMVoice engine:</value></data>
+  <data name="Loc.Settings.Body.Available" xml:space="preserve"><value>Available</value></data>
+  <data name="Loc.Settings.Body.Unavailable" xml:space="preserve"><value>Unavailable</value></data>
+  <data name="Loc.Settings.Body.RMVoiceMissing" xml:space="preserve"><value>If RMVoice is unavailable, check that Addons/RMVoice and its region files are present.</value></data>
+  <data name="Loc.Settings.Body.PanelVoiceOutput" xml:space="preserve"><value>Panel announcement output</value></data>
+  <data name="Loc.Settings.Body.PanelVoiceOutputDescription" xml:space="preserve"><value>Output bus for the time and weather announcement buttons in TopInfoPanel. This does not affect announcements inside a playlist.</value></data>
+  <data name="Loc.Settings.Body.VoiceVolume" xml:space="preserve"><value>Panel announcement volume</value></data>
+  <data name="Loc.Settings.Body.DuckDuringVoice" xml:space="preserve"><value>Lower audio volume during announcements</value></data>
+  <data name="Loc.Settings.Body.VoiceDuckLevel" xml:space="preserve"><value>Audio level during announcements</value></data>
+  <data name="Loc.Settings.Body.VoiceDuckHelp" xml:space="preserve"><value>How far the audio on the same bus is lowered during an announcement. At 30%, it stays in the background.</value></data>
+  <data name="Loc.Settings.Body.WeatherRefresh" xml:space="preserve"><value>Weather updates</value></data>
+  <data name="Loc.Settings.Body.RefreshAutomatically" xml:space="preserve"><value>Refresh automatically</value></data>
+  <data name="Loc.Settings.Body.Every" xml:space="preserve"><value>Every</value></data>
+  <data name="Loc.Settings.Body.Minutes" xml:space="preserve"><value>minutes</value></data>
+  <data name="Loc.Settings.Body.RefreshNow" xml:space="preserve"><value>Refresh now</value></data>
+  <data name="Loc.Settings.Run.ContinueTitle" xml:space="preserve"><value>Resume where it left off:</value></data>
+  <data name="Loc.Settings.Run.ContinueDescription" xml:space="preserve"><value> The playlist resumes from the same point where it was paused.</value></data>
+  <data name="Loc.Settings.Run.SkipTitle" xml:space="preserve"><value>Skip to the next item:</value></data>
+  <data name="Loc.Settings.Run.SkipDescription" xml:space="preserve"><value> The playlist marks the current track as completed and advances to the next one when playback resumes.</value></data>
+  <data name="Loc.Settings.Run.ExclusiveTitle" xml:space="preserve"><value>Exclusive:</value></data>
+  <data name="Loc.Settings.Run.ExclusiveDescription" xml:space="preserve"><value> When enabled, the module competes for the bus (the current audio fades out and the new one fades in). Otherwise it plays in parallel. For example, the file manager is non-exclusive so you can preview files while the on-air audio continues.</value></data>
+  <data name="Loc.Settings.Run.PriorityTitle" xml:space="preserve"><value>Priority:</value></data>
+  <data name="Loc.Settings.Run.PriorityDescription" xml:space="preserve"><value> Determines which module wins when two request the same bus. Higher priority wins. If priorities match, the most recently triggered module wins. &quot;ON AIR&quot; is the highest value and is reserved for Scheduled, which represents the actual on-air output.</value></data>
+  <data name="Loc.Settings.Run.PreemptTitle" xml:space="preserve"><value>On preemption:</value></data>
+  <data name="Loc.Settings.Run.PreemptDescription" xml:space="preserve"><value> Defines what THIS module does to the module it displaces when taking the bus. Stop = fade out and discard. Pause = fade out and pause for manual resumption. Pause and resume = fade out and pause, then resume automatically when this module finishes. For example, Scheduled can resume music after a scheduled item ends.</value></data>
+  <data name="Loc.Settings.Run.NormalAirTitle" xml:space="preserve"><value>• Normal on-air operation:</value></data>
+  <data name="Loc.Settings.Run.NormalAirDescription" xml:space="preserve"><value> Set Scheduled to ON AIR priority and &quot;Pause and resume.&quot; When a scheduled item starts, the current playlist or cart pauses and resumes when the item ends.</value></data>
+  <data name="Loc.Settings.Run.AggressiveCartTitle" xml:space="preserve"><value>• Cart wall takeover:</value></data>
+  <data name="Loc.Settings.Run.AggressiveCartDescription" xml:space="preserve"><value> To make a cart stop current playback, set Cart wall to &quot;Stop.&quot; To pause and resume it instead, select &quot;Pause and resume.&quot;</value></data>
+  <data name="Loc.Settings.Run.PreviewTitle" xml:space="preserve"><value>• Preview:</value></data>
+  <data name="Loc.Settings.Run.PreviewDescription" xml:space="preserve"><value> Set File Manager and Favorite Folders to non-exclusive to preview without affecting on-air playback. To let preview interrupt the air, enable exclusive mode.</value></data>
+  <data name="Loc.Settings.Run.MultiplePlaylistsTitle" xml:space="preserve"><value>• Multiple playlists:</value></data>
+  <data name="Loc.Settings.Run.MultiplePlaylistsDescription" xml:space="preserve"><value> By default, the latest playlist to start wins and stops the previous one. To keep several available, set them to non-exclusive (they may overlap, which is usually not recommended).</value></data>
+  <data name="Loc.Settings.Body.BehaviorContinue" xml:space="preserve"><value>Continue where it left off</value></data>
+  <data name="Loc.Settings.Body.BehaviorSkip" xml:space="preserve"><value>Skip to the next item</value></data>
+  <data name="Loc.Settings.Body.BehaviorSkipShort" xml:space="preserve"><value>Skip to next</value></data>
+  <data name="Loc.Settings.Body.CurrentBehaviorPrefix" xml:space="preserve"><value>Current behavior</value></data>
+  <data name="Loc.Controls.Fade.AutoTitle" xml:space="preserve"><value>Automatic fades</value></data>
+  <data name="Loc.Controls.Fade.AutoEnabled" xml:space="preserve"><value>Apply automatic fade-in and fade-out to all audio</value></data>
+  <data name="Loc.Controls.Fade.Duration" xml:space="preserve"><value>Fade duration:</value></data>
+  <data name="Loc.Controls.Fade.AutoHelp" xml:space="preserve"><value>Fade-out runs before the usable end of the audio. If auto-trim is enabled, fade-out starts just before the trim point.</value></data>
+  <data name="Loc.Controls.Fade.CartCrossfade" xml:space="preserve"><value>Cart wall crossfade</value></data>
+  <data name="Loc.Controls.Fade.CartCrossfadeEnabled" xml:space="preserve"><value>Crossfade when triggering a cart while another is playing</value></data>
+  <data name="Loc.Controls.Fade.CrossfadeDuration" xml:space="preserve"><value>Crossfade duration:</value></data>
+  <data name="Loc.Controls.Fade.CrossfadeHelp" xml:space="preserve"><value>When enabled, triggering a cart while another is playing fades out the current cart and fades in the new one. When disabled, carts overlap (classic behavior).</value></data>
+  <data name="Loc.Controls.Silence.Title" xml:space="preserve"><value>Silence analysis</value></data>
+  <data name="Loc.Controls.Silence.Enabled" xml:space="preserve"><value>Auto-trim enabled (skip leading and trailing silence)</value></data>
+  <data name="Loc.Controls.Silence.Threshold" xml:space="preserve"><value>Threshold (dB):</value></data>
+  <data name="Loc.Controls.Silence.Block" xml:space="preserve"><value>Block (ms):</value></data>
+  <data name="Loc.Controls.Silence.Minimum" xml:space="preserve"><value>Minimum silence (ms):</value></data>
+  <data name="Loc.Controls.Silence.Help" xml:space="preserve"><value>Analysis runs automatically when each file is loaded. Results are cached.</value></data>
+  <data name="Loc.Controls.Silence.Leading" xml:space="preserve"><value>Leading silence</value></data>
+  <data name="Loc.Controls.Silence.EffectiveDuration" xml:space="preserve"><value>Effective duration</value></data>
+  <data name="Loc.Controls.Silence.Trailing" xml:space="preserve"><value>Trailing silence</value></data>
+  <data name="Loc.Controls.Normalization.Title" xml:space="preserve"><value>Level normalization</value></data>
+  <data name="Loc.Controls.Normalization.Enabled" xml:space="preserve"><value>Normalization enabled (apply gain during playback)</value></data>
+  <data name="Loc.Controls.Normalization.Mode" xml:space="preserve"><value>Mode:</value></data>
+  <data name="Loc.Controls.Normalization.Target" xml:space="preserve"><value>Target (dBFS):</value></data>
+  <data name="Loc.Controls.Normalization.Help" xml:space="preserve"><value>Peak/RMS analysis runs automatically when each file is loaded. Results are cached.</value></data>
+  <data name="Loc.Controls.Normalization.Peak" xml:space="preserve"><value>Peak</value></data>
+  <data name="Loc.Controls.Normalization.Rms" xml:space="preserve"><value>Average RMS</value></data>
+  <data name="Loc.Controls.Normalization.Crest" xml:space="preserve"><value>Crest factor</value></data>
+  <data name="Loc.Controls.Normalization.Gain" xml:space="preserve"><value>Calculated gain</value></data>
+  <data name="Loc.Controls.Ducking.Title" xml:space="preserve"><value>Microphone ducking</value></data>
+  <data name="Loc.Controls.Ducking.Enabled" xml:space="preserve"><value>Enable</value></data>
+  <data name="Loc.Controls.Ducking.Microphone" xml:space="preserve"><value>Microphone:</value></data>
+  <data name="Loc.Controls.Ducking.Refresh" xml:space="preserve"><value>Refresh microphone list</value></data>
+  <data name="Loc.Controls.Ducking.MicLevel" xml:space="preserve"><value>Microphone level</value></data>
+  <data name="Loc.Controls.Ducking.VoiceDetected" xml:space="preserve"><value>Voice detected</value></data>
+  <data name="Loc.Controls.Ducking.Threshold" xml:space="preserve"><value>Threshold</value></data>
+  <data name="Loc.Controls.Ducking.AppliedGain" xml:space="preserve"><value>Applied gain</value></data>
+  <data name="Loc.Controls.Ducking.Active" xml:space="preserve"><value>DUCKING ACTIVE</value></data>
+  <data name="Loc.Controls.Ducking.ThresholdDb" xml:space="preserve"><value>Threshold (dB):</value></data>
+  <data name="Loc.Controls.Ducking.Reduction" xml:space="preserve"><value>Reduction (dB):</value></data>
+  <data name="Loc.Controls.Ducking.Hold" xml:space="preserve"><value>Hold (ms):</value></data>
+  <data name="Loc.Controls.Ducking.Attack" xml:space="preserve"><value>Attack (ms):</value></data>
+  <data name="Loc.Controls.Ducking.Release" xml:space="preserve"><value>Release (ms):</value></data>
+  <data name="Loc.Controls.Ducking.Help" xml:space="preserve"><value>Ducking attenuates all active channels on all buses when the microphone level exceeds the threshold.</value></data>
+  <data name="Loc.Controls.VuMeter.Description" xml:space="preserve"><value>Adjust the style, orientation, segments, scale, and colors. The preview updates live.</value></data>
+  <data name="Loc.Controls.VuMeter.StyleOrientation" xml:space="preserve"><value>Style and orientation</value></data>
+  <data name="Loc.Controls.VuMeter.Style" xml:space="preserve"><value>Style</value></data>
+  <data name="Loc.Controls.VuMeter.Orientation" xml:space="preserve"><value>Orientation</value></data>
+  <data name="Loc.Controls.VuMeter.Structure" xml:space="preserve"><value>Layout</value></data>
+  <data name="Loc.Controls.VuMeter.ShowDbScale" xml:space="preserve"><value>Show dB scale</value></data>
+  <data name="Loc.Controls.VuMeter.PeakHold" xml:space="preserve"><value>Peak hold marker</value></data>
+  <data name="Loc.Controls.VuMeter.OverlayRms" xml:space="preserve"><value>Overlay RMS (Console style)</value></data>
+  <data name="Loc.Controls.VuMeter.Clipping" xml:space="preserve"><value>Clipping indicator</value></data>
+  <data name="Loc.Controls.VuMeter.Segments" xml:space="preserve"><value>Number of segments (LED style)</value></data>
+  <data name="Loc.Controls.VuMeter.BarWidth" xml:space="preserve"><value>Bar width (px)</value></data>
+  <data name="Loc.Controls.VuMeter.PeakHoldDuration" xml:space="preserve"><value>Peak hold duration (ms)</value></data>
+  <data name="Loc.Controls.VuMeter.Colors" xml:space="preserve"><value>Colors (hex #RRGGBB)</value></data>
+  <data name="Loc.Controls.VuMeter.GreenZone" xml:space="preserve"><value>Green zone</value></data>
+  <data name="Loc.Controls.VuMeter.AmberZone" xml:space="preserve"><value>Amber zone</value></data>
+  <data name="Loc.Controls.VuMeter.RedZone" xml:space="preserve"><value>Red zone</value></data>
+  <data name="Loc.Controls.VuMeter.Background" xml:space="preserve"><value>Meter background</value></data>
+  <data name="Loc.Controls.VuMeter.ScaleText" xml:space="preserve"><value>Scale text</value></data>
+  <data name="Loc.Controls.VuMeter.AccentColor" xml:space="preserve"><value>Accent color (Minimal style)</value></data>
+  <data name="Loc.Controls.VuMeter.ResetColors" xml:space="preserve"><value>Reset colors</value></data>
+  <data name="Loc.Controls.VuMeter.ResetLayout" xml:space="preserve"><value>Reset layout</value></data>
+  <data name="Loc.Controls.VuMeter.LivePreview" xml:space="preserve"><value>Live preview</value></data>
+  <data name="Loc.Controls.VuMeter.DemoSignal" xml:space="preserve"><value>Demo signal active</value></data>
+  <data name="Loc.Controls.Plugins.Description" xml:space="preserve"><value>Status of BASS add-ons loaded in this session.</value></data>
+  <data name="Loc.Controls.Plugins.Plugin" xml:space="preserve"><value>Plugin</value></data>
+  <data name="Loc.Controls.Plugins.Extensions" xml:space="preserve"><value>Extensions</value></data>
+  <data name="Loc.Controls.Plugins.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Loc.Controls.Plugins.SupportedFormats" xml:space="preserve"><value>Currently supported formats</value></data>
+  <data name="Loc.Controls.Emergency.Enable" xml:space="preserve"><value>Enable silence monitoring</value></data>
+  <data name="Loc.Controls.Emergency.Description" xml:space="preserve"><value>When enabled, RadioMaker monitors the ON AIR bus. If prolonged silence is detected, it automatically plays an emergency playlist until the operator stops it.</value></data>
+  <data name="Loc.Controls.Emergency.Detection" xml:space="preserve"><value>Detection</value></data>
+  <data name="Loc.Controls.Emergency.SilenceThreshold" xml:space="preserve"><value>Silence threshold:</value></data>
+  <data name="Loc.Controls.Emergency.Seconds" xml:space="preserve"><value> seconds</value></data>
+  <data name="Loc.Controls.Emergency.MinimumLevel" xml:space="preserve"><value>Minimum level (dBFS):</value></data>
+  <data name="Loc.Controls.Emergency.NoChannel" xml:space="preserve"><value>Detect when there is NO active channel on the ON AIR bus</value></data>
+  <data name="Loc.Controls.Emergency.BelowThreshold" xml:space="preserve"><value>Detect when active channels are below the threshold (digital silence)</value></data>
+  <data name="Loc.Controls.Emergency.Source" xml:space="preserve"><value>Emergency audio source</value></data>
+  <data name="Loc.Controls.Emergency.Playlist" xml:space="preserve"><value>Prepared playlist (.rmf)</value></data>
+  <data name="Loc.Controls.Emergency.NoPlaylist" xml:space="preserve"><value>(no playlist)</value></data>
+  <data name="Loc.Controls.Emergency.Choose" xml:space="preserve"><value>Choose...</value></data>
+  <data name="Loc.Controls.Emergency.Folder" xml:space="preserve"><value>Folder with audio (shuffle)</value></data>
+  <data name="Loc.Controls.Emergency.NoFolder" xml:space="preserve"><value>(no folder)</value></data>
+  <data name="Loc.Controls.Emergency.IncludeSubfolders" xml:space="preserve"><value>Include subfolders</value></data>
+  <data name="Loc.Controls.Emergency.LoopHelp" xml:space="preserve"><value>Tracks loop until the operator stops the emergency.</value></data>
+  <data name="Loc.Controls.Emergency.Alarm" xml:space="preserve"><value>Audio alarm</value></data>
+  <data name="Loc.Controls.Emergency.BeepEnabled" xml:space="preserve"><value>Play a periodic beep to alert the operator</value></data>
+  <data name="Loc.Controls.Emergency.BeepEvery" xml:space="preserve"><value>Beep every</value></data>
+  <data name="Loc.Controls.Emergency.Tracks" xml:space="preserve"><value>track(s)</value></data>
+  <data name="Loc.Controls.Emergency.TestConfigTooltip" xml:space="preserve"><value>Manually trigger the emergency to test the configuration</value></data>
+  <data name="Loc.Controls.Emergency.TestNow" xml:space="preserve"><value>Test emergency now</value></data>
+  <data name="Loc.Controls.Emergency.TestBeepTooltip" xml:space="preserve"><value>Play the alarm beep without triggering the emergency</value></data>
+  <data name="Loc.Controls.Emergency.TestBeep" xml:space="preserve"><value>Test beep</value></data>
+  <data name="Loc.Controls.Emergency.Stop" xml:space="preserve"><value>STOP EMERGENCY</value></data>
+  <data name="Loc.Controls.Events.Active" xml:space="preserve"><value>Active:</value></data>
+  <data name="Loc.Controls.Events.Disabled" xml:space="preserve"><value>Disabled:</value></data>
+  <data name="Loc.Controls.Events.Pending" xml:space="preserve"><value>Pending:</value></data>
+  <data name="Loc.Controls.Events.ToggleTooltip" xml:space="preserve"><value>Start / stop scheduler</value></data>
+  <data name="Loc.Controls.Events.ResetTooltip" xml:space="preserve"><value>Reset trigger status (mark all as not triggered)</value></data>
+  <data name="Loc.Controls.Events.ClearTooltip" xml:space="preserve"><value>Clear the event log</value></data>
+  <data name="Loc.Controls.Events.Upcoming" xml:space="preserve"><value>Upcoming scheduled triggers</value></data>
+  <data name="Loc.Controls.Events.Empty" xml:space="preserve"><value>No pending items to trigger.</value></data>
+  <data name="Loc.Controls.Events.EndPrefix" xml:space="preserve"><value>End: </value></data>
+  <data name="Loc.Controls.Events.LogTitle" xml:space="preserve"><value>Event log</value></data>
+  <data name="Loc.Controls.Scheduler.Title" xml:space="preserve"><value>Scheduler engine</value></data>
+  <data name="Loc.Controls.Scheduler.StartTooltip" xml:space="preserve"><value>Start scheduler</value></data>
+  <data name="Loc.Controls.Scheduler.StopTooltip" xml:space="preserve"><value>Stop scheduler</value></data>
+  <data name="Loc.Controls.Scheduler.EvaluateTooltip" xml:space="preserve"><value>Evaluate all items now</value></data>
+  <data name="Loc.Controls.Scheduler.Sequence" xml:space="preserve"><value>SEQUENCE</value></data>
+  <data name="Loc.Controls.Scheduler.WaitingBadge" xml:space="preserve"><value>WAITING</value></data>
+  <data name="Loc.Controls.Scheduler.NothingPlaying" xml:space="preserve"><value>Nothing is playing</value></data>
+  <data name="Loc.Controls.Scheduler.StopCurrentTooltip" xml:space="preserve"><value>Stop current scheduled playback</value></data>
+  <data name="Loc.Controls.Scheduler.ForgetTriggersTooltip" xml:space="preserve"><value>Forget which items triggered this minute</value></data>
+  <data name="Loc.Controls.Scheduler.ClearLogTooltip" xml:space="preserve"><value>Clear scheduler log</value></data>
+  <data name="Loc.Controls.Scheduler.QueueTitle" xml:space="preserve"><value>Waiting queue</value></data>
+  <data name="Loc.Controls.Scheduler.NoEvents" xml:space="preserve"><value>No events yet</value></data>
+  <data name="Loc.Controls.Log.Title" xml:space="preserve"><value>Playback log</value></data>
+  <data name="Loc.Controls.Log.Debug" xml:space="preserve"><value>Debug</value></data>
+  <data name="Loc.Controls.Log.Info" xml:space="preserve"><value>Info</value></data>
+  <data name="Loc.Controls.Log.Warning" xml:space="preserve"><value>Warning</value></data>
+  <data name="Loc.Controls.Log.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Loc.Controls.Log.Filter" xml:space="preserve"><value>Filter...</value></data>
+  <data name="Loc.Controls.Log.Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Loc.Controls.Log.Export" xml:space="preserve"><value>Export log (TXT, CSV, HTML, Excel, PDF)</value></data>
+  <data name="Loc.Controls.Log.Clear" xml:space="preserve"><value>Clear log</value></data>
+  <data name="Loc.Controls.Log.DateTime" xml:space="preserve"><value>Date / time</value></data>
+  <data name="Loc.Controls.Log.Level" xml:space="preserve"><value>Level</value></data>
+  <data name="Loc.Controls.Log.Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Loc.Controls.Log.Message" xml:space="preserve"><value>Message</value></data>
+  <data name="Loc.Controls.TopInfo.NowPlaying" xml:space="preserve"><value>NOW PLAYING</value></data>
+  <data name="Loc.Controls.TopInfo.ElapsedRemaining" xml:space="preserve"><value>Elapsed / remaining time</value></data>
+  <data name="Loc.Controls.TopInfo.Next" xml:space="preserve"><value>UP NEXT</value></data>
+  <data name="Loc.Controls.TopInfo.DateTime" xml:space="preserve"><value>Date / time</value></data>
+  <data name="Loc.Controls.TopInfo.MasterVolume" xml:space="preserve"><value>Master volume</value></data>
+  <data name="Loc.Controls.TopInfo.RefreshWeather" xml:space="preserve"><value>Refresh data</value></data>
+  <data name="Loc.Controls.TopInfo.Settings" xml:space="preserve"><value>Settings...</value></data>
+  <data name="Loc.Controls.TopInfo.OpenVoice" xml:space="preserve"><value>Open RMVoice...</value></data>
+  <data name="Loc.Controls.Equalizer.Title" xml:space="preserve"><value>Equalizer</value></data>
+  <data name="Loc.Controls.Equalizer.Enable" xml:space="preserve"><value>Enable</value></data>
+  <data name="Loc.Controls.Equalizer.Reset" xml:space="preserve"><value>Reset all bands to 0 dB</value></data>
+  <data name="Loc.Controls.Equalizer.SavePreset" xml:space="preserve"><value>Save current preset</value></data>
+  <data name="Loc.Controls.Equalizer.NewPreset" xml:space="preserve"><value>New:</value></data>
+  <data name="Loc.Controls.Equalizer.PresetName" xml:space="preserve"><value>Preset name...</value></data>
+  <data name="Loc.Controls.Equalizer.DeletePreset" xml:space="preserve"><value>Delete selected custom preset</value></data>
+  <data name="Loc.Controls.Spectrum.Title" xml:space="preserve"><value>Spectrum analyzer</value></data>
+  <data name="Loc.Controls.Spectrum.NextMode" xml:space="preserve"><value>Next mode</value></data>
+  <data name="Loc.Controls.Spectrum.PauseResume" xml:space="preserve"><value>Pause / resume</value></data>
+  <data name="Loc.Controls.Spectrum.Help" xml:space="preserve"><value>Click the analyzer or use the selector to change modes. Modes: FFT, Bands, Waterfall, Waveform.</value></data>
+  <data name="Loc.Views.Playlist.New" xml:space="preserve"><value>New playlist</value></data>
+  <data name="Loc.Views.Playlist.Open" xml:space="preserve"><value>Open .rmf file</value></data>
+  <data name="Loc.Views.Playlist.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Views.Playlist.SaveAs" xml:space="preserve"><value>Save as...</value></data>
+  <data name="Loc.Views.Playlist.Generate" xml:space="preserve"><value>Generate a playlist automatically from a folder</value></data>
+  <data name="Loc.Views.Playlist.AddTrack" xml:space="preserve"><value>Add track</value></data>
+  <data name="Loc.Views.Playlist.RemoveTrack" xml:space="preserve"><value>Remove selected track</value></data>
+  <data name="Loc.Views.Playlist.Import" xml:space="preserve"><value>Import playlist</value></data>
+  <data name="Loc.Views.Playlist.ImportM3u" xml:space="preserve"><value>Import from M3U / M3U8</value></data>
+  <data name="Loc.Views.Playlist.ImportPls" xml:space="preserve"><value>Import from PLS</value></data>
+  <data name="Loc.Views.Playlist.Export" xml:space="preserve"><value>Export playlist</value></data>
+  <data name="Loc.Views.Playlist.ExportM3u" xml:space="preserve"><value>Export to M3U / M3U8</value></data>
+  <data name="Loc.Views.Playlist.ExportPls" xml:space="preserve"><value>Export to PLS</value></data>
+  <data name="Loc.Views.Playlist.TracksHeader" xml:space="preserve"><value>Playlist tracks (right-click to edit)</value></data>
+  <data name="Loc.Views.Playlist.Edit" xml:space="preserve"><value>Edit...</value></data>
+  <data name="Loc.Views.Playlist.EditTags" xml:space="preserve"><value>Edit tags...</value></data>
+  <data name="Loc.Views.Playlist.EditRmw" xml:space="preserve"><value>Edit in RMWave...</value></data>
+  <data name="Loc.Views.Playlist.Delete" xml:space="preserve"><value>Remove</value></data>
+  <data name="Loc.Views.Playlist.MoveUp" xml:space="preserve"><value>Move track up</value></data>
+  <data name="Loc.Views.Playlist.MoveDown" xml:space="preserve"><value>Move track down</value></data>
+  <data name="Loc.Views.Playlist.Previous" xml:space="preserve"><value>Previous track</value></data>
+  <data name="Loc.Views.Playlist.Play" xml:space="preserve"><value>Play</value></data>
+  <data name="Loc.Views.Playlist.Resume" xml:space="preserve"><value>Resume</value></data>
+  <data name="Loc.Views.Playlist.Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Loc.Views.Playlist.Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Loc.Views.Playlist.Next" xml:space="preserve"><value>Next track</value></data>
+  <data name="Loc.Views.Playlist.TotalDuration" xml:space="preserve"><value>Total duration of enabled tracks</value></data>
+  <data name="Loc.Views.Playlist.Total" xml:space="preserve"><value>Total:</value></data>
+  <data name="Loc.Views.Scheduled.New" xml:space="preserve"><value>New scheduled list</value></data>
+  <data name="Loc.Views.Scheduled.Open" xml:space="preserve"><value>Open .rms file</value></data>
+  <data name="Loc.Views.Scheduled.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Views.Scheduled.SaveAs" xml:space="preserve"><value>Save as...</value></data>
+  <data name="Loc.Views.Scheduled.AddFile" xml:space="preserve"><value>Add single audio file</value></data>
+  <data name="Loc.Views.Scheduled.AddTanda" xml:space="preserve"><value>Add sequence</value></data>
+  <data name="Loc.Views.Scheduled.AddPlaylist" xml:space="preserve"><value>Add playlist (.rmf)</value></data>
+  <data name="Loc.Views.Scheduled.AddBlock" xml:space="preserve"><value>Add scheduled block (playlists, sequences, and audio files in order)</value></data>
+  <data name="Loc.Views.Scheduled.Remove" xml:space="preserve"><value>Remove selected item</value></data>
+  <data name="Loc.Views.Scheduled.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Loc.Views.Scheduled.Disabled" xml:space="preserve"><value>Disabled</value></data>
+  <data name="Loc.Views.Scheduled.DisabledTooltip" xml:space="preserve"><value>When disabled, the scheduler ignores this list and none of its items will trigger.</value></data>
+  <data name="Loc.Views.Scheduled.DisabledBanner" xml:space="preserve"><value>LIST DISABLED — The scheduler will ignore this list until you enable it.</value></data>
+  <data name="Loc.Views.Scheduled.ItemsHeader" xml:space="preserve"><value>Scheduled items (drop files here, or right-click an item to edit)</value></data>
+  <data name="Loc.Views.Scheduled.Edit" xml:space="preserve"><value>Edit...</value></data>
+  <data name="Loc.Views.Scheduled.EditRmw" xml:space="preserve"><value>Edit in RMWave...</value></data>
+  <data name="Loc.Views.Scheduled.Delete" xml:space="preserve"><value>Remove</value></data>
+  <data name="Loc.Views.Scheduled.MoveUp" xml:space="preserve"><value>Move item up</value></data>
+  <data name="Loc.Views.Scheduled.MoveDown" xml:space="preserve"><value>Move item down</value></data>
+  <data name="Loc.Views.Scheduled.Previous" xml:space="preserve"><value>Previous item</value></data>
+  <data name="Loc.Views.Scheduled.Resume" xml:space="preserve"><value>Resume</value></data>
+  <data name="Loc.Views.Scheduled.Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Loc.Views.Scheduled.Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Loc.Views.Scheduled.Next" xml:space="preserve"><value>Next item</value></data>
+  <data name="Loc.Views.Scheduled.TotalDuration" xml:space="preserve"><value>Total duration of enabled items</value></data>
+  <data name="Loc.Views.Scheduled.Total" xml:space="preserve"><value>Total:</value></data>
+  <data name="Loc.Views.PlaylistTrack.Type" xml:space="preserve"><value>Item type</value></data>
+  <data name="Loc.Views.PlaylistTrack.AudioFile" xml:space="preserve"><value>Audio file</value></data>
+  <data name="Loc.Views.PlaylistTrack.NoFile" xml:space="preserve"><value>(no file)</value></data>
+  <data name="Loc.Views.PlaylistTrack.ChooseAudio" xml:space="preserve"><value>Choose audio file</value></data>
+  <data name="Loc.Views.PlaylistTrack.Browse" xml:space="preserve"><value>Browse...</value></data>
+  <data name="Loc.Views.PlaylistTrack.Title" xml:space="preserve"><value>Title (optional)</value></data>
+  <data name="Loc.Views.PlaylistTrack.FileTitleHint" xml:space="preserve"><value>(uses the file name)</value></data>
+  <data name="Loc.Views.PlaylistTrack.RelativeVolume" xml:space="preserve"><value>Relative volume</value></data>
+  <data name="Loc.Views.PlaylistTrack.Enabled" xml:space="preserve"><value>Enabled</value></data>
+  <data name="Loc.Views.PlaylistTrack.Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Loc.Views.PlaylistTrack.Optional" xml:space="preserve"><value>(optional)</value></data>
+  <data name="Loc.Views.PlaylistTrack.InterstitialMix" xml:space="preserve"><value>Interstitial mix (optional)</value></data>
+  <data name="Loc.Views.PlaylistTrack.InterstitialHelp" xml:space="preserve"><value>The mix starts at a specific point in the main audio and plays alongside it at a lower volume. When it ends, the main audio returns to its normal level.</value></data>
+  <data name="Loc.Views.PlaylistTrack.MixType" xml:space="preserve"><value>Mix type</value></data>
+  <data name="Loc.Views.PlaylistTrack.MixFile" xml:space="preserve"><value>Mix audio file</value></data>
+  <data name="Loc.Views.PlaylistTrack.NoMixFile" xml:space="preserve"><value>(no mix file)</value></data>
+  <data name="Loc.Views.PlaylistTrack.ChooseMix" xml:space="preserve"><value>Choose mix file</value></data>
+  <data name="Loc.Views.PlaylistTrack.MixVolume" xml:space="preserve"><value>Mix volume</value></data>
+  <data name="Loc.Views.PlaylistTrack.VoiceCommand" xml:space="preserve"><value>Voice announcement command</value></data>
+  <data name="Loc.Views.PlaylistTrack.VoiceUnavailable" xml:space="preserve"><value>If RMVoice is unavailable, the mix will be skipped and the main audio will continue uninterrupted.</value></data>
+  <data name="Loc.Views.PlaylistTrack.MixStart" xml:space="preserve"><value>Start point within the main audio</value></data>
+  <data name="Loc.Views.PlaylistTrack.Seconds" xml:space="preserve"><value>sec</value></data>
+  <data name="Loc.Views.PlaylistTrack.MainReduction" xml:space="preserve"><value>Main audio reduction during the mix</value></data>
+  <data name="Loc.Views.PlaylistTrack.VoiceOnlyHelp" xml:space="preserve"><value>This item does not play an audio file. When it reaches its turn in the playlist, RMVoice runs the selected command. RMVoice determines the actual duration at runtime; Estimated duration is only used to calculate the playlist total and progress.</value></data>
+  <data name="Loc.Views.PlaylistTrack.VoiceCommandLabel" xml:space="preserve"><value>Voice announcement command</value></data>
+  <data name="Loc.Views.PlaylistTrack.EstimatedDuration" xml:space="preserve"><value>Estimated duration (seconds)</value></data>
+  <data name="Loc.Views.PlaylistTrack.EstimatedDurationTooltip" xml:space="preserve"><value>Estimated duration used to calculate the playlist total</value></data>
+  <data name="Loc.Views.PlaylistTrack.EstimatedDurationHelp" xml:space="preserve"><value>Only used to calculate the total. It does not affect playback.</value></data>
+  <data name="Loc.Views.PlaylistTrack.CommandTitleHint" xml:space="preserve"><value>(uses the command name)</value></data>
+  <data name="Loc.Views.PlaylistTrack.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Views.PlaylistTrack.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Views.ScheduledEditor.Type" xml:space="preserve"><value>Content type</value></data>
+  <data name="Loc.Views.ScheduledEditor.SingleFile" xml:space="preserve"><value>Single file</value></data>
+  <data name="Loc.Views.ScheduledEditor.Sequence" xml:space="preserve"><value>Sequence</value></data>
+  <data name="Loc.Views.ScheduledEditor.PlaylistType" xml:space="preserve"><value>Playlist (.rmf)</value></data>
+  <data name="Loc.Views.ScheduledEditor.Block" xml:space="preserve"><value>Block</value></data>
+  <data name="Loc.Views.ScheduledEditor.AudioFile" xml:space="preserve"><value>Audio file</value></data>
+  <data name="Loc.Views.ScheduledEditor.NoFile" xml:space="preserve"><value>(no file)</value></data>
+  <data name="Loc.Views.ScheduledEditor.ChooseAudio" xml:space="preserve"><value>Choose audio file</value></data>
+  <data name="Loc.Views.ScheduledEditor.Browse" xml:space="preserve"><value>Browse...</value></data>
+  <data name="Loc.Views.ScheduledEditor.NoPlaylist" xml:space="preserve"><value>(no playlist)</value></data>
+  <data name="Loc.Views.ScheduledEditor.ChoosePlaylist" xml:space="preserve"><value>Choose playlist (.rmf)</value></data>
+  <data name="Loc.Views.ScheduledEditor.BrowsePlaylist" xml:space="preserve"><value>Choose .rmf...</value></data>
+  <data name="Loc.Views.ScheduledEditor.PlaylistHelp" xml:space="preserve"><value>Create and edit playlists in the Playlists tab. Here, choose which playlist this scheduled item will play. It plays once when triggered, regardless of the playlist Loop/Shuffle mode.</value></data>
+  <data name="Loc.Views.ScheduledEditor.SequenceType" xml:space="preserve"><value>Sequence (.tnd)</value></data>
+  <data name="Loc.Views.ScheduledEditor.NoSequence" xml:space="preserve"><value>(no sequence)</value></data>
+  <data name="Loc.Views.ScheduledEditor.ChooseSequence" xml:space="preserve"><value>Choose sequence (.tnd)</value></data>
+  <data name="Loc.Views.ScheduledEditor.BrowseSequence" xml:space="preserve"><value>Choose .tnd...</value></data>
+  <data name="Loc.Views.ScheduledEditor.SequenceHelp" xml:space="preserve"><value>Create and edit sequences in the Sequences tab. Here, choose which one this scheduled item will play when triggered.</value></data>
+  <data name="Loc.Views.ScheduledEditor.BlockName" xml:space="preserve"><value>Block name</value></data>
+  <data name="Loc.Views.ScheduledEditor.BlockContents" xml:space="preserve"><value>Block contents (played in order)</value></data>
+  <data name="Loc.Views.ScheduledEditor.AddPlaylist" xml:space="preserve"><value>Add a playlist (.rmf)</value></data>
+  <data name="Loc.Views.ScheduledEditor.Playlist" xml:space="preserve"><value>Playlist</value></data>
+  <data name="Loc.Views.ScheduledEditor.AddSequence" xml:space="preserve"><value>Add a sequence (.tnd)</value></data>
+  <data name="Loc.Views.ScheduledEditor.AddFile" xml:space="preserve"><value>Add an audio file</value></data>
+  <data name="Loc.Views.ScheduledEditor.File" xml:space="preserve"><value>File</value></data>
+  <data name="Loc.Views.ScheduledEditor.EmptyBlock" xml:space="preserve"><value>No contents. Use the buttons above to add items.</value></data>
+  <data name="Loc.Views.ScheduledEditor.ChooseFile" xml:space="preserve"><value>Choose file</value></data>
+  <data name="Loc.Views.ScheduledEditor.MoveUp" xml:space="preserve"><value>Move up</value></data>
+  <data name="Loc.Views.ScheduledEditor.MoveDown" xml:space="preserve"><value>Move down</value></data>
+  <data name="Loc.Views.ScheduledEditor.Remove" xml:space="preserve"><value>Remove item</value></data>
+  <data name="Loc.Views.ScheduledEditor.BlockTotal" xml:space="preserve"><value>Block total:</value></data>
+  <data name="Loc.Views.ScheduledEditor.Title" xml:space="preserve"><value>Title (optional)</value></data>
+  <data name="Loc.Views.ScheduledEditor.DefaultTitle" xml:space="preserve"><value>(uses the default name)</value></data>
+  <data name="Loc.Views.ScheduledEditor.Priority" xml:space="preserve"><value>Priority</value></data>
+  <data name="Loc.Views.ScheduledEditor.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Loc.Views.ScheduledEditor.Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Loc.Views.ScheduledEditor.Optional" xml:space="preserve"><value>(optional)</value></data>
+  <data name="Loc.Views.ScheduledEditor.Schedules" xml:space="preserve"><value>Scheduled times</value></data>
+  <data name="Loc.Views.ScheduledEditor.AddSchedule" xml:space="preserve"><value>Add a scheduled time</value></data>
+  <data name="Loc.Views.ScheduledEditor.Schedule" xml:space="preserve"><value>Schedule</value></data>
+  <data name="Loc.Views.ScheduledEditor.NoSchedules" xml:space="preserve"><value>No scheduled times.</value></data>
+  <data name="Loc.Views.ScheduledEditor.Time" xml:space="preserve"><value>Time:</value></data>
+  <data name="Loc.Views.ScheduledEditor.RemoveSchedule" xml:space="preserve"><value>Remove scheduled time</value></data>
+  <data name="Loc.Views.ScheduledEditor.Day.Mon" xml:space="preserve"><value>Mon</value></data>
+  <data name="Loc.Views.ScheduledEditor.Day.Tue" xml:space="preserve"><value>Tue</value></data>
+  <data name="Loc.Views.ScheduledEditor.Day.Wed" xml:space="preserve"><value>Wed</value></data>
+  <data name="Loc.Views.ScheduledEditor.Day.Thu" xml:space="preserve"><value>Thu</value></data>
+  <data name="Loc.Views.ScheduledEditor.Day.Fri" xml:space="preserve"><value>Fri</value></data>
+  <data name="Loc.Views.ScheduledEditor.Day.Sat" xml:space="preserve"><value>Sat</value></data>
+  <data name="Loc.Views.ScheduledEditor.Day.Sun" xml:space="preserve"><value>Sun</value></data>
+  <data name="Loc.Views.ScheduledEditor.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Views.ScheduledEditor.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Views.Generator.Preset" xml:space="preserve"><value>Preset:</value></data>
+  <data name="Loc.Views.Generator.NewPreset" xml:space="preserve"><value>New preset (reset form)</value></data>
+  <data name="Loc.Views.Generator.OpenPreset" xml:space="preserve"><value>Open preset (.rpg)</value></data>
+  <data name="Loc.Views.Generator.SavePreset" xml:space="preserve"><value>Save preset (overwrite)</value></data>
+  <data name="Loc.Views.Generator.SavePresetAs" xml:space="preserve"><value>Save preset as...</value></data>
+  <data name="Loc.Views.Generator.CurrentPreset" xml:space="preserve"><value>Current preset:</value></data>
+  <data name="Loc.Views.Generator.SourceFolder" xml:space="preserve"><value>Source folder</value></data>
+  <data name="Loc.Views.Generator.SelectFolder" xml:space="preserve"><value>Select a folder...</value></data>
+  <data name="Loc.Views.Generator.Browse" xml:space="preserve"><value>Browse...</value></data>
+  <data name="Loc.Views.Generator.IncludeSubfolders" xml:space="preserve"><value>Include subfolders</value></data>
+  <data name="Loc.Views.Generator.Content" xml:space="preserve"><value>Content</value></data>
+  <data name="Loc.Views.Generator.TrackCount" xml:space="preserve"><value>Track count</value></data>
+  <data name="Loc.Views.Generator.Quantity" xml:space="preserve"><value>Quantity:</value></data>
+  <data name="Loc.Views.Generator.Tracks" xml:space="preserve"><value>tracks</value></data>
+  <data name="Loc.Views.Generator.TargetDuration" xml:space="preserve"><value>Target duration</value></data>
+  <data name="Loc.Views.Generator.TargetDurationLabel" xml:space="preserve"><value>Target duration:</value></data>
+  <data name="Loc.Views.Generator.Minutes" xml:space="preserve"><value>minutes</value></data>
+  <data name="Loc.Views.Generator.Tolerance" xml:space="preserve"><value>Tolerance (±):</value></data>
+  <data name="Loc.Views.Generator.Filters" xml:space="preserve"><value>Filters (optional)</value></data>
+  <data name="Loc.Views.Generator.GenreContains" xml:space="preserve"><value>Genre contains:</value></data>
+  <data name="Loc.Views.Generator.EmptyFilter" xml:space="preserve"><value>(empty = no filter)</value></data>
+  <data name="Loc.Views.Generator.ArtistContains" xml:space="preserve"><value>Artist contains:</value></data>
+  <data name="Loc.Views.Generator.AlbumContains" xml:space="preserve"><value>Album contains:</value></data>
+  <data name="Loc.Views.Generator.YearRange" xml:space="preserve"><value>Year range:</value></data>
+  <data name="Loc.Views.Generator.TrackDuration" xml:space="preserve"><value>Track duration:</value></data>
+  <data name="Loc.Views.Generator.MinutesShort" xml:space="preserve"><value>min</value></data>
+  <data name="Loc.Views.Generator.FilterHelp" xml:space="preserve"><value>Genre, artist, album, and year filters require reading each file&apos;s tags. Files without the corresponding tag are excluded.</value></data>
+  <data name="Loc.Views.Generator.Variety" xml:space="preserve"><value>Variety (optional)</value></data>
+  <data name="Loc.Views.Generator.AvoidConsecutiveArtist" xml:space="preserve"><value>Avoid consecutive tracks by the same artist</value></data>
+  <data name="Loc.Views.Generator.MinimumArtistGap" xml:space="preserve"><value>Minimum tracks between the same artist:</value></data>
+  <data name="Loc.Views.Generator.BalanceArtists" xml:space="preserve"><value>Balance by artist (round-robin)</value></data>
+  <data name="Loc.Views.Generator.BalanceTooltip" xml:space="preserve"><value>Distribute each artist&apos;s tracks evenly throughout the playlist</value></data>
+  <data name="Loc.Views.Generator.RelaxRules" xml:space="preserve"><value>Relax rules if needed to reach the target</value></data>
+  <data name="Loc.Views.Generator.RelaxTooltip" xml:space="preserve"><value>If variety rules prevent reaching the requested count or duration, discarded tracks are added to complete the playlist.</value></data>
+  <data name="Loc.Views.Generator.VarietyHelp" xml:space="preserve"><value>Variety rules use the artist tag. Tracks without that tag are wildcards: they neither block nor are blocked by other tracks.</value></data>
+  <data name="Loc.Views.Generator.Order" xml:space="preserve"><value>Order</value></data>
+  <data name="Loc.Views.Generator.OrderHelp" xml:space="preserve"><value>Artist balancing replaces manual ordering. Tracks are interleaved by artist for maximum variety.</value></data>
+  <data name="Loc.Views.Generator.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Loc.Views.Generator.Generate" xml:space="preserve"><value>Generate</value></data>
+  <data name="Loc.Views.Generator.Regenerate" xml:space="preserve"><value>Regenerate</value></data>
+  <data name="Loc.Views.Generator.PressGenerate" xml:space="preserve"><value>Select Generate to preview the result.</value></data>
+  <data name="Loc.Views.Generator.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Views.Generator.Accept" xml:space="preserve"><value>Accept</value></data>
+  <data name="Loc.Views.AutoDj.OpenClockTooltip" xml:space="preserve"><value>Open clock (.rmclock)</value></data>
+  <data name="Loc.Views.AutoDj.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Loc.Views.AutoDj.SaveClockTooltip" xml:space="preserve"><value>Save clock</value></data>
+  <data name="Loc.Views.AutoDj.SaveClock" xml:space="preserve"><value>Save clock</value></data>
+  <data name="Loc.Views.AutoDj.SaveAsTooltip" xml:space="preserve"><value>Save clock as</value></data>
+  <data name="Loc.Views.AutoDj.SaveAs" xml:space="preserve"><value>Save as...</value></data>
+  <data name="Loc.Views.AutoDj.StageDescription" xml:space="preserve"><value>This first step creates and previews a schedule. It does not enable AutoDJ or start playback. Each clock line is a slot; the sequence repeats until it reaches approximately the target duration. Use * for any genre.</value></data>
+  <data name="Loc.Views.AutoDj.MusicLibrary" xml:space="preserve"><value>Music library</value></data>
+  <data name="Loc.Views.AutoDj.SelectMusicFolder" xml:space="preserve"><value>Select a music folder...</value></data>
+  <data name="Loc.Views.AutoDj.Browse" xml:space="preserve"><value>Browse...</value></data>
+  <data name="Loc.Views.AutoDj.IncludeSubfolders" xml:space="preserve"><value>Include subfolders</value></data>
+  <data name="Loc.Views.AutoDj.TargetDuration" xml:space="preserve"><value>Target duration</value></data>
+  <data name="Loc.Views.AutoDj.TargetDurationHelp" xml:space="preserve"><value>minutes (up to 24 hours). Songs are not cut, so the actual duration may exceed the target.</value></data>
+  <data name="Loc.Views.AutoDj.ArtistSeparation" xml:space="preserve"><value>Artist separation</value></data>
+  <data name="Loc.Views.AutoDj.ArtistSeparationHelp" xml:space="preserve"><value>tracks between repeats. 0 disables this rule.</value></data>
+  <data name="Loc.Views.AutoDj.ClockSequence" xml:space="preserve"><value>Clock sequence</value></data>
+  <data name="Loc.Views.AutoDj.OneCategoryPerLine" xml:space="preserve"><value>One category per line; for example: Rock, Pop, Rock, *</value></data>
+  <data name="Loc.Views.AutoDj.GenreHelp" xml:space="preserve"><value>Enter genres as they appear in audio tags. Repeat a genre to give it more slots. * means any genre. A slot is skipped if the genre does not match exactly.</value></data>
+  <data name="Loc.Views.AutoDj.Preview" xml:space="preserve"><value>Hour preview</value></data>
+  <data name="Loc.Views.AutoDj.GeneratePreview" xml:space="preserve"><value>Generate preview</value></data>
+  <data name="Loc.Views.AutoDj.SavePlaylist" xml:space="preserve"><value>Save playlist (.rmf)</value></data>
+  <data name="Loc.Views.AutoDj.TakeAir" xml:space="preserve"><value>Take on air</value></data>
+  <data name="Loc.Views.AutoDj.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.Views.CartEditor.AudioFile" xml:space="preserve"><value>Audio file</value></data>
+  <data name="Loc.Views.CartEditor.NoFile" xml:space="preserve"><value>(no file)</value></data>
+  <data name="Loc.Views.CartEditor.ChooseAudio" xml:space="preserve"><value>Choose audio file</value></data>
+  <data name="Loc.Views.CartEditor.Browse" xml:space="preserve"><value>Browse...</value></data>
+  <data name="Loc.Views.CartEditor.RemoveFile" xml:space="preserve"><value>Remove file</value></data>
+  <data name="Loc.Views.CartEditor.ButtonLabel" xml:space="preserve"><value>Label (button text)</value></data>
+  <data name="Loc.Views.CartEditor.FileNameHint" xml:space="preserve"><value>(uses the file name)</value></data>
+  <data name="Loc.Views.CartEditor.BackgroundColor" xml:space="preserve"><value>Background color</value></data>
+  <data name="Loc.Views.CartEditor.QuickColors" xml:space="preserve"><value>Quick colors</value></data>
+  <data name="Loc.Views.CartEditor.Shortcut" xml:space="preserve"><value>Keyboard shortcut (optional)</value></data>
+  <data name="Loc.Views.CartEditor.ShortcutHint" xml:space="preserve"><value>e.g. 1, F1, Numpad1 (coming soon)</value></data>
+  <data name="Loc.Views.CartEditor.RelativeVolume" xml:space="preserve"><value>Relative volume</value></data>
+  <data name="Loc.Views.CartEditor.Enabled" xml:space="preserve"><value>Button enabled</value></data>
+  <data name="Loc.Views.CartEditor.Loop" xml:space="preserve"><value>Loop playback (coming soon)</value></data>
+  <data name="Loc.Views.CartEditor.Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Loc.Views.CartEditor.Optional" xml:space="preserve"><value>(optional)</value></data>
+  <data name="Loc.Views.CartEditor.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Views.CartEditor.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Views.Encadenadores.New" xml:space="preserve"><value>New chainers file</value></data>
+  <data name="Loc.Views.Encadenadores.Open" xml:space="preserve"><value>Open .rme file</value></data>
+  <data name="Loc.Views.Encadenadores.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Views.Encadenadores.SaveAs" xml:space="preserve"><value>Save as...</value></data>
+  <data name="Loc.Views.Encadenadores.Remove" xml:space="preserve"><value>Remove selected audio</value></data>
+  <data name="Loc.Views.Encadenadores.On" xml:space="preserve"><value>Enabled</value></data>
+  <data name="Loc.Views.Encadenadores.Off" xml:space="preserve"><value>Disabled</value></data>
+  <data name="Loc.Views.Encadenadores.OnlyOneActive" xml:space="preserve"><value>Only one Chainers tab can be active at a time.</value></data>
+  <data name="Loc.Views.Encadenadores.AudioList" xml:space="preserve"><value>Chainer audio</value></data>
+  <data name="Loc.Views.Encadenadores.Edit" xml:space="preserve"><value>Edit...</value></data>
+  <data name="Loc.Views.Encadenadores.EditTags" xml:space="preserve"><value>Edit tags...</value></data>
+  <data name="Loc.Views.Encadenadores.MoveUp" xml:space="preserve"><value>Move audio up</value></data>
+  <data name="Loc.Views.Encadenadores.MoveDown" xml:space="preserve"><value>Move audio down</value></data>
+  <data name="Loc.Views.Encadenadores.Configuration" xml:space="preserve"><value>Insertion settings</value></data>
+  <data name="Loc.Views.Encadenadores.Order" xml:space="preserve"><value>Order</value></data>
+  <data name="Loc.Views.Encadenadores.InsertEvery" xml:space="preserve"><value>Insert every</value></data>
+  <data name="Loc.Views.Encadenadores.AudioUnit" xml:space="preserve"><value>audio item(s)</value></data>
+  <data name="Loc.Views.Encadenadores.ResetCounter" xml:space="preserve"><value>Reset counter</value></data>
+  <data name="Loc.Views.Encadenadores.DragHint" xml:space="preserve"><value>Drag files from File Manager; the list will insert them automatically.</value></data>
+  <data name="Loc.Views.Tanda.New" xml:space="preserve"><value>New sequence</value></data>
+  <data name="Loc.Views.Tanda.Open" xml:space="preserve"><value>Open .tnd file</value></data>
+  <data name="Loc.Views.Tanda.Save" xml:space="preserve"><value>Save current file</value></data>
+  <data name="Loc.Views.Tanda.SaveAs" xml:space="preserve"><value>Save as...</value></data>
+  <data name="Loc.Views.Tanda.AddTrack" xml:space="preserve"><value>Add track</value></data>
+  <data name="Loc.Views.Tanda.Empty" xml:space="preserve"><value>No tracks. Press &apos;+&apos; in the toolbar to add one.</value></data>
+  <data name="Loc.Views.Tanda.EnableTrack" xml:space="preserve"><value>Enable / disable this track</value></data>
+  <data name="Loc.Views.Tanda.ChooseFile" xml:space="preserve"><value>Choose file</value></data>
+  <data name="Loc.Views.Tanda.EditRmw" xml:space="preserve"><value>Edit in RMWave...</value></data>
+  <data name="Loc.Views.Tanda.OpenRmwTooltip" xml:space="preserve"><value>Open this .rmw project in RMWave</value></data>
+  <data name="Loc.Views.Tanda.MoveUp" xml:space="preserve"><value>Move up</value></data>
+  <data name="Loc.Views.Tanda.MoveDown" xml:space="preserve"><value>Move down</value></data>
+  <data name="Loc.Views.Tanda.Remove" xml:space="preserve"><value>Remove track</value></data>
+  <data name="Loc.Views.Tanda.Volume" xml:space="preserve"><value>Volume:</value></data>
+  <data name="Loc.Views.Tanda.Wait" xml:space="preserve"><value>Delay (s):</value></data>
+  <data name="Loc.Views.CartBoard.New" xml:space="preserve"><value>New cart wall</value></data>
+  <data name="Loc.Views.CartBoard.Open" xml:space="preserve"><value>Open cart wall (.rcb)</value></data>
+  <data name="Loc.Views.CartBoard.Save" xml:space="preserve"><value>Save current file</value></data>
+  <data name="Loc.Views.CartBoard.SaveAs" xml:space="preserve"><value>Save as...</value></data>
+  <data name="Loc.Views.CartBoard.PlaySelected" xml:space="preserve"><value>Play selected cart</value></data>
+  <data name="Loc.Views.CartBoard.StopAll" xml:space="preserve"><value>Stop all carts</value></data>
+  <data name="Loc.Views.CartBoard.Crossfade" xml:space="preserve"><value>Toggle crossfade between carts</value></data>
+  <data name="Loc.Views.CartBoard.OutputBus" xml:space="preserve"><value>Cart wall output bus</value></data>
+  <data name="Loc.Views.CartBoard.Edit" xml:space="preserve"><value>Edit...</value></data>
+  <data name="Loc.Views.CartBoard.EditTags" xml:space="preserve"><value>Edit tags...</value></data>
+  <data name="Loc.Views.CartBoard.EditRmw" xml:space="preserve"><value>Edit in RMWave...</value></data>
+  <data name="Loc.Views.CartBoard.Play" xml:space="preserve"><value>Play</value></data>
+  <data name="Loc.Views.CartBoard.Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Loc.Views.CartBoard.Clear" xml:space="preserve"><value>Clear cart</value></data>
+  <data name="Loc.Views.CartBoard.Playing" xml:space="preserve"><value>PLAYING</value></data>
+  <data name="Loc.Views.FileBrowser.Home" xml:space="preserve"><value>Go to home folder</value></data>
+  <data name="Loc.Views.FileBrowser.Desktop" xml:space="preserve"><value>Go to desktop</value></data>
+  <data name="Loc.Views.FileBrowser.Up" xml:space="preserve"><value>Go up one level</value></data>
+  <data name="Loc.Views.FileBrowser.Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Loc.Views.FileBrowser.FilterType" xml:space="preserve"><value>Filter by file type</value></data>
+  <data name="Loc.Views.FileBrowser.PreviewBus" xml:space="preserve"><value>Preview output bus</value></data>
+  <data name="Loc.Views.FileBrowser.StopPreview" xml:space="preserve"><value>Stop preview</value></data>
+  <data name="Loc.Views.FileBrowser.FilterName" xml:space="preserve"><value>Filter by name...</value></data>
+  <data name="Loc.Views.FileBrowser.AddFavorite" xml:space="preserve"><value>Add to Favorites...</value></data>
+  <data name="Loc.Views.FileBrowser.RemoveFavorite" xml:space="preserve"><value>Remove from Favorites</value></data>
+  <data name="Loc.Views.FileBrowser.EditTags" xml:space="preserve"><value>Edit tags...</value></data>
+  <data name="Loc.Views.FileBrowser.EditRmw" xml:space="preserve"><value>Edit in RMWave...</value></data>
+  <data name="Loc.Views.FileBrowser.RmwProject" xml:space="preserve"><value>RadioMaker project (drag it to a tab)</value></data>
+  <data name="Loc.Views.FileBrowser.NoCover" xml:space="preserve"><value>No
+cover</value></data>
+  <data name="Loc.Views.FavoriteFolder.PlayBus" xml:space="preserve"><value>Direct playback output bus</value></data>
+  <data name="Loc.Views.FavoriteFolder.Stop" xml:space="preserve"><value>Stop playback</value></data>
+  <data name="Loc.Views.FavoriteFolder.EditTags" xml:space="preserve"><value>Edit tags...</value></data>
+  <data name="Loc.Views.FavoriteFolder.EditRmw" xml:space="preserve"><value>Edit in RMWave...</value></data>
+  <data name="Loc.Views.FavoriteFolder.NoCover" xml:space="preserve"><value>No
+cover</value></data>
+  <data name="Loc.Views.AudioTags.NoCover" xml:space="preserve"><value>No
+cover</value></data>
+  <data name="Loc.Views.AudioTags.Title" xml:space="preserve"><value>Title:</value></data>
+  <data name="Loc.Views.AudioTags.TitleHint" xml:space="preserve"><value>Audio title</value></data>
+  <data name="Loc.Views.AudioTags.Artists" xml:space="preserve"><value>Artist(s):</value></data>
+  <data name="Loc.Views.AudioTags.MultipleHint" xml:space="preserve"><value>Separate multiple entries with ;</value></data>
+  <data name="Loc.Views.AudioTags.Album" xml:space="preserve"><value>Album:</value></data>
+  <data name="Loc.Views.AudioTags.AlbumHint" xml:space="preserve"><value>Album name</value></data>
+  <data name="Loc.Views.AudioTags.AlbumArtists" xml:space="preserve"><value>Album artist(s):</value></data>
+  <data name="Loc.Views.AudioTags.Genres" xml:space="preserve"><value>Genre(s):</value></data>
+  <data name="Loc.Views.AudioTags.YearTrackDisc" xml:space="preserve"><value>Year / track / disc:</value></data>
+  <data name="Loc.Views.AudioTags.Comment" xml:space="preserve"><value>Comment:</value></data>
+  <data name="Loc.Views.AudioTags.CommentHint" xml:space="preserve"><value>Freeform comment (optional)</value></data>
+  <data name="Loc.Views.AudioTags.CoverHelp" xml:space="preserve"><value>Embedded cover art cannot be changed in this editor. Empty fields clear their corresponding tags.</value></data>
+  <data name="Loc.Views.AudioTags.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Views.AudioTags.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Views.FavoriteDialog.Folder" xml:space="preserve"><value>Folder to add</value></data>
+  <data name="Loc.Views.FavoriteDialog.CustomName" xml:space="preserve"><value>Custom name (optional)</value></data>
+  <data name="Loc.Views.FavoriteDialog.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Views.FavoriteDialog.Add" xml:space="preserve"><value>Add</value></data>
+  <data name="Loc.Views.AudioBuses.Title" xml:space="preserve"><value>Output buses</value></data>
+  <data name="Loc.Views.AudioBuses.Description" xml:space="preserve"><value>Each bus uses a different audio device and has its own master volume.</value></data>
+  <data name="Loc.Views.AudioBuses.Add" xml:space="preserve"><value>+ Add</value></data>
+  <data name="Loc.Views.AudioBuses.Refresh" xml:space="preserve"><value>Refresh device list</value></data>
+  <data name="Loc.Views.AudioBuses.Details" xml:space="preserve"><value>Bus details</value></data>
+  <data name="Loc.Views.AudioBuses.Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Loc.Views.AudioBuses.OutputDevice" xml:space="preserve"><value>Output device</value></data>
+  <data name="Loc.Views.AudioBuses.PrimaryNote" xml:space="preserve"><value>The primary bus uses the device selected when the app starts.</value></data>
+  <data name="Loc.Views.AudioBuses.MasterVolume" xml:space="preserve"><value>Master volume</value></data>
+  <data name="Loc.Views.AudioBuses.Test" xml:space="preserve"><value>▶ Test output (440 Hz)</value></data>
+  <data name="Loc.Views.AudioBuses.Remove" xml:space="preserve"><value>Remove bus</value></data>
+  <data name="Loc.Views.AudioBuses.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.Views.LogExport.Description" xml:space="preserve"><value>Choose the format and content to export.</value></data>
+  <data name="Loc.Views.LogExport.FileName" xml:space="preserve"><value>File name</value></data>
+  <data name="Loc.Views.LogExport.FileNameHint" xml:space="preserve"><value>filename-without-extension</value></data>
+  <data name="Loc.Views.LogExport.Format" xml:space="preserve"><value>Output format</value></data>
+  <data name="Loc.Views.LogExport.Content" xml:space="preserve"><value>Content to export</value></data>
+  <data name="Loc.Views.LogExport.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Views.LogExport.Export" xml:space="preserve"><value>Export...</value></data>
+  <data name="Loc.Views.About.Title" xml:space="preserve"><value>About</value></data>
+  <data name="Loc.Views.About.BuildInfo" xml:space="preserve"><value>Build information</value></data>
+  <data name="Loc.Views.About.Version" xml:space="preserve"><value>Version:</value></data>
+  <data name="Loc.Views.About.Build" xml:space="preserve"><value>Build:</value></data>
+  <data name="Loc.Views.About.Platform" xml:space="preserve"><value>Platform:</value></data>
+  <data name="Loc.Views.About.Links" xml:space="preserve"><value>Useful links</value></data>
+  <data name="Loc.Views.About.Libraries" xml:space="preserve"><value>Libraries</value></data>
+  <data name="Loc.Views.About.LibraryNotice" xml:space="preserve"><value>RadioMaker is built with the following open-source and commercial libraries. Each has its own license, and its terms are followed.</value></data>
+  <data name="Loc.Views.About.BassNoticeTitle" xml:space="preserve"><value>BASS notice</value></data>
+  <data name="Loc.Views.About.BassNotice" xml:space="preserve"><value>Un4seen&apos;s native BASS library is free for personal and educational use. Commercial use (including selling the software or using it at a for-profit radio station) requires a commercial license from Un4seen Developments. See https://www.un4seen.com for more information.</value></data>
+  <data name="Loc.Views.About.CopyTooltip" xml:space="preserve"><value>Copy app information to the clipboard</value></data>
+  <data name="Loc.Views.About.CopyInfo" xml:space="preserve"><value>Copy info</value></data>
+  <data name="Loc.Views.About.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.Controls.Spectrum.Status.NoChannel" xml:space="preserve"><value>No active channel.</value></data>
+  <data name="Loc.Controls.Spectrum.Status.Monitoring" xml:space="preserve"><value>Monitoring: {0}</value></data>
+  <data name="Loc.Controls.Spectrum.Status.Source" xml:space="preserve"><value>[{0}] {1}</value></data>
+  <data name="Loc.Controls.Spectrum.Status.Active" xml:space="preserve"><value>Analysis active.</value></data>
+  <data name="Loc.Controls.Spectrum.Status.Paused" xml:space="preserve"><value>Analysis paused.</value></data>
+  <data name="Loc.Controls.Silence.None" xml:space="preserve"><value>None</value></data>
+  <data name="Loc.Controls.Silence.Status.Waiting" xml:space="preserve"><value>Waiting for a file to load...</value></data>
+  <data name="Loc.Controls.Silence.Status.NoChannel" xml:space="preserve"><value>No channel loaded.</value></data>
+  <data name="Loc.Controls.Silence.Status.Analyzing" xml:space="preserve"><value>Analyzing silence...</value></data>
+  <data name="Loc.Controls.Silence.Status.Completed" xml:space="preserve"><value>Analysis complete. Leading silence: {0}, trailing: {1}.</value></data>
+  <data name="Loc.Controls.Silence.Status.Failed" xml:space="preserve"><value>Could not analyze the file.</value></data>
+  <data name="Loc.Controls.Silence.Status.Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.Controls.Silence.Status.TrimError" xml:space="preserve"><value>Could not apply auto-trim: {0}</value></data>
+  <data name="Loc.Controls.Silence.Trim.Disabled" xml:space="preserve"><value>Auto-trim disabled.</value></data>
+  <data name="Loc.Controls.Silence.Trim.Waiting" xml:space="preserve"><value>Auto-trim enabled - waiting for analysis.</value></data>
+  <data name="Loc.Controls.Silence.Trim.NoTrim" xml:space="preserve"><value>Auto-trim enabled - no significant trims.</value></data>
+  <data name="Loc.Controls.Silence.Trim.Applied" xml:space="preserve"><value>Auto-trim enabled: -{0} at start, -{1} at end.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.NoChannel" xml:space="preserve"><value>No channel loaded. Load a file to hear the EQ.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.ActiveOnChannel" xml:space="preserve"><value>EQ active on the current channel.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.DisabledOnChannel" xml:space="preserve"><value>EQ disabled (enable it to hear changes).</value></data>
+  <data name="Loc.Controls.Equalizer.Status.ApplyError" xml:space="preserve"><value>Could not apply EQ: {0}</value></data>
+  <data name="Loc.Controls.Equalizer.Status.PresetApplied" xml:space="preserve"><value>Preset applied: {0}</value></data>
+  <data name="Loc.Controls.Equalizer.Status.Active" xml:space="preserve"><value>EQ active.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.Disabled" xml:space="preserve"><value>EQ disabled.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.Controls.Equalizer.Status.Reset" xml:space="preserve"><value>All bands reset to 0 dB.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.PresetNameRequired" xml:space="preserve"><value>Enter a preset name.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.FactoryPreset" xml:space="preserve"><value>'{0}' is a factory preset. Choose another name.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.PresetSaved" xml:space="preserve"><value>Preset '{0}' saved.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.CustomPresetOnly" xml:space="preserve"><value>Only custom presets can be deleted.</value></data>
+  <data name="Loc.Controls.Equalizer.Status.PresetDeleted" xml:space="preserve"><value>Preset '{0}' deleted.</value></data>
+  <data name="Loc.AutoDJ.AnyGenre" xml:space="preserve"><value>Any genre</value></data>
+  <data name="Loc.AutoDJ.Status.Initial" xml:space="preserve"><value>Choose the music folder and define the category order.</value></data>
+  <data name="Loc.AutoDJ.Status.Preparing" xml:space="preserve"><value>Preparing library...</value></data>
+  <data name="Loc.AutoDJ.Status.PreviewReady" xml:space="preserve"><value>Preview ready; duration {0}. Library: {1} track(s), {2} unreadable.</value></data>
+  <data name="Loc.AutoDJ.Status.SkippedSlots" xml:space="preserve"><value>Slots without an available track: {0}.</value></data>
+  <data name="Loc.AutoDJ.Status.Cancelled" xml:space="preserve"><value>Scan cancelled.</value></data>
+  <data name="Loc.AutoDJ.Status.GenerateError" xml:space="preserve"><value>Could not generate the clock: {0}</value></data>
+  <data name="Loc.AutoDJ.Status.TakingAir" xml:space="preserve"><value>Preparing AutoDJ and waiting for a safe point to go on air...</value></data>
+  <data name="Loc.AutoDJ.Status.TakeAirEnabled" xml:space="preserve"><value>AutoDJ is enabled. It will go on air when the current track ends.</value></data>
+  <data name="Loc.AutoDJ.Status.TakeAirError" xml:space="preserve"><value>Could not enable AutoDJ: {0}</value></data>
+  <data name="Loc.AutoDJ.Status.OpenError" xml:space="preserve"><value>Could not open the clock file.</value></data>
+  <data name="Loc.AutoDJ.Status.ClockLoaded" xml:space="preserve"><value>Clock loaded: {0}.</value></data>
+  <data name="Loc.AutoDJ.Status.ClockSaved" xml:space="preserve"><value>Clock saved: {0}.</value></data>
+  <data name="Loc.AutoDJ.Status.ClockSaveError" xml:space="preserve"><value>Could not save the clock: {0}</value></data>
+  <data name="Loc.AutoDJ.Status.PlaylistSaved" xml:space="preserve"><value>AutoDJ playlist saved: {0}.</value></data>
+  <data name="Loc.AutoDJ.Status.PlaylistSaveError" xml:space="preserve"><value>Could not save the playlist: {0}</value></data>
+  <data name="Loc.AutoDJ.Progress.Searching" xml:space="preserve"><value>Searching for audio files...</value></data>
+  <data name="Loc.AutoDJ.Progress.ReadingLibrary" xml:space="preserve"><value>Reading library </value></data>
+  <data name="Loc.AutoDJ.Progress.Categorizing" xml:space="preserve"><value>Library analyzed. Organizing clock categories...</value></data>
+  <data name="Loc.AutoDJ.Progress.OrganizingCategories" xml:space="preserve"><value>Organizing categories </value></data>
+  <data name="Loc.AutoDJ.Progress.Sequence" xml:space="preserve"><value>Generating the AutoDJ sequence...</value></data>
+  <data name="Loc.AutoDJ.Progress.WithCount" xml:space="preserve"><value>{0} ({1:N0}/{2:N0})</value></data>
+  <data name="Loc.AutoDJ.Progress.LibraryAnalyzed" xml:space="preserve"><value>List generated: {0:N0} files analyzed.</value></data>
+  <data name="Loc.AutoDJ.Relation.OnTarget" xml:space="preserve"><value>matches the target</value></data>
+  <data name="Loc.AutoDJ.Relation.Exceeds" xml:space="preserve"><value>exceeds by {0}</value></data>
+  <data name="Loc.AutoDJ.Relation.ShortBy" xml:space="preserve"><value>short by {0}</value></data>
+  <data name="Loc.AutoDJ.Error.NoLibraryFolder" xml:space="preserve"><value>No library folder was specified.</value></data>
+  <data name="Loc.AutoDJ.Error.MissingFolder" xml:space="preserve"><value>The selected folder does not exist.</value></data>
+  <data name="Loc.AutoDJ.Error.NoCompatibleFiles" xml:space="preserve"><value>No compatible audio files were found.</value></data>
+  <data name="Loc.AutoDJ.Error.NoReadableAudio" xml:space="preserve"><value>Could not read the duration of any audio file.</value></data>
+  <data name="Loc.AutoDJ.Error.NoClock" xml:space="preserve"><value>No clock is configured.</value></data>
+  <data name="Loc.AutoDJ.Error.EmptyClock" xml:space="preserve"><value>Add at least one slot to the clock.</value></data>
+  <data name="Loc.AutoDJ.Error.Generate" xml:space="preserve"><value>Could not generate the clock.</value></data>
+  <data name="Loc.AutoDJ.Error.InvalidDuration" xml:space="preserve"><value>The target duration must be between 5 minutes and 24 hours.</value></data>
+  <data name="Loc.AutoDJ.Error.ReadLibrary" xml:space="preserve"><value>Could not read the library.</value></data>
+  <data name="Loc.AutoDJ.PreviewAvailable" xml:space="preserve"><value>Preview is ready.</value></data>
+  <data name="Loc.AutoDJ.PreviewSummary" xml:space="preserve"><value>{0} tracks · {1} / {2}</value></data>
+  <data name="Loc.AutoDJ.Dialog.SelectMusicFolder" xml:space="preserve"><value>Select music folder</value></data>
+  <data name="Loc.AutoDJ.Dialog.OpenClock" xml:space="preserve"><value>Open AutoDJ clock</value></data>
+  <data name="Loc.AutoDJ.Dialog.ClockFileType" xml:space="preserve"><value>AutoDJ clock</value></data>
+  <data name="Loc.AutoDJ.Dialog.SaveClock" xml:space="preserve"><value>Save AutoDJ clock</value></data>
+  <data name="Loc.AutoDJ.Dialog.ClockFileName" xml:space="preserve"><value>AutoDJ Clock</value></data>
+  <data name="Loc.AutoDJ.Dialog.SaveGeneratedPlaylist" xml:space="preserve"><value>Save generated playlist</value></data>
+  <data name="Loc.AutoDJ.Dialog.PlaylistFileType" xml:space="preserve"><value>RadioMaker playlist</value></data>
+  <data name="Loc.PlaylistGenerator.Filters.None" xml:space="preserve"><value>No active filters</value></data>
+  <data name="Loc.PlaylistGenerator.Filters.Active" xml:space="preserve"><value>{0} active filter(s)</value></data>
+  <data name="Loc.PlaylistGenerator.Variety.None" xml:space="preserve"><value>No variety rules</value></data>
+  <data name="Loc.PlaylistGenerator.Variety.Active" xml:space="preserve"><value>{0} active rule(s)</value></data>
+  <data name="Loc.PlaylistGenerator.Status.Initial" xml:space="preserve"><value>Configure the options and select Generate.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.PresetLoadError" xml:space="preserve"><value>Could not load preset '{0}'.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.PresetApplied" xml:space="preserve"><value>Preset '{0}' applied.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.EmptySavePath" xml:space="preserve"><value>Save path is empty.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.PresetSaved" xml:space="preserve"><value>Preset saved to '{0}'.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.PresetSaveError" xml:space="preserve"><value>Could not save preset: {0}</value></data>
+  <data name="Loc.PlaylistGenerator.Status.NoPresetToSave" xml:space="preserve"><value>No preset is loaded. Use 'Save As...'.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.NewPreset" xml:space="preserve"><value>New preset. Configure the options.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.RemovedFromHistory" xml:space="preserve"><value>Removed from history: {0}</value></data>
+  <data name="Loc.PlaylistGenerator.Status.Starting" xml:space="preserve"><value>Starting...</value></data>
+  <data name="Loc.PlaylistGenerator.Status.Cancelled" xml:space="preserve"><value>Generation cancelled.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.PlaylistGenerator.Status.NoTracks" xml:space="preserve"><value>No tracks could be selected with these settings.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.Ready" xml:space="preserve"><value>Ready: {0}.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.PreviewReady" xml:space="preserve"><value>Preview is ready.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.SettingsChanged" xml:space="preserve"><value>You changed the settings. Select Regenerate.</value></data>
+  <data name="Loc.PlaylistGenerator.Status.UntitledPreset" xml:space="preserve"><value>Untitled</value></data>
+  <data name="Loc.PlaylistGenerator.PreviewSummary" xml:space="preserve"><value>{0} track(s) · {1}</value></data>
+  <data name="Loc.PlaylistGenerator.Result.Selected" xml:space="preserve"><value>{0} track(s) selected from {1} valid candidate(s)</value></data>
+  <data name="Loc.PlaylistGenerator.Result.Unreadable" xml:space="preserve"><value>{0} unreadable</value></data>
+  <data name="Loc.PlaylistGenerator.Result.FilteredTags" xml:space="preserve"><value>{0} excluded by tags</value></data>
+  <data name="Loc.PlaylistGenerator.Result.FilteredDuration" xml:space="preserve"><value>{0} excluded by duration</value></data>
+  <data name="Loc.PlaylistGenerator.Result.RelaxedArtist" xml:space="preserve"><value>{0} variety rule(s) relaxed</value></data>
+  <data name="Loc.PlaylistGenerator.Progress.Searching" xml:space="preserve"><value>Searching for audio files...</value></data>
+  <data name="Loc.PlaylistGenerator.Progress.Enumerating" xml:space="preserve"><value>Enumerating files...</value></data>
+  <data name="Loc.PlaylistGenerator.Progress.ReadingDurations" xml:space="preserve"><value>Reading durations... </value></data>
+  <data name="Loc.PlaylistGenerator.Progress.ReadingDurationsTags" xml:space="preserve"><value>Reading durations and tags... </value></data>
+  <data name="Loc.PlaylistGenerator.Progress.ReadingLibrary" xml:space="preserve"><value>Reading library </value></data>
+  <data name="Loc.PlaylistGenerator.Progress.Building" xml:space="preserve"><value>Building playlist...</value></data>
+  <data name="Loc.PlaylistGenerator.Error.NoMatchingTracks" xml:space="preserve"><value>No tracks match the active filters. Excluded by filters: {0}.</value></data>
+  <data name="Loc.PlaylistGenerator.Error.EmptyConfiguration" xml:space="preserve"><value>Configuration is empty.</value></data>
+  <data name="Loc.PlaylistGenerator.Error.NoSourceFolder" xml:space="preserve"><value>No source folder was specified.</value></data>
+  <data name="Loc.PlaylistGenerator.Error.MissingFolder" xml:space="preserve"><value>The selected folder does not exist.</value></data>
+  <data name="Loc.PlaylistGenerator.Error.NoAudioFiles" xml:space="preserve"><value>No audio files were found in the folder.</value></data>
+  <data name="Loc.PlaylistGenerator.Error.NoReadableFiles" xml:space="preserve"><value>No files could be read successfully.</value></data>
+  <data name="Loc.PlaylistGenerator.Error.Generate" xml:space="preserve"><value>Could not generate the playlist.</value></data>
+  <data name="Loc.PlaylistGenerator.Dialog.SelectSourceFolder" xml:space="preserve"><value>Select source folder</value></data>
+  <data name="Loc.PlaylistGenerator.Dialog.PresetFileType" xml:space="preserve"><value>Generator preset</value></data>
+  <data name="Loc.PlaylistGenerator.Dialog.OpenPreset" xml:space="preserve"><value>Open preset (.rpg)</value></data>
+  <data name="Loc.PlaylistGenerator.Dialog.DefaultPresetName" xml:space="preserve"><value>Generator Preset</value></data>
+  <data name="Loc.PlaylistGenerator.Dialog.SavePreset" xml:space="preserve"><value>Save preset (.rpg)</value></data>
+  <data name="Loc.AudioBuses.NewBus" xml:space="preserve"><value>New bus</value></data>
+  <data name="Loc.AudioBuses.Status.Removed" xml:space="preserve"><value>Bus '{0}' removed.</value></data>
+  <data name="Loc.AudioBuses.Status.CannotRemove" xml:space="preserve"><value>This bus cannot be removed.</value></data>
+  <data name="Loc.AudioBuses.Status.Added" xml:space="preserve"><value>Bus added. Assign it a name and a device.</value></data>
+  <data name="Loc.AudioBuses.Status.CreateError" xml:space="preserve"><value>Could not create the bus: {0}</value></data>
+  <data name="Loc.AudioBuses.Status.DevicesUpdated" xml:space="preserve"><value>Device list updated.</value></data>
+  <data name="Loc.AudioBuses.Status.TestToneSent" xml:space="preserve"><value>Test tone sent (440 Hz, 1 s).</value></data>
+  <data name="Loc.AudioBuses.Status.Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.AudioBuses.Status.DeviceChanged" xml:space="preserve"><value>Device changed to: {0}</value></data>
+  <data name="Loc.AudioBuses.Status.ChangeDeviceError" xml:space="preserve"><value>Could not change the device: {0}</value></data>
+  <data name="Loc.Carts.Status.OutputBus" xml:space="preserve"><value>Output bus: {0}</value></data>
+  <data name="Loc.Carts.Status.NoEngine" xml:space="preserve"><value>No playback engine.</value></data>
+  <data name="Loc.Carts.Status.PlayError" xml:space="preserve"><value>Playback error: {0}</value></data>
+  <data name="Loc.Carts.Status.AllStopped" xml:space="preserve"><value>All buttons stopped.</value></data>
+  <data name="Loc.Carts.Status.StopError" xml:space="preserve"><value>Stop error: {0}</value></data>
+  <data name="Loc.Carts.Status.ButtonCleared" xml:space="preserve"><value>Button cleared.</value></data>
+  <data name="Loc.Carts.Status.Assigned" xml:space="preserve"><value>Assigned: {0}</value></data>
+  <data name="Loc.Carts.Status.LoadFailed" xml:space="preserve"><value>Could not load '{0}'.</value></data>
+  <data name="Loc.Carts.Status.NoSavePath" xml:space="preserve"><value>No save path is available.</value></data>
+  <data name="Loc.Carts.Status.Saved" xml:space="preserve"><value>Saved to '{0}'.</value></data>
+  <data name="Loc.Carts.Status.SaveError" xml:space="preserve"><value>Save error: {0}</value></data>
+  <data name="Loc.Carts.Status.NewBoard" xml:space="preserve"><value>New cart board created.</value></data>
+  <data name="Loc.Carts.Status.CrossfadeEnabled" xml:space="preserve"><value>Crossfade enabled ({0} ms).</value></data>
+  <data name="Loc.Carts.Status.CrossfadeDisabled" xml:space="preserve"><value>Crossfade disabled (carts overlap).</value></data>
+  <data name="Loc.Carts.Status.SelectButton" xml:space="preserve"><value>Select a button first.</value></data>
+  <data name="Loc.PlaylistEditor.NewPlaylist" xml:space="preserve"><value>New Playlist</value></data>
+  <data name="Loc.PlaylistEditor.Status.Initial" xml:space="preserve"><value>Playlist ready. Add tracks or open a file.</value></data>
+  <data name="Loc.PlaylistEditor.Status.PlayError" xml:space="preserve"><value>Playback error: {0}</value></data>
+  <data name="Loc.PlaylistEditor.Status.TrackAdded" xml:space="preserve"><value>Track added. Configure the file.</value></data>
+  <data name="Loc.PlaylistEditor.Status.TrackRemoved" xml:space="preserve"><value>Track removed.</value></data>
+  <data name="Loc.PlaylistEditor.Status.MixRemoved" xml:space="preserve"><value>Mix removed.</value></data>
+  <data name="Loc.PlaylistEditor.Status.Generated" xml:space="preserve"><value>Playlist generated automatically: {0} track(s).</value></data>
+  <data name="Loc.PlaylistEditor.Status.AutoDjReady" xml:space="preserve"><value>AutoDJ is ready to go on air.</value></data>
+  <data name="Loc.PlaylistEditor.Status.AutoDjSaved" xml:space="preserve"><value>AutoDJ preview saved temporarily ({0} tracks).</value></data>
+  <data name="Loc.PlaylistEditor.Status.AutoDjSaveError" xml:space="preserve"><value>AutoDJ preview is ready ({0} tracks), but it could not be saved temporarily: {1}</value></data>
+  <data name="Loc.PlaylistEditor.Status.LoadFailed" xml:space="preserve"><value>Could not load '{0}'.</value></data>
+  <data name="Loc.PlaylistEditor.Status.Loaded" xml:space="preserve"><value>Loaded '{0}' with {1} track(s).</value></data>
+  <data name="Loc.PlaylistEditor.Status.BusMissing" xml:space="preserve"><value>The saved bus no longer exists. The on-air bus will be used.</value></data>
+  <data name="Loc.PlaylistEditor.Status.OutputBus" xml:space="preserve"><value>Output bus: {0}</value></data>
+  <data name="Loc.PlaylistEditor.Status.NoSavePath" xml:space="preserve"><value>No save path is available. Use 'Save As...'.</value></data>
+  <data name="Loc.PlaylistEditor.Status.Saved" xml:space="preserve"><value>Saved to '{0}'.</value></data>
+  <data name="Loc.PlaylistEditor.Status.SaveError" xml:space="preserve"><value>Save error: {0}</value></data>
+  <data name="Loc.PlaylistEditor.Status.NewPlaylist" xml:space="preserve"><value>New playlist created.</value></data>
+  <data name="Loc.PlaylistEditor.Status.ImportFailed" xml:space="preserve"><value>Could not import '{0}' or it is empty.</value></data>
+  <data name="Loc.PlaylistEditor.Status.Imported" xml:space="preserve"><value>Imported {0} track(s) from '{1}'.</value></data>
+  <data name="Loc.PlaylistEditor.Status.Exported" xml:space="preserve"><value>Exported to '{0}'.</value></data>
+  <data name="Loc.PlaylistEditor.Status.ExportM3uError" xml:space="preserve"><value>M3U export error: {0}</value></data>
+  <data name="Loc.PlaylistEditor.Status.ExportPlsError" xml:space="preserve"><value>PLS export error: {0}</value></data>
+  <data name="Loc.TandaEditor.NewTanda" xml:space="preserve"><value>New Sequence</value></data>
+  <data name="Loc.TandaEditor.Status.Initial" xml:space="preserve"><value>Sequence ready. Add tracks or open a .tnd file.</value></data>
+  <data name="Loc.TandaEditor.Status.TrackAdded" xml:space="preserve"><value>Track added. Configure the file.</value></data>
+  <data name="Loc.TandaEditor.Status.TrackRemoved" xml:space="preserve"><value>Track removed.</value></data>
+  <data name="Loc.TandaEditor.Status.LoadFailed" xml:space="preserve"><value>Could not load '{0}'.</value></data>
+  <data name="Loc.TandaEditor.Status.Loaded" xml:space="preserve"><value>Loaded '{0}' with {1} track(s).</value></data>
+  <data name="Loc.TandaEditor.Status.NoSavePath" xml:space="preserve"><value>No save path is available. Use 'Save As...'.</value></data>
+  <data name="Loc.TandaEditor.Status.Saved" xml:space="preserve"><value>Saved to '{0}'.</value></data>
+  <data name="Loc.TandaEditor.Status.SaveError" xml:space="preserve"><value>Save error: {0}</value></data>
+  <data name="Loc.TandaEditor.Status.NewTanda" xml:space="preserve"><value>New sequence created.</value></data>
+  <data name="Loc.TandaEditor.Summary" xml:space="preserve"><value>{0} track(s) — {1} enabled, {2:F1} s of delays</value></data>
+  <data name="Loc.Chainers.DefaultName" xml:space="preserve"><value>Chainers</value></data>
+  <data name="Loc.Chainers.Status.Initial" xml:space="preserve"><value>Add audio to create a chainers list.</value></data>
+  <data name="Loc.Chainers.Status.NewSet" xml:space="preserve"><value>New chainers list.</value></data>
+  <data name="Loc.Chainers.Status.OpenError" xml:space="preserve"><value>Could not open the .rme file.</value></data>
+  <data name="Loc.Chainers.Status.Opened" xml:space="preserve"><value>Opened: {0}</value></data>
+  <data name="Loc.Chainers.Status.Saved" xml:space="preserve"><value>Saved: {0}</value></data>
+  <data name="Loc.Chainers.Status.SaveError" xml:space="preserve"><value>Save error: {0}</value></data>
+  <data name="Loc.Chainers.Order.Sequential" xml:space="preserve"><value>List order</value></data>
+  <data name="Loc.Chainers.Order.Random" xml:space="preserve"><value>Random</value></data>
+  <data name="Loc.Chainers.CounterReset.Continuous" xml:space="preserve"><value>Continuous</value></data>
+  <data name="Loc.Chainers.CounterReset.OnSourceChange" xml:space="preserve"><value>On source change</value></data>
+  <data name="Loc.PlaylistEditor.Status.TagsSaved" xml:space="preserve"><value>Tags saved: {0}</value></data>
+  <data name="Loc.PlaylistEditor.Status.TagsError" xml:space="preserve"><value>Could not edit tags: {0}</value></data>
+  <data name="Loc.PlaylistEditor.Status.RmWaveError" xml:space="preserve"><value>Could not open in RMWave.</value></data>
+  <data name="Loc.PlaylistEditor.Status.OpeningRmWave" xml:space="preserve"><value>Opening {0} in RMWave...</value></data>
+  <data name="Loc.PlaylistEditor.Status.TrackUpdated" xml:space="preserve"><value>Track updated: {0}</value></data>
+  <data name="Loc.PlaylistEditor.Status.NoTracksToExport" xml:space="preserve"><value>There are no tracks to export.</value></data>
+  <data name="Loc.PlaylistEditor.Status.FileNotFound" xml:space="preserve"><value>File not found: {0}</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.FileType" xml:space="preserve"><value>Playlist .rmf</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.Open" xml:space="preserve"><value>Open playlist (.rmf)</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.Save" xml:space="preserve"><value>Save playlist (.rmf)</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.M3uType" xml:space="preserve"><value>Playlist M3U / M3U8</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.ImportM3u" xml:space="preserve"><value>Import playlist from M3U / M3U8</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.PlsType" xml:space="preserve"><value>Playlist PLS</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.ImportPls" xml:space="preserve"><value>Import playlist from PLS</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.ExportM3u" xml:space="preserve"><value>Export playlist to M3U / M3U8</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.M3u8Type" xml:space="preserve"><value>Playlist M3U8</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.M3uTypeShort" xml:space="preserve"><value>Playlist M3U</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.ExportPls" xml:space="preserve"><value>Export playlist to PLS</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.PickMainAudio" xml:space="preserve"><value>Select main audio file</value></data>
+  <data name="Loc.PlaylistEditor.Dialog.PickMixAudio" xml:space="preserve"><value>Select mix audio file</value></data>
+  <data name="Loc.TandaEditor.Status.RmWaveError" xml:space="preserve"><value>Could not open in RMWave.</value></data>
+  <data name="Loc.TandaEditor.Status.OpeningRmWave" xml:space="preserve"><value>Opening {0} in RMWave...</value></data>
+  <data name="Loc.TandaEditor.Dialog.FileType" xml:space="preserve"><value>Sequence</value></data>
+  <data name="Loc.TandaEditor.Dialog.Open" xml:space="preserve"><value>Open sequence (.tnd)</value></data>
+  <data name="Loc.TandaEditor.Dialog.Save" xml:space="preserve"><value>Save sequence (.tnd)</value></data>
+  <data name="Loc.TandaEditor.Dialog.SelectAudio" xml:space="preserve"><value>Select audio file</value></data>
+  <data name="Loc.Chainers.Status.AudioUpdated" xml:space="preserve"><value>Audio updated: {0}</value></data>
+  <data name="Loc.Chainers.Dialog.UseFileName" xml:space="preserve"><value>(uses the file name)</value></data>
+  <data name="Loc.Chainers.Dialog.Browse" xml:space="preserve"><value>Browse...</value></data>
+  <data name="Loc.Chainers.Dialog.SelectAudio" xml:space="preserve"><value>Select chainer audio</value></data>
+  <data name="Loc.Chainers.Dialog.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Chainers.Dialog.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Chainers.Dialog.AudioFile" xml:space="preserve"><value>Audio file</value></data>
+  <data name="Loc.Chainers.Dialog.OptionalTitle" xml:space="preserve"><value>Title (optional)</value></data>
+  <data name="Loc.Chainers.Dialog.EditAudio" xml:space="preserve"><value>Edit chainer audio</value></data>
+  <data name="Loc.Chainers.Dialog.Open" xml:space="preserve"><value>Open Chainers (.rme)</value></data>
+  <data name="Loc.Chainers.Dialog.FileType" xml:space="preserve"><value>Chainers .rme</value></data>
+  <data name="Loc.Chainers.Dialog.SaveAs" xml:space="preserve"><value>Save Chainers (.rme)</value></data>
+  <data name="Loc.PlaylistEditor.Summary" xml:space="preserve"><value>{0} track(s) — {1} enabled, {2} with mix · Mode: {3}</value></data>
+  <data name="Loc.PlaylistEditor.Mode.Once" xml:space="preserve"><value>Once</value></data>
+  <data name="Loc.PlaylistEditor.Mode.Loop" xml:space="preserve"><value>Repeat</value></data>
+  <data name="Loc.PlaylistEditor.Mode.Shuffle" xml:space="preserve"><value>Shuffle</value></data>
+  <data name="Loc.PlaylistEditor.Duration.Unanalyzed" xml:space="preserve"><value>{0} (+{1} unanalyzed)</value></data>
+  <data name="Loc.PlaylistEditor.PlayerState.WaitingOnAir" xml:space="preserve"><value>Waiting to go on air</value></data>
+  <data name="Loc.PlaylistEditor.PlayerState.Stopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="Loc.PlaylistEditor.PlayerState.Playing" xml:space="preserve"><value>Playing</value></data>
+  <data name="Loc.PlaylistEditor.PlayerState.Paused" xml:space="preserve"><value>Paused</value></data>
+  <data name="Loc.PlaylistEditor.PlayerState.PausedByScheduler" xml:space="preserve"><value>Paused (scheduled)</value></data>
+  <data name="Loc.PlaylistEditor.PlayerState.Delaying" xml:space="preserve"><value>Waiting</value></data>
+  <data name="Loc.PlaylistEditor.PlayerState.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Loc.Chainers.Status.FileNotFound" xml:space="preserve"><value>File not found: {0}</value></data>
+  <data name="Loc.Chainers.Status.TagsSaved" xml:space="preserve"><value>Tags saved: {0}</value></data>
+  <data name="Loc.Chainers.Status.TagsError" xml:space="preserve"><value>Could not edit tags: {0}</value></data>
+  <data name="Loc.Scheduler.Registered" xml:space="preserve"><value>{0} registered list(s)</value></data>
+  <data name="Loc.Scheduler.Enabled" xml:space="preserve"><value>{0} enabled</value></data>
+  <data name="Loc.Scheduler.State.Active" xml:space="preserve"><value>ACTIVE</value></data>
+  <data name="Loc.Scheduler.State.Stopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="Loc.Scheduler.Playlist" xml:space="preserve"><value>Playlist</value></data>
+  <data name="Loc.Scheduler.TrackProgress" xml:space="preserve"><value>Track {0} of {1}</value></data>
+  <data name="Loc.Scheduler.PlaylistStatus.Stopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="Loc.Scheduler.PlaylistStatus.Playing" xml:space="preserve"><value>Playing</value></data>
+  <data name="Loc.Scheduler.PlaylistStatus.Paused" xml:space="preserve"><value>Paused</value></data>
+  <data name="Loc.Scheduler.PlaylistStatus.PausedByScheduler" xml:space="preserve"><value>Paused (scheduled)</value></data>
+  <data name="Loc.Scheduler.PlaylistStatus.Waiting" xml:space="preserve"><value>Waiting</value></data>
+  <data name="Loc.Scheduler.PlaylistStatus.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Loc.Scheduler.Status.Stopped" xml:space="preserve"><value>Scheduler stopped.</value></data>
+  <data name="Loc.Scheduler.Status.Running" xml:space="preserve"><value>Scheduler active. {0} list(s), {1} enabled.</value></data>
+  <data name="Loc.Scheduler.Status.StartError" xml:space="preserve"><value>Could not start: {0}</value></data>
+  <data name="Loc.Scheduler.Status.StopError" xml:space="preserve"><value>Could not stop: {0}</value></data>
+  <data name="Loc.Scheduler.Status.Reset" xml:space="preserve"><value>Trigger state reset.</value></data>
+  <data name="Loc.Scheduler.Status.Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.Scheduler.Status.StopPlaybackError" xml:space="preserve"><value>Could not stop playback: {0}</value></data>
+  <data name="Loc.Scheduler.Queue.Playlist" xml:space="preserve"><value>PLAYLIST</value></data>
+  <data name="Loc.Scheduler.Queue.High" xml:space="preserve"><value>HIGH</value></data>
+  <data name="Loc.Scheduler.Queue.Low" xml:space="preserve"><value>Low</value></data>
+  <data name="Loc.Scheduler.Queue.WillResume" xml:space="preserve"><value>will resume</value></data>
+  <data name="Loc.Scheduler.Queue.Track" xml:space="preserve"><value>track: {0}</value></data>
+  <data name="Loc.Scheduler.Queue.Tanda" xml:space="preserve"><value>sequence, {0} track(s)</value></data>
+  <data name="Loc.Scheduler.Queue.From" xml:space="preserve"><value>from {0}</value></data>
+  <data name="Loc.ScheduledList.DefaultName" xml:space="preserve"><value>Scheduled</value></data>
+  <data name="Loc.ScheduledList.NewItem" xml:space="preserve"><value>New item</value></data>
+  <data name="Loc.ScheduledList.NewTanda" xml:space="preserve"><value>New Sequence</value></data>
+  <data name="Loc.ScheduledList.NewPlaylist" xml:space="preserve"><value>New Playlist</value></data>
+  <data name="Loc.ScheduledList.NewBlock" xml:space="preserve"><value>New Block</value></data>
+  <data name="Loc.ScheduledList.Summary" xml:space="preserve"><value>{0} item(s) — {1} enabled, {2} high priority, {3} sequence(s), {4} playlist(s), {5} block(s)</value></data>
+  <data name="Loc.ScheduledList.Duration.Unanalyzed" xml:space="preserve"><value>{0} (+{1} unanalyzed)</value></data>
+  <data name="Loc.ScheduledList.Tooltip.Playing" xml:space="preserve"><value>Playing this list...</value></data>
+  <data name="Loc.ScheduledList.Tooltip.PlayAll" xml:space="preserve"><value>Play the entire list (ignore schedules)</value></data>
+  <data name="Loc.ScheduledList.Status.Initial" xml:space="preserve"><value>List ready. Add items or open a .rms file.</value></data>
+  <data name="Loc.ScheduledList.Status.ItemAdded" xml:space="preserve"><value>Item added. Configure the file, days, and time.</value></data>
+  <data name="Loc.ScheduledList.Status.TandaAdded" xml:space="preserve"><value>Sequence added. Choose the .tnd file with 'Edit'.</value></data>
+  <data name="Loc.ScheduledList.Status.PlaylistAdded" xml:space="preserve"><value>Playlist added. Choose the .rmf file with 'Edit'.</value></data>
+  <data name="Loc.ScheduledList.Status.BlockAdded" xml:space="preserve"><value>Block added. Add playlists, sequences, or files with 'Edit'.</value></data>
+  <data name="Loc.ScheduledList.Status.ItemRemoved" xml:space="preserve"><value>Item removed.</value></data>
+  <data name="Loc.ScheduledList.Status.NoEngine" xml:space="preserve"><value>No playback engine is available.</value></data>
+  <data name="Loc.ScheduledList.Status.NoEnabledItems" xml:space="preserve"><value>There are no enabled items to play.</value></data>
+  <data name="Loc.ScheduledList.Status.PlayFailed" xml:space="preserve"><value>Could not start playback.</value></data>
+  <data name="Loc.ScheduledList.Status.ManualProgress" xml:space="preserve"><value>Playing {0} of {1}</value></data>
+  <data name="Loc.ScheduledList.Status.ManualQueued" xml:space="preserve"><value>Manual play: {0} item(s) queued.</value></data>
+  <data name="Loc.ScheduledList.Status.ManualPlayError" xml:space="preserve"><value>Could not start manual play: {0}</value></data>
+  <data name="Loc.ScheduledList.Status.ManualStopped" xml:space="preserve"><value>Manual play stopped.</value></data>
+  <data name="Loc.ScheduledList.Status.StopError" xml:space="preserve"><value>Stop error: {0}</value></data>
+  <data name="Loc.ScheduledList.Status.TrackProgress" xml:space="preserve"><value>Track {0} of {1} — {2}</value></data>
+  <data name="Loc.ScheduledList.Status.PlayingItem" xml:space="preserve"><value>Playing: {0}</value></data>
+  <data name="Loc.ScheduledList.Status.ManualFinished" xml:space="preserve"><value>Manual play finished.</value></data>
+  <data name="Loc.ScheduledList.Status.UnsupportedFile" xml:space="preserve"><value>'{0}' is not a supported scheduled file.</value></data>
+  <data name="Loc.ScheduledList.Status.AddedFromBrowser" xml:space="preserve"><value>Added from file browser: {0}</value></data>
+  <data name="Loc.ScheduledList.Status.Added" xml:space="preserve"><value>Added: {0}</value></data>
+  <data name="Loc.ScheduledList.Status.LoadFailed" xml:space="preserve"><value>Could not load '{0}'.</value></data>
+  <data name="Loc.ScheduledList.Status.Loaded" xml:space="preserve"><value>Loaded {0} item(s) from '{1}'.</value></data>
+  <data name="Loc.ScheduledList.Status.NoSavePath" xml:space="preserve"><value>No save path is available. Use 'Save As...'.</value></data>
+  <data name="Loc.ScheduledList.Status.Saved" xml:space="preserve"><value>Saved to '{0}'.</value></data>
+  <data name="Loc.ScheduledList.Status.SaveError" xml:space="preserve"><value>Save error: {0}</value></data>
+  <data name="Loc.ScheduledList.Status.NewList" xml:space="preserve"><value>New list created.</value></data>
+  <data name="Loc.Scheduler.QueueReason.OtherHigh" xml:space="preserve"><value>another HIGH priority item is playing</value></data>
+  <data name="Loc.Scheduler.QueueReason.High" xml:space="preserve"><value>a HIGH priority item is playing</value></data>
+  <data name="Loc.Scheduler.QueueReason.OtherLow" xml:space="preserve"><value>another LOW priority item is running</value></data>
+  <data name="Loc.Scheduler.Log.Started" xml:space="preserve"><value>Scheduler started.</value></data>
+  <data name="Loc.Scheduler.Log.Stopped" xml:space="preserve"><value>Scheduler stopped.</value></data>
+  <data name="Loc.Scheduler.Log.Trigger" xml:space="preserve"><value>Triggering: {0} ({1}) from '{2}'</value></data>
+  <data name="Loc.Scheduler.Log.TickError" xml:space="preserve"><value>Scheduler tick error: {0}</value></data>
+  <data name="Loc.Scheduler.Log.TriggerHandlerError" xml:space="preserve"><value>ItemTriggered handler error: {0}</value></data>
+  <data name="Loc.Scheduler.Log.PauseDuringVoice" xml:space="preserve"><value>Pause requested during a sequence voice track.</value></data>
+  <data name="Loc.Scheduler.Log.ScheduledPlayback" xml:space="preserve"><value>scheduled playback</value></data>
+  <data name="Loc.Scheduler.Log.Pause" xml:space="preserve"><value>Pause requested: {0}.</value></data>
+  <data name="Loc.Scheduler.Log.Resume" xml:space="preserve"><value>Resume requested: {0}.</value></data>
+  <data name="Loc.Scheduler.Log.Next" xml:space="preserve"><value>Next requested during: {0}.</value></data>
+  <data name="Loc.Scheduler.Log.Previous" xml:space="preserve"><value>Previous requested during: {0}.</value></data>
+  <data name="Loc.Scheduler.Log.StopAllRequested" xml:space="preserve"><value>Stop all requested for the Scheduler.</value></data>
+  <data name="Loc.Scheduler.Log.ManualListEmpty" xml:space="preserve"><value>Manual play: the list is empty.</value></data>
+  <data name="Loc.Scheduler.Log.ManualNoEnabledItems" xml:space="preserve"><value>Manual play: there are no enabled items to play.</value></data>
+  <data name="Loc.Scheduler.Log.ManualStopRequested" xml:space="preserve"><value>Scheduled playback stopped manually.</value></data>
+  <data name="Loc.Scheduler.Log.ManualQueued" xml:space="preserve"><value>Manual play: '{0}' → {1} item(s) queued ({2} still in the queue after the first starts).</value></data>
+  <data name="Loc.Scheduler.Log.Duplicate" xml:space="preserve"><value>'{0}' is already queued; duplicate trigger ignored.</value></data>
+  <data name="Loc.Scheduler.Log.QueueFull" xml:space="preserve"><value>Queue full ({0}); '{1}' was dropped.</value></data>
+  <data name="Loc.Scheduler.Log.Enqueued" xml:space="preserve"><value>'{0}' queued ({1}). Total: {2}.</value></data>
+  <data name="Loc.Scheduler.Log.Dequeued" xml:space="preserve"><value>Dequeued: '{0}' ({1} remaining).</value></data>
+  <data name="Loc.Scheduler.Log.QueueCleared" xml:space="preserve"><value>Clearing queue ({0} pending items).</value></data>
+  <data name="Loc.Scheduler.Log.LoadSequenceError" xml:space="preserve"><value>Error loading sequence '{0}': {1}</value></data>
+  <data name="Loc.Scheduler.Log.LegacySequence" xml:space="preserve"><value>'{0}': using embedded sequence (legacy format). Save it again as a .tnd file and reference it instead.</value></data>
+  <data name="Loc.Scheduler.Log.InvalidSequence" xml:space="preserve"><value>'{0}' has no valid sequence (file missing or empty).</value></data>
+  <data name="Loc.Scheduler.Log.NoEnabledTracks" xml:space="preserve"><value>'{0}' has no enabled tracks with files.</value></data>
+  <data name="Loc.Scheduler.Log.PlayingSequence" xml:space="preserve"><value>Playing sequence '{0}' ({1} tracks) from '{2}' ({3}).</value></data>
+  <data name="Loc.Scheduler.Log.NoPlaylist" xml:space="preserve"><value>'{0}' has no playlist assigned.</value></data>
+  <data name="Loc.Scheduler.Log.PlaylistFileMissing" xml:space="preserve"><value>Playlist file for '{0}' was not found: {1}</value></data>
+  <data name="Loc.Scheduler.Log.LoadPlaylistError" xml:space="preserve"><value>Error loading playlist '{0}': {1}</value></data>
+  <data name="Loc.Scheduler.Log.EmptyPlaylist" xml:space="preserve"><value>'{0}' has an empty playlist or it could not be loaded.</value></data>
+  <data name="Loc.Scheduler.Log.NoPlayableTracks" xml:space="preserve"><value>'{0}' has no enabled playable tracks.</value></data>
+  <data name="Loc.Scheduler.Log.PlayingPlaylist" xml:space="preserve"><value>Playing playlist '{0}' ({1} tracks) from '{2}' ({3}).</value></data>
+  <data name="Loc.Scheduler.Log.EmptyBlock" xml:space="preserve"><value>'{0}' is an empty block.</value></data>
+  <data name="Loc.Scheduler.Log.UnplayableBlock" xml:space="preserve"><value>'{0}' has no playable content (all items are missing or empty).</value></data>
+  <data name="Loc.Scheduler.Log.PlayingBlock" xml:space="preserve"><value>Playing block '{0}' ({1} total tracks from {2} items) from '{3}' ({4}).</value></data>
+  <data name="Loc.Scheduler.Log.BlockAudioMissing" xml:space="preserve"><value>Block '{0}': audio file '{1}' not found. Skipped.</value></data>
+  <data name="Loc.Scheduler.Log.BlockPlaylistMissing" xml:space="preserve"><value>Block '{0}': playlist '{1}' not found. Skipped.</value></data>
+  <data name="Loc.Scheduler.Log.BlockPlaylistUnreadable" xml:space="preserve"><value>Block '{0}': playlist '{1}' is empty or unreadable. Skipped.</value></data>
+  <data name="Loc.Scheduler.Log.BlockSequenceMissing" xml:space="preserve"><value>Block '{0}': sequence '{1}' not found. Skipped.</value></data>
+  <data name="Loc.Scheduler.Log.BlockSequenceUnreadable" xml:space="preserve"><value>Block '{0}': sequence '{1}' is empty or unreadable. Skipped.</value></data>
+  <data name="Loc.Scheduler.Log.PlaybackError" xml:space="preserve"><value>Error playing '{0}': {1}</value></data>
+  <data name="Loc.Scheduler.Log.SequenceTrackMissing" xml:space="preserve"><value>Track {0} in '{1}' has no valid file. Skipped.</value></data>
+  <data name="Loc.Scheduler.Log.SequenceTrackPlaying" xml:space="preserve"><value>'{0}': track {1}/{2} — '{3}'.</value></data>
+  <data name="Loc.Scheduler.Log.SequenceTrackError" xml:space="preserve"><value>Error playing track {0} in '{1}': {2}</value></data>
+  <data name="Loc.Scheduler.Log.DelayBeforeTrack" xml:space="preserve"><value>Waiting {0}s before track {1}...</value></data>
+  <data name="Loc.Scheduler.Log.ItemEnded" xml:space="preserve"><value>Finished '{0}'.</value></data>
+  <data name="Loc.Scheduler.Log.VoiceTrackPlaying" xml:space="preserve"><value>'{0}': track {1}/{2} — VOICE: {3}.</value></data>
+  <data name="Loc.Scheduler.Log.Suspended" xml:space="preserve"><value>Suspended '{0}'{1} at {2}s (will resume).</value></data>
+  <data name="Loc.Scheduler.Log.SuspendError" xml:space="preserve"><value>Could not suspend current channel: {0}</value></data>
+  <data name="Loc.Scheduler.Log.ResumeSequenceFailed" xml:space="preserve"><value>Could not resume '{0}' (sequence unavailable).</value></data>
+  <data name="Loc.Scheduler.Log.ResumeSequence" xml:space="preserve"><value>Resuming '{0}' from track {1} at {2}s.</value></data>
+  <data name="Loc.Scheduler.Log.ResumeItem" xml:space="preserve"><value>Resuming '{0}' from {1}s.</value></data>
+  <data name="Loc.ScheduledItem.Kind.File" xml:space="preserve"><value>File</value></data>
+  <data name="Loc.Weekday.TueShort" xml:space="preserve"><value>Tue</value></data>
+  <data name="Loc.ScheduledItem.Schedule.Count" xml:space="preserve"><value>{0} times: {1}</value></data>
+  <data name="Loc.ScheduledItem.Block.NoName" xml:space="preserve"><value>(Unnamed block)</value></data>
+  <data name="Loc.Weekday.FriShort" xml:space="preserve"><value>Fri</value></data>
+  <data name="Loc.ScheduledItem.Kind.Playlist" xml:space="preserve"><value>PLAYLIST</value></data>
+  <data name="Loc.ScheduledItem.Empty.Block" xml:space="preserve"><value>Empty block</value></data>
+  <data name="Loc.ScheduledItem.Priority.High" xml:space="preserve"><value>HIGH</value></data>
+  <data name="Loc.Weekday.SatShort" xml:space="preserve"><value>Sat</value></data>
+  <data name="Loc.ScheduledItem.Block.Playlists" xml:space="preserve"><value>{0} playlist(s)</value></data>
+  <data name="Loc.ScheduledItem.Schedule.None" xml:space="preserve"><value>No scheduled times</value></data>
+  <data name="Loc.ScheduledItem.Sequence.TrackCount" xml:space="preserve"><value>{0} — {1} track(s)</value></data>
+  <data name="Loc.Weekday.ThuShort" xml:space="preserve"><value>Thu</value></data>
+  <data name="Loc.ScheduledItem.Tanda.NoFile" xml:space="preserve"><value>(Sequence without a file)</value></data>
+  <data name="Loc.ScheduledItem.Duration" xml:space="preserve"><value>Duration: {0}</value></data>
+  <data name="Loc.ScheduledItem.LoadFailed" xml:space="preserve"><value>{0} (could not be loaded)</value></data>
+  <data name="Loc.ScheduledItem.Block.NewName" xml:space="preserve"><value>New Block</value></data>
+  <data name="Loc.ScheduledItem.File.None" xml:space="preserve"><value>(no file)</value></data>
+  <data name="Loc.ScheduledItem.Empty.Playlist" xml:space="preserve"><value>No playlist</value></data>
+  <data name="Loc.ScheduledItem.Block.Sequences" xml:space="preserve"><value>{0} sequence(s)</value></data>
+  <data name="Loc.ScheduledItem.Sequence.None" xml:space="preserve"><value>(no sequence)</value></data>
+  <data name="Loc.ScheduledItem.FileType.RMWave" xml:space="preserve"><value>RMWAVE PROJECT</value></data>
+  <data name="Loc.ScheduledItem.Playlist.None" xml:space="preserve"><value>(no playlist)</value></data>
+  <data name="Loc.ScheduledItem.Schedule.NoNext" xml:space="preserve"><value>Days: {0} · No upcoming play time</value></data>
+  <data name="Loc.Weekday.MonShort" xml:space="preserve"><value>Mon</value></data>
+  <data name="Loc.ScheduledItem.Priority.Low" xml:space="preserve"><value>Low</value></data>
+  <data name="Loc.ScheduledItem.Schedule.NoneActive" xml:space="preserve"><value>No active schedules</value></data>
+  <data name="Loc.ScheduledItem.Block.Files" xml:space="preserve"><value>{0} file(s)</value></data>
+  <data name="Loc.ScheduledItem.Kind.Block" xml:space="preserve"><value>BLOCK</value></data>
+  <data name="Loc.ScheduledItem.Schedule.Summary" xml:space="preserve"><value>Days: {0} · Starts: {1} · Ends: {2}</value></data>
+  <data name="Loc.ScheduledItem.Kind.Sequence" xml:space="preserve"><value>SEQUENCE</value></data>
+  <data name="Loc.ScheduledItem.Empty.Sequence" xml:space="preserve"><value>No sequence</value></data>
+  <data name="Loc.ScheduledItem.Playlist.TrackCount" xml:space="preserve"><value>{0} — {1} track(s)</value></data>
+  <data name="Loc.Weekday.WedShort" xml:space="preserve"><value>Wed</value></data>
+  <data name="Loc.Weekday.SunShort" xml:space="preserve"><value>Sun</value></data>
+  <data name="Loc.EqPreset.Tooltip" xml:space="preserve"><value>Equalizer preset</value></data>
+  <data name="Loc.Tabs.NewNote" xml:space="preserve"><value>New Note</value></data>
+  <data name="Loc.BusSelector.Tooltip" xml:space="preserve"><value>Select module output bus</value></data>
+  <data name="Loc.BusSelector.Description" xml:space="preserve"><value>Choose which output device carries audio from this module.</value></data>
+  <data name="Loc.Tabs.AddTooltip" xml:space="preserve"><value>Add a new tab</value></data>
+  <data name="Loc.Common.SaveAs" xml:space="preserve"><value>Save as...</value></data>
+  <data name="Loc.Common.CloseTab" xml:space="preserve"><value>Close tab</value></data>
+  <data name="Loc.Common.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.Tabs.ScrollLeft" xml:space="preserve"><value>Scroll tabs left</value></data>
+  <data name="Loc.PlaylistMode.Title" xml:space="preserve"><value>Playback mode</value></data>
+  <data name="Loc.Tabs.NewSequence" xml:space="preserve"><value>New Sequence</value></data>
+  <data name="Loc.Notes.NewTooltip" xml:space="preserve"><value>New document</value></data>
+  <data name="Loc.PlaylistMode.Description" xml:space="preserve"><value>Choose how the playlist behaves when it reaches the end.</value></data>
+  <data name="Loc.Tabs.NewScheduled" xml:space="preserve"><value>New Scheduled Item</value></data>
+  <data name="Loc.Tabs.NewCart" xml:space="preserve"><value>New Cart</value></data>
+  <data name="Loc.BusSelector.Footer" xml:space="preserve"><value>Changes apply to upcoming audio. Audio already playing finishes on the previous bus.</value></data>
+  <data name="Loc.EqPreset.Title" xml:space="preserve"><value>Equalizer preset</value></data>
+  <data name="Loc.Tabs.FavoriteFolders" xml:space="preserve"><value>Favorite folders</value></data>
+  <data name="Loc.Common.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.Tabs.RenameTooltip" xml:space="preserve"><value>Double-click to rename</value></data>
+  <data name="Loc.EqPreset.Description" xml:space="preserve"><value>Choose a factory preset or one you saved.</value></data>
+  <data name="Loc.Notes.Placeholder" xml:space="preserve"><value>Start writing...</value></data>
+  <data name="Loc.Tabs.NewChainer" xml:space="preserve"><value>New Chainer</value></data>
+  <data name="Loc.PlaylistMode.Tooltip" xml:space="preserve"><value>Playlist playback mode</value></data>
+  <data name="Loc.Tabs.ScrollRight" xml:space="preserve"><value>Scroll tabs right</value></data>
+  <data name="Loc.Notes.OpenTooltip" xml:space="preserve"><value>Open .txt file</value></data>
+  <data name="Loc.BusSelector.Title" xml:space="preserve"><value>Module output bus</value></data>
+  <data name="Loc.Tabs.NewPlaylist" xml:space="preserve"><value>New Playlist</value></data>
+  <data name="Loc.Window.AutoDjPlanner.Title" xml:space="preserve"><value>AutoDJ Planner</value></data>
+  <data name="Loc.Window.About.Title" xml:space="preserve"><value>About RadioMaker</value></data>
+  <data name="Loc.Window.ScheduledItemEditor.Title" xml:space="preserve"><value>Edit Scheduled Item</value></data>
+  <data name="Loc.Window.LogExport.Title" xml:space="preserve"><value>Export Log</value></data>
+  <data name="Loc.Window.PlaylistTrackEditor.Title" xml:space="preserve"><value>Edit Track</value></data>
+  <data name="Loc.Window.CartButtonEditor.Title" xml:space="preserve"><value>Edit Cart Button</value></data>
+  <data name="Loc.Window.PlaylistGenerator.Title" xml:space="preserve"><value>Generate Playlist Automatically</value></data>
+  <data name="Loc.Window.AudioBuses.Title" xml:space="preserve"><value>Audio Devices and Buses</value></data>
+  <data name="Loc.Window.AudioTags.Title" xml:space="preserve"><value>Edit Tags</value></data>
+  <data name="Loc.Window.AddFavorite.Title" xml:space="preserve"><value>Add to Favorites</value></data>
+  <data name="Loc.Dialog.SelectSequence.Title" xml:space="preserve"><value>Select Sequence (.tnd)</value></data>
+  <data name="Loc.Dialog.SavePlaylist.Title" xml:space="preserve"><value>Save Playlist</value></data>
+  <data name="Loc.Dialog.SaveScheduledList.Title" xml:space="preserve"><value>Save Scheduled List</value></data>
+  <data name="Loc.Dialog.SelectCartAudio.Title" xml:space="preserve"><value>Select Audio File for Cart</value></data>
+  <data name="Loc.Dialog.SelectAudio.Title" xml:space="preserve"><value>Select Audio File</value></data>
+  <data name="Loc.Dialog.SaveCartBoard.Title" xml:space="preserve"><value>Save Cart Board</value></data>
+  <data name="Loc.Dialog.SelectPlaylist.Title" xml:space="preserve"><value>Select Playlist (.rmf)</value></data>
+  <data name="Loc.Dialog.FileType.CartBoard" xml:space="preserve"><value>Cart Board</value></data>
+  <data name="Loc.Dialog.OpenNote.Title" xml:space="preserve"><value>Open Note</value></data>
+  <data name="Loc.Dialog.OpenCartBoard.Title" xml:space="preserve"><value>Open Cart Board (.rcb)</value></data>
+  <data name="Loc.Dialog.FileType.Sequence" xml:space="preserve"><value>Sequence</value></data>
+  <data name="Loc.Dialog.SelectEmergencyFolder.Title" xml:space="preserve"><value>Choose Emergency Folder</value></data>
+  <data name="Loc.Dialog.SaveNote.Title" xml:space="preserve"><value>Save Note</value></data>
+  <data name="Loc.Dialog.FileType.Playlist" xml:space="preserve"><value>Playlist .rmf</value></data>
+  <data name="Loc.Dialog.OpenScheduledList.Title" xml:space="preserve"><value>Open Scheduled List</value></data>
+  <data name="Loc.Dialog.AudioFileType" xml:space="preserve"><value>Audio (BASS and add-ons) and RMWave projects</value></data>
+  <data name="Loc.Dialog.SaveLog.Title" xml:space="preserve"><value>Save Log</value></data>
+  <data name="Loc.Dialog.SelectEmergencyPlaylist.Title" xml:space="preserve"><value>Choose Preconfigured Emergency Playlist</value></data>
+  <data name="Loc.Dialog.PlainTextFileType" xml:space="preserve"><value>Plain Text</value></data>
+  <data name="Loc.Dialog.FileType.ScheduledList" xml:space="preserve"><value>Scheduled List</value></data>
+  <data name="Loc.Dialog.SaveSequence.Title" xml:space="preserve"><value>Save Sequence</value></data>
+  <data name="Loc.FavoriteFolder.Status.ReadError" xml:space="preserve"><value>Error reading folder: {0}</value></data>
+  <data name="Loc.FileBrowser.Status.NoOutputBus" xml:space="preserve"><value>No output bus selected.</value></data>
+  <data name="Loc.FavoriteFolder.Status.PlayError" xml:space="preserve"><value>Playback error: {0}</value></data>
+  <data name="Loc.FavoriteFolder.Status.Stopped" xml:space="preserve"><value>Stopped.</value></data>
+  <data name="Loc.FavoriteFolder.Status.Playing" xml:space="preserve"><value>Playing: {0}</value></data>
+  <data name="Loc.FileBrowser.Status.Stopped" xml:space="preserve"><value>Stopped.</value></data>
+  <data name="Loc.FileBrowser.Status.ReadError" xml:space="preserve"><value>Error reading folder: {0}</value></data>
+  <data name="Loc.FavoriteFolder.Status.NoOutputBus" xml:space="preserve"><value>No output bus selected.</value></data>
+  <data name="Loc.FavoriteFolder.Status.Ready" xml:space="preserve"><value>Ready. {0} file(s).</value></data>
+  <data name="Loc.FavoriteFolder.Status.LoadingTags" xml:space="preserve"><value>Loading tags for {0} file(s)...</value></data>
+  <data name="Loc.FileBrowser.Status.LoadingInfo" xml:space="preserve"><value>Loading information for {0} file(s)...</value></data>
+  <data name="Loc.FileBrowser.Status.Playing" xml:space="preserve"><value>Playing: {0}</value></data>
+  <data name="Loc.FileBrowser.Status.LoadingProgress" xml:space="preserve"><value>Loading information... {0}/{1}</value></data>
+  <data name="Loc.FileBrowser.Status.NoCompatibleFiles" xml:space="preserve"><value>No compatible files in this folder.</value></data>
+  <data name="Loc.FavoriteFolder.Status.Missing" xml:space="preserve"><value>Folder no longer exists: {0}</value></data>
+  <data name="Loc.FileBrowser.Status.Ready" xml:space="preserve"><value>Ready. {0} file(s) read.</value></data>
+  <data name="Loc.FileBrowser.Status.NoFilesWithExtension" xml:space="preserve"><value>No {0} files in this folder.</value></data>
+  <data name="Loc.FavoriteFolder.Status.TagProgress" xml:space="preserve"><value>Loading tags... {0}/{1}</value></data>
+  <data name="Loc.FavoriteFolder.Status.Reading" xml:space="preserve"><value>Reading folder...</value></data>
+  <data name="Loc.FavoriteFolder.Status.Empty" xml:space="preserve"><value>No audio files in this folder.</value></data>
+  <data name="Loc.FileBrowser.Status.PlayError" xml:space="preserve"><value>Playback error: {0}</value></data>
+  <data name="Loc.FileBrowser.Status.ProjectHint" xml:space="preserve"><value>&apos;{0}&apos; is a project file. Drag it to the matching tab.</value></data>
+  <data name="Loc.FileBrowser.Status.ReadingFolder" xml:space="preserve"><value>Reading &apos;{0}&apos;...</value></data>
+  <data name="Loc.Ducking.Status.MicsUpdated" xml:space="preserve"><value>Microphone list updated ({0} device(s)).</value></data>
+  <data name="Loc.Ducking.Status.Disabled" xml:space="preserve"><value>Ducking disabled.</value></data>
+  <data name="Loc.Ducking.Status.ApplyError" xml:space="preserve"><value>Error applying ducking: {0}</value></data>
+  <data name="Loc.Ducking.Status.ActiveConfigured" xml:space="preserve"><value>Ducking active: -{0:F0} dB with a {1:F0} dB threshold.</value></data>
+  <data name="Loc.AudioTags.Status.Saved" xml:space="preserve"><value>Tags saved successfully.</value></data>
+  <data name="Loc.AudioTags.Status.SaveError" xml:space="preserve"><value>Error saving tags: {0}</value></data>
+  <data name="Loc.Ducking.Status.Active" xml:space="preserve"><value>Ducking active.</value></data>
+  <data name="Loc.Demo.ErrorTitle" xml:space="preserve"><value>Presentation error</value></data>
+  <data name="Loc.Ducking.Status.EnumerateError" xml:space="preserve"><value>Error enumerating microphones: {0}</value></data>
+  <data name="Loc.AudioTags.Status.UnexpectedError" xml:space="preserve"><value>Unexpected error: {0}</value></data>
+  <data name="Loc.Main.Status.TabDoesNotAcceptFiles" xml:space="preserve"><value>Tab &apos;{0}&apos; does not accept files.</value></data>
+  <data name="Loc.Main.Status.EmergencyDisabled" xml:space="preserve"><value>Emergency playback disabled.</value></data>
+  <data name="Loc.Main.Status.EngineInitialized" xml:space="preserve"><value>Engine initialized. {0} active bus(es).</value></data>
+  <data name="Loc.Main.Status.PlaybackBusRemoved" xml:space="preserve"><value>The playback bus was removed. Load a file again.</value></data>
+  <data name="Loc.Main.Status.AddedToChainers" xml:space="preserve"><value>Added to Chainers: {0}</value></data>
+  <data name="Loc.Main.Status.ConfigureEmergencyFirst" xml:space="preserve"><value>Configure Emergency playback before enabling it.</value></data>
+  <data name="Loc.Main.Status.DefaultPlaylistBus" xml:space="preserve"><value>Playlist default bus -> {0}</value></data>
+  <data name="Loc.Main.Status.StopAll" xml:space="preserve"><value>Playback stopped globally.</value></data>
+  <data name="Loc.Main.Status.AddedToPlaylist" xml:space="preserve"><value>Added to Playlist: {0}</value></data>
+  <data name="Loc.Main.Status.OpenRMVoiceError" xml:space="preserve"><value>Error opening RMVoice: {0}</value></data>
+  <data name="Loc.Main.Status.PerModuleRouting" xml:space="preserve"><value>Per-module routing is active. Each module can choose its output.</value></data>
+  <data name="Loc.Main.Status.AddedToSequence" xml:space="preserve"><value>Added to Sequence: {0}</value></data>
+  <data name="Loc.Main.Status.PlaybackFinished" xml:space="preserve"><value>Finished.</value></data>
+  <data name="Loc.Main.Status.OpeningRMVoice" xml:space="preserve"><value>Opening RMVoice...</value></data>
+  <data name="Loc.Main.Status.AddFileError" xml:space="preserve"><value>Error adding file: {0}</value></data>
+  <data name="Loc.Main.Status.RMVoiceNotFound" xml:space="preserve"><value>RMVoice executable was not found. Check Addons/RMVoice/.</value></data>
+  <data name="Loc.Main.Status.EmergencyStopped" xml:space="preserve"><value>Emergency playback stopped and disabled.</value></data>
+  <data name="Loc.Main.Status.ScheduledTriggered" xml:space="preserve"><value>SCHEDULED: {0} from &apos;{1}&apos;</value></data>
+  <data name="Loc.Main.Status.AddedToScheduled" xml:space="preserve"><value>Added to Scheduled: {0}</value></data>
+  <data name="Loc.Main.Status.DefaultScheduledBus" xml:space="preserve"><value>Scheduled -> {0}</value></data>
+  <data name="Loc.Main.Status.Stopped" xml:space="preserve"><value>Stopped.</value></data>
+  <data name="Loc.Main.Status.EngineInitializationFailed" xml:space="preserve"><value>Audio engine initialization failed.</value></data>
+  <data name="Loc.Main.Status.NoActiveTab" xml:space="preserve"><value>There is no active tab.</value></data>
+  <data name="Loc.Main.Status.TriggersReset" xml:space="preserve"><value>Trigger state reset.</value></data>
+  <data name="Loc.Main.Status.Paused" xml:space="preserve"><value>Paused.</value></data>
+  <data name="Loc.Main.Status.EmergencyEnabled" xml:space="preserve"><value>Emergency playback enabled. Watchdog monitoring the on-air bus.</value></data>
+  <data name="Loc.Main.Status.Playing" xml:space="preserve"><value>Playing.</value></data>
+  <data name="Loc.Main.Status.DefaultFileManagerBus" xml:space="preserve"><value>File Manager -> {0}</value></data>
+  <data name="Loc.Main.Status.DefaultCartBus" xml:space="preserve"><value>Cart default bus -> {0}</value></data>
+  <data name="Loc.Main.Status.GlobalBusApplied" xml:space="preserve"><value>Global bus applied to all modules: {0}</value></data>
+  <data name="Loc.Main.Status.StoppedByUser" xml:space="preserve"><value>Stopped by user.</value></data>
+  <data name="Loc.Main.Status.FileLoaded" xml:space="preserve"><value>Loaded: {0}</value></data>
+  <data name="Loc.Main.Status.EmergencyConfigurationIncomplete" xml:space="preserve"><value>Emergency playback configuration is still incomplete.</value></data>
+  <data name="Loc.Main.Status.ChannelReleasedForBusChange" xml:space="preserve"><value>Channel released after changing the output bus.</value></data>
+  <data name="Loc.Main.Status.NotesTabCreated" xml:space="preserve"><value>New Notes tab created.</value></data>
+  <data name="Loc.Main.Status.CartBoardSaved" xml:space="preserve"><value>Cart Board saved: {0}</value></data>
+  <data name="Loc.Main.Status.PlaylistTabCreated" xml:space="preserve"><value>New Playlist tab created.</value></data>
+  <data name="Loc.Main.Status.StopAllError" xml:space="preserve"><value>Error stopping all playback: {0}</value></data>
+  <data name="Loc.Dialog.OpenPlaylist.Title" xml:space="preserve"><value>Open Playlist</value></data>
+  <data name="Loc.Main.Status.TabDoesNotSupportSave" xml:space="preserve"><value>Tab &apos;{0}&apos; does not support saving.</value></data>
+  <data name="Loc.Main.Status.TagsSaved" xml:space="preserve"><value>Tags saved: {0}</value></data>
+  <data name="Loc.Main.Status.AddonNotFound" xml:space="preserve"><value>Could not find {0}. Check that it is in Addons/{1}/ alongside RadioMaker.exe.</value></data>
+  <data name="Loc.Main.Status.NoteOpened" xml:space="preserve"><value>Note opened: {0}</value></data>
+  <data name="Loc.Main.Status.CartBoardOpened" xml:space="preserve"><value>Cart Board opened: {0}</value></data>
+  <data name="Loc.Main.Status.ScheduledTabCreated" xml:space="preserve"><value>New Scheduled tab created.</value></data>
+  <data name="Loc.Main.Status.SequenceTabCreated" xml:space="preserve"><value>New Sequence tab created.</value></data>
+  <data name="Loc.Main.Status.PlaylistGenerated" xml:space="preserve"><value>Playlist generated: {0} track(s).</value></data>
+  <data name="Loc.Main.Status.NoActiveTabToSave" xml:space="preserve"><value>There is no active tab to save.</value></data>
+  <data name="Loc.Main.Status.TagsEditError" xml:space="preserve"><value>Error editing tags: {0}</value></data>
+  <data name="Loc.Main.Status.ScheduledListOpened" xml:space="preserve"><value>Scheduled list opened: {0}</value></data>
+  <data name="Loc.Main.Status.PlaylistOpened" xml:space="preserve"><value>Playlist opened: {0}</value></data>
+  <data name="Loc.Main.Status.CartTabCreated" xml:space="preserve"><value>New Cart tab created.</value></data>
+  <data name="Loc.Dialog.OpenSequence.Title" xml:space="preserve"><value>Open Sequence</value></data>
+  <data name="Loc.Main.Status.SequenceOpened" xml:space="preserve"><value>Sequence opened: {0}</value></data>
+  <data name="Loc.Main.Status.ScheduledItemUpdated" xml:space="preserve"><value>Scheduled item updated: {0}</value></data>
+  <data name="Loc.Main.Status.LogReloaded" xml:space="preserve"><value>Log reloaded.</value></data>
+  <data name="Loc.Main.Status.AddonStarting" xml:space="preserve"><value>Starting {0}...</value></data>
+  <data name="Loc.Main.Status.CannotCreatePlaylistTab" xml:space="preserve"><value>Could not open a Playlist tab.</value></data>
+  <data name="Loc.Main.Status.AddonStartError" xml:space="preserve"><value>Error starting {0}: {1}</value></data>
+  <data name="Loc.FileBrowser.Status.FavoriteAdded" xml:space="preserve"><value>Added to favorites: {0}</value></data>
+  <data name="Loc.Views.CartBoard.Status.OpeningRMWave" xml:space="preserve"><value>Opening {0} in RMWave...</value></data>
+  <data name="Loc.Views.Scheduled.Status.OpeningRMWave" xml:space="preserve"><value>Opening {0} in RMWave...</value></data>
+  <data name="Loc.Normalization.Status.ApplyError" xml:space="preserve"><value>Error applying normalization: {0}</value></data>
+  <data name="Loc.Views.Scheduled.Status.ItemUpdated" xml:space="preserve"><value>Item updated: {0}</value></data>
+  <data name="Loc.Notes.Status.OpenError" xml:space="preserve"><value>Error opening: {0}</value></data>
+  <data name="Loc.Notes.Status.SaveError" xml:space="preserve"><value>Error saving: {0}</value></data>
+  <data name="Loc.Notes.Status.NewDocument" xml:space="preserve"><value>New document</value></data>
+  <data name="Loc.Notes.Status.Saved" xml:space="preserve"><value>Saved: {0}</value></data>
+  <data name="Loc.Notes.Status.Opened" xml:space="preserve"><value>Opened: {0}</value></data>
+  <data name="Loc.FavoriteFolder.Status.OpeningRMWave" xml:space="preserve"><value>Opening {0} in RMWave...</value></data>
+  <data name="Loc.Views.CartBoard.Status.FileNotFound" xml:space="preserve"><value>File not found: {0}</value></data>
+  <data name="Loc.Views.CartBoard.Status.NotAudio" xml:space="preserve"><value>&apos;{0}&apos; is not an audio file. The Cart Board only accepts audio files.</value></data>
+  <data name="Loc.Emergency.Status.Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.FileBrowser.Status.OpeningRMWave" xml:space="preserve"><value>Opening {0} in RMWave...</value></data>
+  <data name="Loc.Views.CartBoard.Status.TagsError" xml:space="preserve"><value>Error editing tags: {0}</value></data>
+  <data name="Loc.Views.CartBoard.Status.ButtonUpdated" xml:space="preserve"><value>Button updated: {0}</value></data>
+  <data name="Loc.Views.CartBoard.Status.TagsSaved" xml:space="preserve"><value>Tags saved: {0}</value></data>
+  <data name="Loc.Normalization.Status.Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.Tabs.FavoriteFolderMissing" xml:space="preserve"><value>Folder no longer exists: {0}</value></data>
+  <data name="Loc.FileBrowser.Status.FavoriteAddFailed" xml:space="preserve"><value>Could not add to favorites.</value></data>
+  <data name="Loc.Notes.Status.Unsaved" xml:space="preserve"><value>Unsaved</value></data>
+  <data name="Loc.Tabs.Untitled" xml:space="preserve"><value>Untitled</value></data>
+  <data name="Loc.Main.Next.None" xml:space="preserve"><value>(nothing upcoming)</value></data>
+  <data name="Loc.Main.AutoDj.Status.Disabled" xml:space="preserve"><value>AutoDJ disabled.</value></data>
+  <data name="Loc.Main.AutoDj.Status.NewClockWaitingForTrackEnd" xml:space="preserve"><value>The new AutoDJ clock will take over when the current track ends.</value></data>
+  <data name="Loc.Main.AutoDj.Status.BusChangeWaitingForTrackEnd" xml:space="preserve"><value>AutoDJ will switch to the new bus when the current track ends.</value></data>
+  <data name="Loc.Main.AutoDj.Status.WaitingForAirBus" xml:space="preserve"><value>AutoDJ is enabled and waiting for the on-air bus to become available.</value></data>
+  <data name="Loc.Main.AutoDj.Status.WaitingSafePoint" xml:space="preserve"><value>AutoDJ is enabled and waiting for a safe point to go on air.</value></data>
+  <data name="Loc.Main.AutoDj.Status.OnAir" xml:space="preserve"><value>AutoDJ on air: {0}.</value></data>
+  <data name="Loc.Main.AutoDj.Status.NoAirBus" xml:space="preserve"><value>No on-air bus is available for AutoDJ.</value></data>
+  <data name="Loc.Main.AutoDj.Status.StartFailedRetrying" xml:space="preserve"><value>AutoDJ is enabled but could not start. It will retry when the bus is available.</value></data>
+  <data name="Loc.Main.AutoDj.Status.PausedByScheduled" xml:space="preserve"><value>AutoDJ paused by a scheduled item; it will resume when it ends.</value></data>
+  <data name="Loc.Main.AutoDj.Status.Paused" xml:space="preserve"><value>AutoDJ paused.</value></data>
+  <data name="Loc.Main.AutoDj.Status.ClockHasNoPlayableTracks" xml:space="preserve"><value>The clock has no playable tracks. Generate a valid preview first.</value></data>
+  <data name="Loc.Main.AutoDj.Status.ReadyToAir" xml:space="preserve"><value>AutoDJ is ready to go on air.</value></data>
+  <data name="Loc.Main.Source.VoiceOver" xml:space="preserve"><value>Voice-over</value></data>
+  <data name="Loc.Main.Source.FromList" xml:space="preserve"><value>from {0}</value></data>
+  <data name="Loc.Main.Source.Sequence" xml:space="preserve"><value>Sequence</value></data>
+  <data name="Loc.Main.Source.ScheduledNamed" xml:space="preserve"><value>Scheduled: {0}</value></data>
+  <data name="Loc.Main.Source.SequenceInProgress" xml:space="preserve"><value>Sequence in progress</value></data>
+  <data name="Loc.Main.TrackPosition" xml:space="preserve"><value>Track {0} of {1}</value></data>
+  <data name="Loc.Main.Source.Chainer" xml:space="preserve"><value>Chainer</value></data>
+  <data name="Loc.Main.Source.SequenceNamed" xml:space="preserve"><value>Sequence: {0}</value></data>
+  <data name="Loc.Main.Source.Scheduled" xml:space="preserve"><value>Scheduled</value></data>
+  <data name="Loc.Main.Source.SequenceQueue" xml:space="preserve"><value>Sequence, {0} track(s)</value></data>
+  <data name="Loc.Events.Status.NoScheduler" xml:space="preserve"><value>No scheduler.</value></data>
+  <data name="Loc.Locution.NoData" xml:space="preserve"><value>No data</value></data>
+  <data name="Loc.Plugins.Summary" xml:space="preserve"><value>{0} of {1} plugins loaded successfully.</value></data>
+  <data name="Loc.Plugins.EmptySummary" xml:space="preserve"><value>0 of 0 plugins loaded.</value></data>
+  <data name="Loc.Plugins.NativeBass" xml:space="preserve"><value>Native BASS</value></data>
+  <data name="Loc.Plugins.NoExtensions" xml:space="preserve"><value>(no extensions)</value></data>
+  <data name="Loc.Plugins.Loaded" xml:space="preserve"><value>Loaded</value></data>
+  <data name="Loc.Plugins.Unavailable" xml:space="preserve"><value>Unavailable</value></data>
+  <data name="Loc.Splash.Starting" xml:space="preserve"><value>Starting...</value></data>
+  <data name="Loc.Splash.StartingRadioMaker" xml:space="preserve"><value>Starting RadioMaker...</value></data>
+  <data name="Loc.Splash.InitializingAudioEngine" xml:space="preserve"><value>Initializing audio engine...</value></data>
+  <data name="Loc.Splash.InitializingBass" xml:space="preserve"><value>Initializing BASS...</value></data>
+  <data name="Loc.Splash.LoadingFormatPlugins" xml:space="preserve"><value>Loading format plugins...</value></data>
+  <data name="Loc.Splash.LoadingConfiguration" xml:space="preserve"><value>Loading configuration...</value></data>
+  <data name="Loc.Splash.RestoringWorkspace" xml:space="preserve"><value>Restoring workspace...</value></data>
+  <data name="Loc.Splash.PreparingInterface" xml:space="preserve"><value>Preparing interface...</value></data>
+  <data name="Loc.Splash.Ready" xml:space="preserve"><value>Ready</value></data>
+  <data name="Loc.Splash.StartError" xml:space="preserve"><value>Startup error: {0}</value></data>
+  <data name="Loc.About.BuildDate.Unknown" xml:space="preserve"><value>unknown</value></data>
+  <data name="Loc.Main.Status.Ready" xml:space="preserve"><value>Ready.</value></data>
+  <data name="Loc.Main.Confirm.StopEmergency.Title" xml:space="preserve"><value>Stop emergency mode</value></data>
+  <data name="Loc.Main.Confirm.StopEmergency.Message" xml:space="preserve"><value>Emergency audio is on air. Do you want to stop it?{0}{0}The watchdog will be disabled and the operator will need to enable it manually.</value></data>
+  <data name="Loc.Main.Confirm.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.Main.Confirm.Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Loc.Locution.Status.NoData" xml:space="preserve"><value>No data</value></data>
+  <data name="Loc.Locution.Tooltip.Unavailable" xml:space="preserve"><value>RMVoice is unavailable</value></data>
+  <data name="Loc.Locution.Tooltip.Playing" xml:space="preserve"><value>Playing voice announcement...</value></data>
+  <data name="Loc.Locution.Tooltip.PlayClimate" xml:space="preserve"><value>Play weather</value></data>
+  <data name="Loc.Locution.Tooltip.PlayHour" xml:space="preserve"><value>Play time</value></data>
+  <data name="Loc.Locution.Status.AlreadyPlaying" xml:space="preserve"><value>a voice announcement is already playing</value></data>
+  <data name="Loc.Demo.Header.Title" xml:space="preserve"><value>Welcome tour</value></data>
+  <data name="Loc.Demo.Header.Subtitle" xml:space="preserve"><value>Explore RadioMaker features</value></data>
+  <data name="Loc.Demo.Playing" xml:space="preserve"><value>NOW PLAYING</value></data>
+  <data name="Loc.Demo.Counter.Audio" xml:space="preserve"><value>Track </value></data>
+  <data name="Loc.Demo.Counter.Of" xml:space="preserve"><value> of </value></data>
+  <data name="Loc.Demo.Button.Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Loc.Demo.Button.Resume" xml:space="preserve"><value>Resume</value></data>
+  <data name="Loc.Demo.Button.Skip" xml:space="preserve"><value>Skip</value></data>
+  <data name="Loc.Events.Status.Empty" xml:space="preserve"><value>No pending items.</value></data>
+  <data name="Loc.Events.Status.Pending" xml:space="preserve"><value>{0} pending item(s) in {1} active list(s).</value></data>
+  <data name="Loc.Events.Status.DisabledLists" xml:space="preserve"><value> {0} disabled list(s).</value></data>
+  <data name="Loc.Carts.Status.Ready" xml:space="preserve"><value>Cart board ready.</value></data>
+  <data name="Loc.FavoriteFolder.Status.Starting" xml:space="preserve"><value>Loading...</value></data>
+  <data name="Loc.FavoriteFolder.Status.NoAudioFiles" xml:space="preserve"><value>No audio files</value></data>
+  <data name="Loc.FileBrowser.Status.Starting" xml:space="preserve"><value>Browse to a folder to view its files.</value></data>
+  <data name="Loc.FileBrowser.Status.NoFiles" xml:space="preserve"><value>No files</value></data>
+  <data name="Loc.Normalization.Status.WaitingForFile" xml:space="preserve"><value>Waiting for a file to load...</value></data>
+  <data name="Loc.Normalization.Status.NoChannel" xml:space="preserve"><value>No channel loaded.</value></data>
+  <data name="Loc.Normalization.Status.Analyzing" xml:space="preserve"><value>Analyzing levels...</value></data>
+  <data name="Loc.Normalization.Status.AnalysisComplete" xml:space="preserve"><value>Analysis complete. Peak: {0:F2} dB, RMS: {1:F2} dB.</value></data>
+  <data name="Loc.Normalization.Status.AnalysisFailed" xml:space="preserve"><value>Could not analyze the file.</value></data>
+  <data name="Loc.Normalization.Description.Peak" xml:space="preserve"><value>Peak: brings the peak to the target while preserving dynamics.</value></data>
+  <data name="Loc.Normalization.Description.Rms" xml:space="preserve"><value>RMS: matches perceived loudness between files.</value></data>
+  <data name="Loc.Normalization.Status.Disabled" xml:space="preserve"><value>Normalization disabled.</value></data>
+  <data name="Loc.Normalization.Status.WaitingAnalysis" xml:space="preserve"><value>Normalization enabled: waiting for analysis.</value></data>
+  <data name="Loc.Normalization.Status.Active" xml:space="preserve"><value>Normalization enabled: {0}.</value></data>
+  <data name="Loc.FileBrowser.Count.All" xml:space="preserve"><value>{0} file(s)</value></data>
+  <data name="Loc.FileBrowser.Count.Filtered" xml:space="preserve"><value>{0} of {1} file(s)</value></data>
+  <data name="Loc.FileBrowser.Filter.All" xml:space="preserve"><value>All extensions</value></data>
+  <data name="Loc.FileBrowser.Filter.Playlists" xml:space="preserve"><value>.rmf — Playlists</value></data>
+  <data name="Loc.FileBrowser.Filter.Chainers" xml:space="preserve"><value>.rme — Chainers</value></data>
+  <data name="Loc.FileBrowser.Filter.Sequences" xml:space="preserve"><value>.tnd — Sequences</value></data>
+  <data name="Loc.FileBrowser.Filter.Scheduled" xml:space="preserve"><value>.rms — Scheduled</value></data>
+  <data name="Loc.FileBrowser.Filter.Carts" xml:space="preserve"><value>.rcb — Cart board</value></data>
+  <data name="Loc.Label.Locution.HourMinute" xml:space="preserve"><value>Time + minutes</value></data>
+  <data name="Loc.Label.Locution.Climate" xml:space="preserve"><value>Temperature and humidity</value></data>
+  <data name="Loc.Label.Locution.HourClimate" xml:space="preserve"><value>Time + temperature and humidity</value></data>
+  <data name="Loc.Label.PlaylistMode.Once" xml:space="preserve"><value>Once</value></data>
+  <data name="Loc.Label.PlaylistMode.Loop" xml:space="preserve"><value>Repeat</value></data>
+  <data name="Loc.Label.PlaylistMode.Shuffle" xml:space="preserve"><value>Shuffle</value></data>
+  <data name="Loc.Label.GeneratorOrder.Random" xml:space="preserve"><value>Random</value></data>
+  <data name="Loc.Label.GeneratorOrder.Name" xml:space="preserve"><value>Alphabetical by name</value></data>
+  <data name="Loc.Label.GeneratorOrder.Path" xml:space="preserve"><value>Alphabetical by path</value></data>
+  <data name="Loc.Label.EmergencySource.Prearmed" xml:space="preserve"><value>Preloaded playlist (.rmf)</value></data>
+  <data name="Loc.Label.EmergencySource.Folder" xml:space="preserve"><value>Folder (shuffle)</value></data>
+  <data name="Loc.Label.EmergencySource.Hybrid" xml:space="preserve"><value>Hybrid (playlist and folder)</value></data>
+  <data name="Loc.Label.Priority.Low" xml:space="preserve"><value>Low</value></data>
+  <data name="Loc.Label.Priority.Normal" xml:space="preserve"><value>Normal</value></data>
+  <data name="Loc.Label.Priority.High" xml:space="preserve"><value>High</value></data>
+  <data name="Loc.Label.Priority.Air" xml:space="preserve"><value>AIR</value></data>
+  <data name="Loc.Label.Spectrum.LogBands" xml:space="preserve"><value>Bands</value></data>
+  <data name="Loc.Label.Spectrum.Waterfall" xml:space="preserve"><value>Waterfall</value></data>
+  <data name="Loc.Label.Spectrum.Waveform" xml:space="preserve"><value>Waveform</value></data>
+  <data name="Loc.Main.Emergency.Tooltip.Active" xml:space="preserve"><value>EMERGENCY ACTIVE - Click to stop</value></data>
+  <data name="Loc.Main.Emergency.Tooltip.Deactivate" xml:space="preserve"><value>Disable emergency mode</value></data>
+  <data name="Loc.Main.Emergency.Tooltip.Activate" xml:space="preserve"><value>Enable emergency mode</value></data>
+  <data name="Loc.Main.Error.NoOutputBus" xml:space="preserve"><value>No output bus is available.</value></data>
+  <data name="Loc.Notes.Untitled" xml:space="preserve"><value>Untitled</value></data>
+  <data name="Loc.PlaylistTrackEditor.Header" xml:space="preserve"><value>Edit playlist track</value></data>
+  <data name="Loc.Schedule.EveryDay" xml:space="preserve"><value>Every day</value></data>
+  <data name="Loc.Label.Interruption.Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Loc.Label.Interruption.Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Loc.Label.Interruption.AutoResume" xml:space="preserve"><value>Pause and resume</value></data>
+  <data name="Loc.Label.Module.Cart" xml:space="preserve"><value>Cart board</value></data>
+  <data name="Loc.Label.Module.Playlist" xml:space="preserve"><value>Playlists</value></data>
+  <data name="Loc.Label.Module.Scheduler" xml:space="preserve"><value>Scheduled</value></data>
+  <data name="Loc.Label.Module.FileManager" xml:space="preserve"><value>File Manager</value></data>
+  <data name="Loc.Label.Module.FavoriteFolder" xml:space="preserve"><value>Favorite Folders</value></data>
+  <data name="Loc.Label.Module.Manual" xml:space="preserve"><value>Manual playback</value></data>
+  <data name="Loc.Label.Module.AutoDj" xml:space="preserve"><value>AutoDJ</value></data>
+  <data name="Loc.Label.FileKind.CartBoard" xml:space="preserve"><value>CART BOARD</value></data>
+  <data name="Loc.Label.PlaylistTrack.MixNone" xml:space="preserve"><value>(no mix)</value></data>
+  <data name="Loc.Label.Tanda.NoDelay" xml:space="preserve"><value>No delay</value></data>
+  <data name="Loc.Label.Tanda.Delay" xml:space="preserve"><value>Delay {0:F1} s</value></data>
+  <data name="Loc.Label.Tanda.Duration" xml:space="preserve"><value>Duration: {0}</value></data>
+  <data name="Loc.Label.Tanda.RmWaveProject" xml:space="preserve"><value>RMWAVE PROJECT</value></data>
+  <data name="Loc.Fade.Status.Disabled" xml:space="preserve"><value>Automatic fade disabled.</value></data>
+  <data name="Loc.Fade.Status.Waiting" xml:space="preserve"><value>Automatic fade: {0} (applies to the next playback).</value></data>
+  <data name="Loc.Fade.Status.Applied" xml:space="preserve"><value>Automatic fade: {0} applied to the current channel.</value></data>
+  <data name="Loc.Fade.Crossfade.Active" xml:space="preserve"><value>Crossfade active: {0} between carts.</value></data>
+  <data name="Loc.Fade.Crossfade.Disabled" xml:space="preserve"><value>Crossfade disabled: carts overlap.</value></data>
+  <data name="Loc.Label.Locution.DurationEstimated" xml:space="preserve"><value>Estimated duration: {0}</value></data>
+  <data name="Loc.Label.Locution.DurationUnknown" xml:space="preserve"><value>Voice announcement (duration unknown)</value></data>
+  <data name="Loc.Label.Audio.Duration" xml:space="preserve"><value>Duration: {0}</value></data>
+  <data name="Loc.Label.Locution.Prefix" xml:space="preserve"><value>Voice announcement: {0}</value></data>
+  <data name="Loc.Label.Locution.Weather" xml:space="preserve"><value>Weather</value></data>
+  <data name="Loc.Label.Locution.TimeWeather" xml:space="preserve"><value>Time + weather</value></data>
+  <data name="Loc.Label.PlaylistTrack.MixLocutionPrefix" xml:space="preserve"><value>Voice: </value></data>
+  <data name="Loc.Label.Locution.Default" xml:space="preserve"><value>Voice announcement</value></data>
+  <data name="Loc.Main.Next.Resuming" xml:space="preserve"><value>will resume</value></data>
+  <data name="Loc.Main.Source.Manual" xml:space="preserve"><value>MANUAL</value></data>
+  <data name="Loc.Main.Source.Scheduler" xml:space="preserve"><value>SCHEDULED</value></data>
+  <data name="Loc.Main.Source.Playlist" xml:space="preserve"><value>PLAYLIST</value></data>
+  <data name="Loc.Main.Source.AutoDj" xml:space="preserve"><value>AUTODJ</value></data>
+  <data name="Loc.Main.Source.Cart" xml:space="preserve"><value>CART BOARD</value></data>
+  <data name="Loc.Main.Source.Demo" xml:space="preserve"><value>DEMO</value></data>
+  <data name="Loc.Main.Source.Locution" xml:space="preserve"><value>VOICE</value></data>
+  <data name="Loc.Main.Source.HourWeather" xml:space="preserve"><value>Time / weather</value></data>
+  <data name="Loc.Tabs.Default.Scheduled" xml:space="preserve"><value>Scheduled {0}</value></data>
+  <data name="Loc.Tabs.Default.Sequence" xml:space="preserve"><value>Sequence {0}</value></data>
+  <data name="Loc.Tabs.Default.Playlist" xml:space="preserve"><value>Playlist {0}</value></data>
+  <data name="Loc.About.Description" xml:space="preserve"><value>Cross-platform radio automation software. Scheduled playback, cart board, sequences, playlists, and audio analysis in one professional environment.</value></data>
+  <data name="Loc.About.Copyright" xml:space="preserve"><value>© {0} RadioMaker. All rights reserved.</value></data>
+  <data name="Loc.About.VersionPrefix" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Loc.About.BuildPrefix" xml:space="preserve"><value>Build {0}</value></data>
+  <data name="Loc.About.Group.Framework" xml:space="preserve"><value>Framework and UI</value></data>
+  <data name="Loc.About.Group.Mvvm" xml:space="preserve"><value>MVVM and utilities</value></data>
+  <data name="Loc.About.Group.Audio" xml:space="preserve"><value>Audio engine</value></data>
+  <data name="Loc.About.Group.Reports" xml:space="preserve"><value>Reports and export</value></data>
+  <data name="Loc.About.Dependency.Avalonia" xml:space="preserve"><value>Cross-platform UI framework for .NET.</value></data>
+  <data name="Loc.About.Dependency.AvaloniaDesktop" xml:space="preserve"><value>Desktop backend for Avalonia.</value></data>
+  <data name="Loc.About.Dependency.Fluent" xml:space="preserve"><value>Fluent theme for Avalonia.</value></data>
+  <data name="Loc.About.Dependency.Inter" xml:space="preserve"><value>Inter font bundled for Avalonia.</value></data>
+  <data name="Loc.About.Dependency.Diagnostics" xml:space="preserve"><value>Diagnostic tools and DevTools for Avalonia.</value></data>
+  <data name="Loc.About.Dependency.Mvvm" xml:space="preserve"><value>MVVM utilities: ObservableProperty, RelayCommand, and more.</value></data>
+  <data name="Loc.About.Dependency.MaterialIcons" xml:space="preserve"><value>Material Design icons for Avalonia.</value></data>
+  <data name="Loc.About.Dependency.Bass" xml:space="preserve"><value>Cross-platform native audio engine by Un4seen Developments. Free for personal and educational use; commercial use requires a license.</value></data>
+  <data name="Loc.About.Dependency.ManagedBass" xml:space="preserve"><value>Cross-platform .NET wrapper for the BASS library.</value></data>
+  <data name="Loc.About.Dependency.BassFx" xml:space="preserve"><value>Audio effects add-on (EQ, reverb, and echo) for BASS.</value></data>
+  <data name="Loc.About.Dependency.Flac" xml:space="preserve"><value>FLAC decoding add-on for BASS.</value></data>
+  <data name="Loc.About.Dependency.Aac" xml:space="preserve"><value>AAC / M4A decoding add-on for BASS.</value></data>
+  <data name="Loc.About.Dependency.Opus" xml:space="preserve"><value>Opus decoding add-on for BASS.</value></data>
+  <data name="Loc.About.Dependency.WavPack" xml:space="preserve"><value>WavPack decoding add-on for BASS.</value></data>
+  <data name="Loc.About.Dependency.TagLib" xml:space="preserve"><value>Reads and writes audio tags (ID3, Vorbis, FLAC, MP4, APE).</value></data>
+  <data name="Loc.About.Dependency.ClosedXml" xml:space="preserve"><value>Creates and edits Excel files (.xlsx).</value></data>
+  <data name="Loc.About.Dependency.QuestPdf" xml:space="preserve"><value>PDF document generation. Free Community License for projects with annual revenue below USD 1 million.</value></data>
+  <data name="Loc.About.License.Bass" xml:space="preserve"><value>Free (non-commercial)</value></data>
+  <data name="Loc.About.License.QuestPdf" xml:space="preserve"><value>Community License</value></data>
+  <data name="Loc.About.Link.Avalonia" xml:space="preserve"><value>Avalonia website</value></data>
+  <data name="Loc.About.Link.Bass" xml:space="preserve"><value>BASS (Un4seen)</value></data>
+  <data name="Loc.About.Link.DotNet" xml:space="preserve"><value>.NET 8</value></data>
+  <data name="Loc.FileBrowser.Status.FavoriteRemoved" xml:space="preserve"><value>Removed from favorites: {0}</value></data>
+  <data name="Loc.FileBrowser.Status.FavoriteRemoveFailed" xml:space="preserve"><value>Could not remove from favorites.</value></data>
+  <data name="Loc.Main.Error.SchedulerStart" xml:space="preserve"><value>Could not start the scheduler: {0}</value></data>
+  <data name="Loc.Dialog.SelectAudioFile" xml:space="preserve"><value>Select audio file</value></data>
+  <data name="Loc.Dialog.SelectMixAudioFile" xml:space="preserve"><value>Select mix audio file</value></data>
+  <data name="Loc.RMWaveLauncher.PathEmpty" xml:space="preserve"><value>The path is empty.</value></data>
+  <data name="Loc.RMWaveLauncher.InvalidProject" xml:space="preserve"><value>This is not an RMW project: {0}</value></data>
+  <data name="Loc.RMWaveLauncher.FileMissing" xml:space="preserve"><value>File not found: {0}</value></data>
+  <data name="Loc.RMWaveLauncher.AddonMissing" xml:space="preserve"><value>RMWave was not found. Check that it is in Addons/RMWave/.</value></data>
+  <data name="Loc.RMWaveLauncher.OpenError" xml:space="preserve"><value>Error opening RMWave: {0}</value></data>
+  <data name="Loc.Views.FavoriteDialog.DefaultNamePlaceholder" xml:space="preserve"><value>Leave blank to use the folder name</value></data>
+  <data name="Loc.Views.FavoriteDialog.SavedAs" xml:space="preserve"><value>Will be saved as: </value></data>
+  <data name="Loc.Views.FavoriteDialog.EmptyName" xml:space="preserve"><value>(unnamed)</value></data>
+  <data name="Loc.Controls.Scheduler.QueueCount" xml:space="preserve"><value>({0} item(s))</value></data>
+  <data name="Loc.Main.SelectedBus" xml:space="preserve"><value>Output: {0}</value></data>
+  <data name="Loc.PlaylistGenerator.Warning.ReplaceExisting" xml:space="preserve"><value>The current playlist has {0} track(s). They will be replaced by the generated tracks.</value></data>
+  <data name="Loc.RMVoice.StatusIndicator.Playing" xml:space="preserve"><value>PLAYING</value></data>
+  <data name="Loc.ScheduledItem.Sequence.LegacySummary" xml:space="preserve"><value>(legacy embedded sequence) {0} track(s) — {1} active</value></data>
+  <data name="Loc.Main.Error.EngineInitialization" xml:space="preserve"><value>Could not initialize the audio engine: {0}</value></data>
+  <data name="Loc.Tabs.Events" xml:space="preserve"><value>Events</value></data>
+  <data name="Loc.Tabs.FileManager" xml:space="preserve"><value>File Manager</value></data>
+  <data name="Loc.Carts.DefaultBoardName" xml:space="preserve"><value>Cart Board</value></data>
+  <data name="Loc.Toolbar.AutoDJ.Disable" xml:space="preserve"><value>Disable AutoDJ</value></data>
+  <data name="Loc.Toolbar.AutoDJ.ActivatePrepared" xml:space="preserve"><value>Start the prepared AutoDJ playlist</value></data>
+  <data name="Loc.Toolbar.AutoDJ.Generate" xml:space="preserve"><value>Generate an AutoDJ playlist</value></data>
+  <data name="Loc.Toolbar.Ducking.Disable" xml:space="preserve"><value>Disable microphone ducking</value></data>
+  <data name="Loc.Toolbar.Ducking.Enable" xml:space="preserve"><value>Enable microphone ducking</value></data>
+  <data name="Loc.Controls.Events.PendingToday" xml:space="preserve"><value>Pending today ({0}, {1})</value></data>
+  <data name="Loc.Controls.Events.PendingTomorrow" xml:space="preserve"><value>Pending tomorrow ({0}, {1})</value></data>
+  <data name="Loc.Controls.Events.PendingDate" xml:space="preserve"><value>Pending on {0}, {1}</value></data>
+  <data name="Loc.Tips.RMVoice" xml:space="preserve"><value>Enable the RMVoice add-on to configure time and weather announcements.</value></data>
+  <data name="Loc.Tips.RMWave" xml:space="preserve"><value>Create multitrack projects with the RMWave add-on and play them directly from RadioMaker.</value></data>
+  <data name="Loc.Tips.Crossfade" xml:space="preserve"><value>Enable crossfade in Settings → Fade for smooth transitions between Playlist tracks.</value></data>
+  <data name="Loc.Tips.DragDrop" xml:space="preserve"><value>Drag files from File Manager to any tab to add them quickly.</value></data>
+  <data name="Loc.Tips.ContextMenu" xml:space="preserve"><value>Right-click an item to edit its properties and see more options.</value></data>
+  <data name="Loc.Tips.FavoriteFolders" xml:space="preserve"><value>Save favorite folders for quick access from the right panel.</value></data>
+  <data name="Loc.Tips.Exclusivity" xml:space="preserve"><value>Configure exclusivity policies to prevent modules on the same bus from overlapping.</value></data>
+  <data name="Loc.Tips.Emergency" xml:space="preserve"><value>Enable Emergency under Settings → Behavior to prevent silence on air.</value></data>
+  <data name="Loc.Tips.AudioTags" xml:space="preserve"><value>Right-click an audio file to edit its tags (ID3, FLAC, M4A, OGG).</value></data>
+  <data name="Loc.Tips.PlaylistGenerator" xml:space="preserve"><value>Use Playlist Generator to build lists automatically by duration or track count.</value></data>
+  <data name="Loc.Tips.Notes" xml:space="preserve"><value>Notes are saved automatically so you do not lose your ideas.</value></data>
+  <data name="Loc.Tips.OutputBuses" xml:space="preserve"><value>Create multiple output buses to preview on headphones while the broadcast stays on air.</value></data>
+  <data name="Loc.Tips.AnalysisCache" xml:space="preserve"><value>Trim and normalization analysis is cached per file, so the second playback is instant.</value></data>
+  <data name="Loc.Tips.Equalizer" xml:space="preserve"><value>Configure the 10-band EQ and save your own presets.</value></data>
+  <data name="Loc.Tips.CartBuses" xml:space="preserve"><value>Each Cart tab has its own output bus, keeping on-air audio separate from previews.</value></data>
+  <data name="Loc.Tips.ScheduledLists" xml:space="preserve"><value>Use the switch in the top bar to enable or disable each Scheduled list.</value></data>
+  <data name="Loc.Tips.PlaylistCrossfade" xml:space="preserve"><value>Playlist track crossfade uses the duration configured in Fade settings.</value></data>
+  <data name="Loc.Tips.DisableScheduledList" xml:space="preserve"><value>Disable a Scheduled list while preparing it to prevent it from triggering.</value></data>
+  <data name="Loc.Tips.EmergencyBeep" xml:space="preserve"><value>Set an emergency beep every N tracks to make the alert easy to notice.</value></data>
+  <data name="Loc.Tips.PlaylistInterrupt" xml:space="preserve"><value>When a Scheduled item interrupts a Playlist, skip to the next track instead of continuing.</value></data>
+</root>

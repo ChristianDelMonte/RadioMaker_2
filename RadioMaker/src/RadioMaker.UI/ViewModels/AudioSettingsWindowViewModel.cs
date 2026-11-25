@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Material.Icons;
 using System.Linq;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -26,7 +27,7 @@ namespace RadioMaker.UI.ViewModels;
 /// MainWindowViewModel, asi que no hay boton "Aplicar". La unica excepcion
 /// es la config de buses, que se persiste al cerrar la ventana.
 /// -------------
-public sealed class AudioSettingsWindowViewModel : ViewModelBase
+public sealed class AudioSettingsWindowViewModel : ViewModelBase, IDisposable
 {
     // ───── Paneles individuales (referencias directas) ───────────────────
     public FadePanelViewModel FadePanel { get; }
@@ -47,6 +48,19 @@ public sealed class AudioSettingsWindowViewModel : ViewModelBase
 
     // ───── Navegacion ────────────────────────────────────────────────────
     public ObservableCollection<SettingsSectionViewModel> Sections { get; }
+
+    public IReadOnlyList<UiLanguageOption> AvailableLanguages => LocalizationService.Languages;
+
+    private UiLanguageOption _selectedLanguage = LocalizationService.Languages[0];
+    public UiLanguageOption SelectedLanguage
+    {
+        get => _selectedLanguage;
+        set
+        {
+            if (SetProperty(ref _selectedLanguage, value))
+                LocalizationService.SetLanguage(value.Code);
+        }
+    }
 
     private SettingsSectionViewModel? _selectedSection;
     public SettingsSectionViewModel? SelectedSection
@@ -99,19 +113,21 @@ public sealed class AudioSettingsWindowViewModel : ViewModelBase
 
         Sections = new ObservableCollection<SettingsSectionViewModel>
         {
-            new("fade",          "Fade",                IconFade,       fadePanel),
-            new("silence",       "Silencios",           IconSilence,    silencePanel),
-            new("normalization", "Normalizacion",       IconNorm,       normalizationPanel),
-            new("ducking",       "Ducking",             IconDucking,    duckingPanel),
-            new("behavior",      "Comportamiento",      IconBehavior,   behaviorPanel),
-            new("buses",         "Buses de salida",     IconBuses,      busesPanel),
-            new("routing",       "Ruteo por modulo",    IconRouting,    RoutingPanel),
-            new("climate",       "Datos climaticos",    IconClimate,    locutionPanel),
-            new("vumeter",       "VU Meter",            IconVuMeter,    vuMeterPanel),
-            new("plugins",       "Plugins de formato",  IconPlugins,    pluginsPanel),
-            new("appearance",    "Apariencia",          IconAppearance, AppearancePanel),
+            new("fade",          IconFade,       fadePanel),
+            new("silence",       IconSilence,    silencePanel),
+            new("normalization", IconNorm,       normalizationPanel),
+            new("ducking",       IconDucking,    duckingPanel),
+            new("behavior",      IconBehavior,   behaviorPanel),
+            new("buses",         IconBuses,      busesPanel),
+            new("routing",       IconRouting,    RoutingPanel),
+            new("climate",       IconClimate,    locutionPanel),
+            new("vumeter",       IconVuMeter,    vuMeterPanel),
+            new("plugins",       IconPlugins,    pluginsPanel),
+            new("appearance",    IconAppearance, AppearancePanel),
         };
 
+        _selectedLanguage = LocalizationService.Languages.First(x => x.Code == LocalizationService.CurrentLanguage);
+        LocalizationService.LanguageChanged += OnLanguageChanged;
         SelectedSection = Sections.FirstOrDefault();
     }
 
@@ -121,4 +137,14 @@ public sealed class AudioSettingsWindowViewModel : ViewModelBase
         var s = Sections.FirstOrDefault(x => x.Key == key);
         if (s is not null) SelectedSection = s;
     }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        foreach (var section in Sections) section.RefreshLocalization();
+        BehaviorPanel.RefreshLocalization();
+        var selected = LocalizationService.Languages.First(x => x.Code == LocalizationService.CurrentLanguage);
+        SetProperty(ref _selectedLanguage, selected, nameof(SelectedLanguage));
+    }
+
+    public void Dispose() => LocalizationService.LanguageChanged -= OnLanguageChanged;
 }

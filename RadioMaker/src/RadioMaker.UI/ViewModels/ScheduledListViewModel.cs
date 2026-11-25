@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DocumentFormat.OpenXml.Wordprocessing;
 using RadioMaker.Core.Logging;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 using System.Collections.ObjectModel;
 
 namespace RadioMaker.UI.ViewModels;
@@ -34,7 +35,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
     [ObservableProperty] private bool _isEnabled = true;
     [ObservableProperty] private string? _loadedFilePath;
     [ObservableProperty] private bool _isDirty;
-    [ObservableProperty] private string _statusMessage = "Lista lista. Puedes agregar items o abrir un archivo .rms.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.Initial");
     [ObservableProperty] private ScheduledItemViewModel? _selectedItem;
     [ObservableProperty] private ModuleBusSelectorViewModel? _busSelector;
 
@@ -63,7 +64,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
     public bool HasNoSelection => !HasSelection;
 
     public string SummaryText =>
-        $"{ItemCount} item(s) — {EnabledCount} activo(s), {HighPriorityCount} alta prioridad, {TandaCount} tanda(s), {PlaylistItemCount} playlist(s), {BlockCount} bloque(s)";
+        string.Format(LocalizationService.GetString("Loc.ScheduledList.Summary"), ItemCount, EnabledCount, HighPriorityCount, TandaCount, PlaylistItemCount, BlockCount);
 
     // ───── Totalizador de duracion ──────────────────────────────────────
 
@@ -84,7 +85,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
             int unanalyzed = UnanalyzedItemCount;
             return unanalyzed > 0
-                ? $"{baseText}  (+{unanalyzed} sin analizar)"
+                ? string.Format(LocalizationService.GetString("Loc.ScheduledList.Duration.Unanalyzed"), baseText, unanalyzed)
                 : baseText;
         }
     }
@@ -167,14 +168,14 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
     /// -------------Label del boton Play cuando ya esta en curso.</summary>
     public string PlayButtonTooltip =>
         IsManualPlaying
-            ? "Reproduciendo esta lista..."
-            : "Reproducir toda la lista (ignora los horarios)";
+            ? LocalizationService.GetString("Loc.ScheduledList.Tooltip.Playing")
+            : LocalizationService.GetString("Loc.ScheduledList.Tooltip.PlayAll");
 
     // =====================================================================
     // ───── CONSTRUCTOR ───────────────────────────────────────────────────
     // =====================================================================
     public ScheduledListViewModel()
-        : this(new ScheduledList(), null)
+        : this(new ScheduledList { Name = LocalizationService.GetString("Loc.ScheduledList.DefaultName") }, null)
     {
     }
 
@@ -215,7 +216,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         var item = new ScheduledItem
         {
             Kind = ScheduledItemKind.SingleFile,
-            Title = "Nuevo item",
+            Title = LocalizationService.GetString("Loc.ScheduledList.NewItem"),
             Priority = SchedulePriority.Low,
             IsEnabled = true,
             Entries = new List<ScheduleEntry>
@@ -230,7 +231,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
             }
         };
 
-        AddItemInternal(item, "Item agregado. Configura archivo, dias y horario.");
+        AddItemInternal(item, LocalizationService.GetString("Loc.ScheduledList.Status.ItemAdded"));
     }
 
     [RelayCommand]
@@ -239,7 +240,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         var item = new ScheduledItem
         {
             Kind = ScheduledItemKind.Tanda,
-            Title = "Nueva Tanda",
+            Title = LocalizationService.GetString("Loc.ScheduledList.NewTanda"),
             Priority = SchedulePriority.Low,
             IsEnabled = true,
             Entries = new List<ScheduleEntry>
@@ -254,7 +255,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
             }
         };
 
-        AddItemInternal(item, "Tanda agregada. Elegi el archivo .tnd con 'Editar'.");
+        AddItemInternal(item, LocalizationService.GetString("Loc.ScheduledList.Status.TandaAdded"));
     }
 
     [RelayCommand]
@@ -263,7 +264,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         var item = new ScheduledItem
         {
             Kind = ScheduledItemKind.Playlist,
-            Title = "Nueva Playlist",
+            Title = LocalizationService.GetString("Loc.ScheduledList.NewPlaylist"),
             Priority = SchedulePriority.Low,
             IsEnabled = true,
             Entries = new List<ScheduleEntry>
@@ -278,7 +279,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
             }
         };
 
-        AddItemInternal(item, "Playlist agregada. Elegi el archivo .rmf con 'Editar'.");
+        AddItemInternal(item, LocalizationService.GetString("Loc.ScheduledList.Status.PlaylistAdded"));
     }
 
     [RelayCommand]
@@ -287,12 +288,12 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         var item = new ScheduledItem
         {
             Kind = ScheduledItemKind.Block,
-            Title = "Nuevo Bloque",
+            Title = LocalizationService.GetString("Loc.ScheduledList.NewBlock"),
             Priority = SchedulePriority.Low,
             IsEnabled = true,
             EmbeddedBlock = new ScheduledBlock
             {
-                Name = "Nuevo Bloque",
+                Name = LocalizationService.GetString("Loc.ScheduledList.NewBlock"),
                 Items = new List<ScheduledBlockItem>()
             },
             Entries = new List<ScheduleEntry>
@@ -307,7 +308,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
             }
         };
 
-        AddItemInternal(item, "Bloque agregado. Agrega playlists, tandas o archivos con 'Editar'.");
+        AddItemInternal(item, LocalizationService.GetString("Loc.ScheduledList.Status.BlockAdded"));
     }
 
     public SchedulePriority[] AvailablePriorities { get; } =
@@ -341,7 +342,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
         SelectedItem = Items.FirstOrDefault();
         IsDirty = true;
-        StatusMessage = "Item eliminado.";
+        StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.ItemRemoved");
         RefreshSummary();
     }
 
@@ -381,13 +382,13 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
     {
         if (_playback is null)
         {
-            StatusMessage = "No hay motor de reproduccion disponible.";
+            StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.NoEngine");
             return;
         }
 
         if (!CanPlayList)
         {
-            StatusMessage = "No hay items habilitados para reproducir.";
+            StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.NoEnabledItems");
             return;
         }
 
@@ -403,7 +404,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
         if (orderedItems.Count == 0)
         {
-            StatusMessage = "No hay items habilitados para reproducir.";
+            StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.NoEnabledItems");
             return;
         }
 
@@ -413,20 +414,20 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
             if (enqueued == 0)
             {
-                StatusMessage = "No se pudo iniciar la reproduccion.";
+                StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.PlayFailed");
                 return;
             }
 
             IsManualPlaying = true;
-            ManualPlaybackStatus = $"Reproduciendo 1 de {enqueued}";
-            StatusMessage = $"Play manual: {enqueued} item(s) en cola.";
+            ManualPlaybackStatus = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.ManualProgress"), 1, enqueued);
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.ManualQueued"), enqueued);
 
             AppLogger.Info("PLAYLIST-MANUAL",
                 $"Play manual iniciado en '{ListName}': {enqueued} item(s).");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al iniciar Play manual: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.ManualPlayError"), ex.Message);
             AppLogger.Error("PLAYLIST-MANUAL", "Error en Play manual", ex);
         }
     }
@@ -445,11 +446,11 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
             _playback.StopAll();
             IsManualPlaying = false;
             ManualPlaybackStatus = string.Empty;
-            StatusMessage = "Play manual detenido.";
+            StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.ManualStopped");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al detener: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.StopError"), ex.Message);
         }
     }
 
@@ -495,9 +496,9 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
             if (IsManualPlaying && state.IsActive)
             {
                 if (state.IsTanda)
-                    ManualPlaybackStatus = $"{state.TandaProgressText} — {state.TandaTrackTitle}";
+                    ManualPlaybackStatus = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.TrackProgress"), state.TandaTrackIndex + 1, state.TandaTrackCount, state.TandaTrackTitle);
                 else
-                    ManualPlaybackStatus = $"Reproduciendo: {state.ItemTitle}";
+                    ManualPlaybackStatus = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.PlayingItem"), state.ItemTitle);
             }
 
             // Notificar que puede cambiar CanPlayList (por si cambio IsEnabled).
@@ -532,7 +533,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
             IsManualPlaying = false;
             ManualPlaybackStatus = string.Empty;
-            StatusMessage = "Play manual finalizado.";
+            StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.ManualFinished");
 
             NotifyTransportStateChanged();
         });
@@ -563,7 +564,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         var kind = ScheduledItemViewModel.DetectKindFromExtension(path);
         if (kind is null)
         {
-            StatusMessage = $"'{Path.GetFileName(path)}' no es un archivo compatible con programados.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.UnsupportedFile"), Path.GetFileName(path));
             return null;
         }
 
@@ -586,7 +587,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
             }
         };
 
-        return AddItemInternal(item, $"Agregado desde explorador: {Path.GetFileName(path)}");
+        return AddItemInternal(item, string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.AddedFromBrowser"), Path.GetFileName(path)));
     }
 
     /// -------------
@@ -614,7 +615,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
                     }
                 }
             },
-            $"Agregado: {Path.GetFileName(filePath)}");
+            string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.Added"), Path.GetFileName(filePath)));
     }
 
     // ───── Apertura / guardado .rms ──────────────────────────────────────
@@ -624,7 +625,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         var loaded = ScheduledListStore.Load(filePath);
         if (loaded is null)
         {
-            StatusMessage = $"No se pudo cargar '{Path.GetFileName(filePath)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.LoadFailed"), Path.GetFileName(filePath));
             return false;
         }
 
@@ -663,7 +664,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
 
         SelectedItem = Items.FirstOrDefault();
 
-        StatusMessage = $"Cargados {Items.Count} item(s) desde '{Path.GetFileName(filePath)}'.";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.Loaded"), Items.Count, Path.GetFileName(filePath));
         RefreshSummary();
         return true;
     }
@@ -673,7 +674,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         var target = filePath ?? _currentFilePath;
         if (string.IsNullOrWhiteSpace(target))
         {
-            StatusMessage = "No hay ruta de guardado. Use 'Guardar como...'.";
+            StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.NoSavePath");
             return false;
         }
 
@@ -692,13 +693,13 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
             LoadedFilePath = target;
             IsDirty = false;
 
-            StatusMessage = $"Guardado en '{Path.GetFileName(target)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.Saved"), Path.GetFileName(target));
             OnPropertyChanged(nameof(TitleWithDirty));
             return true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al guardar: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.ScheduledList.Status.SaveError"), ex.Message);
             return false;
         }
     }
@@ -713,7 +714,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         Items.Clear();
         _list.Items.Clear();
 
-        _list.Name = "Programados";
+        _list.Name = LocalizationService.GetString("Loc.ScheduledList.DefaultName");
         _list.Version = 1;
         _list.CreatedAtUtc = DateTime.UtcNow;
         _list.ModifiedAtUtc = DateTime.UtcNow;
@@ -730,7 +731,7 @@ public sealed partial class ScheduledListViewModel : ViewModelBase
         IsDirty = false;
         SelectedItem = null;
 
-        StatusMessage = "Lista nueva creada.";
+        StatusMessage = LocalizationService.GetString("Loc.ScheduledList.Status.NewList");
         RefreshSummary();
     }
 

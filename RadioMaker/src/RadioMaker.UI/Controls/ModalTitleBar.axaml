@@ -41,7 +41,7 @@
                     VerticalAlignment="Center"
                     WindowDecorationProperties.ElementRole="CloseButton"
                     Click="OnCloseClick"
-                    ToolTip.Tip="Cerrar">
+                    ToolTip.Tip="{DynamicResource Loc.Common.Close}">
                 <materialIcons:MaterialIcon Kind="Close"
                                             Width="14" Height="14"
                                             Foreground="{DynamicResource Error}" />

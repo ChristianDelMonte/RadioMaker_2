@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:RMWave.UI.Controls" 
         x:Class="RMWave.UI.MainWindow"
         KeyDown="Window_KeyDown"
-        Title="RadioMaker Wave Addon"
+        Title="{DynamicResource Loc.RMWave.Main.Title}"
         Width="1250"
         Height="680"
         FontSize="10">
@@ -47,7 +47,7 @@
                                          Foreground="#4D6BFE"
                                          VerticalAlignment="Center" />
                         <TextBlock Name="WindowTitleText"
-                                   Text="RadioMaker Wave Editor Addon - documento sin nombre.rmw"
+                                   Text="{DynamicResource Loc.RMWave.Main.UntitledTitle}"
                                    FontSize="14"
                                    FontWeight="Bold"
                                    Foreground="#F0F0F0"
@@ -66,7 +66,7 @@
                                 Padding="10,4"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                ToolTip.Tip="Minimizar">
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.Minimize}">
                             <mi:MaterialIcon Kind="WindowMinimize"
                                              Width="14" Height="14"
                                              Foreground="#F0F0F0" />
@@ -77,7 +77,7 @@
                                 Padding="10,4"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                ToolTip.Tip="Maximizar">
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.Maximize}">
                             <mi:MaterialIcon Kind="WindowMaximize"
                                              Width="14" Height="14"
                                              Foreground="#F0F0F0" />
@@ -88,7 +88,7 @@
                                 Padding="10,4"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                ToolTip.Tip="Cerrar">
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.Close}">
                             <mi:MaterialIcon Kind="Close"
                                              Width="14" Height="14"
                                              Foreground="#F0F0F0" />
@@ -107,22 +107,22 @@
         <!-- ========================================== -->
         <Menu DockPanel.Dock="Top">
 
-            <MenuItem Header="Archivo">
-                <MenuItem Header="Nuevo"
+            <MenuItem Header="{DynamicResource Loc.RMWave.Main.FileMenu}">
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.New}"
                           Click="NewProject_Click"
                           InputGesture="Ctrl+N">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="FilePlusOutline" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Abrir..."
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.Open}"
                           Click="OpenProject_Click"
                           InputGesture="Ctrl+O">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="FolderOpenOutline" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Guardar"
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.Save}"
                           Click="SaveProject_Click"
                           InputGesture="Ctrl+S">
                     <MenuItem.Icon>
@@ -130,21 +130,21 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Propiedades del proyecto..."
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.ProjectProperties}"
                           Click="ProjectProperties_Click">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="InformationOutline" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Exportar mezcla..."
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.ExportMix}"
                           Click="Export_Click"
                           InputGesture="Ctrl+E">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="ExportVariant" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Exportar selección..."
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.ExportSelection}"
                           Click="ExportSelection_Click"
                           InputGesture="Ctrl+Shift+E">
                     <MenuItem.Icon>
@@ -152,33 +152,33 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem x:Name="RecentMenu" Header="Proyectos recientes">
+                <MenuItem x:Name="RecentMenu" Header="{DynamicResource Loc.RMWave.Main.RecentProjects}">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="History" Width="16" Height="16" />
                     </MenuItem.Icon>
                     <!-- Se llena dinámicamente desde el código -->
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Salir" Click="Exit_Click">
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.Exit}" Click="Exit_Click">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="ExitToApp" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
 
-            <MenuItem Header="Dispositivos" x:Name="DevicesMenu">
+            <MenuItem Header="{DynamicResource Loc.RMWave.Main.Devices}" x:Name="DevicesMenu">
                 <!-- Los items se agregan dinámicamente desde el code-behind -->
             </MenuItem>
 
-            <MenuItem Header="Edición">
-                <MenuItem Header="Duplicar clip"
+            <MenuItem Header="{DynamicResource Loc.RMWave.Main.Edit}">
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.DuplicateClip}"
                           Click="DuplicateClip_Click"
                           InputGesture="Ctrl+D">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="ContentCopy" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Eliminar clip"
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.DeleteClip}"
                           Click="DeleteClip_Click"
                           InputGesture="Delete">
                     <MenuItem.Icon>
@@ -186,7 +186,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Cortar clip en el cursor"
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.SplitAtCursor}"
                           Click="SplitClip_Click"
                           InputGesture="Ctrl+B">
                     <MenuItem.Icon>
@@ -194,27 +194,27 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Agregar marcador"
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.AddMarker}"
                           Click="AddMarker_Click"
                           InputGesture="M">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="MapMarker" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Marcadores..."
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.Markers}"
                           Click="MarkersList_Click">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="FormatListBulleted" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Importar marcadores de regiones..."
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.ImportRegions}"
                           Click="ImportMarkers_Click">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="FileImportOutline" Width="16" Height="16" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Grabar audio..."
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.RecordAudio}"
                           Click="Record_Click"
                           InputGesture="Ctrl+R">
                     <MenuItem.Icon>
@@ -223,15 +223,15 @@
                 </MenuItem>
             </MenuItem>
 
-            <MenuItem x:Name="ThemeMenu" Header="Tema">
+            <MenuItem x:Name="ThemeMenu" Header="{DynamicResource Loc.RMWave.Main.Theme}">
                 <MenuItem.Icon>
                     <mi:MaterialIcon Kind="Palette" Width="16" Height="16" />
                 </MenuItem.Icon>
                 <!-- Los temas se llenan dinámicamente desde el código -->
             </MenuItem>
 
-            <MenuItem Header="Ayuda">
-                <MenuItem Header="Acerca de RMWave" Click="About_Click">
+            <MenuItem Header="{DynamicResource Loc.RMWave.Main.Help}">
+                <MenuItem Header="{DynamicResource Loc.RMWave.Main.About}" Click="About_Click">
                     <MenuItem.Icon>
                         <mi:MaterialIcon Kind="InformationOutline" Width="16" Height="16" />
                     </MenuItem.Icon>
@@ -247,7 +247,7 @@
 
             <!-- NUEVO -->
             <Button Click="NewProject_Click"
-                    ToolTip.Tip="Nuevo proyecto"
+                    ToolTip.Tip="{DynamicResource Loc.RMWave.Main.NewProject}"
                     Width="36" Height="30">
                 <mi:MaterialIcon Kind="FilePlusOutline"
                                  Width="18" Height="18" />
@@ -255,7 +255,7 @@
 
             <!-- ABRIR -->
             <Button Click="OpenProject_Click"
-                    ToolTip.Tip="Abrir proyecto"
+                    ToolTip.Tip="{DynamicResource Loc.RMWave.Main.OpenProject}"
                     Width="36" Height="30">
                 <mi:MaterialIcon Kind="FolderOpenOutline"
                                  Width="18" Height="18" />
@@ -263,7 +263,7 @@
 
             <!-- GUARDAR -->
             <Button Click="SaveProject_Click"
-                    ToolTip.Tip="Guardar proyecto"
+                    ToolTip.Tip="{DynamicResource Loc.RMWave.Main.SaveProject}"
                     Width="36" Height="30">
                 <mi:MaterialIcon Kind="ContentSaveOutline"
                                  Width="18" Height="18" />
@@ -274,18 +274,18 @@
             <Button x:Name="AddTrackButton"
                     Click="AddTrack_Click"
                     IsEnabled="False"
-                    ToolTip.Tip="Agregar pista">
+                    ToolTip.Tip="{DynamicResource Loc.RMWave.Main.AddTrackTooltip}">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <mi:MaterialIcon Kind="PlaylistPlus"
                                      Width="16" Height="16" />
-                    <TextBlock Text="Agregar pista" VerticalAlignment="Center" />
+                    <TextBlock Text="{DynamicResource Loc.RMWave.Main.AddTrackTooltip}" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
 
             <Button x:Name="PlayButton"
                     Click="Play_Click"
                     IsEnabled="False"
-                    ToolTip.Tip="Reproducir (Espacio)"
+                    ToolTip.Tip="{DynamicResource Loc.RMWave.Main.Play}"
                     Width="40" Height="30">
                 <mi:MaterialIcon Kind="Play"
                                  Width="18" Height="18" />
@@ -294,7 +294,7 @@
             <Button x:Name="PauseButton"
                     Click="Pause_Click"
                     IsEnabled="False"
-                    ToolTip.Tip="Pausa (Espacio)"
+                    ToolTip.Tip="{DynamicResource Loc.RMWave.Main.Pause}"
                     Width="40" Height="30">
                 <mi:MaterialIcon Kind="Pause"
                                  Width="18" Height="18" />
@@ -303,7 +303,7 @@
             <Button x:Name="StopButton"
                     Click="Stop_Click"
                     IsEnabled="False"
-                    ToolTip.Tip="Detener"
+                    ToolTip.Tip="{DynamicResource Loc.RMWave.Main.Stop}"
                     Width="40" Height="30">
                 <mi:MaterialIcon Kind="Stop"
                                  Width="18" Height="18" />
@@ -313,11 +313,11 @@
 
             <Button x:Name="RecordButton"
                     Click="Record_Click"
-                    ToolTip.Tip="Grabar audio"
+                    ToolTip.Tip="{DynamicResource Loc.RMWave.Main.RecordTooltip}"
                     Foreground="#FF4444">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <mi:MaterialIcon Kind="Microphone" Width="16" Height="16" />
-                    <TextBlock Text="Grabar" VerticalAlignment="Center" />
+                    <TextBlock Text="{DynamicResource Loc.RMWave.Main.Record}" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
 
@@ -343,10 +343,10 @@
                          Value="0" />
 
             <CheckBox x:Name="SnapCheckBox"
-                      Content="Snap"
+                      Content="{DynamicResource Loc.RMWave.Main.Snap}"
                       IsChecked="True"
                       VerticalAlignment="Center"
-                      ToolTip.Tip="Activar/desactivar ajuste magnético" />
+                      ToolTip.Tip="{DynamicResource Loc.RMWave.Main.SnapTooltip}" />
 
             <Border Width="20" />
 
@@ -367,12 +367,12 @@
 
                     <TextBlock x:Name="SelectedClipName"
                                FontWeight="Bold"
-                               Text="Clip seleccionado" />
+                               Text="{DynamicResource Loc.RMWave.Main.SelectedClip}" />
 
                     <StackPanel Orientation="Horizontal"
                                 Spacing="8">
 
-                        <TextBlock Text="Inicio"
+                        <TextBlock Text="{DynamicResource Loc.RMWave.Main.Start}"
                                    VerticalAlignment="Center" />
 
                         <TextBox x:Name="SelectedStart"
@@ -382,7 +382,7 @@
                                  Padding="3,1"
                                  VerticalAlignment="Center" />
 
-                        <TextBlock Text="Offset"
+                        <TextBlock Text="{DynamicResource Loc.RMWave.Main.Offset}"
                                    VerticalAlignment="Center" />
 
                         <TextBox x:Name="SelectedOffset"
@@ -392,7 +392,7 @@
                                  Padding="3,1"
                                  VerticalAlignment="Center" />
 
-                        <TextBlock Text="Duración"
+                        <TextBlock Text="{DynamicResource Loc.RMWave.Main.Duration}"
                                    VerticalAlignment="Center" />
 
                         <TextBox x:Name="SelectedDuration"
@@ -402,7 +402,7 @@
                                  Padding="3,1"
                                  VerticalAlignment="Center" />
 
-                        <TextBlock Text="Ganancia"
+                        <TextBlock Text="{DynamicResource Loc.RMWave.Main.Gain}"
                                    VerticalAlignment="Center"
                                    Margin="8,0,0,0" />
 
@@ -410,7 +410,7 @@
                                             Minimum="0" Maximum="3"
                                             Value="1"
                                             KnobSize="42"
-                                            Label="Gain"
+                                            Label="{DynamicResource Loc.RMWave.Main.GainKnob}"
                                             ValueFormat="0.00" />
 
                         <TextBlock x:Name="SelectedGainValue"
@@ -418,7 +418,7 @@
                                    VerticalAlignment="Center"
                                    Width="20" />
 
-                        <TextBlock Text="Fade In"
+                        <TextBlock Text="{DynamicResource Loc.RMWave.Main.FadeIn}"
                                    VerticalAlignment="Center"
                                    Margin="8,0,0,0" />
 
@@ -429,7 +429,7 @@
                                  Padding="3,1"
                                  VerticalAlignment="Center" />
 
-                        <TextBlock Text="Fade Out"
+                        <TextBlock Text="{DynamicResource Loc.RMWave.Main.FadeOut}"
                                    VerticalAlignment="Center"
                                    Margin="8,0,0,0" />
 
@@ -441,41 +441,41 @@
                                  VerticalAlignment="Center" />
 
                         <Button Click="ApplyClip_Click"
-                                ToolTip.Tip="Aplicar cambios"
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.ApplyChanges}"
                                 Width="36" Height="30">
                             <mi:MaterialIcon Kind="Check" Width="16" Height="16" />
                         </Button>
 
                         <Button Click="DuplicateClip_Click"
-                                ToolTip.Tip="Duplicar clip (Ctrl+D)"
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.DuplicateClipShortcut}"
                                 Margin="12,0,0,0"
                                 Width="36" Height="30">
                             <mi:MaterialIcon Kind="ContentCopy" Width="16" Height="16" />
                         </Button>
 
                         <Button Click="SplitClip_Click"
-                                ToolTip.Tip="Cortar clip en el cursor (Ctrl+B)"
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.SplitClipShortcut}"
                                 Margin="12,0,0,0"
                                 Width="36" Height="30">
                             <mi:MaterialIcon Kind="ContentCut" Width="16" Height="16" />
                         </Button>
 
                         <Button Click="DeleteClip_Click"
-                                ToolTip.Tip="Eliminar clip (Delete)"
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.RemoveClip}"
                                 Foreground="#FF6666"
                                 Width="36" Height="30">
                             <mi:MaterialIcon Kind="DeleteOutline" Width="16" Height="16" />
                         </Button>
 
                         <Button Click="NormalizeClip_Click"
-                                ToolTip.Tip="Ajusta la ganancia para que el peak del clip llegue a -1 dB"
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.NormalizeClip}"
                                 Margin="12,0,0,0"
                                 Width="36" Height="30">
                             <mi:MaterialIcon Kind="VolumeHigh" Width="16" Height="16" />
                         </Button>
 
                         <Button Click="DeselectClip_Click"
-                                ToolTip.Tip="Cerrar panel"
+                                ToolTip.Tip="{DynamicResource Loc.RMWave.Main.ClosePanel}"
                                 Margin="12,0,0,0"
                                 Width="36" Height="30">
                             <mi:MaterialIcon Kind="Close" Width="16" Height="16" />
@@ -510,7 +510,7 @@
             </Grid>
 
             <TextBlock x:Name="StatusText"
-                       Text="Inicializando audio..." />
+                       Text="{DynamicResource Loc.RMWave.Main.InitializingAudio}" />
 
         </StackPanel>
 

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -70,11 +71,11 @@ public sealed partial class BusViewModel : ViewModelBase
         try
         {
             _bus.PlayTestTone(440.0, 1000);
-            StatusMessage = $"Tono de prueba enviado (440 Hz, 1 s)";
+            StatusMessage = LocalizationService.GetString("Loc.AudioBuses.Status.TestToneSent");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AudioBuses.Status.Error"), ex.Message);
         }
     }
 
@@ -111,11 +112,11 @@ public sealed partial class BusViewModel : ViewModelBase
         try
         {
             _bus.ChangeDevice(value.Index);
-            StatusMessage = $"Dispositivo cambiado a: {value.DisplayName}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AudioBuses.Status.DeviceChanged"), value.DisplayName);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al cambiar dispositivo: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AudioBuses.Status.ChangeDeviceError"), ex.Message);
         }
     }
 }

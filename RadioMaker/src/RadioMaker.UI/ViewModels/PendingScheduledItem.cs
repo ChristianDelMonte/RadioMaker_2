@@ -1,5 +1,6 @@
 using System;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -39,10 +40,10 @@ public sealed class PendingScheduledItem
 
     public string KindText => Kind switch
     {
-        ScheduledItemKind.Tanda => "TANDA",
-        ScheduledItemKind.Playlist => "PLAYLIST",
-        ScheduledItemKind.Block => "BLOQUE",
-        _ => "ARCHIVO"
+        ScheduledItemKind.Tanda => LocalizationService.GetString("Loc.ScheduledItem.Kind.Sequence"),
+        ScheduledItemKind.Playlist => LocalizationService.GetString("Loc.ScheduledItem.Kind.Playlist"),
+        ScheduledItemKind.Block => LocalizationService.GetString("Loc.ScheduledItem.Kind.Block"),
+        _ => LocalizationService.GetString("Loc.ScheduledItem.Kind.File")
     };
 
     public string KindColor => Kind switch

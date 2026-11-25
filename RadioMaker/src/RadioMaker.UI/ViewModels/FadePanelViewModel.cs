@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -59,9 +60,9 @@ public sealed partial class FadePanelViewModel : ViewModelBase
     {
         get
         {
-            if (!IsEnabled) return "Fade automatico desactivado.";
-            if (_channel is null) return $"Fade automatico: {SecondsText} (activo al reproducir).";
-            return $"Fade automatico: {SecondsText} aplicado al canal actual.";
+            if (!IsEnabled) return LocalizationService.GetString("Loc.Fade.Status.Disabled");
+            if (_channel is null) return string.Format(LocalizationService.GetString("Loc.Fade.Status.Waiting"), SecondsText);
+            return string.Format(LocalizationService.GetString("Loc.Fade.Status.Applied"), SecondsText);
         }
     }
 
@@ -108,8 +109,8 @@ public sealed partial class FadePanelViewModel : ViewModelBase
 
     public string CartCrossfadeStatusText =>
         CartCrossfadeEnabled
-            ? $"Crossfade activo: {CartCrossfadeSecondsText} entre carts."
-            : "Crossfade desactivado: los carts se superponen.";
+            ? string.Format(LocalizationService.GetString("Loc.Fade.Crossfade.Active"), CartCrossfadeSecondsText)
+            : LocalizationService.GetString("Loc.Fade.Crossfade.Disabled");
 
     // ───── Constructor ───────────────────────────────────────────────────
 

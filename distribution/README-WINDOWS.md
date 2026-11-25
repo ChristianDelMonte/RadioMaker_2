@@ -1,6 +1,8 @@
 
 # RadioMaker — Guía de ejecución en Windows
 
+[English version](README-WINDOWS.en.md)
+
 Versión: 2.01 · Plataformas: Windows 10 (build 1809+) / Windows 11
 Arquitecturas: x64 · ARM64
 

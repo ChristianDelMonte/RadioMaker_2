@@ -1,6 +1,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -17,9 +18,9 @@ public sealed class PlaylistGeneratorOrderLabelConverter : IValueConverter
         {
             return order switch
             {
-                PlaylistGeneratorOrder.Random => "Aleatorio",
-                PlaylistGeneratorOrder.AlphabeticalByName => "Alfabético por nombre",
-                PlaylistGeneratorOrder.AlphabeticalByPath => "Alfabético por ruta",
+                PlaylistGeneratorOrder.Random => LocalizationService.GetString("Loc.Label.GeneratorOrder.Random"),
+                PlaylistGeneratorOrder.AlphabeticalByName => LocalizationService.GetString("Loc.Label.GeneratorOrder.Name"),
+                PlaylistGeneratorOrder.AlphabeticalByPath => LocalizationService.GetString("Loc.Label.GeneratorOrder.Path"),
                 _ => order.ToString()
             };
         }

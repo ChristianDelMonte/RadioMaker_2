@@ -10,7 +10,7 @@
 
         <!-- Subtitulo -->
         <TextBlock Grid.Row="0"
-                   Text="Ajustá el estilo, la orientación, los segmentos, la escala y los colores. El preview se actualiza en vivo."
+                   Text="{DynamicResource Loc.Controls.VuMeter.Description}"
                    FontSize="11"
                    Foreground="{DynamicResource FgSecondary}"
                    TextWrapping="Wrap"
@@ -26,13 +26,13 @@
                     Padding="14">
                 <ScrollViewer>
                     <StackPanel Spacing="14">
-                        <TextBlock Text="Estilo y orientación"
+                        <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.StyleOrientation}"
                                    FontWeight="SemiBold"
                                    FontSize="12"
                                    Foreground="{DynamicResource FgPrimary}" />
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Estilo"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.Style}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <ComboBox SelectedItem="{Binding Settings.Style}"
@@ -42,7 +42,7 @@
                         </StackPanel>
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Orientación"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.Orientation}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <ComboBox SelectedItem="{Binding Settings.Orientation}"
@@ -52,30 +52,30 @@
                         </StackPanel>
 
                         <Separator />
-                        <TextBlock Text="Estructura"
+                        <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.Structure}"
                                    FontWeight="SemiBold"
                                    FontSize="12"
                                    Foreground="{DynamicResource FgPrimary}" />
 
-                        <CheckBox Content="Mostrar escala en dB"
+                        <CheckBox Content="{DynamicResource Loc.Controls.VuMeter.ShowDbScale}"
                                   FontSize="11"
                                   Foreground="{DynamicResource FgPrimary}"
                                   IsChecked="{Binding Settings.ShowDbScale}" />
-                        <CheckBox Content="Marcador de peak hold"
+                        <CheckBox Content="{DynamicResource Loc.Controls.VuMeter.PeakHold}"
                                   FontSize="11"
                                   Foreground="{DynamicResource FgPrimary}"
                                   IsChecked="{Binding Settings.ShowPeakHold}" />
-                        <CheckBox Content="Superponer RMS (estilo Console)"
+                        <CheckBox Content="{DynamicResource Loc.Controls.VuMeter.OverlayRms}"
                                   FontSize="11"
                                   Foreground="{DynamicResource FgPrimary}"
                                   IsChecked="{Binding Settings.ShowRms}" />
-                        <CheckBox Content="Indicador de clipping"
+                        <CheckBox Content="{DynamicResource Loc.Controls.VuMeter.Clipping}"
                                   FontSize="11"
                                   Foreground="{DynamicResource FgPrimary}"
                                   IsChecked="{Binding Settings.ShowClipIndicator}" />
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Cantidad de segmentos (estilo LEDs)"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.Segments}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <Grid ColumnDefinitions="*,Auto">
@@ -91,7 +91,7 @@
                         </StackPanel>
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Ancho de barra (px)"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.BarWidth}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <Grid ColumnDefinitions="*,Auto">
@@ -105,7 +105,7 @@
                         </StackPanel>
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Duración del peak hold (ms)"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.PeakHoldDuration}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <Grid ColumnDefinitions="*,Auto">
@@ -119,43 +119,43 @@
                         </StackPanel>
 
                         <Separator />
-                        <TextBlock Text="Colores (hex #RRGGBB)"
+                        <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.Colors}"
                                    FontWeight="SemiBold"
                                    FontSize="12"
                                    Foreground="{DynamicResource FgPrimary}" />
 
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Zona verde"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.GreenZone}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <TextBox Text="{Binding Settings.GreenZoneColor}" FontSize="11" />
                         </StackPanel>
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Zona ámbar"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.AmberZone}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <TextBox Text="{Binding Settings.AmberZoneColor}" FontSize="11" />
                         </StackPanel>
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Zona roja"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.RedZone}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <TextBox Text="{Binding Settings.RedZoneColor}" FontSize="11" />
                         </StackPanel>
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Fondo del meter"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.Background}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <TextBox Text="{Binding Settings.BackgroundColor}" FontSize="11" />
                         </StackPanel>
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Texto de escala"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.ScaleText}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <TextBox Text="{Binding Settings.ScaleTextColor}" FontSize="11" />
                         </StackPanel>
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Color de acento (estilo Minimal)"
+                            <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.AccentColor}"
                                        FontSize="11"
                                        Foreground="{DynamicResource FgSecondary}" />
                             <TextBox Text="{Binding Settings.AccentColor}" FontSize="11" />
@@ -170,7 +170,7 @@
                                     <materialIcons:MaterialIcon Kind="Refresh"
                                                                 Width="14" Height="14"
                                                                 Foreground="{DynamicResource FgPrimary}" />
-                                    <TextBlock Text="Reset colores"
+                                    <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.ResetColors}"
                                                FontSize="11"
                                                Foreground="{DynamicResource FgPrimary}" />
                                 </StackPanel>
@@ -182,7 +182,7 @@
                                     <materialIcons:MaterialIcon Kind="Refresh"
                                                                 Width="14" Height="14"
                                                                 Foreground="{DynamicResource FgPrimary}" />
-                                    <TextBlock Text="Reset layout"
+                                    <TextBlock Text="{DynamicResource Loc.Controls.VuMeter.ResetLayout}"
                                                FontSize="11"
                                                Foreground="{DynamicResource FgPrimary}" />
                                 </StackPanel>
@@ -201,7 +201,7 @@
                     Margin="12,0,0,0">
                 <Grid RowDefinitions="Auto,*,Auto">
                     <TextBlock Grid.Row="0"
-                               Text="Preview en vivo"
+                               Text="{DynamicResource Loc.Controls.VuMeter.LivePreview}"
                                FontSize="13"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource FgPrimary}"
@@ -236,7 +236,7 @@
                     </Border>
 
                     <CheckBox Grid.Row="2"
-                              Content="Señal de demostración activa"
+                              Content="{DynamicResource Loc.Controls.VuMeter.DemoSignal}"
                               FontSize="11"
                               Foreground="{DynamicResource FgPrimary}"
                               IsChecked="{Binding DemoEnabled}"

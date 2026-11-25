@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Configuration;
 using RadioMaker.Core.Scheduling;
 using Avalonia.Platform.Storage;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -173,7 +174,7 @@ public sealed partial class EmergencyPanelViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Emergency.Status.Error"), ex.Message);
         }
     }
 
@@ -189,7 +190,7 @@ public sealed partial class EmergencyPanelViewModel : ViewModelBase
         {
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
             {
-                Title = "Elegir playlist pre-armada de emergencia",
+                Title = LocalizationService.GetString("Loc.Dialog.SelectEmergencyPlaylist.Title"),
                 AllowMultiple = false,
                 FileTypeFilter = new[]
                 {
@@ -219,7 +220,7 @@ public sealed partial class EmergencyPanelViewModel : ViewModelBase
             var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(
                 new Avalonia.Platform.Storage.FolderPickerOpenOptions
                 {
-                    Title = "Elegir carpeta de emergencia",
+                    Title = LocalizationService.GetString("Loc.Dialog.SelectEmergencyFolder.Title"),
                     AllowMultiple = false
                 });
 

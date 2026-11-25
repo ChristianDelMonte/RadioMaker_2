@@ -7,6 +7,7 @@ using Avalonia.VisualTree;  // (si no lo tenés ya)
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.ViewModels;
 using RadioMaker.UI.Services;
+using RadioMaker.UI.Localization;
 namespace RadioMaker.UI.Views;
 
 /// -------------
@@ -39,14 +40,14 @@ public partial class PlaylistEditorView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var filter = new FilePickerFileType("Playlist .rmf")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.FileType"))
         {
             Patterns = new[] { "*" + PlaylistStore.FileExtension }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir playlist (.rmf)",
+            Title = LocalizationService.GetString("Loc.PlaylistEditor.Dialog.Open"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -119,7 +120,7 @@ public partial class PlaylistEditorView : UserControl
 
         if (!File.Exists(track.FilePath))
         {
-            vm!.StatusMessage = $"Archivo no encontrado: {Path.GetFileName(track.FilePath)}";
+            vm!.StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.FileNotFound"), Path.GetFileName(track.FilePath));
             return;
         }
 
@@ -134,11 +135,11 @@ public partial class PlaylistEditorView : UserControl
             if (owner is null) return;
 
             if (await win.ShowDialog<bool>(owner))
-                vm!.StatusMessage = $"Tags guardados: {Path.GetFileName(track.FilePath)}";
+            vm!.StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.TagsSaved"), Path.GetFileName(track.FilePath));
         }
         catch (Exception ex)
         {
-            vm!.StatusMessage = $"Error al editar tags: {ex.Message}";
+            vm!.StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.TagsError"), ex.Message);
         }
     }
 
@@ -154,12 +155,12 @@ public partial class PlaylistEditorView : UserControl
         if (!RMWaveLauncher.OpenFile(track.FilePath, out var error))
         {
             if (vm is not null)
-                vm.StatusMessage = error ?? "No se pudo abrir en RMWave.";
+                vm.StatusMessage = error ?? LocalizationService.GetString("Loc.PlaylistEditor.Status.RmWaveError");
         }
         else
         {
             if (vm is not null)
-                vm.StatusMessage = $"Abriendo {System.IO.Path.GetFileName(track.FilePath)} en RMWave...";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.OpeningRmWave"), System.IO.Path.GetFileName(track.FilePath));
         }
     }
 
@@ -188,7 +189,7 @@ public partial class PlaylistEditorView : UserControl
         {
             var vm = GetVm();
             if (vm is not null)
-                vm.StatusMessage = $"Pista actualizada: {trackVm.DisplayTitle}";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistEditor.Status.TrackUpdated"), trackVm.DisplayTitle);
         }
     }
 
@@ -201,12 +202,12 @@ public partial class PlaylistEditorView : UserControl
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar playlist (.rmf)",
+            Title = LocalizationService.GetString("Loc.PlaylistEditor.Dialog.Save"),
             SuggestedFileName = suggestedName,
             DefaultExtension = PlaylistStore.FileExtension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Playlist .rmf")
+                new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.FileType"))
                 {
                     Patterns = new[] { "*" + PlaylistStore.FileExtension }
                 }
@@ -232,14 +233,14 @@ public partial class PlaylistEditorView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var filter = new FilePickerFileType("Playlist M3U / M3U8")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.M3uType"))
         {
             Patterns = new[] { "*.m3u", "*.m3u8" }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Importar playlist desde M3U / M3U8",
+            Title = LocalizationService.GetString("Loc.PlaylistEditor.Dialog.ImportM3u"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -260,14 +261,14 @@ public partial class PlaylistEditorView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var filter = new FilePickerFileType("Playlist PLS")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.PlsType"))
         {
             Patterns = new[] { "*.pls" }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Importar playlist desde PLS",
+            Title = LocalizationService.GetString("Loc.PlaylistEditor.Dialog.ImportPls"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -289,7 +290,7 @@ public partial class PlaylistEditorView : UserControl
         if (vm is null) return;
         if (vm.TrackCount == 0)
         {
-            vm.StatusMessage = "No hay pistas para exportar.";
+            vm.StatusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.NoTracksToExport");
             return;
         }
 
@@ -300,16 +301,16 @@ public partial class PlaylistEditorView : UserControl
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Exportar playlist a M3U / M3U8",
+            Title = LocalizationService.GetString("Loc.PlaylistEditor.Dialog.ExportM3u"),
             SuggestedFileName = suggestedName,
             DefaultExtension = "m3u8",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Playlist M3U8")
+                new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.M3u8Type"))
                 {
                     Patterns = new[] { "*.m3u8" }
                 },
-                new FilePickerFileType("Playlist M3U")
+                new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.M3uTypeShort"))
                 {
                     Patterns = new[] { "*.m3u" }
                 }
@@ -330,7 +331,7 @@ public partial class PlaylistEditorView : UserControl
         if (vm is null) return;
         if (vm.TrackCount == 0)
         {
-            vm.StatusMessage = "No hay pistas para exportar.";
+            vm.StatusMessage = LocalizationService.GetString("Loc.PlaylistEditor.Status.NoTracksToExport");
             return;
         }
 
@@ -341,12 +342,12 @@ public partial class PlaylistEditorView : UserControl
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Exportar playlist a PLS",
+            Title = LocalizationService.GetString("Loc.PlaylistEditor.Dialog.ExportPls"),
             SuggestedFileName = suggestedName,
             DefaultExtension = "pls",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Playlist PLS")
+                new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.PlsType"))
                 {
                     Patterns = new[] { "*.pls" }
                 }
@@ -398,7 +399,7 @@ public partial class PlaylistEditorView : UserControl
         var vm = GetVm();
         if (vm?.SelectedTrack is null) return;
 
-        var path = await PickAudioFileAsync("Seleccionar archivo de audio principal");
+        var path = await PickAudioFileAsync(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.PickMainAudio"));
         if (string.IsNullOrEmpty(path)) return;
 
         vm.SelectedTrack.FilePath = path;
@@ -412,7 +413,7 @@ public partial class PlaylistEditorView : UserControl
         var vm = GetVm();
         if (vm?.SelectedTrack is null) return;
 
-        var path = await PickAudioFileAsync("Seleccionar archivo de mixado");
+        var path = await PickAudioFileAsync(LocalizationService.GetString("Loc.PlaylistEditor.Dialog.PickMixAudio"));
         if (string.IsNullOrEmpty(path)) return;
 
         vm.SelectedTrack.MixAudioPath = path;

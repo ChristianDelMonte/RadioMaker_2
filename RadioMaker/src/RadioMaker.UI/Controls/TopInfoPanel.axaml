@@ -59,7 +59,7 @@
 
                     <Grid Grid.Column="0" RowDefinitions="Auto,Auto,Auto">
                         <TextBlock Grid.Row="0"
-                                   Text="EN REPRODUCCION"
+                                   Text="{DynamicResource Loc.Controls.TopInfo.NowPlaying}"
                                    FontSize="8"
                                    FontWeight="Bold"
                                    Foreground="{Binding NowPlayingPanelForeground}"
@@ -109,7 +109,7 @@
                                LineHeight="18"
                                MinWidth="135"
                                VerticalAlignment="Center"
-                               ToolTip.Tip="Tiempo transcurrido / restante" />
+                               ToolTip.Tip="{DynamicResource Loc.Controls.TopInfo.ElapsedRemaining}" />
 
             <!-- ═══════════════════════════════════════════════════════
                  3) Siguiente
@@ -124,7 +124,7 @@
                     MinWidth="200">
                 <Grid RowDefinitions="Auto,Auto,Auto">
                     <TextBlock Grid.Row="0"
-                               Text="SIGUIENTE"
+                               Text="{DynamicResource Loc.Controls.TopInfo.Next}"
                                FontSize="8"
                                FontWeight="Bold"
                                Foreground="{Binding NextPlayingPanelForeground}"
@@ -224,7 +224,7 @@
                                    LineHeight="18"
                                    MinWidth="155"
                                    VerticalAlignment="Center"
-                                   ToolTip.Tip="Fecha / hora" />
+                                   ToolTip.Tip="{DynamicResource Loc.Controls.TopInfo.DateTime}" />
             </Grid>
 
             <!-- ═══════════════════════════════════════════════════════
@@ -245,7 +245,7 @@
                                      Width="48" Height="48"
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center"
-                                     ToolTip.Tip="Volumen general" />
+                                     ToolTip.Tip="{DynamicResource Loc.Controls.TopInfo.MasterVolume}" />
             </Border>
 
             <!-- ═══════════════════════════════════════════════════════
@@ -361,12 +361,12 @@
 
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Refrescar datos"
+                        <MenuItem Header="{DynamicResource Loc.Controls.TopInfo.RefreshWeather}"
                                   Command="{Binding LocutionPanel.RefreshWeatherCommand}" />
                         <Separator />
-                        <MenuItem Header="Configuracion..."
+                        <MenuItem Header="{DynamicResource Loc.Controls.TopInfo.Settings}"
                                   Command="{Binding LocutionPanel.RequestOpenSettingsCommand}" />
-                        <MenuItem Header="Abrir RMVoice..."
+                        <MenuItem Header="{DynamicResource Loc.Controls.TopInfo.OpenVoice}"
                                   Command="{Binding LocutionPanel.RequestOpenRMVoiceCommand}" />
                     </ContextMenu>
                 </Border.ContextMenu>

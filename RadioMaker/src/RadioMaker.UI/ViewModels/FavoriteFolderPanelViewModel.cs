@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
@@ -39,7 +40,7 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
     public bool FolderExists => _entry.ExistsNow;
 
     // ───── Estado ────────────────────────────────────────────────────────
-    [ObservableProperty] private string _statusMessage = "Cargando...";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.FavoriteFolder.Status.Starting");
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private AudioFileViewModel? _selectedFile;
     [ObservableProperty] private int _fileCount;
@@ -67,7 +68,7 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
     public bool HasNoSelection => !HasSelection;
 
     public string FileCountText => FileCount == 0
-        ? "Sin archivos de audio"
+        ? LocalizationService.GetString("Loc.FavoriteFolder.Status.NoAudioFiles")
         : $"{FileCount} archivo(s)";
 
     /// -------------Se dispara cuando el usuario activa un archivo (doble clic / Enter).</summary>
@@ -118,12 +119,12 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
 
         if (!_entry.ExistsNow)
         {
-            StatusMessage = $"La carpeta ya no existe: {_entry.Path}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FavoriteFolder.Status.Missing"), _entry.Path);
             return;
         }
 
         IsLoading = true;
-        StatusMessage = "Leyendo carpeta...";
+        StatusMessage = LocalizationService.GetString("Loc.FavoriteFolder.Status.Reading");
 
         try
         {
@@ -143,14 +144,14 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
             OnPropertyChanged(nameof(FileCountText));
 
             StatusMessage = files.Count == 0
-                ? "Sin archivos de audio en esta carpeta."
-                : $"Cargando TAGs de {files.Count} archivo(s)...";
+                ? LocalizationService.GetString("Loc.FavoriteFolder.Status.Empty")
+                : string.Format(LocalizationService.GetString("Loc.FavoriteFolder.Status.LoadingTags"), files.Count);
 
             _ = LoadTagsAsync(Files.ToList(), cts.Token);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error leyendo carpeta: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FavoriteFolder.Status.ReadError"), ex.Message);
         }
         finally
         {
@@ -208,13 +209,13 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
                 loaded++;
 
                 if (loaded % 5 == 0)
-                    StatusMessage = $"Cargando TAGs... {loaded}/{files.Count}";
+                    StatusMessage = string.Format(LocalizationService.GetString("Loc.FavoriteFolder.Status.TagProgress"), loaded, files.Count);
             }
             catch { }
         }
 
         if (!token.IsCancellationRequested)
-            StatusMessage = $"Listo. {files.Count} archivo(s).";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FavoriteFolder.Status.Ready"), files.Count);
     }
 
     // ───── Activacion y seleccion ────────────────────────────────────────
@@ -253,7 +254,7 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
 
         if (BusSelector.SelectedBus is not IAudioBus bus)
         {
-            StatusMessage = "No hay bus de salida seleccionado.";
+            StatusMessage = LocalizationService.GetString("Loc.FavoriteFolder.Status.NoOutputBus");
             return;
         }
 
@@ -269,11 +270,11 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
 
             IsPlaying = true;
             NowPlayingText = Path.GetFileName(filePath);
-            StatusMessage = $"Reproduciendo: {NowPlayingText}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FavoriteFolder.Status.Playing"), NowPlayingText);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al reproducir: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FavoriteFolder.Status.PlayError"), ex.Message);
         }
     }
 
@@ -283,7 +284,7 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
         StopCurrentChannel();
         IsPlaying = false;
         NowPlayingText = string.Empty;
-        StatusMessage = "Detenido.";
+        StatusMessage = LocalizationService.GetString("Loc.FavoriteFolder.Status.Stopped");
     }
 
     private void StopCurrentChannel()

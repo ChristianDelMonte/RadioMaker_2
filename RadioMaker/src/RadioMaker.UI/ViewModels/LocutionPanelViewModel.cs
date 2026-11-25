@@ -7,6 +7,7 @@ using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Logging;
 using RadioMaker.Core.Playback;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 using RMVoice.Core.Models;
 
 namespace RadioMaker.UI.ViewModels;
@@ -119,7 +120,7 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
     // ───── Estado ────────────────────────────────────────────────────────
 
     /// -------------Ciudad, Pais (ej: "Buenos Aires, Argentina").</summary>
-    [ObservableProperty] private string _locationText = "Sin datos";
+    [ObservableProperty] private string _locationText = LocalizationService.GetString("Loc.Locution.NoData");
 
     /// -------------Temperatura formateada (ej: "22°C"). "---" si no hay datos.</summary>
     [ObservableProperty] private string _temperatureText = "---";
@@ -143,7 +144,7 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
 
     /// -------------Texto de ubicacion mostrado en el panel.</summary>
     public string LocationDisplayText =>
-        HasWeatherData ? LocationText : "Sin datos";
+        HasWeatherData ? LocationText : LocalizationService.GetString("Loc.Locution.Status.NoData");
 
     /// -------------Textos de clima mostrados en el panel.</summary>
     public string TemperatureDisplayText => HasWeatherData ? TemperatureText : "---";
@@ -151,15 +152,22 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
 
     /// -------------Tooltip del boton de clima segun estado.</summary>
     public string ClimateButtonTooltip =>
-        !IsAvailable ? "RMVoice no esta disponible"
-        : IsPlaying ? "Reproduciendo locucion..."
-        : "Reproducir clima";
+        !IsAvailable ? LocalizationService.GetString("Loc.Locution.Tooltip.Unavailable")
+        : IsPlaying ? LocalizationService.GetString("Loc.Locution.Tooltip.Playing")
+        : LocalizationService.GetString("Loc.Locution.Tooltip.PlayClimate");
 
     /// -------------Tooltip del boton de hora segun estado.</summary>
     public string HourButtonTooltip =>
-        !IsAvailable ? "RMVoice no esta disponible"
-        : IsPlaying ? "Reproduciendo locucion..."
-        : "Reproducir hora";
+        !IsAvailable ? LocalizationService.GetString("Loc.Locution.Tooltip.Unavailable")
+        : IsPlaying ? LocalizationService.GetString("Loc.Locution.Tooltip.Playing")
+        : LocalizationService.GetString("Loc.Locution.Tooltip.PlayHour");
+
+    public void RefreshLocalizedTexts()
+    {
+        OnPropertyChanged(nameof(LocationDisplayText));
+        OnPropertyChanged(nameof(ClimateButtonTooltip));
+        OnPropertyChanged(nameof(HourButtonTooltip));
+    }
 
     // ───── Eventos (los consume MainWindowViewModel) ─────────────────────
 
@@ -237,7 +245,7 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         {
             AppLogger.Warning("LOCUTION-PANEL",
                 $"No se puede reproducir {command}: " +
-                (IsPlaying ? "ya hay una locucion en curso" : "RMVoice no esta disponible"));
+                (IsPlaying ? LocalizationService.GetString("Loc.Locution.Status.AlreadyPlaying") : LocalizationService.GetString("Loc.Locution.Tooltip.Unavailable")));
             return;
         }
 
@@ -514,7 +522,7 @@ public sealed partial class LocutionPanelViewModel : ViewModelBase, IDisposable
         var country = (loc.Country ?? string.Empty).Trim();
 
         if (string.IsNullOrEmpty(city) && string.IsNullOrEmpty(country))
-            return "Sin datos";
+            return LocalizationService.GetString("Loc.Locution.Status.NoData");
 
         if (string.IsNullOrEmpty(city)) return country;
         if (string.IsNullOrEmpty(country)) return city;

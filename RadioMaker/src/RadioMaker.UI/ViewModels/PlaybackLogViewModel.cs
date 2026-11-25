@@ -3,6 +3,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Logging;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -62,7 +63,7 @@ public sealed partial class PlaybackLogViewModel : ViewModelBase
     /// -------------
     public IReadOnlyList<LogEntry> GetAllEntries()
     {
-        return _logService.GetSnapshot(int.MaxValue);
+        return _logService.GetSnapshot(int.MaxValue).Select(LogMessageLocalizer.Localize).ToList();
     }
 
     /// -------------
@@ -81,10 +82,11 @@ public sealed partial class PlaybackLogViewModel : ViewModelBase
         Dispatcher.UIThread.Post(() =>
         {
             IncrementCount(entry.Level);
+            var displayEntry = LogMessageLocalizer.Localize(entry);
 
-            if (PassesFilter(entry))
+            if (PassesFilter(displayEntry))
             {
-                Entries.Insert(0, entry);
+                Entries.Insert(0, displayEntry);
 
                 while (Entries.Count > MaxVisible)
                     Entries.RemoveAt(Entries.Count - 1);
@@ -140,15 +142,16 @@ public sealed partial class PlaybackLogViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void ReloadSnapshot()
+    public void ReloadSnapshot()
     {
         var snapshot = _logService.GetSnapshot(MaxVisible);
 
         Entries.Clear();
-        foreach (var entry in snapshot)
+        foreach (var sourceEntry in snapshot)
         {
-            if (PassesFilter(entry))
-                Entries.Add(entry);
+            var displayEntry = LogMessageLocalizer.Localize(sourceEntry);
+            if (PassesFilter(displayEntry))
+                Entries.Add(displayEntry);
         }
 
         DebugCount = _logService.CountByLevel(LogLevel.Debug);
@@ -164,4 +167,5 @@ public sealed partial class PlaybackLogViewModel : ViewModelBase
     partial void OnShowWarningChanged(bool value) => ReloadSnapshot();
     partial void OnShowErrorChanged(bool value) => ReloadSnapshot();
     partial void OnFilterTextChanged(string value) => ReloadSnapshot();
+
 }

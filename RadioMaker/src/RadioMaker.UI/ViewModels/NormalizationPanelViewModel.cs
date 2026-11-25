@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -91,7 +92,7 @@ public sealed partial class NormalizationPanelViewModel : ViewModelBase
     // ───── Estado ────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _isAnalyzing;
-    [ObservableProperty] private string _statusMessage = "Esperando a que se cargue un archivo...";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Normalization.Status.WaitingForFile");
     [ObservableProperty] private NormalizationResult _result = NormalizationResult.NotAnalyzed;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
@@ -106,8 +107,8 @@ public sealed partial class NormalizationPanelViewModel : ViewModelBase
 
     public string ModeDescription => Mode switch
     {
-        NormalizationMode.Peak => "Peak: lleva el pico al target, conserva la dinamica.",
-        NormalizationMode.Rms  => "RMS: empareja la sonoridad percibida entre archivos.",
+        NormalizationMode.Peak => LocalizationService.GetString("Loc.Normalization.Description.Peak"),
+        NormalizationMode.Rms  => LocalizationService.GetString("Loc.Normalization.Description.Rms"),
         _ => string.Empty
     };
 
@@ -123,9 +124,9 @@ public sealed partial class NormalizationPanelViewModel : ViewModelBase
     {
         get
         {
-            if (!IsEnabled) return "Normalizacion desactivada.";
-            if (!Result.IsAnalyzed) return "Normalizacion activa - esperando analisis.";
-            return $"Normalizacion activa: {GainText}.";
+            if (!IsEnabled) return LocalizationService.GetString("Loc.Normalization.Status.Disabled");
+            if (!Result.IsAnalyzed) return LocalizationService.GetString("Loc.Normalization.Status.WaitingAnalysis");
+            return string.Format(LocalizationService.GetString("Loc.Normalization.Status.Active"), GainText);
         }
     }
 
@@ -151,8 +152,8 @@ public sealed partial class NormalizationPanelViewModel : ViewModelBase
 
         Result = NormalizationResult.NotAnalyzed;
         StatusMessage = channel is null
-            ? "Sin canal cargado."
-            : "Analizando niveles...";
+            ? LocalizationService.GetString("Loc.Normalization.Status.NoChannel")
+            : LocalizationService.GetString("Loc.Normalization.Status.Analyzing");
 
         RefreshTexts();
 
@@ -179,14 +180,14 @@ public sealed partial class NormalizationPanelViewModel : ViewModelBase
             Result = result;
 
             StatusMessage = result.IsAnalyzed
-                ? $"Analisis completado. Peak: {result.PeakDb:F2} dB, RMS: {result.RmsDb:F2} dB."
-                : "No se pudo analizar el archivo.";
+                ? string.Format(LocalizationService.GetString("Loc.Normalization.Status.AnalysisComplete"), result.PeakDb, result.RmsDb)
+                : LocalizationService.GetString("Loc.Normalization.Status.AnalysisFailed");
 
             ApplyNormalizationToChannel();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Normalization.Status.Error"), ex.Message);
             Result = NormalizationResult.NotAnalyzed;
         }
         finally
@@ -216,7 +217,7 @@ public sealed partial class NormalizationPanelViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al aplicar normalizacion: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Normalization.Status.ApplyError"), ex.Message);
         }
 
         OnPropertyChanged(nameof(TrimStatusText));

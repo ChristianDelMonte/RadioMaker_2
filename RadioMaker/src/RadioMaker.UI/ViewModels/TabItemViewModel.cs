@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -71,6 +72,8 @@ public sealed partial class TabItemViewModel : ViewModelBase
     /// -------------ViewModel del contenido especifico de esta pestaña.</summary>
     public object? Content { get; set; }
 
+    public string? LocalizedTitleKey { get; }
+
     /// -------------Titulo visible de la pestaña.</summary>
     [ObservableProperty] private string _title;
 
@@ -139,19 +142,44 @@ public sealed partial class TabItemViewModel : ViewModelBase
     /// (TitleWithDirty). Si agregaramos otro "*" aca, apareceria duplicado
     /// o "fantasma" cuando el VM ya lo limpio.
     /// -------------
-    public string DisplayTitle => Title;
+    public string DisplayTitle
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(LocalizedTitleKey))
+                return LocalizationService.GetString(LocalizedTitleKey);
+
+            var keys = Kind switch
+            {
+                TabKind.Events => new[] { "Loc.Tabs.Events" },
+                TabKind.Scheduled => new[] { "Loc.ScheduledList.DefaultName", "Loc.Tabs.Default.Scheduled" },
+                TabKind.Tanda => new[] { "Loc.TandaEditor.NewTanda", "Loc.Tabs.Default.Sequence" },
+                TabKind.Playlist => new[] { "Loc.PlaylistEditor.NewPlaylist", "Loc.Tabs.Default.Playlist" },
+                TabKind.Encadenadores => new[] { "Loc.Chainers.DefaultName" },
+                TabKind.Cart => new[] { "Loc.Carts.DefaultBoardName" },
+                TabKind.Notes => new[] { "Loc.Tabs.NewNote" },
+                _ => Array.Empty<string>()
+            };
+
+            var dirtySuffix = Title.EndsWith(" *", StringComparison.Ordinal) ? " *" : string.Empty;
+            var plainTitle = dirtySuffix.Length == 0 ? Title : Title[..^dirtySuffix.Length];
+            return LocalizationService.LocalizeKnownDefault(plainTitle, keys) + dirtySuffix;
+        }
+    }
 
     public TabItemViewModel(
         string title,
         TabKind kind,
         bool isClosable,
         object? content = null,
-        Action<TabItemViewModel>? onCloseRequested = null)
+        Action<TabItemViewModel>? onCloseRequested = null,
+        string? localizedTitleKey = null)
     {
         Id = Guid.NewGuid().ToString("N");
         Kind = kind;
         IsClosable = isClosable;
         Content = content;
+        LocalizedTitleKey = localizedTitleKey;
         _title = title;
         _editingTitle = title;
         _onCloseRequested = onCloseRequested;
@@ -179,7 +207,7 @@ public sealed partial class TabItemViewModel : ViewModelBase
     public void BeginEdit()
     {
         if (!IsClosable) return;
-        EditingTitle = Title;
+        EditingTitle = DisplayTitle;
         IsEditing = true;
     }
 
@@ -190,7 +218,7 @@ public sealed partial class TabItemViewModel : ViewModelBase
 
         var newTitle = EditingTitle?.Trim();
         if (string.IsNullOrWhiteSpace(newTitle))
-            newTitle = "Sin nombre";
+            newTitle = LocalizationService.GetString("Loc.Tabs.Untitled");
 
         Title = newTitle;
         IsEditing = false;
@@ -208,6 +236,8 @@ public sealed partial class TabItemViewModel : ViewModelBase
         EditingTitle = Title;
         IsEditing = false;
     }
+
+    public void RefreshLocalizedTitle() => OnPropertyChanged(nameof(DisplayTitle));
 
     partial void OnTitleChanged(string value) => OnPropertyChanged(nameof(DisplayTitle));
 }

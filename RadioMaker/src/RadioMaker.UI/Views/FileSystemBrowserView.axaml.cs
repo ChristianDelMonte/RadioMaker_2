@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using RadioMaker.UI.Services;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 using System.Threading.Tasks;
 
@@ -108,12 +109,12 @@ public partial class FileSystemBrowserView : UserControl
         if (!RMWaveLauncher.OpenFile(fileVm.FullPath, out var error))
         {
             if (vm is not null)
-                vm.StatusMessage = error ?? "No se pudo abrir en RMWave.";
+                vm.StatusMessage = error ?? LocalizationService.GetString("Loc.TandaEditor.Status.RmWaveError");
         }
         else
         {
             if (vm is not null)
-                vm.StatusMessage = $"Abriendo {System.IO.Path.GetFileName(fileVm.FullPath)} en RMWave...";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.OpeningRMWave"), System.IO.Path.GetFileName(fileVm.FullPath));
         }
     }
 
@@ -188,13 +189,13 @@ public partial class FileSystemBrowserView : UserControl
         {
             var vm = GetVm();
             if (vm is not null)
-                vm.StatusMessage = $"Agregado a favoritos: {entry.EffectiveName}";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.FavoriteAdded"), entry.EffectiveName);
         }
         else
         {
             var vm = GetVm();
             if (vm is not null)
-                vm.StatusMessage = "No se pudo agregar a favoritos.";
+                vm.StatusMessage = LocalizationService.GetString("Loc.FileBrowser.Status.FavoriteAddFailed");
         }
     }
 
@@ -212,8 +213,8 @@ public partial class FileSystemBrowserView : UserControl
         if (vm is not null)
         {
             vm.StatusMessage = removed
-                ? $"Quitado de favoritos: {node.DisplayName}"
-                : "No se pudo quitar de favoritos.";
+                ? string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.FavoriteRemoved"), node.DisplayName)
+                : LocalizationService.GetString("Loc.FileBrowser.Status.FavoriteRemoveFailed");
         }
     }
 

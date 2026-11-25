@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
@@ -48,6 +49,8 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
 
     public bool HasExistingContent { get; }
     public int ExistingTrackCount { get; }
+    public string ExistingTrackWarningText => string.Format(
+        LocalizationService.GetString("Loc.PlaylistGenerator.Warning.ReplaceExisting"), ExistingTrackCount);
     public string ExistingPlaylistName { get; }
 
     // ───── Preset actual ─────────────────────────────────────────────────
@@ -149,7 +152,9 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         get
         {
             int n = ActiveFilterCount;
-            return n == 0 ? "Sin filtros activos" : $"{n} filtro(s) activo(s)";
+            return n == 0
+                ? LocalizationService.GetString("Loc.PlaylistGenerator.Filters.None")
+                : string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Filters.Active"), n);
         }
     }
 
@@ -158,14 +163,16 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         get
         {
             int n = ActiveVarietyRuleCount;
-            return n == 0 ? "Sin reglas de variedad" : $"{n} regla(s) activa(s)";
+            return n == 0
+                ? LocalizationService.GetString("Loc.PlaylistGenerator.Variety.None")
+                : string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Variety.Active"), n);
         }
     }
 
     // ───── Estado ────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _isGenerating;
-    [ObservableProperty] private string _statusMessage = "Configura las opciones y presiona Generar.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.PlaylistGenerator.Status.Initial");
     [ObservableProperty] private bool _hasPreview;
 
     // ───── Progreso ──────────────────────────────────────────────────────
@@ -194,7 +201,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
 
             var ts = TimeSpan.FromSeconds(total);
             var dur = $"{(int)ts.TotalHours:D2}:{ts.Minutes:D2}:{ts.Seconds:D2}";
-            return $"{PreviewTracks.Count} pista(s) · {dur}";
+            return string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.PreviewSummary"), PreviewTracks.Count, dur);
         }
     }
 
@@ -215,6 +222,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         HasExistingContent = hasExistingContent;
         ExistingTrackCount = existingTrackCount;
         ExistingPlaylistName = existingPlaylistName ?? string.Empty;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
 
         // Cargar historial de presets.
         ReloadHistory();
@@ -244,7 +252,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         var preset = PlaylistGeneratorPresetStore.Load(path);
         if (preset is null)
         {
-            StatusMessage = $"No se pudo cargar el preset '{Path.GetFileName(path)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Status.PresetLoadError"), Path.GetFileName(path));
             return;
         }
 
@@ -266,7 +274,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         }
         finally { _suppressPresetApply = false; }
 
-        StatusMessage = $"Preset '{preset.DisplayName}' aplicado.";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Status.PresetApplied"), preset.DisplayName);
     }
 
     /// -------------
@@ -276,7 +284,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(path))
         {
-            StatusMessage = "Ruta de guardado vacia.";
+            StatusMessage = LocalizationService.GetString("Loc.PlaylistGenerator.Status.EmptySavePath");
             return false;
         }
 
@@ -306,12 +314,12 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
             CurrentPresetPath = path;
             CurrentPresetName = preset.DisplayName;
 
-            StatusMessage = $"Preset guardado en '{Path.GetFileName(path)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Status.PresetSaved"), Path.GetFileName(path));
             return true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al guardar preset: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Status.PresetSaveError"), ex.Message);
             return false;
         }
     }
@@ -323,7 +331,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
     {
         if (string.IsNullOrEmpty(CurrentPresetPath))
         {
-            StatusMessage = "No hay un preset cargado. Usa 'Guardar como...'.";
+            StatusMessage = LocalizationService.GetString("Loc.PlaylistGenerator.Status.NoPresetToSave");
             return false;
         }
 
@@ -369,7 +377,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         finally { _suppressPresetApply = false; }
 
         ClearPreviewIfAny();
-        StatusMessage = "Preset nuevo. Configura las opciones.";
+        StatusMessage = LocalizationService.GetString("Loc.PlaylistGenerator.Status.NewPreset");
     }
 
     /// -------------Quita el preset seleccionado del historial (no borra el archivo).</summary>
@@ -392,7 +400,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         }
         finally { _suppressPresetApply = false; }
 
-        StatusMessage = $"Quitado del historial: {entry.DisplayName}";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Status.RemovedFromHistory"), entry.DisplayName);
     }
 
     // ───── Comandos ──────────────────────────────────────────────────────
@@ -407,7 +415,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         _cts = cts;
 
         IsGenerating = true;
-        StatusMessage = "Iniciando...";
+        StatusMessage = LocalizationService.GetString("Loc.PlaylistGenerator.Status.Starting");
 
         ProgressValue = 0;
         ProgressMaximum = 0;
@@ -418,7 +426,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         var options = BuildOptions();
         var progress = new Progress<PlaylistGeneratorProgress>(p =>
         {
-            StatusMessage = p.Message;
+            StatusMessage = LocalizeProgress(p.Message);
             ProgressMaximum = p.Total;
             ProgressValue = p.Current;
         });
@@ -432,13 +440,13 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         }
         catch (OperationCanceledException)
         {
-            StatusMessage = "Generacion cancelada.";
+            StatusMessage = LocalizationService.GetString("Loc.PlaylistGenerator.Status.Cancelled");
             IsGenerating = false;
             return;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Status.Error"), ex.Message);
             IsGenerating = false;
             return;
         }
@@ -447,13 +455,13 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
 
         if (!result.Success)
         {
-            StatusMessage = result.ErrorMessage ?? "No se pudo generar la playlist.";
+            StatusMessage = LocalizeGeneratorError(result.ErrorMessage ?? "No se pudo generar la playlist.");
             return;
         }
 
         if (result.TrackCount == 0)
         {
-            StatusMessage = "No se pudo armar ninguna pista con esa configuracion.";
+            StatusMessage = LocalizationService.GetString("Loc.PlaylistGenerator.Status.NoTracks");
             return;
         }
 
@@ -472,21 +480,21 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         HasPreview = true;
 
         var parts = new List<string>();
-        parts.Add($"{result.TrackCount} pista(s) seleccionada(s) de {result.TotalCandidatesFound} valida(s)");
+        parts.Add(string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Result.Selected"), result.TrackCount, result.TotalCandidatesFound));
 
         if (result.SkippedUnreadable > 0)
-            parts.Add($"{result.SkippedUnreadable} ilegible(s)");
+            parts.Add(string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Result.Unreadable"), result.SkippedUnreadable));
 
         if (result.FilteredOutByTags > 0)
-            parts.Add($"{result.FilteredOutByTags} descartada(s) por tags");
+            parts.Add(string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Result.FilteredTags"), result.FilteredOutByTags));
 
         if (result.FilteredOutByDuration > 0)
-            parts.Add($"{result.FilteredOutByDuration} descartada(s) por duracion");
+            parts.Add(string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Result.FilteredDuration"), result.FilteredOutByDuration));
 
         if (result.RelaxedByArtistRules > 0)
-            parts.Add($"{result.RelaxedByArtistRules} relajada(s) por variedad");
+            parts.Add(string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Result.RelaxedArtist"), result.RelaxedByArtistRules));
 
-        StatusMessage = "Listo: " + string.Join(" · ", parts) + ".";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Status.Ready"), string.Join(" · ", parts));
     }
 
     // ───── Helpers ───────────────────────────────────────────────────────
@@ -561,7 +569,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
     {
         return new PlaylistGeneratorPreset
         {
-            Name = string.IsNullOrWhiteSpace(presetName) ? "Sin nombre" : presetName.Trim(),
+            Name = string.IsNullOrWhiteSpace(presetName) ? LocalizationService.GetString("Loc.PlaylistGenerator.Status.UntitledPreset") : presetName.Trim(),
             Options = BuildOptions()
         };
     }
@@ -604,7 +612,7 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
 
         PreviewTracks.Clear();
         HasPreview = false;
-        StatusMessage = "Cambiaste la configuracion. Presiona Regenerar.";
+        StatusMessage = LocalizationService.GetString("Loc.PlaylistGenerator.Status.SettingsChanged");
     }
 
     private void NotifyFilterSummaryChanged()
@@ -620,6 +628,63 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(ActiveVarietyRuleCount));
         OnPropertyChanged(nameof(VarietySummaryText));
         OnPropertyChanged(nameof(HasActiveTagFilters));
+    }
+
+    private static string LocalizeProgress(string message)
+    {
+        string[] prefixes = { "Leyendo duraciones y tags...", "Leyendo duraciones...", "Leyendo biblioteca " };
+        foreach (var prefix in prefixes)
+        {
+            if (message.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                string key = prefix switch
+                {
+                    "Leyendo duraciones y tags..." => "Loc.PlaylistGenerator.Progress.ReadingDurationsTags",
+                    "Leyendo duraciones..." => "Loc.PlaylistGenerator.Progress.ReadingDurations",
+                    _ => "Loc.PlaylistGenerator.Progress.ReadingLibrary"
+                };
+                return LocalizationService.GetString(key) + message[prefix.Length..];
+            }
+        }
+        return message switch
+        {
+            "Buscando archivos de audio..." => LocalizationService.GetString("Loc.PlaylistGenerator.Progress.Searching"),
+            "Enumerando archivos..." => LocalizationService.GetString("Loc.PlaylistGenerator.Progress.Enumerating"),
+            "Armando la playlist..." => LocalizationService.GetString("Loc.PlaylistGenerator.Progress.Building"),
+            _ => message
+        };
+    }
+
+    private static string LocalizeGeneratorError(string message)
+    {
+        if (message.StartsWith("Ninguna pista cumple con los filtros activos.", StringComparison.Ordinal))
+        {
+            var count = System.Text.RegularExpressions.Regex.Match(message, @"\d+").Value;
+            return string.Format(LocalizationService.GetString("Loc.PlaylistGenerator.Error.NoMatchingTracks"), count);
+        }
+        return message switch
+        {
+            "Configuracion vacia." => LocalizationService.GetString("Loc.PlaylistGenerator.Error.EmptyConfiguration"),
+            "No se especifico una carpeta de origen." => LocalizationService.GetString("Loc.PlaylistGenerator.Error.NoSourceFolder"),
+            "La carpeta seleccionada no existe." => LocalizationService.GetString("Loc.PlaylistGenerator.Error.MissingFolder"),
+            "No se encontraron archivos de audio en la carpeta." => LocalizationService.GetString("Loc.PlaylistGenerator.Error.NoAudioFiles"),
+            "Ningun archivo se pudo leer correctamente." => LocalizationService.GetString("Loc.PlaylistGenerator.Error.NoReadableFiles"),
+            "No se pudo generar la playlist." => LocalizationService.GetString("Loc.PlaylistGenerator.Error.Generate"),
+            _ => message
+        };
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        NotifyFilterSummaryChanged();
+        NotifyVarietySummaryChanged();
+        OnPropertyChanged(nameof(ExistingTrackWarningText));
+        OnPropertyChanged(nameof(PreviewSummaryText));
+        StatusMessage = IsGenerating
+            ? LocalizationService.GetString("Loc.PlaylistGenerator.Status.Starting")
+            : HasPreview
+                ? LocalizationService.GetString("Loc.PlaylistGenerator.Status.PreviewReady")
+                : LocalizationService.GetString("Loc.PlaylistGenerator.Status.Initial");
     }
 
     // ───── Hooks ─────────────────────────────────────────────────────────
@@ -703,5 +768,11 @@ public sealed partial class PlaylistGeneratorWindowViewModel : ViewModelBase
     public void CancelPendingOperation()
     {
         try { _cts?.Cancel(); } catch { }
+    }
+
+    public void Dispose()
+    {
+        CancelPendingOperation();
+        LocalizationService.LanguageChanged -= OnLanguageChanged;
     }
 }

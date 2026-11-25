@@ -18,7 +18,7 @@
                 <Button x:Name="NewButton"
                         Click="OnNewClick"
                         Padding="3" Background="Transparent" BorderThickness="0"
-                        ToolTip.Tip="Nuevo documento">
+                        ToolTip.Tip="{DynamicResource Loc.Notes.NewTooltip}">
                     <materialIcons:MaterialIcon Kind="FilePlus"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -27,7 +27,7 @@
                 <!-- Abrir -->
                 <Button x:Name="OpenButton" Click="OnOpenClick"
                         Padding="3" Background="Transparent" BorderThickness="0"
-                        ToolTip.Tip="Abrir archivo .txt">
+                        ToolTip.Tip="{DynamicResource Loc.Notes.OpenTooltip}">
                     <materialIcons:MaterialIcon Kind="FolderOpen"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -36,7 +36,7 @@
                 <!-- Guardar -->
                 <Button x:Name="SaveButton" Click="OnSaveClick"
                         Padding="3" Background="Transparent" BorderThickness="0"
-                        ToolTip.Tip="Guardar">
+                        ToolTip.Tip="{DynamicResource Loc.Common.Save}">
                     <materialIcons:MaterialIcon Kind="ContentSave"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -45,7 +45,7 @@
                 <!-- Guardar como -->
                 <Button x:Name="SaveAsButton" Click="OnSaveAsClick"
                         Padding="3" Background="Transparent" BorderThickness="0"
-                        ToolTip.Tip="Guardar como...">
+                        ToolTip.Tip="{DynamicResource Loc.Common.SaveAs}">
                     <materialIcons:MaterialIcon Kind="ContentSaveEdit"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -81,7 +81,7 @@
                  Background="{DynamicResource BgTertiary}"
                  BorderThickness="0"
                  VerticalContentAlignment="Top"
-                 PlaceholderText="Empeza a escribir..." />
+                 PlaceholderText="{DynamicResource Loc.Notes.Placeholder}" />
 
         <!-- Status bar -->
         <Border Grid.Row="2"

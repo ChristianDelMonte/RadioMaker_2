@@ -6,6 +6,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.Controls;
 
@@ -206,7 +207,7 @@ public sealed class SpectrumAnalyzer : Control
         var spectrum = Spectrum ?? Channel?.Spectrum;
         if (spectrum is null)
         {
-            DrawCenteredText(ctx, bounds, "Sin canal activo");
+            DrawCenteredText(ctx, bounds, LocalizationService.GetString("Loc.Controls.Spectrum.Status.NoChannel"));
             return;
         }
 

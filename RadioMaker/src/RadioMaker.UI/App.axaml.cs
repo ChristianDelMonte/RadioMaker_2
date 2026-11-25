@@ -1,11 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using RadioMaker.Core.Engine;
 using RadioMaker.Core.Logging;
 using RadioMaker.UI.Services;
+using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 using RadioMaker.UI.Views;
 
@@ -26,12 +29,54 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Arrancar el flujo de inicializacion con splash en background.
-            // No bloqueamos el arranque del bucle de UI.
-            _ = InitializeWithSplashAsync(desktop);
+            // La selección inicial, si corresponde, se muestra antes del splash.
+            _ = InitializeApplicationAsync(desktop);
+        }
+        else
+        {
+            LocalizationService.Initialize();
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private async Task InitializeApplicationAsync(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        if (!LanguageSettingsStore.TryLoad(out _))
+        {
+            string? selectedLanguage = null;
+            try
+            {
+                selectedLanguage = await ShowFirstRunLanguageWindowAsync(desktop);
+            }
+            catch
+            {
+                // If the chooser cannot be shown, use the system language and continue startup.
+            }
+
+            LanguageSettingsStore.Save(selectedLanguage ?? LanguageSettingsStore.DetectSystemLanguage());
+        }
+
+        LocalizationService.Initialize();
+        await InitializeWithSplashAsync(desktop);
+    }
+
+    private static Task<string?> ShowFirstRunLanguageWindowAsync(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        var window = new FirstRunLanguageWindow();
+        var completion = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        window.LanguageSelected += language =>
+        {
+            completion.TrySetResult(language);
+            window.Close();
+        };
+        window.Closed += (_, _) => completion.TrySetResult(null);
+
+        desktop.MainWindow = window;
+        window.Show();
+        return completion.Task;
     }
 
     private static void RegisterGlobalExceptionLogging()
@@ -75,7 +120,7 @@ public partial class App : Application
         AppLogger.Info("APP", "Inicio de RadioMaker.");
         var splash = new SplashWindow();
         splash.Show();
-        splash.ReportProgress(0.0, "Iniciando RadioMaker...");
+        splash.ReportProgress(0.0, LocalizationService.GetString("Loc.Splash.StartingRadioMaker"));
 
         // Dejar que el splash se renderice una vez antes de arrancar la carga.
         await Task.Delay(300);
@@ -86,12 +131,12 @@ public partial class App : Application
         try
         {
             // ── Paso 1: motor de audio ─────────────────────────────────
-            splash.ReportProgress(0.05, "Inicializando motor de audio...");
+            splash.ReportProgress(0.05, LocalizationService.GetString("Loc.Splash.InitializingAudioEngine"));
             await Task.Delay(250);
 
             engine = await Task.Run(() => new BassEngine());
 
-            splash.ReportProgress(0.25, "Inicializando BASS...");
+            splash.ReportProgress(0.25, LocalizationService.GetString("Loc.Splash.InitializingBass"));
             await Task.Delay(250);
 
             await Task.Run(() =>
@@ -105,17 +150,17 @@ public partial class App : Application
             });
 
             // ── Paso 2: plugins / formatos ─────────────────────────────
-            splash.ReportProgress(0.45, "Cargando plugins de formato...");
+            splash.ReportProgress(0.45, LocalizationService.GetString("Loc.Splash.LoadingFormatPlugins"));
             await Task.Delay(250);
 
             // ── Paso 3: configuracion ─────────────────────────────────
-            splash.ReportProgress(0.60, "Cargando configuracion...");
+            splash.ReportProgress(0.60, LocalizationService.GetString("Loc.Splash.LoadingConfiguration"));
             await Task.Delay(250);
 
             viewModel = new MainWindowViewModel(engine);
 
             // ── Paso 4: workspace ─────────────────────────────────────
-            splash.ReportProgress(0.78, "Restaurando workspace...");
+            splash.ReportProgress(0.78, LocalizationService.GetString("Loc.Splash.RestoringWorkspace"));
             await Task.Delay(250);
 
             try { viewModel.RestoreWorkspace(); }
@@ -126,12 +171,13 @@ public partial class App : Application
             }
 
             // ── Paso 5: interfaz ──────────────────────────────────────
-            splash.ReportProgress(0.92, "Preparando interfaz...");
+            splash.ReportProgress(0.92, LocalizationService.GetString("Loc.Splash.PreparingInterface"));
             await Task.Delay(250);
 
             var mainWindow = new MainWindow { DataContext = viewModel };
 
             desktop.MainWindow = mainWindow;
+            desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
             desktop.ShutdownRequested += (_, _) =>
             {
@@ -146,7 +192,7 @@ public partial class App : Application
             AppLogger.Info("APP", "Ventana principal lista.");
 
             // ── Paso 6: cierre del splash ─────────────────────────────
-            splash.ReportProgress(1.0, "Listo");
+            splash.ReportProgress(1.0, LocalizationService.GetString("Loc.Splash.Ready"));
             await Task.Delay(350);
 
             splash.Close();
@@ -155,7 +201,7 @@ public partial class App : Application
         {
             AppLogger.Error("Splash", "Error critico durante el arranque", ex);
 
-            splash.ReportProgress(1.0, $"Error al iniciar: {ex.Message}");
+            splash.ReportProgress(1.0, string.Format(LocalizationService.GetString("Loc.Splash.StartError"), ex.Message));
             await Task.Delay(2500);
 
             try { splash.Close(); } catch { }

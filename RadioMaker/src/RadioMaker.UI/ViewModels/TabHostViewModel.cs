@@ -5,6 +5,7 @@ using RadioMaker.Core.Configuration;
 using RadioMaker.Core.Playback;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 using System.Collections.ObjectModel;
 
@@ -129,7 +130,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
             case TabZone.Left:
                 EventsPanel = new EventsPanelViewModel(schedulerPanel);
                 EventsTab = new TabItemViewModel(
-                    title: "Eventos",
+                    title: LocalizationService.GetString("Loc.Tabs.Events"),
                     kind: TabKind.Events,
                     isClosable: false,
                     content: EventsPanel);
@@ -163,10 +164,11 @@ public sealed partial class TabHostViewModel : ViewModelBase
                 if (fixedPanel is FileSystemBrowserViewModel fileVm)
                 {
                     var fileTab = new TabItemViewModel(
-                        title: "Explorador",
+                        title: LocalizationService.GetString("Loc.Tabs.FileManager"),
                         kind: TabKind.Custom,
                         isClosable: false,
-                        content: fileVm);
+                        content: fileVm,
+                        localizedTitleKey: "Loc.Tabs.FileManager");
 
                     Tabs.Add(fileTab);
                 }
@@ -390,7 +392,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
     public void AddScheduledTab()
     {
         var vm = new ScheduledListViewModel(_playbackEngine);
-        vm.ListName = "Programados " + (CountOf(TabKind.Scheduled) + 1);
+        vm.ListName = string.Format(LocalizationService.GetString("Loc.Tabs.Default.Scheduled"), CountOf(TabKind.Scheduled) + 1);
 
         var tab = CreateScheduledTab(vm);
         Tabs.Add(tab);
@@ -403,7 +405,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
     public void AddTandaTab()
     {
         var vm = new TandaEditorViewModel();
-        vm.TandaName = "Tanda " + (CountOf(TabKind.Tanda) + 1);
+        vm.TandaName = string.Format(LocalizationService.GetString("Loc.Tabs.Default.Sequence"), CountOf(TabKind.Tanda) + 1);
 
         var tab = CreateTandaTab(vm);
         Tabs.Add(tab);
@@ -427,7 +429,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
             // Fallback para tests o casos sin factory: crear con el player
             // compartido y el BusSelector del modulo.
             vm = new PlaylistEditorViewModel(
-                new Playlist { Name = "Playlist " + (CountOf(TabKind.Playlist) + 1) },
+                new Playlist { Name = string.Format(LocalizationService.GetString("Loc.Tabs.Default.Playlist"), CountOf(TabKind.Playlist) + 1) },
                 _playlistPlayer);
 
             if (_busSelectorPlaylist is not null)
@@ -438,7 +440,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
         }
 
         if (string.IsNullOrWhiteSpace(vm.PlaylistName))
-            vm.PlaylistName = "Playlist " + (CountOf(TabKind.Playlist) + 1);
+            vm.PlaylistName = string.Format(LocalizationService.GetString("Loc.Tabs.Default.Playlist"), CountOf(TabKind.Playlist) + 1);
 
         var tab = CreatePlaylistTab(vm);
         Tabs.Add(tab);
@@ -540,7 +542,7 @@ public sealed partial class TabHostViewModel : ViewModelBase
 
         if (!entry.ExistsNow)
         {
-            StatusMessage = $"La carpeta ya no existe: {entry.Path}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Tabs.FavoriteFolderMissing"), entry.Path);
             return;
         }
 
@@ -832,6 +834,12 @@ public sealed partial class TabHostViewModel : ViewModelBase
         }
 
         return entries;
+    }
+
+    public void RefreshLocalizedTitles()
+    {
+        foreach (var tab in Tabs)
+            tab.RefreshLocalizedTitle();
     }
 
     public void SelectClosableTabByIndex(int index)

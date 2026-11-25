@@ -21,7 +21,7 @@
                 <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
 
                     <TextBlock Grid.Column="0"
-                               Text="Analizador de espectro"
+                               Text="{DynamicResource Loc.Controls.Spectrum.Title}"
                                FontWeight="SemiBold"
                                FontSize="11"
                                Foreground="{DynamicResource FgPrimary}"
@@ -55,7 +55,7 @@
                             Command="{Binding NextModeCommand}"
                             Padding="3,2" Background="Transparent" BorderThickness="0"
                             VerticalAlignment="Center"
-                            ToolTip.Tip="Siguiente modo">
+                            ToolTip.Tip="{DynamicResource Loc.Controls.Spectrum.NextMode}">
                         <materialIcons:MaterialIcon Kind="ChevronRight"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -66,7 +66,7 @@
                             Command="{Binding ToggleRunningCommand}"
                             Padding="3,2" Background="Transparent" BorderThickness="0"
                             VerticalAlignment="Center"
-                            ToolTip.Tip="Pausar / reanudar">
+                            ToolTip.Tip="{DynamicResource Loc.Controls.Spectrum.PauseResume}">
                         <materialIcons:MaterialIcon Kind="Pause"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Warning}" />
@@ -95,7 +95,7 @@
                     BorderBrush="{DynamicResource BorderPrimary}"
                     BorderThickness="0,1,0,0"
                     Padding="6,3">
-                <TextBlock Text="Click sobre el analizador o usa el selector para cambiar de modo. Modos: FFT, Bandas, Waterfall, Onda."
+                <TextBlock Text="{DynamicResource Loc.Controls.Spectrum.Help}"
                            FontSize="9"
                            Foreground="{DynamicResource FgMuted}"
                            TextTrimming="CharacterEllipsis" />

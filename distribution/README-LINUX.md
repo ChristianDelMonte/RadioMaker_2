@@ -1,5 +1,7 @@
 # RadioMaker — Guía de ejecución en Linux
 
+[English version](README-LINUX.en.md)
+
 Versión: 2.01 · Plataformas: Linux x64 (x86_64)
 Distribuciones probadas: Debian 12+, Ubuntu 22.04+, Fedora 38+, Arch
 

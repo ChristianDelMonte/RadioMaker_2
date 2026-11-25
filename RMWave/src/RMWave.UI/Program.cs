@@ -2,6 +2,7 @@ using Avalonia;
 using ManagedBass;
 using RMWave.Core.Audio;
 using RMWave.Core.Models;
+using RMWave.UI.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text;
 
 namespace RMWave.UI;
 
@@ -17,19 +19,23 @@ class Program
     [STAThread]
     public static async Task Main(string[] args)
     {
-        // ===== INTEGRACIÓN CON RADIOMAKER =====
-        // Precargar DLLs nativas de BASS antes de cualquier código que las use.
+        try { Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false); }
+        catch { }
+
+        // ===== INTEGRACIÃ“N CON RADIOMAKER =====
+        // Precargar DLLs nativas de BASS antes de cualquier cÃ³digo que las use.
         // El loader sube directorios para encontrar "runtimes/{rid}/native/"
-        // en la raíz de RadioMaker cuando corremos desde Addons/RMWave/.
+        // en la raÃ­z de RadioMaker cuando corremos desde Addons/RMWave/.
         NativeLibraryLoader.EnsureLoaded();
+        WaveLocalizationService.Initialize();
 
         PrintBanner();
 
-        // Filtrar flags de integración que agrega el host (ej: RadioMaker).
+        // Filtrar flags de integraciÃ³n que agrega el host (ej: RadioMaker).
         var effectiveArgs = FilterInformativeFlags(args);
 
         // Detectar --open-file <path>: abrir ese archivo en la UI al arrancar.
-        // También aceptamos un .rmw suelto como primer argumento (double-click
+        // TambiÃ©n aceptamos un .rmw suelto como primer argumento (double-click
         // desde el explorador de Windows).
         StartupFilePath = ExtractStartupFilePath(effectiveArgs, out var remainingArgs);
 
@@ -70,8 +76,8 @@ class Program
 
     /// <summary>
     /// Extrae la ruta a abrir desde los argumentos. Acepta dos formas:
-    ///   --open-file "X.rmw"     (forma explícita)
-    ///   "X.rmw"                 (primer arg con extensión .rmw)
+    ///   --open-file "X.rmw"     (forma explÃ­cita)
+    ///   "X.rmw"                 (primer arg con extensiÃ³n .rmw)
     /// Los args consumidos NO van al listado de "remainingArgs".
     /// </summary>
     private static string? ExtractStartupFilePath(
@@ -128,7 +134,7 @@ class Program
 
             Console.WriteLine("***************************************************");
             Console.WriteLine("** RadioMaker Wave Editor.");
-            Console.WriteLine($"** Version {versionStr} - Ultima compilacion: {buildDate:yyyy-MM-dd}");
+            Console.WriteLine(CliFormat("** VersiÃ³n {0} - Ãšltima compilaciÃ³n: {1:yyyy-MM-dd}", "** Version {0} - Last build: {1:yyyy-MM-dd}", versionStr, buildDate));
             Console.WriteLine("---------------------------------------------------");
             Console.WriteLine();
         }
@@ -140,6 +146,15 @@ class Program
             Console.WriteLine();
         }
     }
+
+    private static string Cli(string spanish, string english) =>
+        WaveLocalizationService.CurrentCulture.TwoLetterISOLanguageName == "en" ? english : spanish;
+
+    private static string CliFormat(string spanish, string english, params object?[] args) =>
+        string.Format(WaveLocalizationService.CurrentCulture, Cli(spanish, english), args);
+
+    private static string BoolLabel(bool value) =>
+        value ? Cli("SÃ­", "Yes") : Cli("No", "No");
 
     // ==========================================
     // MODO CLI
@@ -163,8 +178,8 @@ class Program
                 {
                     if (args.Length < 2)
                     {
-                        Console.WriteLine("Error: Debes especificar el archivo del proyecto.");
-                        Console.WriteLine("Uso: RMWave -reproducir <proyecto.rmw>");
+                        Console.WriteLine(Cli("Error: Debes especificar el archivo del proyecto.", "Error: You must specify the project file."));
+                        Console.WriteLine(Cli("Uso: RMWave -reproducir <proyecto.rmw>", "Usage: RMWave play <project.rmw>"));
                         return;
                     }
 
@@ -191,8 +206,8 @@ class Program
                             }
                             else
                             {
-                                Console.WriteLine("Error: Debes especificar el nombre del dispositivo.");
-                                Console.WriteLine("Uso: RMWave -reproducir <proyecto.rmw> -dispositivo <nombre>");
+                                Console.WriteLine(Cli("Error: Debes especificar el nombre del dispositivo.", "Error: You must specify the device name."));
+                                Console.WriteLine(Cli("Uso: RMWave -reproducir <proyecto.rmw> -dispositivo <nombre>", "Usage: RMWave play <project.rmw> -device <name>"));
                                 return;
                             }
                         }
@@ -207,8 +222,8 @@ class Program
                 {
                     if (args.Length < 3)
                     {
-                        Console.WriteLine("Error: Debes especificar el archivo de entrada y salida.");
-                        Console.WriteLine("Uso: RMWave -exportar <proyecto.rmw> <salida.wav|mp3>");
+                        Console.WriteLine(Cli("Error: Debes especificar el archivo de entrada y salida.", "Error: You must specify the input and output files."));
+                        Console.WriteLine(Cli("Uso: RMWave -exportar <proyecto.rmw> <salida.wav|mp3>", "Usage: RMWave export <project.rmw> <output.wav|mp3>"));
                         return;
                     }
 
@@ -220,8 +235,8 @@ class Program
                 {
                     if (args.Length < 2)
                     {
-                        Console.WriteLine("Error: Debes especificar el archivo del proyecto.");
-                        Console.WriteLine("Uso: RMWave -info <proyecto.rmw>");
+                        Console.WriteLine(Cli("Error: Debes especificar el archivo del proyecto.", "Error: You must specify the project file."));
+                        Console.WriteLine(Cli("Uso: RMWave -info <proyecto.rmw>", "Usage: RMWave info <project.rmw>"));
                         return;
                     }
 
@@ -234,7 +249,7 @@ class Program
                 {
                     if (args.Length < 2)
                     {
-                        Console.WriteLine("Uso: RMWave -listarmarcadores <proyecto.rmw>");
+                        Console.WriteLine(Cli("Uso: RMWave -listarmarcadores <proyecto.rmw>", "Usage: RMWave listmarkers <project.rmw>"));
                         return;
                     }
                     ListMarkers(args[1]);
@@ -246,7 +261,7 @@ class Program
                 {
                     if (args.Length < 3)
                     {
-                        Console.WriteLine("Uso: RMWave -reproducirmarcador <proyecto.rmw> <nombre_marcador> [-dispositivo X] [-silent]");
+                        Console.WriteLine(Cli("Uso: RMWave -reproducirmarcador <proyecto.rmw> <nombre_marcador> [-dispositivo X] [-silent]", "Usage: RMWave playmarker <project.rmw> <marker_name> [-device X] [-silent]"));
                         return;
                     }
                     var (devName, isSilent) = ParsePlaybackFlags(args, 3);
@@ -259,12 +274,12 @@ class Program
                 {
                     if (args.Length < 4)
                     {
-                        Console.WriteLine("Uso: RMWave -reproducirrango <proyecto.rmw> <inicio> <fin> [-dispositivo X] [-silent]");
+                        Console.WriteLine(Cli("Uso: RMWave -reproducirrango <proyecto.rmw> <inicio> <fin> [-dispositivo X] [-silent]", "Usage: RMWave playrange <project.rmw> <start> <end> [-device X] [-silent]"));
                         return;
                     }
                     if (!ParseCliTime(args[2], out double rangeStart) || !ParseCliTime(args[3], out double rangeEnd))
                     {
-                        Console.WriteLine("Error: Formato de tiempo inválido. Use segundos (90) o hh:mm:ss (0:01:30).");
+                        Console.WriteLine(Cli("Error: Formato de tiempo invÃ¡lido. Use segundos (90) o hh:mm:ss (0:01:30).", "Error: Invalid time format. Use seconds (90) or hh:mm:ss (0:01:30)."));
                         return;
                     }
                     var (devName, isSilent) = ParsePlaybackFlags(args, 4);
@@ -277,7 +292,7 @@ class Program
                 {
                     if (args.Length < 3)
                     {
-                        Console.WriteLine("Uso: RMWave -importarmarcadores <proyecto.rmw> <regiones.txt> [salida.rmw]");
+                        Console.WriteLine(Cli("Uso: RMWave -importarmarcadores <proyecto.rmw> <regiones.txt> [salida.rmw]", "Usage: RMWave importmarkers <project.rmw> <regions.txt> [output.rmw]"));
                         return;
                     }
                     string outputPath = args.Length >= 4 ? args[3] : args[1];
@@ -286,7 +301,7 @@ class Program
                 }
 
             default:
-                Console.WriteLine($"Comando desconocido: {args[0]}");
+                Console.WriteLine(CliFormat("Comando desconocido: {0}", "Unknown command: {0}", args[0]));
                 Console.WriteLine();
                 PrintUsage();
                 break;
@@ -297,30 +312,30 @@ class Program
     {
         Console.WriteLine("RMWave - RadioMaker Wave Editor");
         Console.WriteLine();
-        Console.WriteLine("Uso general:");
-        Console.WriteLine("  RMWave                                                    Abre la interfaz gráfica");
+        Console.WriteLine(Cli("Uso general:", "General usage:"));
+        Console.WriteLine(Cli("  RMWave                                                    Abre la interfaz grÃ¡fica", "  RMWave                                                    Opens the graphical interface"));
         Console.WriteLine();
-        Console.WriteLine("Reproducción:");
-        Console.WriteLine("  RMWave -reproducir <proyecto.rmw> [-dispositivo X] [-silent]");
-        Console.WriteLine("  RMWave -reproducirmarcador <proyecto.rmw> <nombre> [-dispositivo X] [-silent]");
-        Console.WriteLine("  RMWave -reproducirrango <proyecto.rmw> <inicio> <fin> [-dispositivo X] [-silent]");
+        Console.WriteLine(Cli("ReproducciÃ³n:", "Playback:"));
+        Console.WriteLine(Cli("  RMWave -reproducir <proyecto.rmw> [-dispositivo X] [-silent]", "  RMWave play <project.rmw> [-device X] [-silent]"));
+        Console.WriteLine(Cli("  RMWave -reproducirmarcador <proyecto.rmw> <nombre> [-dispositivo X] [-silent]", "  RMWave playmarker <project.rmw> <name> [-device X] [-silent]"));
+        Console.WriteLine(Cli("  RMWave -reproducirrango <proyecto.rmw> <inicio> <fin> [-dispositivo X] [-silent]", "  RMWave playrange <project.rmw> <start> <end> [-device X] [-silent]"));
         Console.WriteLine();
-        Console.WriteLine("Marcadores:");
-        Console.WriteLine("  RMWave -listarmarcadores <proyecto.rmw>");
-        Console.WriteLine("  RMWave -importarmarcadores <proyecto.rmw> <regiones.txt> [salida.rmw]");
+        Console.WriteLine(Cli("Marcadores:", "Markers:"));
+        Console.WriteLine(Cli("  RMWave -listarmarcadores <proyecto.rmw>", "  RMWave listmarkers <project.rmw>"));
+        Console.WriteLine(Cli("  RMWave -importarmarcadores <proyecto.rmw> <regiones.txt> [salida.rmw]", "  RMWave importmarkers <project.rmw> <regions.txt> [output.rmw]"));
         Console.WriteLine();
-        Console.WriteLine("Exportación:");
-        Console.WriteLine("  RMWave -exportar <proyecto.rmw> <salida.wav|mp3>");
+        Console.WriteLine(Cli("ExportaciÃ³n:", "Export:"));
+        Console.WriteLine(Cli("  RMWave -exportar <proyecto.rmw> <salida.wav|mp3>", "  RMWave export <project.rmw> <output.wav|mp3>"));
         Console.WriteLine();
-        Console.WriteLine("Información:");
-        Console.WriteLine("  RMWave -info <proyecto.rmw>");
+        Console.WriteLine(Cli("InformaciÃ³n:", "Information:"));
+        Console.WriteLine(Cli("  RMWave -info <proyecto.rmw>", "  RMWave info <project.rmw>"));
         Console.WriteLine();
-        Console.WriteLine("Opciones:");
-        Console.WriteLine("  -dispositivo <nombre>   Selecciona el dispositivo de salida de audio");
-        Console.WriteLine("  -silent                 No muestra información en la consola");
+        Console.WriteLine(Cli("Opciones:", "Options:"));
+        Console.WriteLine(Cli("  -dispositivo <nombre> / -device <name>   Selecciona el dispositivo de salida de audio", "  -device <name>          Selects the audio output device (-dispositivo is also accepted)"));
+        Console.WriteLine(Cli("  -silent                 No muestra informaciÃ³n en la consola", "  -silent                 Hides console output"));
         Console.WriteLine();
-        Console.WriteLine("Formatos de tiempo: segundos (90), mm:ss (1:30), hh:mm:ss (0:01:30)");
-        Console.WriteLine("Durante la reproducción: ESC cancela");
+        Console.WriteLine(Cli("Formatos de tiempo: segundos (90), mm:ss (1:30), hh:mm:ss (0:01:30)", "Time formats: seconds (90), mm:ss (1:30), hh:mm:ss (0:01:30)"));
+        Console.WriteLine(Cli("Durante la reproducciÃ³n: ESC cancela", "During playback: ESC cancels"));
     }
 
     // ==========================================
@@ -331,7 +346,7 @@ class Program
     {
         if (!System.IO.File.Exists(filePath))
         {
-            Console.WriteLine($"Error: El archivo no existe: {filePath}");
+            Console.WriteLine(CliFormat("Error: El archivo no existe: {0}", "Error: File does not exist: {0}", filePath));
             return;
         }
 
@@ -340,8 +355,8 @@ class Program
 
         if (!silent)
         {
-            Console.WriteLine($"Reproduciendo: {System.IO.Path.GetFileName(filePath)}");
-            Console.WriteLine($"Duración: {FormatDuration(project.Duration)}");
+            Console.WriteLine(CliFormat("Reproduciendo: {0}", "Playing: {0}", System.IO.Path.GetFileName(filePath)));
+            Console.WriteLine(CliFormat("DuraciÃ³n: {0}", "Duration: {0}", FormatDuration(project.Duration)));
         }
 
         await PlaySegmentAsync(project, 0, project.Duration, deviceName, silent);
@@ -355,7 +370,7 @@ class Program
     {
         if (!System.IO.File.Exists(filePath))
         {
-            Console.WriteLine($"Error: El archivo no existe: {filePath}");
+            Console.WriteLine(CliFormat("Error: El archivo no existe: {0}", "Error: File does not exist: {0}", filePath));
             return;
         }
 
@@ -364,14 +379,14 @@ class Program
             var project = LoadProjectFromFile(filePath);
             if (project == null) return;
 
-            Console.WriteLine($"Proyecto cargado: {project.Tracks.Count} pista(s), duracion: {FormatDuration(project.Duration)}");
-            Console.WriteLine($"Exportando a: {outputPath}");
+            Console.WriteLine(CliFormat("Proyecto cargado: {0} pista(s), duraciÃ³n: {1}", "Project loaded: {0} track(s), duration: {1}", project.Tracks.Count, FormatDuration(project.Duration)));
+            Console.WriteLine(CliFormat("Exportando a: {0}", "Exporting to: {0}", outputPath));
 
             using var engine = new TimelinePlayer(ownsBass: true);
 
             if (!engine.Init())
             {
-                Console.WriteLine("Error: No se pudo inicializar el motor de audio.");
+                Console.WriteLine(Cli("Error: No se pudo inicializar el motor de audio.", "Error: Could not initialize the audio engine."));
                 return;
             }
 
@@ -383,19 +398,19 @@ class Program
             {
                 await engine.RenderToMp3Async(
                     outputPath,
-                    progress => Console.Write($"\r  Exportando MP3: {progress * 100:F0}%"),
-                    status => Console.WriteLine($"\n  {status}"));
+                    progress => Console.Write(CliFormat("\r  Exportando MP3: {0:F0}%", "\r  Exporting MP3: {0:F0}%", progress * 100)),
+                    status => Console.WriteLine($"\n  {WaveLocalizationService.TranslateExportStatus(status)}"));
             }
             else
             {
                 await engine.RenderToFileAsync(
                     outputPath,
-                    progress => Console.Write($"\r  Exportando WAV: {progress * 100:F0}%"),
-                    status => Console.WriteLine($"\n  {status}"));
+                    progress => Console.Write(CliFormat("\r  Exportando WAV: {0:F0}%", "\r  Exporting WAV: {0:F0}%", progress * 100)),
+                    status => Console.WriteLine($"\n  {WaveLocalizationService.TranslateExportStatus(status)}"));
             }
 
             Console.WriteLine();
-            Console.WriteLine("Exportacion completada.");
+            Console.WriteLine(Cli("ExportaciÃ³n completada.", "Export completed."));
         }
         catch (Exception ex)
         {
@@ -411,7 +426,7 @@ class Program
     {
         if (!System.IO.File.Exists(filePath))
         {
-            Console.WriteLine($"Error: El archivo no existe: {filePath}");
+            Console.WriteLine(CliFormat("Error: El archivo no existe: {0}", "Error: File does not exist: {0}", filePath));
             return;
         }
 
@@ -420,10 +435,10 @@ class Program
             var project = LoadProjectFromFile(filePath);
             if (project == null) return;
 
-            Console.WriteLine("Informacion del proyecto:");
-            Console.WriteLine($"  Pistas:       {project.Tracks.Count}");
-            Console.WriteLine($"  Duracion:     {FormatDuration(project.Duration)}");
-            Console.WriteLine($"  Sample Rate:  {project.SampleRate} Hz");
+            Console.WriteLine(Cli("InformaciÃ³n del proyecto:", "Project information:"));
+            Console.WriteLine(CliFormat("  Pistas:       {0}", "  Tracks:       {0}", project.Tracks.Count));
+            Console.WriteLine(CliFormat("  DuraciÃ³n:     {0}", "  Duration:     {0}", FormatDuration(project.Duration)));
+            Console.WriteLine(CliFormat("  Frecuencia de muestreo: {0} Hz", "  Sample rate:              {0} Hz", project.SampleRate));
             Console.WriteLine();
 
             int totalClips = 0;
@@ -432,21 +447,21 @@ class Program
             {
                 totalClips += track.Clips.Count;
 
-                Console.WriteLine($"  Pista: {track.Name}");
-                Console.WriteLine($"    Volumen: {track.Volume:F2}  |  Pan: {track.Pan:F2}  |  Mute: {track.Mute}  |  Solo: {track.Solo}");
-                Console.WriteLine($"    Filas: {track.RowCount}  |  Clips: {track.Clips.Count}");
+                Console.WriteLine(CliFormat("  Pista: {0}", "  Track: {0}", track.Name));
+                Console.WriteLine(CliFormat("    Volumen: {0:F2}  |  Pan: {1:F2}  |  Silencio: {2}  |  Solo: {3}", "    Volume: {0:F2}  |  Pan: {1:F2}  |  Mute: {2}  |  Solo: {3}", track.Volume, track.Pan, BoolLabel(track.Mute), BoolLabel(track.Solo)));
+                Console.WriteLine(CliFormat("    Filas: {0}  |  Clips: {1}", "    Rows: {0}  |  Clips: {1}", track.RowCount, track.Clips.Count));
 
                 foreach (var clip in track.Clips)
                 {
                     Console.WriteLine($"      [{clip.Row}] {clip.Name}");
-                    Console.WriteLine($"          Inicio: {clip.StartTime:F2}s  |  Duracion: {clip.Duration:F2}s  |  Offset: {clip.SourceOffset:F2}s");
+                    Console.WriteLine(CliFormat("          Inicio: {0:F2}s  |  DuraciÃ³n: {1:F2}s  |  Desplazamiento: {2:F2}s", "          Start: {0:F2}s  |  Duration: {1:F2}s  |  Offset: {2:F2}s", clip.StartTime, clip.Duration, clip.SourceOffset));
                     Console.WriteLine($"          Gain: {clip.Gain:F2}  |  Fade In: {clip.FadeIn:F2}s  |  Fade Out: {clip.FadeOut:F2}s");
                 }
 
                 Console.WriteLine();
             }
 
-            Console.WriteLine($"  Total de clips: {totalClips}");
+            Console.WriteLine(CliFormat("  Total de clips: {0}", "  Total clips: {0}", totalClips));
         }
         catch (Exception ex)
         {
@@ -467,7 +482,7 @@ class Program
 
             if (project == null)
             {
-                Console.WriteLine("Error: No se pudo deserializar el proyecto.");
+                Console.WriteLine(Cli("Error: No se pudo deserializar el proyecto.", "Error: Could not deserialize the project."));
                 return null;
             }
 
@@ -478,7 +493,7 @@ class Program
                 {
                     if (!System.IO.File.Exists(clip.FilePath))
                     {
-                        Console.WriteLine($"  Advertencia: Archivo no encontrado: {clip.FilePath}");
+                        Console.WriteLine(CliFormat("  Advertencia: Archivo no encontrado: {0}", "  Warning: File not found: {0}", clip.FilePath));
                         missingFiles++;
                     }
                 }
@@ -486,14 +501,14 @@ class Program
 
             if (missingFiles > 0)
             {
-                Console.WriteLine($"  {missingFiles} archivo(s) de audio no encontrado(s).");
+                Console.WriteLine(CliFormat("  {0} archivo(s) de audio no encontrado(s).", "  {0} audio file(s) not found.", missingFiles));
             }
 
             return project;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error cargando proyecto: {ex.Message}");
+            Console.WriteLine(CliFormat("Error cargando proyecto: {0}", "Error loading project: {0}", ex.Message));
             return null;
         }
     }
@@ -509,11 +524,11 @@ class Program
 
         if (project.Markers.Count == 0)
         {
-            Console.WriteLine("El proyecto no tiene marcadores.");
+            Console.WriteLine(Cli("El proyecto no tiene marcadores.", "The project has no markers."));
             return;
         }
 
-        Console.WriteLine($"Marcadores del proyecto ({project.Markers.Count}):");
+        Console.WriteLine(CliFormat("Marcadores del proyecto ({0}):", "Project markers ({0}):", project.Markers.Count));
         Console.WriteLine();
 
         var ordered = project.Markers.OrderBy(m => m.Time).ToList();
@@ -523,7 +538,7 @@ class Program
             double nextTime = (i + 1 < ordered.Count) ? ordered[i + 1].Time : project.Duration;
             double segDuration = Math.Max(0, nextTime - m.Time);
 
-            Console.WriteLine($"  {i + 1,3}. {m.Name,-20}  Inicio: {FormatDuration(m.Time)}   Duración: {FormatDuration(segDuration)}");
+            Console.WriteLine(CliFormat("  {0,3}. {1,-20}  Inicio: {2}   DuraciÃ³n: {3}", "  {0,3}. {1,-20}  Start: {2}   Duration: {3}", i + 1, m.Name, FormatDuration(m.Time), FormatDuration(segDuration)));
         }
     }
 
@@ -536,17 +551,17 @@ class Program
         var project = LoadProjectFromFile(filePath);
         if (project == null) return;
 
-        // Buscar el marcador por nombre (sin distinguir mayúsculas/minúsculas).
+        // Buscar el marcador por nombre (sin distinguir mayÃºsculas/minÃºsculas).
         var marker = project.Markers.FirstOrDefault(m =>
             string.Equals(m.Name.Trim(), markerName.Trim(), StringComparison.OrdinalIgnoreCase));
 
         if (marker == null)
         {
-            Console.WriteLine($"Error: No se encontró el marcador '{markerName}'.");
+            Console.WriteLine(CliFormat("Error: No se encontrÃ³ el marcador '{0}'.", "Error: Marker '{0}' was not found.", markerName));
             if (project.Markers.Count > 0)
             {
                 Console.WriteLine();
-                Console.WriteLine("Marcadores disponibles:");
+                Console.WriteLine(Cli("Marcadores disponibles:", "Available markers:"));
                 foreach (var m in project.Markers.OrderBy(x => x.Time))
                     Console.WriteLine($"  {m.Name}  ({FormatDuration(m.Time)})");
             }
@@ -564,8 +579,8 @@ class Program
 
         if (!silent)
         {
-            Console.WriteLine($"Reproduciendo marcador: '{marker.Name}'");
-            Console.WriteLine($"Desde {FormatDuration(startTime)} hasta {FormatDuration(endTime)}");
+            Console.WriteLine(CliFormat("Reproduciendo marcador: '{0}'", "Playing marker: '{0}'", marker.Name));
+            Console.WriteLine(CliFormat("Desde {0} hasta {1}", "From {0} to {1}", FormatDuration(startTime), FormatDuration(endTime)));
         }
 
         await PlaySegmentAsync(project, startTime, endTime, deviceName, silent);
@@ -582,13 +597,13 @@ class Program
 
         if (endTime <= startTime)
         {
-            Console.WriteLine("Error: El fin del rango debe ser mayor que el inicio.");
+            Console.WriteLine(Cli("Error: El fin del rango debe ser mayor que el inicio.", "Error: The range end must be later than its start."));
             return;
         }
 
         if (!silent)
         {
-            Console.WriteLine($"Reproduciendo rango: {FormatDuration(startTime)} a {FormatDuration(endTime)}");
+            Console.WriteLine(CliFormat("Reproduciendo rango: {0} a {1}", "Playing range: {0} to {1}", FormatDuration(startTime), FormatDuration(endTime)));
         }
 
         await PlaySegmentAsync(project, startTime, endTime, deviceName, silent);
@@ -604,7 +619,7 @@ class Program
 
         if (!engine.Init())
         {
-            Console.WriteLine("Error: No se pudo inicializar el motor de audio.");
+            Console.WriteLine(Cli("Error: No se pudo inicializar el motor de audio.", "Error: Could not initialize the audio engine."));
             return;
         }
 
@@ -614,7 +629,7 @@ class Program
             if (deviceId >= 0)
                 engine.SetDevice(deviceId);
             else if (!silent)
-                Console.WriteLine($"Advertencia: Dispositivo '{deviceName}' no encontrado. Usando dispositivo por defecto.");
+                Console.WriteLine(CliFormat("Advertencia: Dispositivo '{0}' no encontrado. Usando dispositivo por defecto.", "Warning: Device '{0}' not found. Using the default device.", deviceName));
         }
 
         engine.LoadProject(project);
@@ -629,7 +644,7 @@ class Program
 
         if (!engine.Play())
         {
-            Console.WriteLine("Error: No se pudo iniciar la reproducción.");
+            Console.WriteLine(Cli("Error: No se pudo iniciar la reproducciÃ³n.", "Error: Could not start playback."));
             return;
         }
 
@@ -645,7 +660,7 @@ class Program
             }
 
             if (!silent)
-                Console.Write($"\rTranscurrido: {FormatDuration(position)}   ");
+                Console.Write(CliFormat("\rTranscurrido: {0}   ", "\rElapsed: {0}   ", FormatDuration(position)));
 
             if (Console.KeyAvailable)
             {
@@ -653,7 +668,7 @@ class Program
                 if (key.Key == ConsoleKey.Escape)
                 {
                     engine.Stop();
-                    if (!silent) Console.WriteLine("\nReproducción cancelada.");
+                    if (!silent) Console.WriteLine(Cli("\nReproducciÃ³n cancelada.", "\nPlayback cancelled."));
                     return;
                 }
             }
@@ -662,7 +677,7 @@ class Program
         }
 
         if (!silent)
-            Console.WriteLine("\nReproducción finalizada.");
+            Console.WriteLine(Cli("\nReproducciÃ³n finalizada.", "\nPlayback finished."));
     }
 
     // ==========================================
@@ -673,12 +688,12 @@ class Program
     {
         if (!System.IO.File.Exists(projectPath))
         {
-            Console.WriteLine($"Error: El proyecto no existe: {projectPath}");
+            Console.WriteLine(CliFormat("Error: El proyecto no existe: {0}", "Error: Project does not exist: {0}", projectPath));
             return;
         }
         if (!System.IO.File.Exists(regionFilePath))
         {
-            Console.WriteLine($"Error: El archivo de regiones no existe: {regionFilePath}");
+            Console.WriteLine(CliFormat("Error: El archivo de regiones no existe: {0}", "Error: Region file does not exist: {0}", regionFilePath));
             return;
         }
 
@@ -688,7 +703,7 @@ class Program
         var regions = ParseRegionFileCli(regionFilePath);
         if (regions.Count == 0)
         {
-            Console.WriteLine("No se encontraron regiones válidas en el archivo.");
+            Console.WriteLine(Cli("No se encontraron regiones vÃ¡lidas en el archivo.", "No valid regions were found in the file."));
             return;
         }
 
@@ -712,8 +727,8 @@ class Program
         var json = System.Text.Json.JsonSerializer.Serialize(project, options);
         System.IO.File.WriteAllText(outputPath, json);
 
-        Console.WriteLine($"{added} marcador(es) importados desde {System.IO.Path.GetFileName(regionFilePath)}.");
-        Console.WriteLine($"Proyecto guardado en: {outputPath}");
+        Console.WriteLine(CliFormat("{0} marcador(es) importados desde {1}.", "Imported {0} marker(s) from {1}.", added, System.IO.Path.GetFileName(regionFilePath)));
+        Console.WriteLine(CliFormat("Proyecto guardado en: {0}", "Project saved to: {0}", outputPath));
     }
 
     // ==========================================
@@ -729,7 +744,7 @@ class Program
         if (string.IsNullOrWhiteSpace(text)) return false;
         text = text.Trim().TrimEnd('s');
 
-        // Número simple (segundos).
+        // NÃºmero simple (segundos).
         if (double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var plain))
         {
             seconds = Math.Max(0, plain);

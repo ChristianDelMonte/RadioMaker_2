@@ -1,6 +1,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using RadioMaker.UI.Controls;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -19,9 +20,9 @@ public sealed class SpectrumModeLabelConverter : IValueConverter
             return mode switch
             {
                 SpectrumMode.Fft => "FFT",
-                SpectrumMode.LogBands => "Bandas",
-                SpectrumMode.Waterfall => "Waterfall",
-                SpectrumMode.Waveform => "Onda",
+                SpectrumMode.LogBands => LocalizationService.GetString("Loc.Label.Spectrum.LogBands"),
+                SpectrumMode.Waterfall => LocalizationService.GetString("Loc.Label.Spectrum.Waterfall"),
+                SpectrumMode.Waveform => LocalizationService.GetString("Loc.Label.Spectrum.Waveform"),
                 _ => mode.ToString()
             };
         }

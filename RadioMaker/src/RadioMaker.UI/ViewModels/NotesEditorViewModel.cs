@@ -1,6 +1,7 @@
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.UI.Services;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -45,7 +46,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
         {
             if (!string.IsNullOrEmpty(LoadedFilePath))
                 return Path.GetFileNameWithoutExtension(LoadedFilePath);
-            return "Sin titulo";
+            return LocalizationService.GetString("Loc.Notes.Untitled");
         }
     }
 
@@ -102,7 +103,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
         if (_suppressDirtyMark) return;
 
         IsDirty = true;
-        StatusMessage = "Sin guardar";
+        StatusMessage = LocalizationService.GetString("Loc.Notes.Status.Unsaved");
 
         // Reiniciar el timer (debounce).
         _autosaveTimer.Stop();
@@ -133,7 +134,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
 
             LoadedFilePath = filePath;
             IsDirty = false;
-            StatusMessage = $"Abierto: {Path.GetFileName(filePath)}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Notes.Status.Opened"), Path.GetFileName(filePath));
 
             NotesDraftStore.SaveDraft(DraftId, Text);
 
@@ -144,7 +145,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al abrir: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Notes.Status.OpenError"), ex.Message);
             return false;
         }
     }
@@ -170,7 +171,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
 
             LoadedFilePath = filePath;
             IsDirty = false;
-            StatusMessage = $"Guardado: {Path.GetFileName(filePath)}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Notes.Status.Saved"), Path.GetFileName(filePath));
 
             // Mantener el draft actualizado (por si se cierra con crash).
             NotesDraftStore.SaveDraft(DraftId, Text);
@@ -182,7 +183,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al guardar: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Notes.Status.SaveError"), ex.Message);
             return false;
         }
     }
@@ -196,7 +197,7 @@ public sealed partial class NotesEditorViewModel : ViewModelBase, IDisposable
 
         LoadedFilePath = null;
         IsDirty = false;
-        StatusMessage = "Documento nuevo";
+        StatusMessage = LocalizationService.GetString("Loc.Notes.Status.NewDocument");
 
         NotesDraftStore.SaveDraft(DraftId, string.Empty);
 

@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
 using RadioMaker.UI.Views;
@@ -118,12 +119,12 @@ public partial class CartBoardView : UserControl
         if (!RMWaveLauncher.OpenFile(buttonVm.FilePath, out var error))
         {
             if (boardVm is not null)
-                boardVm.StatusMessage = error ?? "No se pudo abrir en RMWave.";
+                boardVm.StatusMessage = error ?? LocalizationService.GetString("Loc.TandaEditor.Status.RmWaveError");
         }
         else
         {
             if (boardVm is not null)
-                boardVm.StatusMessage = $"Abriendo {System.IO.Path.GetFileName(buttonVm.FilePath)} en RMWave...";
+                boardVm.StatusMessage = string.Format(LocalizationService.GetString("Loc.Views.CartBoard.Status.OpeningRMWave"), System.IO.Path.GetFileName(buttonVm.FilePath));
         }
     }
 
@@ -138,7 +139,7 @@ public partial class CartBoardView : UserControl
         {
             var boardVm = GetVm();
             if (boardVm is not null)
-                boardVm.StatusMessage = $"Archivo no encontrado: {Path.GetFileName(filePath)}";
+                boardVm.StatusMessage = string.Format(LocalizationService.GetString("Loc.Views.CartBoard.Status.FileNotFound"), Path.GetFileName(filePath));
             return;
         }
 
@@ -160,14 +161,14 @@ public partial class CartBoardView : UserControl
             {
                 var boardVm = GetVm();
                 if (boardVm is not null)
-                    boardVm.StatusMessage = $"Tags guardados: {Path.GetFileName(filePath)}";
+                    boardVm.StatusMessage = string.Format(LocalizationService.GetString("Loc.Views.CartBoard.Status.TagsSaved"), Path.GetFileName(filePath));
             }
         }
         catch (Exception ex)
         {
             var boardVm = GetVm();
             if (boardVm is not null)
-                boardVm.StatusMessage = $"Error al editar tags: {ex.Message}";
+                boardVm.StatusMessage = string.Format(LocalizationService.GetString("Loc.Views.CartBoard.Status.TagsError"), ex.Message);
         }
     }
 
@@ -221,7 +222,7 @@ public partial class CartBoardView : UserControl
         {
             var vm = GetVm();
             if (vm is not null)
-                vm.StatusMessage = $"Boton actualizado: {buttonVm.DisplayLabel}";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.Views.CartBoard.Status.ButtonUpdated"), buttonVm.DisplayLabel);
         }
     }
 
@@ -274,7 +275,7 @@ public partial class CartBoardView : UserControl
         {
             var vmErr = GetVm();
             if (vmErr is not null)
-                vmErr.StatusMessage = $"'{Path.GetFileName(path)}' no es un audio. La botonera solo acepta archivos de audio.";
+                vmErr.StatusMessage = string.Format(LocalizationService.GetString("Loc.Views.CartBoard.Status.NotAudio"), Path.GetFileName(path));
             e.Handled = true;
             return;
         }
@@ -408,14 +409,14 @@ public partial class CartBoardView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var filter = new FilePickerFileType("Botonera")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.CartBoard"))
         {
             Patterns = new[] { "*" + CartBoardStore.FileExtension }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir botonera (.rcb)",
+            Title = LocalizationService.GetString("Loc.Dialog.OpenCartBoard.Title"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -458,12 +459,12 @@ public partial class CartBoardView : UserControl
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar botonera (.rcb)",
+            Title = LocalizationService.GetString("Loc.Dialog.SaveCartBoard.Title"),
             SuggestedFileName = suggestedName,
             DefaultExtension = CartBoardStore.FileExtension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Botonera")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.CartBoard"))
                 {
                     Patterns = new[] { "*" + CartBoardStore.FileExtension }
                 }

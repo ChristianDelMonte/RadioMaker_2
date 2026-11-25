@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.Services;
 
@@ -29,13 +30,13 @@ public static class AppVersionInfo
     public static string ShortVersion => _data.Value.ShortVersion;
 
     /// -------------Texto listo para mostrar en el titulo: "Version 2.01.261011.1530".</summary>
-    public static string VersionText => $"Version {Version}";
+    public static string VersionText => string.Format(LocalizationService.GetString("Loc.About.VersionPrefix"), Version);
 
     /// -------------Fecha de compilacion en formato local (dd-MM-yyyy HH:mm).</summary>
     public static string BuildDateTimeText => _data.Value.BuildDateText;
 
     /// -------------Texto de compilacion para la barra de titulo: "Compilacion 11-10-2026 15:30".</summary>
-    public static string BuildText => $"Compilacion {BuildDateTimeText}";
+    public static string BuildText => string.Format(LocalizationService.GetString("Loc.About.BuildPrefix"), BuildDateTimeText);
 
     /// -------------Texto de plataforma: ".NET 8 · Windows 10.0.19045".</summary>
     public static string PlatformText
@@ -43,7 +44,7 @@ public static class AppVersionInfo
         get
         {
             var netVersion = Environment.Version;
-            var os = RuntimeInformation.OSDescription?.Trim() ?? "Desconocido";
+            var os = RuntimeInformation.OSDescription?.Trim() ?? LocalizationService.GetString("Loc.About.BuildDate.Unknown");
             return $".NET {netVersion.Major} · {os}";
         }
     }
@@ -59,7 +60,7 @@ public static class AppVersionInfo
     {
         public string VersionString { get; init; } = "0.0.0.0";
         public string ShortVersion { get; init; } = "0.0";
-        public string BuildDateText { get; init; } = "desconocida";
+        public string BuildDateText { get; init; } = LocalizationService.GetString("Loc.About.BuildDate.Unknown");
         public DateTime BuildDateTimeUtc { get; init; } = DateTime.MinValue;
     }
 
@@ -109,7 +110,7 @@ public static class AppVersionInfo
             {
                 VersionString = "0.0.0.0",
                 ShortVersion = "0.0",
-                BuildDateText = "desconocida",
+                BuildDateText = LocalizationService.GetString("Loc.About.BuildDate.Unknown"),
                 BuildDateTimeUtc = DateTime.MinValue
             };
         }
@@ -120,7 +121,7 @@ public static class AppVersionInfo
             ? $"{parts[0]}.{parts[1]}"
             : fileVersion;
 
-        string buildDateText = "desconocida";
+        string buildDateText = LocalizationService.GetString("Loc.About.BuildDate.Unknown");
         DateTime buildDateUtc = DateTime.MinValue;
 
         if (parts.Length >= 4)

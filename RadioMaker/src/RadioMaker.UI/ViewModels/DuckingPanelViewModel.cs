@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -111,7 +112,7 @@ public sealed partial class DuckingPanelViewModel : ViewModelBase
 
     [ObservableProperty] private double _currentMicLevelDb = -120.0;
     [ObservableProperty] private double _currentGainDb = 0.0;
-    [ObservableProperty] private string _statusMessage = "Ducking desactivado.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Ducking.Status.Disabled");
 
     public string ThresholdDbText => $"{ThresholdDb:F0} dB";
     public string ReductionDbText => $"-{ReductionDb:F0} dB";
@@ -177,7 +178,7 @@ public sealed partial class DuckingPanelViewModel : ViewModelBase
     private void RefreshMics()
     {
         LoadMics();
-        StatusMessage = $"Lista de microfonos actualizada ({AvailableMics.Count - 1} dispositivo(s)).";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.Ducking.Status.MicsUpdated"), AvailableMics.Count - 1);
     }
 
     private void LoadMics()
@@ -197,7 +198,7 @@ public sealed partial class DuckingPanelViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error enumerando microfonos: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Ducking.Status.EnumerateError"), ex.Message);
         }
     }
 
@@ -227,18 +228,18 @@ public sealed partial class DuckingPanelViewModel : ViewModelBase
             {
                 _engine.ApplyDuckingConfig(config);
                 StatusMessage = config.ReductionDb >= 0
-                    ? $"Ducking activo: -{config.ReductionDb:F0} dB con umbral {config.ThresholdDb:F0} dB."
-                    : "Ducking activo.";
+                    ? string.Format(LocalizationService.GetString("Loc.Ducking.Status.ActiveConfigured"), config.ReductionDb, config.ThresholdDb)
+                    : LocalizationService.GetString("Loc.Ducking.Status.Active");
             }
             else
             {
                 _engine.StopDucking();
-                StatusMessage = "Ducking desactivado.";
+                StatusMessage = LocalizationService.GetString("Loc.Ducking.Status.Disabled");
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error aplicando ducking: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Ducking.Status.ApplyError"), ex.Message);
         }
 
         Refresh();

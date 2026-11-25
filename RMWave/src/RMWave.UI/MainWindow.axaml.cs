@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Material.Icons.Avalonia;
+using RMWave.UI.Localization;
 using Material.Icons;
 using RMWave.UI.Controls;
 using RMWave.UI.Themes;
@@ -130,19 +131,19 @@ public partial class MainWindow : Controls.CustomChromeWindow
         {
             if (_engine.Init())
             {
-                StatusText.Text = "Audio listo. Agrega pistas y clips.";
+                StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.Ready");
                 AddTrackButton.IsEnabled = true;
                 UpdateTransportState();
                 LoadAudioDevices();
             }
             else
             {
-                StatusText.Text = $"No se pudo inicializar BASS/Mixer: {Bass.LastError}";
+                StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.BassMixerError", Bass.LastError);
             }
         }
         catch (Exception ex)
         {
-            StatusText.Text = $"Error cargando BASS o BASSmix: {ex.Message}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.BassLoadError", ex.Message);
         }
     }
 
@@ -159,18 +160,18 @@ public partial class MainWindow : Controls.CustomChromeWindow
         if (string.IsNullOrWhiteSpace(path)) return;
         if (!File.Exists(path))
         {
-            StatusText.Text = $"El archivo no existe: {path}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.FileMissing", path);
             return;
         }
 
         try
         {
             await OpenProjectByPath(path);
-            StatusText.Text = $"Abierto desde línea de comandos: {System.IO.Path.GetFileName(path)}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.OpenedFromCommandLine", System.IO.Path.GetFileName(path));
         }
         catch (Exception ex)
         {
-            StatusText.Text = $"Error al abrir {System.IO.Path.GetFileName(path)}: {ex.Message}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.OpenFileError", System.IO.Path.GetFileName(path), ex.Message);
         }
     }
 
@@ -200,11 +201,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
         if (_engine.Play())
         {
             _timer.Start();
-            StatusText.Text = "Reproduciendo";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.Playing");
         }
         else
         {
-            StatusText.Text = $"No se pudo reproducir. Error BASS: {Bass.LastError}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.PlayError", Bass.LastError);
         }
     }
 
@@ -213,7 +214,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         if (_engine.Pause())
         {
             _timer.Stop();
-            StatusText.Text = "En pausa";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.Paused");
 
             // Resetear el VU meter a cero.
             MasterVuMeter.SetLevels(MasterVuMeter.MinDb, MasterVuMeter.MinDb);
@@ -226,7 +227,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         _timer.Stop();
         UpdatePositionUi();
         UpdatePlaybackCursor();
-        StatusText.Text = "Detenido";
+        StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.Stopped");
 
         // Resetear el VU meter a cero.
         MasterVuMeter.SetLevels(MasterVuMeter.MinDb, MasterVuMeter.MinDb);
@@ -261,7 +262,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             _engine.Stop();
             UpdatePositionUi();
             UpdatePlaybackCursor();
-            StatusText.Text = "Fin de reproducción";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.PlaybackEnded");
 
             // Resetear el VU meter a cero.
             MasterVuMeter.SetLevels(MasterVuMeter.MinDb, MasterVuMeter.MinDb);
@@ -314,10 +315,10 @@ public partial class MainWindow : Controls.CustomChromeWindow
     // ==========================================
     private void UpdateWindowTitle()
     {
-        var baseTitle = "RadioMaker Wave Editor Addon";
+        var baseTitle = WaveLocalizationService.GetString("Loc.RMWave.Main.Title");
 
         var fileName = string.IsNullOrWhiteSpace(_currentProjectPath)
-            ? "documento sin nombre.rmw"
+            ? WaveLocalizationService.GetString("Loc.RMWave.Main.Untitled")
             : System.IO.Path.GetFileName(_currentProjectPath);
         Title = $"{baseTitle} - {fileName}";
 
@@ -342,7 +343,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         {
             var item = new MenuItem
             {
-                Header = theme.Name,
+                Header = ThemeManager.GetDisplayName(theme),
                 Tag = theme
             };
 
@@ -437,17 +438,17 @@ public partial class MainWindow : Controls.CustomChromeWindow
         RefreshTimeline();
         MarkAsChanged();
 
-        StatusText.Text = $"Marcador '{name}' agregado en {FormatTime(time)}.";
+        StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.MarkerAdded", name, FormatTime(time));
         return true;
     }
 
-    private async Task<string?> ShowMarkerNameDialog(string defaultName, string title = "Nuevo Marcador")
+    private async Task<string?> ShowMarkerNameDialog(string defaultName, string? title = null)
     {
         string? result = null;
 
         var dialog = new Window
         {
-            Title = title,
+            Title = title ?? WaveLocalizationService.GetString("Loc.RMWave.Dialog.NewMarkerTitle"),
             Width = 380,
             Height = 170,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -460,7 +461,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Spacing = 12
         };
 
-        panel.Children.Add(new TextBlock { Text = "Nombre del marcador:" });
+        panel.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.AddMarkerName") });
 
         var nameBox = new TextBox { Text = defaultName };
         panel.Children.Add(nameBox);
@@ -472,14 +473,14 @@ public partial class MainWindow : Controls.CustomChromeWindow
             HorizontalAlignment = HorizontalAlignment.Center
         };
 
-        var okButton = new Button { Content = "Aceptar", MinWidth = 90 };
+        var okButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Accept"), MinWidth = 90 };
         okButton.Click += (s, e) =>
         {
             result = nameBox.Text?.Trim();
             dialog.Close();
         };
 
-        var cancelButton = new Button { Content = "Cancelar", MinWidth = 90 };
+        var cancelButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Cancel"), MinWidth = 90 };
         cancelButton.Click += (s, e) => dialog.Close();
 
         buttonPanel.Children.Add(okButton);
@@ -499,7 +500,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var dialog = new Window
         {
-            Title = "Editar Marcador",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.EditMarkerTitle"),
             Width = 380,
             Height = 210,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -510,11 +511,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         panel.Children.Add(new TextBlock
         {
-            Text = $"Marcador: {marker.Name}",
+            Text = WaveLocalizationService.Format("Loc.RMWave.Dialog.MarkerLabel", marker.Name),
             FontWeight = FontWeight.Bold
         });
 
-        panel.Children.Add(new TextBlock { Text = "Nueva posición (ej: 90, 1:30, 0:01:30):" });
+        panel.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.MarkerPosition") });
 
         var timeBox = new TextBox { Text = FormatLoopTime(marker.Time) };
         panel.Children.Add(timeBox);
@@ -526,14 +527,14 @@ public partial class MainWindow : Controls.CustomChromeWindow
             HorizontalAlignment = HorizontalAlignment.Center
         };
 
-        var okButton = new Button { Content = "Aceptar", MinWidth = 90 };
+        var okButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Accept"), MinWidth = 90 };
         okButton.Click += (s, e) =>
         {
             result = Math.Max(0, ParseLoopTime(timeBox.Text ?? ""));
             dialog.Close();
         };
 
-        var cancelButton = new Button { Content = "Cancelar", MinWidth = 90 };
+        var cancelButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Cancel"), MinWidth = 90 };
         cancelButton.Click += (s, e) => dialog.Close();
 
         buttonPanel.Children.Add(okButton);
@@ -551,7 +552,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
     {
         var dialog = new Window
         {
-            Title = "Marcadores del Proyecto",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.MarkersTitle"),
             Width = 520,
             Height = 420,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -571,7 +572,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             {
                 panel.Children.Add(new TextBlock
                 {
-                    Text = "No hay marcadores en el proyecto.",
+                    Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.NoMarkers"),
                     Opacity = 0.6,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Margin = new Thickness(0, 20, 0, 0)
@@ -628,7 +629,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
                     Foreground = new SolidColorBrush(Color.FromRgb(255, 100, 100)),
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                ToolTip.SetTip(deleteBtn, "Eliminar marcador");
+                ToolTip.SetTip(deleteBtn, WaveLocalizationService.GetString("Loc.RMWave.Track.DeleteMarker"));
                 deleteBtn.Click += (s, ev) =>
                 {
                     _engine.Project.Markers.Remove(marker);
@@ -644,7 +645,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             // Botón cerrar.
             var closeButton = new Button
             {
-                Content = "Cerrar",
+                Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Close"),
                 MinWidth = 100,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 16, 0, 0)
@@ -677,16 +678,13 @@ public partial class MainWindow : Controls.CustomChromeWindow
         var (start, end) = GetEffectiveLoopRange();
         if (start < 0 || end <= start)
         {
-            StatusText.Text = "No hay ninguna selección activa para eliminar.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.NoSelection");
             return;
         }
 
         var confirmed = await ShowMessageBox(
-            "Eliminar selección",
-            $"Se eliminará el contenido entre {FormatTime(start)} y {FormatTime(end)}.\n\n" +
-            $"El contenido posterior se desplazará para cerrar el espacio.\n" +
-            $"Los marcadores dentro del rango también se eliminarán.\n\n" +
-            $"¿Desea continuar?");
+            WaveLocalizationService.GetString("Loc.RMWave.Dialog.DeleteSelectionTitle"),
+            WaveLocalizationService.Format("Loc.RMWave.Dialog.DeleteSelectionMessage", FormatTime(start), FormatTime(end)));
 
         if (!confirmed) return;
 
@@ -803,7 +801,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         UpdateTransportState();
         MarkAsChanged();
 
-        StatusText.Text = $"Selección eliminada: {FormatTime(start)} - {FormatTime(end)}.";
+        StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.SelectionDeleted", FormatTime(start), FormatTime(end));
     }
 
     /// <summary>Menú contextual al hacer click derecho sobre la selección.</summary>
@@ -813,7 +811,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var exportItem = new MenuItem
         {
-            Header = "Exportar selección...",
+            Header = WaveLocalizationService.GetString("Loc.RMWave.Main.ExportSelection"),
             Icon = new MaterialIcon { Kind = MaterialIconKind.ExportVariant, Width = 14, Height = 14 }
         };
         exportItem.Click += async (s, e) => await ExportSelectionAsync();
@@ -821,7 +819,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var deleteItem = new MenuItem
         {
-            Header = "Eliminar selección",
+            Header = WaveLocalizationService.GetString("Loc.RMWave.Dialog.DeleteSelectionTitle"),
             Icon = new MaterialIcon { Kind = MaterialIconKind.DeleteOutline, Width = 14, Height = 14 }
         };
         deleteItem.Click += async (s, e) => await ConfirmAndDeleteSelection();
@@ -872,7 +870,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
     {
         if (_selectedClip == null || _selectedTrack == null)
         {
-            StatusText.Text = "Selecciona primero el clip de audio al que pertenecen las regiones.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.SelectClipForRegions");
             return;
         }
 
@@ -881,15 +879,15 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Importar marcadores de regiones",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.ImportRegionsTitle"),
             AllowMultiple = false,
             FileTypeFilter = new[]
             {
-                new FilePickerFileType("Archivos de regiones")
+                new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Regions"))
                 {
                     Patterns = new[] { "*.txt", "*.reg", "*.csv" }
                 },
-                new FilePickerFileType("Todos los archivos")
+                new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.All"))
                 {
                     Patterns = new[] { "*.*" }
                 }
@@ -906,7 +904,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             var regions = ParseRegionFile(path);
             if (regions.Count == 0)
             {
-                StatusText.Text = "No se encontraron regiones válidas en el archivo.";
+                StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.NoValidRegions");
                 return;
             }
 
@@ -937,11 +935,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
             RefreshTimeline();
             MarkAsChanged();
 
-            StatusText.Text = $"{added} marcador(es) importados desde {System.IO.Path.GetFileName(path)}.";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.MarkersImported", added, System.IO.Path.GetFileName(path));
         }
         catch (Exception ex)
         {
-            StatusText.Text = $"Error importando marcadores: {ex.Message}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.ImportMarkersError", ex.Message);
         }
     }
 
@@ -1012,25 +1010,25 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Renombrar
         var renameItem = new MenuItem
         {
-            Header = "Renombrar",
+            Header = WaveLocalizationService.GetString("Loc.RMWave.Marker.Rename"),
             Icon = new MaterialIcon { Kind = MaterialIconKind.Pencil, Width = 14, Height = 14 }
         };
         renameItem.Click += async (s, e) =>
         {
-            var newName = await ShowMarkerNameDialog(marker.Name, "Renombrar Marcador");
+            var newName = await ShowMarkerNameDialog(marker.Name, WaveLocalizationService.GetString("Loc.RMWave.Dialog.RenameMarkerTitle"));
             if (!string.IsNullOrWhiteSpace(newName))
             {
                 marker.Name = newName;
                 RefreshTimeline();
                 MarkAsChanged();
-                StatusText.Text = $"Marcador renombrado a '{newName}'.";
+                StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.MarkerRenamed", newName);
             }
         };
 
         // Editar posición
         var editItem = new MenuItem
         {
-            Header = "Editar posición...",
+            Header = WaveLocalizationService.GetString("Loc.RMWave.Marker.EditPosition"),
             Icon = new MaterialIcon { Kind = MaterialIconKind.ClockOutline, Width = 14, Height = 14 }
         };
         editItem.Click += async (s, e) =>
@@ -1041,14 +1039,14 @@ public partial class MainWindow : Controls.CustomChromeWindow
                 marker.Time = newTime.Value;
                 RefreshTimeline();
                 MarkAsChanged();
-                StatusText.Text = $"Marcador '{marker.Name}' movido a {FormatTime(newTime.Value)}.";
+                StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.MarkerMoved", marker.Name, FormatTime(newTime.Value));
             }
         };
 
         // Eliminar
         var deleteItem = new MenuItem
         {
-            Header = "Eliminar",
+            Header = WaveLocalizationService.GetString("Loc.RMWave.Marker.Delete"),
             Icon = new MaterialIcon { Kind = MaterialIconKind.DeleteOutline, Width = 14, Height = 14 },
             Foreground = new SolidColorBrush(Color.FromRgb(255, 100, 100))
         };
@@ -1058,7 +1056,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             _engine.Project.Markers.Remove(marker);
             RefreshTimeline();
             MarkAsChanged();
-            StatusText.Text = $"Marcador '{name}' eliminado.";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.MarkerDeleted", name);
         };
 
         menu.Items.Add(renameItem);
@@ -1099,11 +1097,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
             // NUEVO: Calcular waveform para el archivo grabado.
             EnsureWaveformForClip(recordedFile);
 
-            StatusText.Text = $"Grabación agregada como '{track.Name}'.";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.RecordingAdded", track.Name);
         }
         else
         {
-            StatusText.Text = "No se pudo agregar la grabación.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.RecordingAddError");
         }
     }
 
@@ -1121,7 +1119,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // ---- Construir la ventana ----
         var dialog = new Window
         {
-            Title = "Grabación de Audio",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.RecordTitle"),
             Width = 480,
             Height = 380,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -1135,7 +1133,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         };
 
         // Dispositivo
-        panel.Children.Add(new TextBlock { Text = "Dispositivo de grabación:" });
+        panel.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.RecordDevice") });
 
         var deviceCombo = new ComboBox
         {
@@ -1154,7 +1152,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         panel.Children.Add(deviceCombo);
 
         // Formato
-        panel.Children.Add(new TextBlock { Text = "Formato:" });
+        panel.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Format") });
 
         var formatCombo = new ComboBox
         {
@@ -1183,7 +1181,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Duración
         var durationText = new TextBlock
         {
-            Text = "Duración: 00:00:00",
+            Text = WaveLocalizationService.Format("Loc.RMWave.Dialog.Duration", "00:00:00"),
             FontSize = 14,
             HorizontalAlignment = HorizontalAlignment.Center
         };
@@ -1199,7 +1197,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var recordButton = new Button
         {
-            Content = "● Grabar",
+            Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Record"),
             MinWidth = 120,
             Foreground = new SolidColorBrush(Color.FromRgb(255, 68, 68)),
             FontWeight = FontWeight.Bold
@@ -1207,14 +1205,14 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var stopButton = new Button
         {
-            Content = "■ Detener",
+            Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Stop"),
             MinWidth = 120,
             IsEnabled = false
         };
 
         var cancelButton = new Button
         {
-            Content = "Cancelar",
+            Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Cancel"),
             MinWidth = 100
         };
 
@@ -1237,7 +1235,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
                 vuMeter.SetLevels(db, db);
 
                 var duration = recordingEngine.GetRecordedDuration();
-                durationText.Text = $"Duración: {FormatTime(duration)}";
+                durationText.Text = WaveLocalizationService.Format("Loc.RMWave.Dialog.Duration", FormatTime(duration));
             }
         };
 
@@ -1252,7 +1250,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
             if (!recordingEngine.InitDevice(selectedDevice.Id))
             {
-                StatusText.Text = "No se pudo inicializar el dispositivo de grabación.";
+                StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.RecordDeviceUnavailable");
                 return;
             }
 
@@ -1262,11 +1260,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
             var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "Guardar grabación",
+                Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.SaveRecording"),
                 DefaultExtension = "wav",
                 FileTypeChoices = new[]
                 {
-                    new FilePickerFileType("WAV Audio")
+                    new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Wav"))
                     {
                         Patterns = new[] { "*.wav" }
                     }
@@ -1292,7 +1290,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
             if (!recordingEngine.StartRecording(sampleRate, channels, path))
             {
-                StatusText.Text = "No se pudo iniciar la grabación.";
+                StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.RecordStartError");
                 return;
             }
 
@@ -1303,7 +1301,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             formatCombo.IsEnabled = false;
 
             levelTimer.Start();
-            StatusText.Text = "Grabando...";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.Recording");
         };
 
         // Detener
@@ -1315,7 +1313,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             levelTimer.Stop();
 
             resultPath = tempPath;
-            StatusText.Text = "Grabación finalizada.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.RecordingFinished");
             dialog.Close();
         };
 
@@ -1366,7 +1364,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         UpdateTransportState();
         MarkAsChanged();
 
-        StatusText.Text = $"Clip '{clipName}' eliminado.";
+        StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.ClipDeleted", clipName);
     }
 
     private void DuplicateClip_Click(object? sender, RoutedEventArgs e)
@@ -1393,11 +1391,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
             RefreshTrackTimeline(_selectedTrack);
             MarkAsChanged();
 
-            StatusText.Text = $"Clip normalizado. Ganancia: {newGain.Value:F2}x";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.ClipNormalized", newGain.Value);
         }
         else
         {
-            StatusText.Text = "No se pudo normalizar el clip.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.NormalizeError");
         }
     }
 
@@ -1432,7 +1430,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         UpdateTransportState();
         MarkAsChanged();
 
-        StatusText.Text = "Clip duplicado.";
+        StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.ClipDuplicated");
     }
 
     // ==========================================
@@ -1448,7 +1446,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
     {
         if (_selectedTrack == null || _selectedClip == null)
         {
-            StatusText.Text = "Selecciona un clip para cortarlo.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.SelectClipToSplit");
             return;
         }
 
@@ -1458,7 +1456,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Verificar que el cursor esté dentro del clip.
         if (cursorPosition <= clip.StartTime || cursorPosition >= clip.EndTime)
         {
-            StatusText.Text = "El cursor debe estar dentro del clip para cortarlo.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.CursorOutsideClip");
             return;
         }
 
@@ -1468,7 +1466,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Verificar que el corte no sea demasiado pequeño.
         if (splitPoint < 0.01 || (clip.Duration - splitPoint) < 0.01)
         {
-            StatusText.Text = "El punto de corte está demasiado cerca del borde del clip.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.SplitNearEdge");
             return;
         }
 
@@ -1506,7 +1504,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         UpdateTransportState();
         MarkAsChanged();
 
-        StatusText.Text = $"Clip cortado en {FormatTime(cursorPosition)}.";
+        StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.ClipSplit", FormatTime(cursorPosition));
     }
 
     private void DeleteTrack(ProjectTrack track)
@@ -1548,7 +1546,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         UpdateTransportState();
         MarkAsChanged();
 
-        StatusText.Text = $"Pista '{trackName}' eliminada.";
+        StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.TrackDeleted", trackName);
     }
 
     // ==========================================
@@ -1681,7 +1679,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         var track = _engine.AddTrack();
         AddTrackUi(track);
         UpdateTransportState();
-        StatusText.Text = $"Pista '{track.Name}' agregada.";
+        StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.TrackAdded", track.Name);
         MarkAsChanged();
     }
 
@@ -1694,15 +1692,15 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = $"Agregar clips a {track.Name}",
+                Title = WaveLocalizationService.Format("Loc.RMWave.Dialog.AddClips", track.Name),
                 AllowMultiple = true,
                 FileTypeFilter = new[]
                 {
-                    new FilePickerFileType("Audio")
+                    new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Audio"))
                     {
                         Patterns = new[] { "*.wav", "*.mp3", "*.ogg" }
                     },
-                    new FilePickerFileType("Todos los archivos")
+                    new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.All"))
                     {
                         Patterns = new[] { "*.*" }
                     }
@@ -1728,8 +1726,10 @@ public partial class MainWindow : Controls.CustomChromeWindow
                 }
                 else
                 {
-                    StatusText.Text =
-                        $"No se pudo agregar {System.IO.Path.GetFileName(path)}. Error BASS: {Bass.LastError}";
+                    StatusText.Text = WaveLocalizationService.Format(
+                        "Loc.RMWave.Status.AddClipError",
+                        System.IO.Path.GetFileName(path),
+                        Bass.LastError);
                 }
             }
 
@@ -1739,12 +1739,12 @@ public partial class MainWindow : Controls.CustomChromeWindow
                 RefreshTimeline();
                 UpdateTransportState();
                 MarkAsChanged();
-                StatusText.Text = $"{addedCount} clip(s) agregado(s) a {track.Name}.";
+                StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.ClipsAdded", addedCount, track.Name);
             }
         }
         catch (Exception ex)
         {
-            StatusText.Text = $"Error: {ex.Message}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.GenericError", ex.Message);
         }
     }
 
@@ -1814,7 +1814,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Width = 36,
             Height = 30
         };
-        ToolTip.SetTip(addClipButton, "Agregar clip");
+        ToolTip.SetTip(addClipButton, WaveLocalizationService.GetString("Loc.RMWave.Track.AddClip"));
         addClipButton.Click += async (s, e) => await AddClipAsync(track);
         topRow.Children.Add(addClipButton);
 
@@ -1825,7 +1825,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Width = 36,
             Height = 30
         };
-        ToolTip.SetTip(addRowButton, "Agregar fila");
+        ToolTip.SetTip(addRowButton, WaveLocalizationService.GetString("Loc.RMWave.Track.AddRow"));
         addRowButton.Click += (s, e) =>
         {
             track.RowCount++;
@@ -1842,7 +1842,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Width = 36,
             Height = 30
         };
-        ToolTip.SetTip(removeRowButton, "Quitar fila");
+        ToolTip.SetTip(removeRowButton, WaveLocalizationService.GetString("Loc.RMWave.Track.RemoveRow"));
         removeRowButton.Click += (s, e) =>
         {
             if (track.RowCount > 1)
@@ -1861,7 +1861,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         topRow.Children.Add(removeRowButton);
 
         // 4. Mute
-        var muteCheck = new CheckBox { Content = "Mute", IsChecked = track.Mute };
+        var muteCheck = new CheckBox { Content = WaveLocalizationService.GetString("Loc.RMWave.Track.Mute"), IsChecked = track.Mute };
         muteCheck.IsCheckedChanged += (s, e) =>
         {
             _engine.SetTrackMute(track, muteCheck.IsChecked == true);
@@ -1870,7 +1870,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         topRow.Children.Add(muteCheck);
 
         // 5. Solo
-        var soloCheck = new CheckBox { Content = "Solo", IsChecked = track.Solo };
+        var soloCheck = new CheckBox { Content = WaveLocalizationService.GetString("Loc.RMWave.Track.Solo"), IsChecked = track.Solo };
         soloCheck.IsCheckedChanged += (s, e) =>
         {
             _engine.SetTrackSolo(track, soloCheck.IsChecked == true);
@@ -1879,14 +1879,14 @@ public partial class MainWindow : Controls.CustomChromeWindow
         topRow.Children.Add(soloCheck);
 
         // 6. Volumen
-        topRow.Children.Add(new TextBlock { Text = "Vol", VerticalAlignment = VerticalAlignment.Center });
+        topRow.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Track.Volume"), VerticalAlignment = VerticalAlignment.Center });
         var volumeKnob = new AudioKnob
         {
             Minimum = 0,
             Maximum = 1,
             Value = track.Volume,
             KnobSize = 32,
-            Label = "Vol",
+            Label = WaveLocalizationService.GetString("Loc.RMWave.Track.Volume"),
             ValueFormat = "0.00"
         };
         volumeKnob.ValueChanged += (val) =>
@@ -1897,14 +1897,14 @@ public partial class MainWindow : Controls.CustomChromeWindow
         topRow.Children.Add(volumeKnob);
 
         // 7. Pan
-        topRow.Children.Add(new TextBlock { Text = "Pan", VerticalAlignment = VerticalAlignment.Center });
+        topRow.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Track.Pan"), VerticalAlignment = VerticalAlignment.Center });
         var panKnob = new AudioKnob
         {
             Minimum = -1,
             Maximum = 1,
             Value = track.Pan,
             KnobSize = 32,
-            Label = "Pan",
+            Label = WaveLocalizationService.GetString("Loc.RMWave.Track.Pan"),
             ValueFormat = "0.00",
             ValueArcColor = new SolidColorBrush(Color.FromRgb(180, 120, 220))
         };
@@ -1926,7 +1926,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Maximum = 12,
             Value = track.EqBass,
             KnobSize = 32,
-            Label = "Bass",
+            Label = WaveLocalizationService.GetString("Loc.RMWave.Track.Bass"),
             ValueFormat = "+0;-0;0",
             ArcThickness = 2.5,
             ValueArcColor = new SolidColorBrush(Color.FromRgb(220, 140, 60))
@@ -1946,7 +1946,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Maximum = 12,
             Value = track.EqMid,
             KnobSize = 32,
-            Label = "Mid",
+            Label = WaveLocalizationService.GetString("Loc.RMWave.Track.Mid"),
             ValueFormat = "+0;-0;0",
             ArcThickness = 2.5,
             ValueArcColor = new SolidColorBrush(Color.FromRgb(220, 140, 60))
@@ -1966,7 +1966,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Maximum = 12,
             Value = track.EqTreble,
             KnobSize = 32,
-            Label = "Treble",
+            Label = WaveLocalizationService.GetString("Loc.RMWave.Track.Treble"),
             ValueFormat = "+0;-0;0",
             ArcThickness = 2.5,
             ValueArcColor = new SolidColorBrush(Color.FromRgb(220, 140, 60))
@@ -2093,7 +2093,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Zoom
         bottomRow.Children.Add(new TextBlock
         {
-            Text = "Zoom",
+            Text = WaveLocalizationService.GetString("Loc.RMWave.Track.Zoom"),
             VerticalAlignment = VerticalAlignment.Center
         });
 
@@ -2119,7 +2119,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Loop
         var loopCheck = new CheckBox
         {
-            Content = "Loop",
+            Content = WaveLocalizationService.GetString("Loc.RMWave.Track.Loop"),
             IsChecked = track.LoopEnabled,
             VerticalAlignment = VerticalAlignment.Center
         };
@@ -2133,7 +2133,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Loop Start
         bottomRow.Children.Add(new TextBlock
         {
-            Text = "In",
+            Text = WaveLocalizationService.GetString("Loc.RMWave.Track.LoopIn"),
             VerticalAlignment = VerticalAlignment.Center,
             Margin = new Thickness(8, 0, 0, 0)
         });
@@ -2161,7 +2161,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Padding = new Thickness(0),
             VerticalAlignment = VerticalAlignment.Center
         };
-        ToolTip.SetTip(captureStartBtn, "Capturar posición actual como inicio del loop");
+        ToolTip.SetTip(captureStartBtn, WaveLocalizationService.GetString("Loc.RMWave.Track.CaptureLoopStart"));
         captureStartBtn.Click += (s, e) =>
         {
             track.LoopStart = _engine.GetPositionSeconds();
@@ -2174,7 +2174,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Loop End
         bottomRow.Children.Add(new TextBlock
         {
-            Text = "Out",
+            Text = WaveLocalizationService.GetString("Loc.RMWave.Track.LoopOut"),
             VerticalAlignment = VerticalAlignment.Center,
             Margin = new Thickness(8, 0, 0, 0)
         });
@@ -2202,7 +2202,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Padding = new Thickness(0),
             VerticalAlignment = VerticalAlignment.Center
         };
-        ToolTip.SetTip(captureEndBtn, "Capturar posición actual como fin del loop");
+        ToolTip.SetTip(captureEndBtn, WaveLocalizationService.GetString("Loc.RMWave.Track.CaptureLoopEnd"));
         captureEndBtn.Click += (s, e) =>
         {
             track.LoopEnd = _engine.GetPositionSeconds();
@@ -2226,7 +2226,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Height = 30,
             Margin = new Thickness(12, 0, 0, 0)
         };
-        ToolTip.SetTip(deleteTrackButton, "Eliminar pista");
+        ToolTip.SetTip(deleteTrackButton, WaveLocalizationService.GetString("Loc.RMWave.Track.DeleteTrack"));
         deleteTrackButton.Click += (s, e) => DeleteTrack(track);
         bottomRow.Children.Add(deleteTrackButton);
 
@@ -2896,7 +2896,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             !TryParseDouble(SelectedOffset.Text, out var offset) ||
             !TryParseDouble(SelectedDuration.Text, out var duration))
         {
-            StatusText.Text = "Valores numéricos inválidos.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.InvalidNumbers");
             return;
         }
 
@@ -2933,7 +2933,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             UpdatePlaybackCursor();
         }
 
-        StatusText.Text = "Clip actualizado.";
+        StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.ClipUpdated");
         MarkAsChanged();
     }
 
@@ -2975,7 +2975,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
     {
         if (_engine.Project.Duration <= 0)
         {
-            StatusText.Text = "No hay audio para exportar.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.NoAudioToExport");
             return;
         }
 
@@ -2984,15 +2984,15 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Exportar mezcla",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.ExportMix"),
             DefaultExtension = "wav",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("WAV Audio")
+                new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Wav"))
                 {
                     Patterns = new[] { "*.wav" }
                 },
-                new FilePickerFileType("MP3 Audio")
+                new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Mp3"))
                 {
                     Patterns = new[] { "*.mp3" }
                 }
@@ -3006,7 +3006,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         ExportProgress.IsVisible = true;
         ExportProgress.Value = 0;
-        StatusText.Text = "Exportando mezcla...";
+        StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.ExportingMix");
 
         var extension = System.IO.Path.GetExtension(path).ToLower();
 
@@ -3017,14 +3017,14 @@ public partial class MainWindow : Controls.CustomChromeWindow
                 await _engine.RenderToMp3Async(
                     path,
                     progress => Dispatcher.UIThread.Post(() => ExportProgress.Value = progress * 100),
-                    status => Dispatcher.UIThread.Post(() => StatusText.Text = status));
+                    status => Dispatcher.UIThread.Post(() => StatusText.Text = WaveLocalizationService.TranslateExportStatus(status)));
             }
             else
             {
                 await _engine.RenderToFileAsync(
                     path,
                     progress => Dispatcher.UIThread.Post(() => ExportProgress.Value = progress * 100),
-                    status => Dispatcher.UIThread.Post(() => StatusText.Text = status));
+                    status => Dispatcher.UIThread.Post(() => StatusText.Text = WaveLocalizationService.TranslateExportStatus(status)));
             }
         }
         finally
@@ -3069,7 +3069,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var dialog = new Window
         {
-            Title = "Acerca de RMWave",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.AboutTitle"),
             Width = 420,
             Height = 230,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -3086,7 +3086,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         panel.Children.Add(new TextBlock
         {
-            Text = "RadioMaker Wave Editor",
+            Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.AppName"),
             FontSize = 20,
             FontWeight = FontWeight.Bold,
             HorizontalAlignment = HorizontalAlignment.Center
@@ -3094,14 +3094,14 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         panel.Children.Add(new TextBlock
         {
-            Text = $"Versión {versionStr}",
+            Text = WaveLocalizationService.Format("Loc.RMWave.Dialog.Version", versionStr),
             HorizontalAlignment = HorizontalAlignment.Center,
             Opacity = 0.8
         });
 
         panel.Children.Add(new TextBlock
         {
-            Text = $"Última compilación: {buildDate:yyyy-MM-dd}",
+            Text = WaveLocalizationService.Format("Loc.RMWave.Dialog.BuildDate", buildDate.ToString("yyyy-MM-dd", WaveLocalizationService.CurrentCulture)),
             HorizontalAlignment = HorizontalAlignment.Center,
             Opacity = 0.6,
             FontSize = 12
@@ -3109,7 +3109,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         panel.Children.Add(new TextBlock
         {
-            Text = "Editor multipista de audio",
+            Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Description"),
             HorizontalAlignment = HorizontalAlignment.Center,
             Opacity = 0.6,
             Margin = new Thickness(0, 8, 0, 0)
@@ -3117,7 +3117,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var okButton = new Button
         {
-            Content = "Aceptar",
+            Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Accept"),
             MinWidth = 100,
             HorizontalAlignment = HorizontalAlignment.Center,
             Margin = new Thickness(0, 12, 0, 0)
@@ -3178,7 +3178,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         UpdateTransportState();
         RefreshTimeline();
 
-        StatusText.Text = "Nuevo proyecto creado.";
+        StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.NewProject");
     }
 
     private enum ConfirmationResult
@@ -3194,7 +3194,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var dialog = new Window
         {
-            Title = "Cambios sin guardar",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.UnsavedTitle"),
             Width = 440,
             Height = 170,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -3209,7 +3209,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         panel.Children.Add(new TextBlock
         {
-            Text = "Hay cambios sin guardar.\n¿Deseas guardarlos antes de crear un nuevo proyecto?",
+            Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.UnsavedMessage"),
             TextWrapping = TextWrapping.Wrap
         });
 
@@ -3220,13 +3220,13 @@ public partial class MainWindow : Controls.CustomChromeWindow
             HorizontalAlignment = HorizontalAlignment.Center
         };
 
-        var saveButton = new Button { Content = "Guardar", MinWidth = 100 };
+        var saveButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Save"), MinWidth = 100 };
         saveButton.Click += (s, e) => { result = ConfirmationResult.Save; dialog.Close(); };
 
-        var dontSaveButton = new Button { Content = "No guardar", MinWidth = 100 };
+        var dontSaveButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.DontSave"), MinWidth = 100 };
         dontSaveButton.Click += (s, e) => { result = ConfirmationResult.DontSave; dialog.Close(); };
 
-        var cancelButton = new Button { Content = "Cancelar", MinWidth = 100 };
+        var cancelButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Cancel"), MinWidth = 100 };
         cancelButton.Click += (s, e) => { result = ConfirmationResult.Cancel; dialog.Close(); };
 
         buttonPanel.Children.Add(saveButton);
@@ -3256,11 +3256,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
             var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "Guardar proyecto RMWave",
+                Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.SaveProjectTitle"),
                 DefaultExtension = "rmw",
                 FileTypeChoices = new[]
                 {
-                    new FilePickerFileType("Proyecto RMWave")
+                    new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Project"))
                     {
                         Patterns = new[] { "*.rmw" }
                     }
@@ -3296,12 +3296,12 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
             UpdateWindowTitle();
 
-            StatusText.Text = "Proyecto guardado correctamente.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.ProjectSaved");
             return true;
         }
         catch (Exception ex)
         {
-            StatusText.Text = $"Error guardando proyecto: {ex.Message}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.SaveProjectError", ex.Message);
             return false;
         }
     }
@@ -3313,15 +3313,15 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir proyecto RMWave",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.OpenProjectTitle"),
             AllowMultiple = false,
             FileTypeFilter = new[]
             {
-            new FilePickerFileType("Proyecto RMWave")
+            new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Project"))
             {
                 Patterns = new[] { "*.rmw" }
             },
-            new FilePickerFileType("Todos los archivos")
+            new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.All"))
             {
                 Patterns = new[] { "*.*" }
             }
@@ -3378,7 +3378,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         {
             var emptyItem = new MenuItem
             {
-                Header = "(sin proyectos recientes)",
+                Header = WaveLocalizationService.GetString("Loc.RMWave.Main.NoRecentProjects"),
                 IsEnabled = false
             };
             RecentMenu.Items.Add(emptyItem);
@@ -3401,7 +3401,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Separador y opción de limpiar.
         RecentMenu.Items.Add(new Separator());
 
-        var clearItem = new MenuItem { Header = "Limpiar lista" };
+        var clearItem = new MenuItem { Header = WaveLocalizationService.GetString("Loc.RMWave.Main.ClearRecentList") };
         clearItem.Click += (s, e) =>
         {
             RecentProjectsManager.Clear();
@@ -3418,8 +3418,8 @@ public partial class MainWindow : Controls.CustomChromeWindow
         if (!System.IO.File.Exists(path))
         {
             var result = await ShowMessageBox(
-                "Archivo no encontrado",
-                $"El proyecto ya no existe:\n{path}\n\n¿Desea quitarlo de la lista de recientes?");
+                WaveLocalizationService.GetString("Loc.RMWave.Dialog.MissingProjectTitle"),
+                WaveLocalizationService.Format("Loc.RMWave.Dialog.MissingProjectMessage", path));
 
             if (result)
             {
@@ -3457,7 +3457,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
             if (project == null)
             {
-                StatusText.Text = "Error: el archivo no es un proyecto válido.";
+                StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.InvalidProject");
                 return;
             }
 
@@ -3503,11 +3503,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
                 }
             }
 
-            StatusText.Text = "Proyecto cargado correctamente.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.ProjectLoaded");
         }
         catch (Exception ex)
         {
-            StatusText.Text = $"Error cargando proyecto: {ex.Message}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.LoadProjectError", ex.Message);
         }
     }
 
@@ -3543,10 +3543,10 @@ public partial class MainWindow : Controls.CustomChromeWindow
             HorizontalAlignment = HorizontalAlignment.Center
         };
 
-        var yesButton = new Button { Content = "Sí", MinWidth = 80 };
+        var yesButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Yes"), MinWidth = 80 };
         yesButton.Click += (s, e) => { result = true; dialog.Close(); };
 
-        var noButton = new Button { Content = "No", MinWidth = 80 };
+        var noButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.No"), MinWidth = 80 };
         noButton.Click += (s, e) => { result = false; dialog.Close(); };
 
         buttonPanel.Children.Add(yesButton);
@@ -3569,7 +3569,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var dialog = new Window
         {
-            Title = "Propiedades del Proyecto",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.ProjectPropertiesTitle"),
             Width = 480,
             Height = 420,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -3583,22 +3583,22 @@ public partial class MainWindow : Controls.CustomChromeWindow
         };
 
         // Nombre del programa.
-        panel.Children.Add(new TextBlock { Text = "Nombre del programa:" });
+        panel.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.ProgramName") });
         var nameBox = new TextBox { Text = project.Name };
         panel.Children.Add(nameBox);
 
         // Episodio.
-        panel.Children.Add(new TextBlock { Text = "Episodio / Fecha de emisión:" });
+        panel.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Episode") });
         var episodeBox = new TextBox { Text = project.Episode };
         panel.Children.Add(episodeBox);
 
         // Autor.
-        panel.Children.Add(new TextBlock { Text = "Autor / Productor:" });
+        panel.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Author") });
         var authorBox = new TextBox { Text = project.Author };
         panel.Children.Add(authorBox);
 
         // Notas.
-        panel.Children.Add(new TextBlock { Text = "Notas:" });
+        panel.Children.Add(new TextBlock { Text = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Notes") });
         var notesBox = new TextBox
         {
             Text = project.Notes,
@@ -3611,7 +3611,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         // Fechas (solo lectura).
         panel.Children.Add(new TextBlock
         {
-            Text = $"Creado: {project.CreatedDate:yyyy-MM-dd HH:mm}   |   Modificado: {project.ModifiedDate:yyyy-MM-dd HH:mm}",
+            Text = WaveLocalizationService.Format("Loc.RMWave.Dialog.CreatedModified", project.CreatedDate.ToString("yyyy-MM-dd HH:mm", WaveLocalizationService.CurrentCulture), project.ModifiedDate.ToString("yyyy-MM-dd HH:mm", WaveLocalizationService.CurrentCulture)),
             Opacity = 0.6,
             FontSize = 11
         });
@@ -3625,7 +3625,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             Margin = new Thickness(0, 12, 0, 0)
         };
 
-        var okButton = new Button { Content = "Aceptar", MinWidth = 100 };
+        var okButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Accept"), MinWidth = 100 };
         okButton.Click += (s, ev) =>
         {
             project.Name = nameBox.Text?.Trim() ?? "";
@@ -3637,11 +3637,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
             MarkAsChanged();
             UpdateWindowTitle();
 
-            StatusText.Text = "Propiedades del proyecto actualizadas.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.PropertiesUpdated");
             dialog.Close();
         };
 
-        var cancelButton = new Button { Content = "Cancelar", MinWidth = 100 };
+        var cancelButton = new Button { Content = WaveLocalizationService.GetString("Loc.RMWave.Dialog.Cancel"), MinWidth = 100 };
         cancelButton.Click += (s, ev) => dialog.Close();
 
         buttonPanel.Children.Add(okButton);
@@ -3668,7 +3668,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         if (start < 0 || end <= start)
         {
-            StatusText.Text = "No hay ninguna selección activa. Marca un rango de loop primero.";
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.NoLoopSelection");
             return;
         }
 
@@ -3677,12 +3677,12 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Exportar selección",
+            Title = WaveLocalizationService.GetString("Loc.RMWave.Dialog.ExportSelectionTitle"),
             DefaultExtension = "wav",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("WAV Audio") { Patterns = new[] { "*.wav" } },
-                new FilePickerFileType("MP3 Audio") { Patterns = new[] { "*.mp3" } }
+                new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Wav")) { Patterns = new[] { "*.wav" } },
+                new FilePickerFileType(WaveLocalizationService.GetString("Loc.RMWave.FileType.Mp3")) { Patterns = new[] { "*.mp3" } }
             }
         });
 
@@ -3694,7 +3694,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         var extension = System.IO.Path.GetExtension(path).ToLower();
         bool isMp3 = extension == ".mp3";
 
-        StatusText.Text = $"Exportando selección: {FormatTime(start)} - {FormatTime(end)}...";
+        StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.ExportingSelection", FormatTime(start), FormatTime(end));
         ExportProgress.IsVisible = true;
         ExportProgress.Value = 0;
 
@@ -3707,24 +3707,24 @@ public partial class MainWindow : Controls.CustomChromeWindow
                 success = await _engine.RenderRangeToMp3Async(
                     path, start, end,
                     progress => Dispatcher.UIThread.Post(() => ExportProgress.Value = progress * 100),
-                    status => Dispatcher.UIThread.Post(() => StatusText.Text = status));
+                    status => Dispatcher.UIThread.Post(() => StatusText.Text = WaveLocalizationService.TranslateExportStatus(status)));
             }
             else
             {
                 success = await _engine.RenderRangeToFileAsync(
                     path, start, end,
                     progress => Dispatcher.UIThread.Post(() => ExportProgress.Value = progress * 100),
-                    status => Dispatcher.UIThread.Post(() => StatusText.Text = status));
+                    status => Dispatcher.UIThread.Post(() => StatusText.Text = WaveLocalizationService.TranslateExportStatus(status)));
             }
 
             if (success)
-                StatusText.Text = $"Selección exportada: {System.IO.Path.GetFileName(path)}";
+                StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.SelectionExported", System.IO.Path.GetFileName(path));
             else
-                StatusText.Text = "Error al exportar la selección.";
+                StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.SelectionExportError");
         }
         catch (Exception ex)
         {
-            StatusText.Text = $"Error exportando selección: {ex.Message}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.ExportSelectionError", ex.Message);
         }
         finally
         {
@@ -3882,7 +3882,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
                 if (info.IsEnabled && !info.IsLoopback)
                 {
                     bool isCurrent = (i == currentDeviceId) || (info.IsDefault && currentDeviceId < 0);
-                    deviceItems.Add((i, info.Name ?? $"Dispositivo {i}", info.IsDefault));
+                    deviceItems.Add((i, info.Name ?? WaveLocalizationService.Format("Loc.RMWave.Device.FallbackName", i), info.IsDefault));
 
                     if (isCurrent && defaultId < 0)
                         defaultId = i;
@@ -3892,7 +3892,9 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         foreach (var (id, name, isDefault) in deviceItems)
         {
-            var displayName = isDefault ? $"{name} (predeterminado)" : name;
+            var displayName = isDefault
+                ? $"{name} ({WaveLocalizationService.GetString("Loc.RMWave.Device.Default")})"
+                : name;
 
             var item = new MenuItem
             {
@@ -3932,7 +3934,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         {
             // Obtener el nombre del dispositivo para mostrarlo.
             Bass.GetDeviceInfo(deviceId, out var info);
-            StatusText.Text = $"Salida de audio: {info.Name}";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.OutputChanged", info.Name);
 
             // Actualizar checks: quitar el check de todos y ponerlo solo en el seleccionado.
             foreach (var menuItem in DevicesMenu.Items.OfType<MenuItem>())
@@ -3955,7 +3957,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
         else
         {
             Bass.GetDeviceInfo(deviceId, out var info);
-            StatusText.Text = $"No se pudo cambiar a '{info.Name}'.";
+            StatusText.Text = WaveLocalizationService.Format("Loc.RMWave.Status.OutputChangeError", info.Name);
         }
     }
 

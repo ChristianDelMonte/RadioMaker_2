@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Playback;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -46,7 +47,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
     [ObservableProperty] private int _columns = 10;
     [ObservableProperty] private string? _loadedFilePath;
     [ObservableProperty] private bool _isDirty;
-    [ObservableProperty] private string _statusMessage = "Botonera lista.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Carts.Status.Ready");
 
     [ObservableProperty] private bool _isAnyPlaying;
     [ObservableProperty] private bool _isPausedByCoordinator;
@@ -141,7 +142,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
         IsDirty = true;
 
         ApplyBusToPlayer(bus);
-        StatusMessage = $"Bus de salida: {bus.DisplayName}";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.Carts.Status.OutputBus"), bus.DisplayName);
     }
 
     /// -------------
@@ -193,7 +194,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
         if (buttonVm is null) return;
         if (_player is null)
         {
-            StatusMessage = "Sin motor de reproduccion.";
+            StatusMessage = LocalizationService.GetString("Loc.Carts.Status.NoEngine");
             return;
         }
 
@@ -203,7 +204,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error reproduciendo: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Carts.Status.PlayError"), ex.Message);
         }
     }
 
@@ -213,11 +214,11 @@ public sealed partial class CartBoardViewModel : ViewModelBase
         try
         {
             _player?.StopAll();
-            StatusMessage = "Todos los botones detenidos.";
+            StatusMessage = LocalizationService.GetString("Loc.Carts.Status.AllStopped");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al detener: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Carts.Status.StopError"), ex.Message);
         }
     }
 
@@ -228,7 +229,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
 
         SelectedButton.Clear();
         IsDirty = true;
-        StatusMessage = "Boton limpiado.";
+        StatusMessage = LocalizationService.GetString("Loc.Carts.Status.ButtonCleared");
         RefreshSummary();
     }
 
@@ -251,7 +252,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
             buttonVm.Label = Path.GetFileNameWithoutExtension(filePath);
 
         IsDirty = true;
-        StatusMessage = $"Asignado: {Path.GetFileName(filePath)}";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.Carts.Status.Assigned"), Path.GetFileName(filePath));
         RefreshSummary();
     }
 
@@ -262,7 +263,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
         var loaded = CartBoardStore.Load(filePath);
         if (loaded is null)
         {
-            StatusMessage = $"No se pudo cargar '{Path.GetFileName(filePath)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Carts.Status.LoadFailed"), Path.GetFileName(filePath));
             return false;
         }
 
@@ -275,7 +276,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
         var target = filePath ?? _currentFilePath;
         if (string.IsNullOrWhiteSpace(target))
         {
-            StatusMessage = "No hay ruta de guardado.";
+            StatusMessage = LocalizationService.GetString("Loc.Carts.Status.NoSavePath");
             return false;
         }
 
@@ -299,13 +300,13 @@ public sealed partial class CartBoardViewModel : ViewModelBase
             LoadedFilePath = target;
             IsDirty = false;
 
-            StatusMessage = $"Guardado en '{Path.GetFileName(target)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Carts.Status.Saved"), Path.GetFileName(target));
             OnPropertyChanged(nameof(TitleWithDirty));
             return true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al guardar: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Carts.Status.SaveError"), ex.Message);
             return false;
         }
     }
@@ -316,7 +317,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
         fresh.Normalize();
 
         ApplyLoadedBoard(fresh, null);
-        StatusMessage = "Botonera nueva creada.";
+        StatusMessage = LocalizationService.GetString("Loc.Carts.Status.NewBoard");
     }
 
     private void ApplyLoadedBoard(CartBoard board, string? filePath)
@@ -427,8 +428,8 @@ public sealed partial class CartBoardViewModel : ViewModelBase
             OnPropertyChanged();
 
             StatusMessage = value
-                ? $"Crossfade ACTIVADO ({_player.CrossfadeDurationMs} ms)"
-                : "Crossfade DESACTIVADO (los carts se superponen)";
+                ? string.Format(LocalizationService.GetString("Loc.Carts.Status.CrossfadeEnabled"), _player.CrossfadeDurationMs)
+                : LocalizationService.GetString("Loc.Carts.Status.CrossfadeDisabled");
         }
     }
 
@@ -441,7 +442,7 @@ public sealed partial class CartBoardViewModel : ViewModelBase
     [RelayCommand]
     private void PlaySelected()
     {
-        if (SelectedButton is null) { StatusMessage = "Selecciona un boton primero."; return; }
+        if (SelectedButton is null) { StatusMessage = LocalizationService.GetString("Loc.Carts.Status.SelectButton"); return; }
         TriggerButton(SelectedButton);
     }
 

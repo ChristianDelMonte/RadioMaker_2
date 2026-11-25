@@ -22,6 +22,7 @@ public partial class AboutWindow : CustomChromeWindow
     public AboutWindow()
     {
         InitializeComponent();
+        Closed += (_, _) => (DataContext as IDisposable)?.Dispose();
     }
 
     // ─────────────────────────────────────────────────────────────────────

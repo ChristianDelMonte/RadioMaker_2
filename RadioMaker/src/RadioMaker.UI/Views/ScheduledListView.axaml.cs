@@ -6,6 +6,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
 
@@ -167,9 +168,9 @@ public partial class ScheduledListView : UserControl
         if (string.IsNullOrWhiteSpace(item.FilePath)) return;
 
         if (!RMWaveLauncher.OpenFile(item.FilePath, out var error))
-            vm.StatusMessage = error ?? "No se pudo abrir en RMWave.";
+            vm.StatusMessage = error ?? LocalizationService.GetString("Loc.TandaEditor.Status.RmWaveError");
         else
-            vm.StatusMessage = $"Abriendo {System.IO.Path.GetFileName(item.FilePath)} en RMWave...";
+            vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.Views.Scheduled.Status.OpeningRMWave"), System.IO.Path.GetFileName(item.FilePath));
     }
 
     private void OnContextDeleteClick(object? sender, RoutedEventArgs e)
@@ -197,7 +198,7 @@ public partial class ScheduledListView : UserControl
         {
             var vm = GetVm();
             if (vm is not null)
-                vm.StatusMessage = $"Item actualizado: {itemVm.DisplayTitle}";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.Views.Scheduled.Status.ItemUpdated"), itemVm.DisplayTitle);
         }
     }
 
@@ -217,14 +218,14 @@ public partial class ScheduledListView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var filter = new FilePickerFileType("Lista de programados")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.ScheduledList"))
         {
             Patterns = new[] { "*" + ScheduledListStore.FileExtension }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir lista de programados",
+            Title = LocalizationService.GetString("Loc.Dialog.OpenScheduledList.Title"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -267,12 +268,12 @@ public partial class ScheduledListView : UserControl
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar lista de programados",
+            Title = LocalizationService.GetString("Loc.Dialog.SaveScheduledList.Title"),
             SuggestedFileName = suggestedName,
             DefaultExtension = ScheduledListStore.FileExtension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Lista de programados")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.ScheduledList"))
                 {
                     Patterns = new[] { "*" + ScheduledListStore.FileExtension }
                 }

@@ -13,6 +13,7 @@ using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
@@ -176,7 +177,7 @@ public partial class MainWindow : Window
 
             if (target is null)
             {
-                vm.StatusMessage = "No se pudo abrir una pestaña de playlist.";
+                vm.SetLocalizedStatus("Loc.Main.Status.CannotCreatePlaylistTab");
                 return;
             }
         }
@@ -199,7 +200,7 @@ public partial class MainWindow : Window
         var paths = genVm.PreviewTracks.Select(p => p.FilePath).ToList();
         target.ReplaceTracksFromGenerator(paths);
 
-        vm.StatusMessage = $"Playlist generada: {paths.Count} pista(s).";
+        vm.SetLocalizedStatus("Loc.Main.Status.PlaylistGenerated", paths.Count);
     }
 
     private void OnMenuExit(object? sender, RoutedEventArgs e)
@@ -239,21 +240,21 @@ public partial class MainWindow : Window
     {
         if (DataContext is not MainWindowViewModel vm) return;
         vm.TabHost.AddTandaTabCommand.Execute(null);
-        vm.StatusMessage = "Nueva pestaña de Tanda creada.";
+        vm.SetLocalizedStatus("Loc.Main.Status.SequenceTabCreated");
     }
 
     private void OnMenuNewScheduled(object? sender, RoutedEventArgs e)
     {
         if (DataContext is not MainWindowViewModel vm) return;
         vm.TabHost.AddScheduledTabCommand.Execute(null);
-        vm.StatusMessage = "Nueva pestaña de Programados creada.";
+        vm.SetLocalizedStatus("Loc.Main.Status.ScheduledTabCreated");
     }
 
     private void OnMenuNewPlaylist(object? sender, RoutedEventArgs e)
     {
         if (DataContext is not MainWindowViewModel vm) return;
         vm.TabHost.AddPlaylistTabCommand.Execute(null);
-        vm.StatusMessage = "Nueva pestaña de Playlist creada.";
+        vm.SetLocalizedStatus("Loc.Main.Status.PlaylistTabCreated");
     }
 
     private void OnMenuNewCart(object? sender, RoutedEventArgs e)
@@ -262,14 +263,14 @@ public partial class MainWindow : Window
 
         // Los Cart solo se pueden abrir en la zona central.
         vm.TabHostCenter.AddCartTabCommand.Execute(null);
-        vm.StatusMessage = "Nueva pestaña de Cart creada.";
+        vm.SetLocalizedStatus("Loc.Main.Status.CartTabCreated");
     }
 
     private void OnMenuNewNotes(object? sender, RoutedEventArgs e)
     {
         if (DataContext is not MainWindowViewModel vm) return;
         vm.TabHost.AddNotesTabCommand.Execute(null);
-        vm.StatusMessage = "Nueva pestaña de Notas creada.";
+        vm.SetLocalizedStatus("Loc.Main.Status.NotesTabCreated");
     }
 
     // ═════════════════════════════════════════════════════════════════════
@@ -281,8 +282,8 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel vm) return;
 
         var path = await PickFileAsync(
-            "Abrir tanda",
-            "Tanda",
+            "Loc.Dialog.OpenSequence.Title",
+            "Loc.Dialog.FileType.Sequence",
             new[] { "*" + TandaStore.FileExtension });
 
         if (string.IsNullOrEmpty(path)) return;
@@ -292,7 +293,7 @@ public partial class MainWindow : Window
         if (vm.TabHost.SelectedTab?.Content is TandaEditorViewModel tanda)
         {
             tanda.LoadFromFile(path);
-            vm.StatusMessage = $"Tanda abierta: {Path.GetFileName(path)}";
+            vm.SetLocalizedStatus("Loc.Main.Status.SequenceOpened", Path.GetFileName(path));
         }
     }
 
@@ -301,8 +302,8 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel vm) return;
 
         var path = await PickFileAsync(
-            "Abrir lista de programados",
-            "Lista de programados",
+            "Loc.Dialog.OpenScheduledList.Title",
+            "Loc.Dialog.FileType.ScheduledList",
             new[] { "*" + ScheduledListStore.FileExtension });
 
         if (string.IsNullOrEmpty(path)) return;
@@ -312,7 +313,7 @@ public partial class MainWindow : Window
         if (vm.TabHost.SelectedTab?.Content is ScheduledListViewModel list)
         {
             list.LoadFromFile(path);
-            vm.StatusMessage = $"Programados abiertos: {Path.GetFileName(path)}";
+            vm.SetLocalizedStatus("Loc.Main.Status.ScheduledListOpened", Path.GetFileName(path));
         }
     }
 
@@ -321,8 +322,8 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel vm) return;
 
         var path = await PickFileAsync(
-            "Abrir playlist",
-            "Playlist .rmf",
+            "Loc.Dialog.OpenPlaylist.Title",
+            "Loc.Dialog.FileType.Playlist",
             new[] { "*" + PlaylistStore.FileExtension });
 
         if (string.IsNullOrEmpty(path)) return;
@@ -332,7 +333,7 @@ public partial class MainWindow : Window
         if (vm.TabHost.SelectedTab?.Content is PlaylistEditorViewModel playlist)
         {
             playlist.LoadFromFile(path);
-            vm.StatusMessage = $"Playlist abierta: {Path.GetFileName(path)}";
+            vm.SetLocalizedStatus("Loc.Main.Status.PlaylistOpened", Path.GetFileName(path));
         }
     }
 
@@ -341,8 +342,8 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel vm) return;
 
         var path = await PickFileAsync(
-            "Abrir botonera",
-            "Botonera",
+            "Loc.Dialog.OpenCartBoard.Title",
+            "Loc.Dialog.FileType.CartBoard",
             new[] { "*" + CartBoardStore.FileExtension });
 
         if (string.IsNullOrEmpty(path)) return;
@@ -353,7 +354,7 @@ public partial class MainWindow : Window
         if (vm.TabHostCenter.SelectedTab?.Content is CartBoardViewModel cart)
         {
             cart.LoadFromFile(path);
-            vm.StatusMessage = $"Botonera abierta: {Path.GetFileName(path)}";
+            vm.SetLocalizedStatus("Loc.Main.Status.CartBoardOpened", Path.GetFileName(path));
         }
     }
 
@@ -362,8 +363,8 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel vm) return;
 
         var path = await PickFileAsync(
-            "Abrir nota",
-            "Texto plano",
+            "Loc.Dialog.OpenNote.Title",
+            "Loc.Dialog.PlainTextFileType",
             new[] { "*.txt" });
 
         if (string.IsNullOrEmpty(path)) return;
@@ -373,7 +374,7 @@ public partial class MainWindow : Window
         if (vm.TabHost.SelectedTab?.Content is NotesEditorViewModel notes)
         {
             notes.OpenFile(path);
-            vm.StatusMessage = $"Nota abierta: {Path.GetFileName(path)}";
+            vm.SetLocalizedStatus("Loc.Main.Status.NoteOpened", Path.GetFileName(path));
         }
     }
 
@@ -449,14 +450,14 @@ public partial class MainWindow : Window
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return null;
 
-        var filter = new FilePickerFileType(typeName)
+        var filter = new FilePickerFileType(LocalizationService.GetString(typeName))
         {
             Patterns = patterns
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = title,
+            Title = LocalizationService.GetString(title),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -480,18 +481,18 @@ public partial class MainWindow : Window
         if (!forceDialog && !string.IsNullOrEmpty(cart.LoadedFilePath))
         {
             cart.SaveToFile(cart.LoadedFilePath);
-            vm.StatusMessage = $"Botonera guardada: {Path.GetFileName(cart.LoadedFilePath)}";
+            vm.SetLocalizedStatus("Loc.Main.Status.CartBoardSaved", Path.GetFileName(cart.LoadedFilePath));
             return;
         }
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar botonera",
+            Title = LocalizationService.GetString("Loc.Dialog.SaveCartBoard.Title"),
             SuggestedFileName = SanitizeFileName(cart.BoardName) + ext,
             DefaultExtension = ext.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Botonera")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.CartBoard"))
                 {
                     Patterns = new[] { "*" + ext }
                 }
@@ -503,7 +504,7 @@ public partial class MainWindow : Window
         if (string.IsNullOrEmpty(path)) return;
 
         cart.SaveToFile(path);
-        vm.StatusMessage = $"Botonera guardada: {Path.GetFileName(path)}";
+        vm.SetLocalizedStatus("Loc.Main.Status.CartBoardSaved", Path.GetFileName(path));
     }
 
     // ═════════════════════════════════════════════════════════════════════
@@ -543,7 +544,7 @@ public partial class MainWindow : Window
 
         if (ok)
         {
-            vm.StatusMessage = $"{label} actualizado: {list.SelectedItem.DisplayTitle}";
+            vm.SetLocalizedStatus("Loc.Main.Status.ScheduledItemUpdated", list.SelectedItem.DisplayTitle);
         }
     }
 
@@ -567,11 +568,11 @@ public partial class MainWindow : Window
             var ok = await win.ShowDialog<bool>(this);
 
             if (ok)
-                vm.StatusMessage = $"Tags guardados: {Path.GetFileName(filePath)}";
+                vm.SetLocalizedStatus("Loc.Main.Status.TagsSaved", Path.GetFileName(filePath));
         }
         catch (Exception ex)
         {
-            vm.StatusMessage = $"Error al editar tags: {ex.Message}";
+            vm.SetLocalizedStatus("Loc.Main.Status.TagsEditError", ex.Message);
         }
     }
 
@@ -593,7 +594,7 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel vm) return;
 
         try { vm.PlaybackLog.ReloadSnapshotCommand.Execute(null); } catch { }
-        vm.StatusMessage = "Log recargado.";
+        vm.SetLocalizedStatus("Loc.Main.Status.LogReloaded");
     }
 
     // ═════════════════════════════════════════════════════════════════════
@@ -626,7 +627,7 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel vm) return;
 
         try { vm.StopAllPlayback(); }
-        catch (Exception ex) { vm.StatusMessage = $"Error al detener todo: {ex.Message}"; }
+        catch (Exception ex) { vm.SetLocalizedStatus("Loc.Main.Status.StopAllError", ex.Message); }
     }
 
     // ═════════════════════════════════════════════════════════════════════
@@ -689,7 +690,7 @@ public partial class MainWindow : Window
 
                 Process.Start(psi);
 
-                vm.StatusMessage = $"Iniciando {displayName}...";
+                vm.SetLocalizedStatus("Loc.Main.Status.AddonStarting", displayName);
 
                 // ===== LOGGING =====
                 try
@@ -714,14 +715,12 @@ public partial class MainWindow : Window
                 }
                 catch { }
 
-                vm.StatusMessage = $"Error al iniciar {displayName}: {ex.Message}";
+                vm.SetLocalizedStatus("Loc.Main.Status.AddonStartError", displayName, ex.Message);
                 return;
             }
         }
 
-        vm.StatusMessage =
-            $"No se encontro {displayName} ({exeName}). " +
-            "Verifica que este en Addons/RMVoice/ junto a RadioMaker.exe.";
+        vm.SetLocalizedStatus("Loc.Main.Status.AddonNotFound", displayName, exeName);
     }
 
     // ═════════════════════════════════════════════════════════════════════
@@ -781,7 +780,7 @@ public partial class MainWindow : Window
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Seleccionar archivo de audio",
+            Title = LocalizationService.GetString("Loc.Dialog.SelectAudio.Title"),
             AllowMultiple = false,
             FileTypeFilter = filters
         });
@@ -805,7 +804,7 @@ public partial class MainWindow : Window
         var tab = vm.TabHost.SelectedTab;
         if (tab is null)
         {
-            vm.StatusMessage = "No hay una pestaña activa para guardar.";
+            vm.SetLocalizedStatus("Loc.Main.Status.NoActiveTabToSave");
             return;
         }
 
@@ -831,7 +830,7 @@ public partial class MainWindow : Window
                 break;
 
             default:
-                vm.StatusMessage = $"La pestaña '{tab.Title}' no admite guardado.";
+                vm.SetLocalizedStatus("Loc.Main.Status.TabDoesNotSupportSave", tab.Title);
                 break;
         }
     }
@@ -852,12 +851,12 @@ public partial class MainWindow : Window
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar lista de programados",
+            Title = LocalizationService.GetString("Loc.Dialog.SaveScheduledList.Title"),
             SuggestedFileName = SanitizeFileName(sl.ListName) + ext,
             DefaultExtension = ext.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Lista de programados")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.ScheduledList"))
                 {
                     Patterns = new[] { "*" + ext }
                 }
@@ -887,12 +886,12 @@ public partial class MainWindow : Window
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar tanda",
+            Title = LocalizationService.GetString("Loc.Dialog.SaveSequence.Title"),
             SuggestedFileName = SanitizeFileName(tn.TandaName) + ext,
             DefaultExtension = ext.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Tanda")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.Sequence"))
                 {
                     Patterns = new[] { "*" + ext }
                 }
@@ -922,12 +921,12 @@ public partial class MainWindow : Window
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar playlist",
+            Title = LocalizationService.GetString("Loc.Dialog.SavePlaylist.Title"),
             SuggestedFileName = SanitizeFileName(pl.PlaylistName) + ext,
             DefaultExtension = ext.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Playlist .rmf")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.FileType.Playlist"))
                 {
                     Patterns = new[] { "*" + ext }
                 }
@@ -990,12 +989,12 @@ public partial class MainWindow : Window
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar nota",
+            Title = LocalizationService.GetString("Loc.Dialog.SaveNote.Title"),
             SuggestedFileName = suggested,
             DefaultExtension = "txt",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Texto plano")
+                new FilePickerFileType(LocalizationService.GetString("Loc.Dialog.PlainTextFileType"))
                 {
                     Patterns = new[] { "*.txt" }
                 }
@@ -1028,9 +1027,8 @@ public partial class MainWindow : Window
     private async void OnConfirmStopEmergencyRequested(object? sender, Action<bool> callback)
     {
         var result = await ShowConfirmationDialogAsync(
-            "Detener emergencia",
-            "La emergencia está sonando al aire. ¿Deseas detenerla?\n\n" +
-            "El watchdog quedará desactivado y el operador deberá reactivarlo manualmente.");
+            LocalizationService.GetString("Loc.Main.Confirm.StopEmergency.Title"),
+            string.Format(LocalizationService.GetString("Loc.Main.Confirm.StopEmergency.Message"), Environment.NewLine));
 
         callback(result);
     }
@@ -1068,12 +1066,12 @@ public partial class MainWindow : Window
             Margin = new Avalonia.Thickness(0, 8, 0, 0)
         };
 
-        var cancelBtn = new Button { Content = "Cancelar", MinWidth = 100 };
+        var cancelBtn = new Button { Content = LocalizationService.GetString("Loc.Main.Confirm.Cancel"), MinWidth = 100 };
         cancelBtn.Click += (_, _) => { result = false; dialog.Close(); };
 
         var confirmBtn = new Button
         {
-            Content = "Detener",
+            Content = LocalizationService.GetString("Loc.Main.Confirm.Stop"),
             MinWidth = 100,
             Background = Avalonia.Media.Brushes.DarkRed,
             Foreground = Avalonia.Media.Brushes.White

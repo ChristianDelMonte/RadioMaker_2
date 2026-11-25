@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
+using RadioMaker.UI.Localization;
 using System;
 
 namespace RadioMaker.UI.Demo;
@@ -66,7 +67,7 @@ public sealed partial class DemoViewModel : ObservableObject, IDisposable
     private void OnFailed(string error) =>
         Dispatcher.UIThread.Post(() =>
         {
-            CurrentTitle = "Error en la presentación";
+            CurrentTitle = LocalizationService.GetString("Loc.Demo.ErrorTitle");
             ErrorMessage = error;
             HasError = true;
             // NO cerrar el overlay: el usuario debe ver el error.

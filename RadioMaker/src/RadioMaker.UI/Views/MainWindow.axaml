@@ -7,7 +7,7 @@
         xmlns:demo="clr-namespace:RadioMaker.UI.Demo"
         x:Class="RadioMaker.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="RMS Audio Player"
+        Title="{DynamicResource Loc.Window.Main.Title}"
         Icon="/Assets/app.ico"
         Width="1280" Height="720"
         MinWidth="1280" MinHeight="720"
@@ -106,7 +106,7 @@
                                 VerticalAlignment="Center" />
 
                         <!-- Slogan -->
-                        <TextBlock Text="{Binding AppSlogan}"
+                        <TextBlock Text="{DynamicResource Loc.App.Slogan}"
                                    FontSize="12"
                                    FontStyle="Italic"
                                    Foreground="{DynamicResource Accent}"
@@ -125,7 +125,7 @@
                                 Padding="10,4"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                ToolTip.Tip="Minimizar">
+                                ToolTip.Tip="{DynamicResource Loc.Chrome.Minimize}">
                             <materialIcons:MaterialIcon Kind="WindowMinimize"
                                                         Width="14" Height="14"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -136,7 +136,7 @@
                                 Padding="10,4"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                ToolTip.Tip="Maximizar">
+                                ToolTip.Tip="{DynamicResource Loc.Chrome.Maximize}">
                             <Panel Width="14" Height="14">
                                 <materialIcons:MaterialIcon Kind="WindowMaximize"
                                                             Width="14" Height="14"
@@ -154,7 +154,7 @@
                                 Padding="10,4"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                ToolTip.Tip="Cerrar">
+                                ToolTip.Tip="{DynamicResource Loc.Chrome.Close}">
                             <materialIcons:MaterialIcon Kind="Close"
                                                         Width="14" Height="14"
                                                         Foreground="{DynamicResource Error}" />
@@ -177,58 +177,58 @@
                           Background="Transparent"
                           Padding="4,2">
 
-                        <MenuItem Header="_Archivo">
+                        <MenuItem Header="{DynamicResource Loc.Menu.File}">
                             <!-- Nuevo -->
-                            <MenuItem Header="Nuevo">
-                                <MenuItem Header="Tanda" Click="OnMenuNewTanda" />
-                                <MenuItem Header="Programado" Click="OnMenuNewScheduled" />
-                                <MenuItem Header="Playlist" Click="OnMenuNewPlaylist" />
-                                <MenuItem Header="Cart" Click="OnMenuNewCart" />
-                                <MenuItem Header="Nota" Click="OnMenuNewNotes" />
+                            <MenuItem Header="{DynamicResource Loc.Menu.New}">
+                                <MenuItem Header="{DynamicResource Loc.Menu.New.Tanda}" Click="OnMenuNewTanda" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.New.Scheduled}" Click="OnMenuNewScheduled" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.New.Playlist}" Click="OnMenuNewPlaylist" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.New.Cart}" Click="OnMenuNewCart" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.New.Note}" Click="OnMenuNewNotes" />
                             </MenuItem>
 
                             <!-- Abrir -->
-                            <MenuItem Header="Abrir">
-                                <MenuItem Header="Tanda..." Click="OnMenuOpenTanda" />
-                                <MenuItem Header="Programado..." Click="OnMenuOpenScheduled" />
-                                <MenuItem Header="Playlist..." Click="OnMenuOpenPlaylist" />
-                                <MenuItem Header="Cart..." Click="OnMenuOpenCart" />
-                                <MenuItem Header="Nota..." Click="OnMenuOpenNotes" />
+                            <MenuItem Header="{DynamicResource Loc.Menu.Open}">
+                                <MenuItem Header="{DynamicResource Loc.Menu.Open.Tanda}" Click="OnMenuOpenTanda" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.Open.Scheduled}" Click="OnMenuOpenScheduled" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.Open.Playlist}" Click="OnMenuOpenPlaylist" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.Open.Cart}" Click="OnMenuOpenCart" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.Open.Note}" Click="OnMenuOpenNotes" />
                             </MenuItem>
 
                             <!-- Guardar (segun la pestaña activa) -->
-                            <MenuItem Header="Guardar">
-                                <MenuItem Header="Tanda..."
+                            <MenuItem Header="{DynamicResource Loc.Menu.Save}">
+                                <MenuItem Header="{DynamicResource Loc.Menu.Save.Tanda}"
                                           IsEnabled="{Binding CanSaveTanda}"
                                           Click="OnMenuSaveTanda" />
-                                <MenuItem Header="Programado..."
+                                <MenuItem Header="{DynamicResource Loc.Menu.Save.Scheduled}"
                                           IsEnabled="{Binding CanSaveScheduledList}"
                                           Click="OnMenuSaveScheduled" />
-                                <MenuItem Header="Playlist..."
+                                <MenuItem Header="{DynamicResource Loc.Menu.Save.Playlist}"
                                           IsEnabled="{Binding CanSavePlaylist}"
                                           Click="OnMenuSavePlaylist" />
-                                <MenuItem Header="Cart..."
+                                <MenuItem Header="{DynamicResource Loc.Menu.Save.Cart}"
                                           IsEnabled="{Binding CanSaveCart}"
                                           Click="OnMenuSaveCart" />
-                                <MenuItem Header="Nota..."
+                                <MenuItem Header="{DynamicResource Loc.Menu.Save.Note}"
                                           IsEnabled="{Binding CanSaveNotes}"
                                           Click="OnMenuSaveNotes" />
                             </MenuItem>
 
                             <Separator />
-                            <MenuItem Header="Salir" Click="OnMenuExit" />
+                                <MenuItem Header="{DynamicResource Loc.Menu.Exit}" Click="OnMenuExit" />
                         </MenuItem>
 
-                        <MenuItem Header="_Edicion">
+                        <MenuItem Header="{DynamicResource Loc.Menu.Edit}">
                             <!-- Editar item seleccionado en Programados -->
-                            <MenuItem Header="Editar">
-                                <MenuItem Header="Bloque..."
+                            <MenuItem Header="{DynamicResource Loc.Menu.EditItem}">
+                                <MenuItem Header="{DynamicResource Loc.Menu.Edit.Block}"
                                           IsEnabled="{Binding CanEditBlock}"
                                           Click="OnMenuEditBlock" />
-                                <MenuItem Header="Tanda..."
+                                <MenuItem Header="{DynamicResource Loc.Menu.Edit.Tanda}"
                                           IsEnabled="{Binding CanEditTandaItem}"
                                           Click="OnMenuEditTandaItem" />
-                                <MenuItem Header="Playlist..."
+                                <MenuItem Header="{DynamicResource Loc.Menu.Edit.Playlist}"
                                           IsEnabled="{Binding CanEditPlaylistItem}"
                                           Click="OnMenuEditPlaylistItem" />
                             </MenuItem>
@@ -236,34 +236,34 @@
                             <Separator />
 
                             <!-- Editar tags del archivo audio seleccionado -->
-                            <MenuItem Header="Editar tags..."
+                            <MenuItem Header="{DynamicResource Loc.Menu.Edit.Tags}"
                                       IsEnabled="{Binding CanEditAudioTags}"
                                       Click="OnMenuEditTags" />
 
                             <Separator />
 
                             <!-- Generador de playlists -->
-                            <MenuItem Header="Playlists">
-                                <MenuItem Header="Generador Automatico..."
+                            <MenuItem Header="{DynamicResource Loc.Menu.Playlists}">
+                                <MenuItem Header="{DynamicResource Loc.Menu.Playlists.Generator}"
                                           Click="OnMenuGeneratePlaylist" />
                             </MenuItem>
 
-                            <MenuItem Header="Planificador AutoDJ..."
+                            <MenuItem Header="{DynamicResource Loc.Menu.AutoDj}"
                                       Click="OnMenuOpenAutoDjClock" />
 
                             <Separator />
 
-                            <MenuItem Header="Configuracion..." Click="OnConfigureAudioClick" />
+                            <MenuItem Header="{DynamicResource Loc.Menu.Settings}" Click="OnConfigureAudioClick" />
                         </MenuItem>
 
-                        <MenuItem Header="_Complementos">
-                            <MenuItem Header="RM Wave..." Click="OnMenuLaunchRMWave" />
-                            <MenuItem Header="RM Voice..." Click="OnMenuLaunchRMVoice" />
-                            <MenuItem Header="RM Cast..." Click="OnMenuLaunchRMCast" />
+                        <MenuItem Header="{DynamicResource Loc.Menu.Addons}">
+                            <MenuItem Header="{DynamicResource Loc.Menu.Addons.Wave}" Click="OnMenuLaunchRMWave" />
+                            <MenuItem Header="{DynamicResource Loc.Menu.Addons.Voice}" Click="OnMenuLaunchRMVoice" />
+                            <MenuItem Header="{DynamicResource Loc.Menu.Addons.Cast}" Click="OnMenuLaunchRMCast" />
                         </MenuItem>
 
-                        <MenuItem Header="_Ayuda">
-                            <MenuItem Header="Acerca de..." Click="OnMenuAbout" />
+                        <MenuItem Header="{DynamicResource Loc.Menu.Help}">
+                            <MenuItem Header="{DynamicResource Loc.Menu.Help.About}" Click="OnMenuAbout" />
                         </MenuItem>
                     </Menu>
 
@@ -282,7 +282,7 @@
                                 Padding="8,3"
                                 VerticalAlignment="Center"
                                 Margin="0,0,6,0"
-                                ToolTip.Tip="Estado de la salida al aire">
+                                ToolTip.Tip="{DynamicResource Loc.Toolbar.OnAir.Tooltip}">
                             <StackPanel Orientation="Horizontal"
                                         Spacing="6"
                                         VerticalAlignment="Center">
@@ -304,7 +304,7 @@
                                 Background="Transparent"
                                 BorderThickness="0"
                                 VerticalAlignment="Center"
-                                ToolTip.Tip="Cambiar entre tema claro y oscuro">
+                                ToolTip.Tip="{DynamicResource Loc.Toolbar.Theme.Tooltip}">
                             <Panel Width="16" Height="16">
                                 <materialIcons:MaterialIcon Kind="WeatherSunny"
                                                             Width="16" Height="16"
@@ -323,7 +323,7 @@
                                 Background="Transparent"
                                 BorderThickness="0"
                                 VerticalAlignment="Center"
-                                ToolTip.Tip="Configuracion">
+                                ToolTip.Tip="{DynamicResource Loc.Toolbar.Settings.Tooltip}">
                             <materialIcons:MaterialIcon Kind="Cog"
                                                         Width="16" Height="16"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -374,19 +374,19 @@
                                 SelectedIndex="0">
 
                         <!-- Tab 1: Spectrum -->
-                        <TabItem Header="Spectrum">
+                        <TabItem Header="{DynamicResource Loc.Main.Tab.Spectrum}">
                             <ContentControl Content="{Binding Spectrum}" Margin="0,4,0,0" />
                         </TabItem>
 
                         <!-- Tab 2: Ecualizador -->
-                        <TabItem Header="Ecualizador">
+                        <TabItem Header="{DynamicResource Loc.Main.Tab.Equalizer}">
                             <ScrollViewer Margin="0,4,0,0">
                                 <ContentControl Content="{Binding Equalizer}" />
                             </ScrollViewer>
                         </TabItem>
 
                         <!-- Tab 3: Log -->
-                        <TabItem Header="Log">
+                        <TabItem Header="{DynamicResource Loc.Main.Tab.Log}">
                             <ContentControl Content="{Binding PlaybackLog}" Margin="0,4,0,0" />
                         </TabItem>
                     </TabControl>
@@ -439,7 +439,7 @@
                                 Spacing="6"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                ToolTip.Tip="Click para ver otro tip">
+                                ToolTip.Tip="{DynamicResource Loc.Main.Tip.Tooltip}">
                         <materialIcons:MaterialIcon Kind="{Binding CurrentTip.Icon}"
                                                     Width="13" Height="13"
                                                     Foreground="{DynamicResource AccentText}"
@@ -455,7 +455,7 @@
 
                     <!-- Columna 3: bus de salida -->
                     <TextBlock Grid.Column="3"
-                               Text="{Binding SelectedBus.DisplayName, StringFormat='Bus: {0}'}"
+                               Text="{Binding SelectedBusDisplayText}"
                                FontSize="11"
                                Foreground="{DynamicResource FgMuted}"
                                VerticalAlignment="Center"
@@ -478,7 +478,7 @@
                                 VerticalAlignment="Center">
                         <TextBlock Text="🚨" FontSize="24" VerticalAlignment="Center" />
                         <StackPanel>
-                            <TextBlock Text="EMERGENCIA ACTIVA"
+                            <TextBlock Text="{DynamicResource Loc.Main.Emergency.Active}"
                                        FontSize="15"
                                        FontWeight="Bold"
                                        Foreground="White" />
@@ -491,7 +491,7 @@
 
                     <Button Grid.Column="2"
                             Command="{Binding StopEmergencyCommand}"
-                            Content="DETENER EMERGENCIA"
+                            Content="{DynamicResource Loc.Main.Emergency.Stop}"
                             Padding="16,8"
                             Background="White"
                             Foreground="#DC2626"

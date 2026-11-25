@@ -12,7 +12,7 @@
 
             <!-- Titulo -->
             <TextBlock Grid.Row="0"
-                       Text="Normalizacion de niveles"
+                       Text="{DynamicResource Loc.Controls.Normalization.Title}"
                        FontWeight="SemiBold"
                        FontSize="12"
                        Foreground="{DynamicResource FgPrimary}"
@@ -28,7 +28,7 @@
                     Margin="0,0,0,6">
                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
                     <CheckBox Grid.Row="0" Grid.Column="0"
-                              Content="Normalizacion activada (aplicar ganancia al reproducir)"
+                              Content="{DynamicResource Loc.Controls.Normalization.Enabled}"
                               IsChecked="{Binding IsEnabled}"
                               FontWeight="SemiBold"
                               FontSize="11"
@@ -56,7 +56,7 @@
                       RowDefinitions="Auto,Auto">
 
                     <TextBlock Grid.Row="0" Grid.Column="0"
-                               Text="Modo:"
+                               Text="{DynamicResource Loc.Controls.Normalization.Mode}"
                                VerticalAlignment="Center"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
@@ -76,7 +76,7 @@
                                TextWrapping="Wrap" />
 
                     <TextBlock Grid.Row="1" Grid.Column="0"
-                               Text="Target (dBFS):"
+                               Text="{DynamicResource Loc.Controls.Normalization.Target}"
                                VerticalAlignment="Center"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
@@ -104,7 +104,7 @@
                     CornerRadius="6"
                     Padding="8,5"
                     Margin="0,0,0,6">
-                <TextBlock Text="El analisis de peak/RMS corre automaticamente al cargar cada archivo. Los resultados se guardan en cache."
+                <TextBlock Text="{DynamicResource Loc.Controls.Normalization.Help}"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
                            TextWrapping="Wrap" />
@@ -121,7 +121,7 @@
                     IsVisible="{Binding HasResult}">
                 <Grid ColumnDefinitions="*,*,*,*">
                     <StackPanel Grid.Column="0" Spacing="1">
-                        <TextBlock Text="Peak maximo"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Normalization.Peak}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBlock Text="{Binding PeakDbText}"
@@ -130,7 +130,7 @@
                                    Foreground="{DynamicResource AccentText}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Spacing="1">
-                        <TextBlock Text="RMS promedio"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Normalization.Rms}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBlock Text="{Binding RmsDbText}"
@@ -139,7 +139,7 @@
                                    Foreground="{DynamicResource AccentText}" />
                     </StackPanel>
                     <StackPanel Grid.Column="2" Spacing="1">
-                        <TextBlock Text="Factor de cresta"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Normalization.Crest}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBlock Text="{Binding CrestFactorText}"
@@ -148,7 +148,7 @@
                                    Foreground="{DynamicResource AccentText}" />
                     </StackPanel>
                     <StackPanel Grid.Column="3" Spacing="1">
-                        <TextBlock Text="Ganancia calculada"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Normalization.Gain}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBlock Text="{Binding GainText}"

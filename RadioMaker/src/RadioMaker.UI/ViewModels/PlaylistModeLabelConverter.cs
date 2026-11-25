@@ -1,6 +1,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -15,9 +16,9 @@ public sealed class PlaylistModeLabelConverter : IValueConverter
         {
             return m switch
             {
-                PlaylistMode.Once => "Una vez",
-                PlaylistMode.Loop => "Repetir",
-                PlaylistMode.Shuffle => "Aleatorio",
+                PlaylistMode.Once => LocalizationService.GetString("Loc.Label.PlaylistMode.Once"),
+                PlaylistMode.Loop => LocalizationService.GetString("Loc.Label.PlaylistMode.Loop"),
+                PlaylistMode.Shuffle => LocalizationService.GetString("Loc.Label.PlaylistMode.Shuffle"),
                 _ => m.ToString()
             };
         }

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Playback;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -95,6 +96,7 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
     public EventsPanelViewModel(SchedulerPanelViewModel? scheduler = null)
     {
         Scheduler = scheduler;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
 
         if (Scheduler?.Registry is { } reg)
         {
@@ -149,6 +151,12 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(PlaylistStatusColorKey));
     }
 
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(IsSchedulerRunning));
+        RefreshPending();
+    }
+
     private void OnRegistryChanged(object? sender, EventArgs e)
     {
         Dispatcher.UIThread.Post(RefreshPending);
@@ -173,7 +181,7 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
                 PendingCount = 0;
                 ActiveListCount = 0;
                 DisabledListCount = 0;
-                StatusText = "Sin scheduler.";
+                StatusText = LocalizationService.GetString("Loc.Events.Status.NoScheduler");
                 return;
             }
 
@@ -246,9 +254,9 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
             PendingCount = pending.Count;
 
             StatusText = pending.Count == 0
-                ? "Sin items pendientes."
-                : $"{pending.Count} item(s) pendiente(s) en {enabledLists.Count} lista(s) activa(s)." +
-                  (DisabledListCount > 0 ? $" {DisabledListCount} lista(s) desactivada(s)." : "");
+                ? LocalizationService.GetString("Loc.Events.Status.Empty")
+                : string.Format(LocalizationService.GetString("Loc.Events.Status.Pending"), pending.Count, enabledLists.Count) +
+                  (DisabledListCount > 0 ? string.Format(LocalizationService.GetString("Loc.Events.Status.DisabledLists"), DisabledListCount) : "");
 
             OnPropertyChanged(nameof(HasPending));
             OnPropertyChanged(nameof(HasNoPending));
@@ -293,8 +301,9 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
 
     private static string BuildHeader(DateTime date, DateTime now)
     {
-        var dayName = date.ToString("dddd", new CultureInfo("es-ES"));
-        var dateText = date.ToString("d 'de' MMMM", new CultureInfo("es-ES"));
+        var culture = CultureInfo.GetCultureInfo(LocalizationService.CurrentLanguage);
+        var dayName = date.ToString("dddd", culture);
+        var dateText = date.ToString(LocalizationService.CurrentLanguage == "en" ? "MMMM d" : "d 'de' MMMM", culture);
 
         // Capitalizar primera letra.
         if (!string.IsNullOrEmpty(dayName))
@@ -302,12 +311,13 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
 
         var diff = (date.Date - now.Date).Days;
 
-        return diff switch
+        var key = diff switch
         {
-            0 => $"Pendientes de Hoy ({dayName}, {dateText})",
-            1 => $"Pendientes de Mañana ({dayName}, {dateText})",
-            _ => $"Pendientes del {dayName} {dateText}"
+            0 => "Loc.Controls.Events.PendingToday",
+            1 => "Loc.Controls.Events.PendingTomorrow",
+            _ => "Loc.Controls.Events.PendingDate"
         };
+        return string.Format(LocalizationService.GetString(key), dayName, dateText);
     }
 
     // ───── Dispose ───────────────────────────────────────────────────────
@@ -316,6 +326,7 @@ public sealed partial class EventsPanelViewModel : ViewModelBase, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+        LocalizationService.LanguageChanged -= OnLanguageChanged;
 
         try { _refreshTimer.Stop(); } catch { }
 

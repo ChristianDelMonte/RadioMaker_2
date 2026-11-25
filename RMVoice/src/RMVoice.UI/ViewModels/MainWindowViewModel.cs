@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using RMVoice.Core;
 using RMVoice.Core.Models;
 using RMVoice.Core.Services;
+using RMVoice.UI.Localization;
 
 namespace RMVoice.UI.ViewModels;
 
@@ -77,7 +78,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string _currentTimeText = "--:--:--";
     [ObservableProperty] private string _currentDateText = "";
     [ObservableProperty] private string _climateSummary = "— °C · — %";
-    [ObservableProperty] private string _statusMessage = "Iniciando…";
+    [ObservableProperty] private string _statusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Status.Starting");
 
     [ObservableProperty] private double _volume = 100;
     [ObservableProperty] private bool _isPlaying;
@@ -108,8 +109,8 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         Weather.FetchFailed += OnWeatherFetchFailed;
 
         StatusMessage = _announcer.IsInitialized
-            ? "BASS inicializado correctamente."
-            : "BASS no inicializado. Revisar dispositivo de audio.";
+            ? VoiceLocalizationService.GetString("Loc.RMVoice.Status.BassReady")
+            : VoiceLocalizationService.GetString("Loc.RMVoice.Status.BassUnavailable");
 
         LoadProfiles();
 
@@ -162,8 +163,11 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
         try
         {
-            CurrentDateText = now.ToString("dddd, d 'de' MMMM 'de' yyyy",
-                CultureInfo.GetCultureInfo("es-ES"));
+            var culture = VoiceLocalizationService.CurrentCulture;
+            var dateFormat = culture.TwoLetterISOLanguageName == "en"
+                ? "dddd, MMMM d, yyyy"
+                : "dddd, d 'de' MMMM 'de' yyyy";
+            CurrentDateText = now.ToString(dateFormat, culture);
         }
         catch
         {
@@ -191,7 +195,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         if (!_announcer.IsInitialized)
         {
-            StatusMessage = "El motor de audio no está inicializado.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Status.EngineUnavailable");
             return;
         }
 
@@ -224,7 +228,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
                 Dispatcher.UIThread.Post(() =>
                 {
                     IsPlaying = false;
-                    StatusMessage = "Error al reproducir: " + ex.Message;
+                    StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.PlayError", ex.Message);
                 });
             }
         });
@@ -235,7 +239,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         Dispatcher.UIThread.Post(() =>
         {
             IsPlaying = true;
-            StatusMessage = "Reproduciendo: " + req.DisplayText;
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.Playing", req.DisplayText);
         });
     }
 
@@ -244,7 +248,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         Dispatcher.UIThread.Post(() =>
         {
             IsPlaying = false;
-            StatusMessage = "Locución finalizada.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Status.PlaybackFinished");
         });
     }
 
@@ -253,7 +257,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         Dispatcher.UIThread.Post(() =>
         {
             IsPlaying = false;
-            StatusMessage = "Error de reproducción: " + ex.Message;
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.PlaybackError", ex.Message);
         });
     }
 
@@ -292,7 +296,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         _announcer.Stop();
         IsPlaying = false;
-        StatusMessage = "Detenido.";
+        StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Status.Stopped");
     }
 
     [RelayCommand]
@@ -323,8 +327,10 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         Humidity = (decimal)Math.Clamp(snapshot.Humidity, 5.0, 100.0);
 
         StatusMessage =
-            $"Clima actualizado: {snapshot.Temperature:0.#} °C, {snapshot.Humidity:0} % " +
-            $"({_announcer.ActiveWeatherLocation?.Name ?? "—"})";
+            VoiceLocalizationService.Format("Loc.RMVoice.Status.WeatherUpdated",
+                snapshot.Temperature,
+                snapshot.Humidity,
+                _announcer.ActiveWeatherLocation?.Name ?? "—");
 
         // Si el fetch fue del arranque (silencioso), no anunciar.
         bool isInitialFetch = _isFirstWeatherFetch;
@@ -338,36 +344,36 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     }
 
     private void OnWeatherFetchFailed(string error)
-        => StatusMessage = "Error al obtener el clima: " + error;
+        => StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.WeatherError", error);
 
     // ------------------------------------------------------------------ //
     //  Selección de archivos
     // ------------------------------------------------------------------ //
 
-    [RelayCommand] private Task BrowseHourAudioAsync() => BrowseAudioAsync("HORAS", p => SelectedProfile!.HourAudioPath = p);
-    [RelayCommand] private Task BrowseMinuteAudioAsync() => BrowseAudioAsync("MINUTOS", p => SelectedProfile!.MinuteAudioPath = p);
-    [RelayCommand] private Task BrowseTemperatureAudioAsync() => BrowseAudioAsync("TEMPERATURA", p => SelectedProfile!.TemperatureAudioPath = p);
-    [RelayCommand] private Task BrowseHumidityAudioAsync() => BrowseAudioAsync("HUMEDAD", p => SelectedProfile!.HumidityAudioPath = p);
+    [RelayCommand] private Task BrowseHourAudioAsync() => BrowseAudioAsync(VoiceLocalizationService.GetString("Loc.RMVoice.Unit.Hours"), p => SelectedProfile!.HourAudioPath = p);
+    [RelayCommand] private Task BrowseMinuteAudioAsync() => BrowseAudioAsync(VoiceLocalizationService.GetString("Loc.RMVoice.Unit.Minutes"), p => SelectedProfile!.MinuteAudioPath = p);
+    [RelayCommand] private Task BrowseTemperatureAudioAsync() => BrowseAudioAsync(VoiceLocalizationService.GetString("Loc.RMVoice.Unit.Temperature"), p => SelectedProfile!.TemperatureAudioPath = p);
+    [RelayCommand] private Task BrowseHumidityAudioAsync() => BrowseAudioAsync(VoiceLocalizationService.GetString("Loc.RMVoice.Unit.Humidity"), p => SelectedProfile!.HumidityAudioPath = p);
 
     private async Task BrowseAudioAsync(string label, Action<string> assign)
     {
         if (SelectedProfile is null) return;
-        var path = await _dialogs.PickFileAsync($"Seleccionar audio de {label}", AudioPatterns);
+        var path = await _dialogs.PickFileAsync(VoiceLocalizationService.Format("Loc.RMVoice.Dialog.SelectAudio", label), AudioPatterns);
         if (path is null) return;
         assign(path);
         ApplySelectedProfile();
         PersistProfiles();
     }
 
-    [RelayCommand] private Task BrowseHourTableAsync() => BrowseTableAsync("HORAS", p => SelectedProfile!.HourTablePath = p);
-    [RelayCommand] private Task BrowseMinuteTableAsync() => BrowseTableAsync("MINUTOS", p => SelectedProfile!.MinuteTablePath = p);
-    [RelayCommand] private Task BrowseTemperatureTableAsync() => BrowseTableAsync("TEMPERATURA", p => SelectedProfile!.TemperatureTablePath = p);
-    [RelayCommand] private Task BrowseHumidityTableAsync() => BrowseTableAsync("HUMEDAD", p => SelectedProfile!.HumidityTablePath = p);
+    [RelayCommand] private Task BrowseHourTableAsync() => BrowseTableAsync(VoiceLocalizationService.GetString("Loc.RMVoice.Unit.Hours"), p => SelectedProfile!.HourTablePath = p);
+    [RelayCommand] private Task BrowseMinuteTableAsync() => BrowseTableAsync(VoiceLocalizationService.GetString("Loc.RMVoice.Unit.Minutes"), p => SelectedProfile!.MinuteTablePath = p);
+    [RelayCommand] private Task BrowseTemperatureTableAsync() => BrowseTableAsync(VoiceLocalizationService.GetString("Loc.RMVoice.Unit.Temperature"), p => SelectedProfile!.TemperatureTablePath = p);
+    [RelayCommand] private Task BrowseHumidityTableAsync() => BrowseTableAsync(VoiceLocalizationService.GetString("Loc.RMVoice.Unit.Humidity"), p => SelectedProfile!.HumidityTablePath = p);
 
     private async Task BrowseTableAsync(string label, Action<string> assign)
     {
         if (SelectedProfile is null) return;
-        var path = await _dialogs.PickFileAsync($"Seleccionar tabla de {label}", TablePatterns);
+        var path = await _dialogs.PickFileAsync(VoiceLocalizationService.Format("Loc.RMVoice.Dialog.SelectTable", label), TablePatterns);
         if (path is null) return;
         assign(path);
         ApplySelectedProfile();
@@ -387,7 +393,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
         if (Profiles.Count == 0)
         {
-            var fallback = new VoiceProfile { Name = "Nuevo perfil" };
+            var fallback = new VoiceProfile { Name = VoiceLocalizationService.GetString("Loc.RMVoice.Profile.New") };
             Profiles.Add(fallback);
         }
 
@@ -474,7 +480,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
                           ?? Profiles.FirstOrDefault();
         _suppressProfileApply = false;
 
-        StatusMessage = $"Perfiles guardados en {_profileStore.FilePath}";
+        StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.ProfilesSaved", _profileStore.FilePath);
     }
 
     // ------------------------------------------------------------------ //
@@ -495,7 +501,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
         if (profile is null)
         {
-            StatusMessage = "Sin perfil seleccionado.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Status.NoProfile");
             return;
         }
 
@@ -505,10 +511,8 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         LoadRegions(TemperatureRegions, profile.TemperatureTablePath);
         LoadRegions(HumidityRegions, profile.HumidityTablePath);
 
-        StatusMessage =
-            $"Perfil «{profile.Name}» → " +
-            $"H:{HourRegions.Count} M:{MinuteRegions.Count} " +
-            $"T:{TemperatureRegions.Count} Hu:{HumidityRegions.Count} regiones.";
+        StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.ProfileLoaded",
+            profile.Name, HourRegions.Count, MinuteRegions.Count, TemperatureRegions.Count, HumidityRegions.Count);
     }
 
     private static void LoadRegions(ObservableCollection<AudioRegion> target, string path)
@@ -556,7 +560,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
         if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
         {
-            path = await _dialogs.SaveFileAsync($"Guardar {suggestedName}", suggestedName, TablePatterns);
+            path = await _dialogs.SaveFileAsync(VoiceLocalizationService.Format("Loc.RMVoice.Dialog.SaveTable", suggestedName), suggestedName, TablePatterns);
             if (path is null) return;
             SetTablePath(isHour, isTemperature, isHumidity, path);
         }
@@ -565,12 +569,12 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         {
             RegionTableParser.Save(path, regions);
             _announcer.ReloadActiveProfile();
-            StatusMessage = $"Tabla guardada en {path}";
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.TableSaved", path);
             PersistProfiles();
         }
         catch (Exception ex)
         {
-            StatusMessage = "No se pudo guardar la tabla: " + ex.Message;
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.TableSaveError", ex.Message);
         }
     }
 
@@ -579,7 +583,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         if (SelectedProfile is null) return;
 
-        var path = await _dialogs.SaveFileAsync($"Guardar {suggestedName} como…", suggestedName, TablePatterns);
+        var path = await _dialogs.SaveFileAsync(VoiceLocalizationService.Format("Loc.RMVoice.Dialog.SaveTableAs", suggestedName), suggestedName, TablePatterns);
         if (path is null) return;
 
         try
@@ -587,12 +591,12 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             RegionTableParser.Save(path, regions);
             SetTablePath(isHour, isTemperature, isHumidity, path);
             _announcer.ReloadActiveProfile();
-            StatusMessage = $"Tabla guardada en {path}";
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.TableSaved", path);
             PersistProfiles();
         }
         catch (Exception ex)
         {
-            StatusMessage = "No se pudo guardar la tabla: " + ex.Message;
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.TableSaveError", ex.Message);
         }
     }
 
@@ -604,7 +608,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         var path = GetTablePath(isHour, isTemperature, isHumidity);
         if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
         {
-            StatusMessage = "No hay archivo de tabla para recargar.";
+            StatusMessage = VoiceLocalizationService.GetString("Loc.RMVoice.Status.NoTableToReload");
             return;
         }
 
@@ -614,11 +618,11 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             target.Clear();
             foreach (var r in parsed) target.Add(r);
             _announcer.ReloadActiveProfile();
-            StatusMessage = $"Tabla recargada ({target.Count} regiones).";
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.TableReloaded", target.Count);
         }
         catch (Exception ex)
         {
-            StatusMessage = "No se pudo recargar la tabla: " + ex.Message;
+            StatusMessage = VoiceLocalizationService.Format("Loc.RMVoice.Status.TableReloadError", ex.Message);
         }
     }
 

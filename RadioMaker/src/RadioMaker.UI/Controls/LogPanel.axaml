@@ -21,14 +21,14 @@
                 <Grid ColumnDefinitions="*,Auto">
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8"
                                 VerticalAlignment="Center">
-                        <TextBlock Text="Log de reproduccion"
+                        <TextBlock Text="{DynamicResource Loc.Controls.Log.Title}"
                                    FontWeight="SemiBold"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgPrimary}"
                                    VerticalAlignment="Center"
                                    Margin="0,0,4,0" />
 
-                        <CheckBox Content="Debug"
+                        <CheckBox Content="{DynamicResource Loc.Controls.Log.Debug}"
                                   IsChecked="{Binding ShowDebug}"
                                   FontSize="10"
                                   Padding="3,0"
@@ -39,7 +39,7 @@
                                    Foreground="{DynamicResource FgMuted}"
                                    VerticalAlignment="Center" />
 
-                        <CheckBox Content="Info"
+                        <CheckBox Content="{DynamicResource Loc.Controls.Log.Info}"
                                   IsChecked="{Binding ShowInfo}"
                                   FontSize="10"
                                   Padding="3,0"
@@ -50,7 +50,7 @@
                                    Foreground="{DynamicResource FgSecondary}"
                                    VerticalAlignment="Center" />
 
-                        <CheckBox Content="Warn"
+                        <CheckBox Content="{DynamicResource Loc.Controls.Log.Warning}"
                                   IsChecked="{Binding ShowWarning}"
                                   FontSize="10"
                                   Padding="3,0"
@@ -61,7 +61,7 @@
                                    Foreground="{DynamicResource Warning}"
                                    VerticalAlignment="Center" />
 
-                        <CheckBox Content="Error"
+                        <CheckBox Content="{DynamicResource Loc.Controls.Log.Error}"
                                   IsChecked="{Binding ShowError}"
                                   FontSize="10"
                                   Padding="3,0"
@@ -75,7 +75,7 @@
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2">
                         <TextBox Text="{Binding FilterText}"
-                                 PlaceholderText="Filtrar..."
+                                 PlaceholderText="{DynamicResource Loc.Controls.Log.Filter}"
                                  FontSize="10"
                                  Padding="4,2"
                                  MinWidth="120"
@@ -85,7 +85,7 @@
                         <Button Command="{Binding ReloadSnapshotCommand}"
                                 Padding="3,2" Background="Transparent" BorderThickness="0"
                                 VerticalAlignment="Center"
-                                ToolTip.Tip="Refrescar">
+                                ToolTip.Tip="{DynamicResource Loc.Controls.Log.Refresh}">
                             <materialIcons:MaterialIcon Kind="Refresh"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -96,7 +96,7 @@
                                 Click="OnExportClick"
                                 Padding="3,2" Background="Transparent" BorderThickness="0"
                                 VerticalAlignment="Center"
-                                ToolTip.Tip="Exportar log (TXT, CSV, HTML, Excel, PDF)">
+                                ToolTip.Tip="{DynamicResource Loc.Controls.Log.Export}">
                             <materialIcons:MaterialIcon Kind="Upload"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource Success}" />
@@ -106,7 +106,7 @@
                         <Button Command="{Binding ClearLogCommand}"
                                 Padding="3,2" Background="Transparent" BorderThickness="0"
                                 VerticalAlignment="Center"
-                                ToolTip.Tip="Limpiar log">
+                                ToolTip.Tip="{DynamicResource Loc.Controls.Log.Clear}">
                             <materialIcons:MaterialIcon Kind="Delete"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource Error}" />
@@ -122,16 +122,16 @@
                     BorderThickness="0,0,0,1"
                     Padding="6,3">
                 <Grid ColumnDefinitions="120,50,100,*">
-                    <TextBlock Grid.Column="0" Text="Fecha / Hora"
+                    <TextBlock Grid.Column="0" Text="{DynamicResource Loc.Controls.Log.DateTime}"
                                FontSize="9" FontWeight="SemiBold"
                                Foreground="{DynamicResource FgMuted}" />
-                    <TextBlock Grid.Column="1" Text="Nivel"
+                    <TextBlock Grid.Column="1" Text="{DynamicResource Loc.Controls.Log.Level}"
                                FontSize="9" FontWeight="SemiBold"
                                Foreground="{DynamicResource FgMuted}" />
-                    <TextBlock Grid.Column="2" Text="Categoria"
+                    <TextBlock Grid.Column="2" Text="{DynamicResource Loc.Controls.Log.Category}"
                                FontSize="9" FontWeight="SemiBold"
                                Foreground="{DynamicResource FgMuted}" />
-                    <TextBlock Grid.Column="3" Text="Mensaje"
+                    <TextBlock Grid.Column="3" Text="{DynamicResource Loc.Controls.Log.Message}"
                                FontSize="9" FontWeight="SemiBold"
                                Foreground="{DynamicResource FgMuted}" />
                 </Grid>

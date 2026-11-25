@@ -23,7 +23,7 @@
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="0">
                         <Button Command="{Binding GoHomeCommand}"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Ir a la carpeta personal">
+                                ToolTip.Tip="{DynamicResource Loc.Views.FileBrowser.Home}">
                             <materialIcons:MaterialIcon Kind="Home"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -31,7 +31,7 @@
 
                         <Button Command="{Binding GoDesktopCommand}"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Ir al escritorio">
+                                ToolTip.Tip="{DynamicResource Loc.Views.FileBrowser.Desktop}">
                             <materialIcons:MaterialIcon Kind="Monitor"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -40,7 +40,7 @@
                         <Button Command="{Binding GoUpCommand}"
                                 IsEnabled="{Binding CanGoUp}"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Subir un nivel">
+                                ToolTip.Tip="{DynamicResource Loc.Views.FileBrowser.Up}">
                             <materialIcons:MaterialIcon Kind="ArrowUp"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -48,7 +48,7 @@
 
                         <Button Command="{Binding RefreshCommand}"
                                 Padding="3" Background="Transparent" BorderThickness="0"
-                                ToolTip.Tip="Refrescar">
+                                ToolTip.Tip="{DynamicResource Loc.Views.FileBrowser.Refresh}">
                             <materialIcons:MaterialIcon Kind="Refresh"
                                                         Width="15" Height="15"
                                                         Foreground="{DynamicResource FgPrimary}" />
@@ -65,7 +65,7 @@
                               MinWidth="170"
                               MaxWidth="240"
                               FontSize="10"
-                              ToolTip.Tip="Filtrar por tipo de archivo">
+                              ToolTip.Tip="{DynamicResource Loc.Views.FileBrowser.FilterType}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:FileExtensionFilter">
                                 <TextBlock Text="{Binding DisplayName}"
@@ -78,7 +78,7 @@
                                                 DataContext="{Binding BusSelector}"
                                                 VerticalAlignment="Center"
                                                 Margin="6,0,0,0"
-                                                ToolTip.Tip="Bus de salida para preescucha" />
+                                                ToolTip.Tip="{DynamicResource Loc.Views.FileBrowser.PreviewBus}" />
 
                     <!-- Boton detener (visible solo si algo esta sonando) -->
                     <Button Grid.Column="3"
@@ -87,7 +87,7 @@
                             Padding="3" Background="Transparent" BorderThickness="0"
                             VerticalAlignment="Center"
                             Margin="4,0,0,0"
-                            ToolTip.Tip="Detener preescucha">
+                            ToolTip.Tip="{DynamicResource Loc.Views.FileBrowser.StopPreview}">
                         <materialIcons:MaterialIcon Kind="Stop"
                                                     Width="13" Height="13"
                                                     Foreground="{DynamicResource Error}" />
@@ -116,7 +116,7 @@
                     BorderBrush="{DynamicResource BorderPrimary}"
                     BorderThickness="0,0,0,1">
                 <TextBox Text="{Binding SearchFilter}"
-                         PlaceholderText="Filtrar por nombre..."
+                         PlaceholderText="{DynamicResource Loc.Views.FileBrowser.FilterName}"
                          FontSize="10"
                          Padding="4,2" />
             </Border>
@@ -149,10 +149,10 @@
                                             PointerPressed="OnTreeNodePointerPressed">
                                     <StackPanel.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Agregar a Favoritos..."
+                                            <MenuItem Header="{DynamicResource Loc.Views.FileBrowser.AddFavorite}"
                                                       IsEnabled="{Binding !IsFavorite}"
                                                       Click="OnAddFavoriteClick" />
-                                            <MenuItem Header="Quitar de Favoritos"
+                                            <MenuItem Header="{DynamicResource Loc.Views.FileBrowser.RemoveFavorite}"
                                                       IsEnabled="{Binding IsFavorite}"
                                                       Click="OnRemoveFavoriteClick" />
                                         </ContextMenu>
@@ -204,15 +204,15 @@
                             <Border.ContextMenu>
                                 <ContextMenu>
                                     <!-- Solo audios: editar tags -->
-                                    <MenuItem Header="Editar tags..."
+                                    <MenuItem Header="{DynamicResource Loc.Views.FileBrowser.EditTags}"
                                               IsVisible="{Binding IsAudio}"
                                               Click="OnFileContextEditTags"
                                               IsEnabled="{Binding FullPath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}" />
-                                    <MenuItem Header="Editar en RMWave..."
+                                    <MenuItem Header="{DynamicResource Loc.Views.FileBrowser.EditRmw}"
                                               Click="OnFileContextEditInRMWave"
                                               IsEnabled="{Binding FullPath, Converter={x:Static vm:IsRmwFileConverter.Instance}}" />
                                     <!-- Proyectos nativos: solo informativo -->
-                                    <MenuItem Header="Proyecto de RadioMaker (arrastralo a una pestaña)"
+                                    <MenuItem Header="{DynamicResource Loc.Views.FileBrowser.RmwProject}"
                                               IsVisible="{Binding IsNativeProject}"
                                               IsEnabled="False" />
                                 </ContextMenu>
@@ -321,7 +321,7 @@
                             ClipToBounds="True">
                         <Panel>
                             <!-- Placeholder para audios sin caratula -->
-                            <TextBlock Text="Sin&#10;caratula"
+                            <TextBlock Text="{DynamicResource Loc.Views.FileBrowser.NoCover}"
                                        FontSize="9"
                                        Foreground="{DynamicResource FgMuted}"
                                        TextAlignment="Center"

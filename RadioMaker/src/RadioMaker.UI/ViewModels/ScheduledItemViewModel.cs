@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -11,6 +12,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
     private readonly ScheduledItem _item;
 
     private readonly EventHandler _themeChangedHandler;
+    private readonly EventHandler _languageChangedHandler;
     private bool _disposed;
 
     // Cache de informacion de la playlist asociada (solo si Kind == Playlist).
@@ -39,7 +41,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _isPlayed;
     [ObservableProperty] private bool _isCurrentlyPlaying;
 
-    [ObservableProperty] private string _blockName = "Nuevo Bloque";
+    [ObservableProperty] private string _blockName = LocalizationService.GetString("Loc.ScheduledItem.Block.NewName");
 
     public ObservableCollection<ScheduleEntryViewModel> Entries { get; } = new();
     public ObservableCollection<TandaTrackViewModel> TandaTracks { get; } = new();
@@ -56,18 +58,20 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
             : (Kind == ScheduledItemKind.Tanda
                 ? (!string.IsNullOrWhiteSpace(FilePath)
                     ? Path.GetFileNameWithoutExtension(FilePath)
-                    : (_item.EmbeddedTanda?.DisplayName ?? "(Tanda sin archivo)"))
+                    : (_item.EmbeddedTanda?.DisplayName ?? LocalizationService.GetString("Loc.ScheduledItem.Tanda.NoFile")))
                 : Kind == ScheduledItemKind.Block
-                    ? (_item.EmbeddedBlock?.DisplayName ?? "(Bloque sin nombre)")
+                    ? (_item.EmbeddedBlock?.DisplayName ?? LocalizationService.GetString("Loc.ScheduledItem.Block.NoName"))
                     : Kind == ScheduledItemKind.Playlist
                         ? (!string.IsNullOrWhiteSpace(FilePath)
                             ? Path.GetFileNameWithoutExtension(FilePath)
-                            : "(sin playlist)")
+                            : LocalizationService.GetString("Loc.ScheduledItem.Playlist.None"))
                         : (!string.IsNullOrWhiteSpace(FilePath)
                             ? Path.GetFileName(FilePath)
-                            : "(sin archivo)"));
+                            : LocalizationService.GetString("Loc.ScheduledItem.File.None")));
 
-    public string PriorityText => Priority == SchedulePriority.High ? "ALTA" : "Baja";
+    public string PriorityText => Priority == SchedulePriority.High
+        ? LocalizationService.GetString("Loc.ScheduledItem.Priority.High")
+        : LocalizationService.GetString("Loc.ScheduledItem.Priority.Low");
 
     public string PriorityColor
     {
@@ -81,10 +85,10 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
 
     public string KindText => Kind switch
     {
-        ScheduledItemKind.Tanda => "TANDA",
-        ScheduledItemKind.Playlist => "PLAYLIST",
-        ScheduledItemKind.Block => "BLOQUE",
-        _ => "Archivo"
+        ScheduledItemKind.Tanda => LocalizationService.GetString("Loc.ScheduledItem.Kind.Sequence"),
+        ScheduledItemKind.Playlist => LocalizationService.GetString("Loc.ScheduledItem.Kind.Playlist"),
+        ScheduledItemKind.Block => LocalizationService.GetString("Loc.ScheduledItem.Kind.Block"),
+        _ => LocalizationService.GetString("Loc.ScheduledItem.Kind.File")
     };
 
     public string KindColor => Kind switch
@@ -113,7 +117,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         !string.IsNullOrWhiteSpace(FilePath)
         && FilePath.EndsWith(".rmw", StringComparison.OrdinalIgnoreCase);
 
-    public string FileTypeBadge => IsRmwProject ? "PROYECTO RMWAVE" : string.Empty;
+    public string FileTypeBadge => IsRmwProject ? LocalizationService.GetString("Loc.ScheduledItem.FileType.RMWave") : string.Empty;
     public string FileTypeBadgeColor => IsRmwProject ? "Accent" : "Transparent";
 
     public bool HasContent => Kind switch
@@ -198,15 +202,15 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         get
         {
             if (Kind == ScheduledItemKind.Tanda && string.IsNullOrWhiteSpace(FilePath) && TandaTracks.Count == 0)
-                return "Sin tanda";
+                return LocalizationService.GetString("Loc.ScheduledItem.Empty.Sequence");
 
             if (Kind == ScheduledItemKind.Block && BlockItems.Count == 0)
-                return "Bloque vacio";
+                return LocalizationService.GetString("Loc.ScheduledItem.Empty.Block");
 
             if (Kind == ScheduledItemKind.Playlist && string.IsNullOrWhiteSpace(FilePath))
-                return "Sin playlist";
+                return LocalizationService.GetString("Loc.ScheduledItem.Empty.Playlist");
 
-            return $"Duracion: {AudioFileInfoReader.FormatDuration(TotalDurationSeconds)}";
+            return string.Format(LocalizationService.GetString("Loc.ScheduledItem.Duration"), AudioFileInfoReader.FormatDuration(TotalDurationSeconds));
         }
     }
 
@@ -220,10 +224,10 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
             if (Kind == ScheduledItemKind.Playlist)
             {
                 if (string.IsNullOrWhiteSpace(FilePath))
-                    return "(sin playlist)";
+                    return LocalizationService.GetString("Loc.ScheduledItem.Playlist.None");
 
                 if (_playlistLoadFailed)
-                    return $"{Path.GetFileName(FilePath)}  (no se pudo cargar)";
+                    return string.Format(LocalizationService.GetString("Loc.ScheduledItem.LoadFailed"), Path.GetFileName(FilePath));
 
                 if (_playlistEnabledTrackCount == 0 && string.IsNullOrEmpty(_playlistDisplayName))
                     return Path.GetFileName(FilePath);
@@ -232,7 +236,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
                     ? Path.GetFileNameWithoutExtension(FilePath)
                     : _playlistDisplayName;
 
-                return $"{name} — {_playlistEnabledTrackCount} pista(s)";
+                return string.Format(LocalizationService.GetString("Loc.ScheduledItem.Playlist.TrackCount"), name, _playlistEnabledTrackCount);
             }
 
             if (Kind == ScheduledItemKind.Tanda)
@@ -241,7 +245,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
                 if (!string.IsNullOrWhiteSpace(FilePath))
                 {
                     if (_tandaLoadFailed)
-                        return $"{Path.GetFileName(FilePath)}  (no se pudo cargar)";
+                        return string.Format(LocalizationService.GetString("Loc.ScheduledItem.LoadFailed"), Path.GetFileName(FilePath));
 
                     if (_tandaTrackCount == 0 && string.IsNullOrEmpty(_tandaDisplayName))
                         return Path.GetFileName(FilePath);
@@ -250,7 +254,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
                         ? Path.GetFileNameWithoutExtension(FilePath)
                         : _tandaDisplayName;
 
-                    return $"{name} — {_tandaTrackCount} pista(s)";
+                    return string.Format(LocalizationService.GetString("Loc.ScheduledItem.Sequence.TrackCount"), name, _tandaTrackCount);
                 }
 
                 // Retrocompat: tanda embebida (formato antiguo, sin .tnd).
@@ -258,25 +262,28 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
                 {
                     int cnt = TandaTracks.Count;
                     int enabled = TandaTracks.Count(t => t.IsEnabled);
-                    return $"(tanda embebida, formato antiguo) {cnt} pista(s) — {enabled} activa(s)";
+                    return string.Format(
+                        LocalizationService.GetString("Loc.ScheduledItem.Sequence.LegacySummary"),
+                        cnt,
+                        enabled);
                 }
 
-                return "(sin tanda)";
+                return LocalizationService.GetString("Loc.ScheduledItem.Sequence.None");
             }
 
             if (Kind == ScheduledItemKind.Block)
             {
                 if (BlockItems.Count == 0)
-                    return "(bloque vacio)";
+                    return LocalizationService.GetString("Loc.ScheduledItem.Empty.Block");
 
                 int playlists = BlockItems.Count(i => i.Kind == ScheduledItemKind.Playlist);
                 int tandas = BlockItems.Count(i => i.Kind == ScheduledItemKind.Tanda);
                 int archivos = BlockItems.Count(i => i.Kind == ScheduledItemKind.SingleFile);
 
                 var parts = new List<string>();
-                if (playlists > 0) parts.Add($"{playlists} playlist(s)");
-                if (tandas > 0) parts.Add($"{tandas} tanda(s)");
-                if (archivos > 0) parts.Add($"{archivos} archivo(s)");
+                if (playlists > 0) parts.Add(string.Format(LocalizationService.GetString("Loc.ScheduledItem.Block.Playlists"), playlists));
+                if (tandas > 0) parts.Add(string.Format(LocalizationService.GetString("Loc.ScheduledItem.Block.Sequences"), tandas));
+                if (archivos > 0) parts.Add(string.Format(LocalizationService.GetString("Loc.ScheduledItem.Block.Files"), archivos));
 
                 return string.Join(", ", parts);
             }
@@ -289,9 +296,9 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
     {
         get
         {
-            if (Entries.Count == 0) return "Sin horarios programados";
+            if (Entries.Count == 0) return LocalizationService.GetString("Loc.ScheduledItem.Schedule.None");
             if (Entries.Count == 1) return Entries[0].ShortDescription;
-            return $"{Entries.Count} horarios: " + string.Join(" · ", Entries.Take(3).Select(e => e.ShortDescription))
+            return string.Format(LocalizationService.GetString("Loc.ScheduledItem.Schedule.Count"), Entries.Count, string.Join(" · ", Entries.Take(3).Select(e => e.ShortDescription)))
                    + (Entries.Count > 3 ? " ..." : string.Empty);
         }
     }
@@ -307,14 +314,14 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
             var activeEntries = Entries
                 .Where(e => e.IsEnabled && e.Source.Days is { Count: > 0 })
                 .ToList();
-            if (activeEntries.Count == 0) return "Sin horarios activos";
+            if (activeEntries.Count == 0) return LocalizationService.GetString("Loc.ScheduledItem.Schedule.NoneActive");
 
             var dayNames = new Dictionary<DayOfWeek, string>
             {
-                [DayOfWeek.Monday] = "Lun", [DayOfWeek.Tuesday] = "Mar",
-                [DayOfWeek.Wednesday] = "Mié", [DayOfWeek.Thursday] = "Jue",
-                [DayOfWeek.Friday] = "Vie", [DayOfWeek.Saturday] = "Sáb",
-                [DayOfWeek.Sunday] = "Dom"
+                [DayOfWeek.Monday] = LocalizationService.GetString("Loc.Weekday.MonShort"), [DayOfWeek.Tuesday] = LocalizationService.GetString("Loc.Weekday.TueShort"),
+                [DayOfWeek.Wednesday] = LocalizationService.GetString("Loc.Weekday.WedShort"), [DayOfWeek.Thursday] = LocalizationService.GetString("Loc.Weekday.ThuShort"),
+                [DayOfWeek.Friday] = LocalizationService.GetString("Loc.Weekday.FriShort"), [DayOfWeek.Saturday] = LocalizationService.GetString("Loc.Weekday.SatShort"),
+                [DayOfWeek.Sunday] = LocalizationService.GetString("Loc.Weekday.SunShort")
             };
             var days = activeEntries
                 .SelectMany(e => e.Source.Days)
@@ -342,7 +349,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
                 }
             }
 
-            if (next is null) return $"Días: {daysText}  ·  Sin próxima salida";
+            if (next is null) return string.Format(LocalizationService.GetString("Loc.ScheduledItem.Schedule.NoNext"), daysText);
 
             var duration = TotalDurationSeconds;
             var endText = "--:--";
@@ -355,7 +362,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
                     : end.ToString("HH:mm");
             }
 
-            return $"Días: {daysText}  ·  Sale: {next.Value:HH:mm}  ·  Fin: {endText}";
+            return string.Format(LocalizationService.GetString("Loc.ScheduledItem.Schedule.Summary"), daysText, next.Value.ToString("HH:mm"), endText);
         }
     }
 
@@ -364,7 +371,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
 
     public string TandaName
     {
-        get => _item.EmbeddedTanda?.Name ?? "Nueva Tanda";
+        get => _item.EmbeddedTanda?.Name ?? LocalizationService.GetString("Loc.ScheduledList.NewTanda");
         set
         {
             if (_item.EmbeddedTanda is null) return;
@@ -388,7 +395,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         _priority = item.Priority;
         _isEnabled = item.IsEnabled;
         _notes = item.Notes;
-        _blockName = item.EmbeddedBlock?.Name ?? "Nuevo Bloque";
+        _blockName = item.EmbeddedBlock?.Name ?? LocalizationService.GetString("Loc.ScheduledItem.Block.NewName");
 
         foreach (var entry in item.Entries)
         {
@@ -441,6 +448,8 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
 
         _themeChangedHandler = OnThemeChanged;
         RadioMaker.UI.Services.ThemeService.ThemeChanged += _themeChangedHandler;
+        _languageChangedHandler = OnLanguageChanged;
+        LocalizationService.LanguageChanged += _languageChangedHandler;
     }
 
     // ───── Lectura de duracion (SingleFile) ──────────────────────────────
@@ -599,12 +608,27 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         });
     }
 
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        if (_disposed) return;
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            if (_disposed) return;
+            foreach (var property in new[] { nameof(BlockName), nameof(DisplayTitle), nameof(PriorityText), nameof(KindText), nameof(FileTypeBadge), nameof(DurationText), nameof(PathText), nameof(EntriesSummary), nameof(ScheduleSummaryText), nameof(TandaName) })
+                OnPropertyChanged(property);
+            foreach (var blockItem in BlockItems)
+                blockItem.RefreshLanguage();
+        });
+    }
+
     public void Dispose()
     {
         if (_disposed) return;
         _disposed = true;
 
         try { RadioMaker.UI.Services.ThemeService.ThemeChanged -= _themeChangedHandler; }
+        catch { }
+        try { LocalizationService.LanguageChanged -= _languageChangedHandler; }
         catch { }
     }
 
@@ -945,7 +969,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
 
         if (_item.EmbeddedBlock is not null)
         {
-            _item.EmbeddedBlock.Name = BlockName ?? "Nuevo Bloque";
+            _item.EmbeddedBlock.Name = BlockName ?? LocalizationService.GetString("Loc.ScheduledItem.Block.NewName");
             foreach (var itemVm in BlockItems)
                 itemVm.ApplyToModel();
         }
@@ -1068,7 +1092,9 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         {
             _item.EmbeddedTanda = new Tanda
             {
-                Name = !string.IsNullOrWhiteSpace(Title) ? Title : "Nueva Tanda",
+                Name = !string.IsNullOrWhiteSpace(Title)
+                    ? Title
+                    : LocalizationService.GetString("Loc.ScheduledList.NewTanda"),
                 Tracks = new List<TandaTrack>()
             };
             OnPropertyChanged(nameof(TandaName));
@@ -1081,7 +1107,9 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
         {
             _item.EmbeddedBlock = new ScheduledBlock
             {
-                Name = !string.IsNullOrWhiteSpace(Title) ? Title : "Nuevo Bloque",
+                Name = !string.IsNullOrWhiteSpace(Title)
+                    ? Title
+                    : LocalizationService.GetString("Loc.ScheduledItem.Block.NewName"),
                 Items = new List<ScheduledBlockItem>()
             };
             BlockName = _item.EmbeddedBlock.Name;
@@ -1129,7 +1157,7 @@ public sealed partial class ScheduledItemViewModel : ViewModelBase, IDisposable
     partial void OnBlockNameChanged(string value)
     {
         if (_item.EmbeddedBlock is not null)
-            _item.EmbeddedBlock.Name = value ?? "Nuevo Bloque";
+            _item.EmbeddedBlock.Name = value ?? LocalizationService.GetString("Loc.ScheduledItem.Block.NewName");
         OnPropertyChanged(nameof(DisplayTitle));
         NotifyChanged();
     }

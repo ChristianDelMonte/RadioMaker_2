@@ -8,6 +8,7 @@ using RadioMaker.Core.Logging;
 using RadioMaker.Core.Playback;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 using RMVoice.Core.Services;
 using System.Collections.ObjectModel;
@@ -104,12 +105,20 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // ───── Buses ─────────────────────────────────────────────────────────
     [ObservableProperty] private ObservableCollection<IAudioBus> _buses = new();
     [ObservableProperty] private IAudioBus? _selectedBus;
+    public string SelectedBusDisplayText => string.Format(
+        LocalizationService.GetString("Loc.Main.SelectedBus"), SelectedBus?.DisplayName ?? string.Empty);
 
     // ───── Archivo / reproduccion ────────────────────────────────────────
     [ObservableProperty] private string _currentFilePath = string.Empty;
-    [ObservableProperty] private string _statusMessage = "Listo.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Main.Status.Ready");
+    private string? _statusMessageResourceKey = "Loc.Main.Status.Ready";
+    private object?[] _statusMessageResourceArgs = Array.Empty<object?>();
+    private bool _settingLocalizedStatus;
     [ObservableProperty] private bool _isAutoDjEnabled;
-    [ObservableProperty] private string _autoDjStatusText = "AutoDJ desactivado.";
+    [ObservableProperty] private string _autoDjStatusText = LocalizationService.GetString("Loc.Main.AutoDj.Status.Disabled");
+    private string? _autoDjStatusResourceKey;
+    private object?[] _autoDjStatusResourceArgs = Array.Empty<object?>();
+    private bool _settingLocalizedAutoDjStatus;
     /// -------------Tip de ayuda actual mostrado en la barra de estado inferior.</summary>
     [ObservableProperty] private AppTip _currentTip = AppTips.GetRandom();
 
@@ -133,7 +142,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public string AppBuildText => Services.AppVersionInfo.BuildText;
 
     /// -------------Eslogan de la aplicacion.</summary>
-    public string AppSlogan => "Forever FREE Radio Automation Software!";
+    public string AppSlogan => LocalizationService.GetString("Loc.App.Slogan");
 
     // ───── Indicador "AL AIRE" ───────────────────────────────────────────
 
@@ -163,7 +172,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         : (ResolveThemeBrush("FgMuted") ?? new SolidColorBrush(Color.Parse("#6B7280")));
 
     /// -------------Texto del indicador.</summary>
-    public string AlAireText => _isAlAire ? "AL AIRE" : "FUERA DEL AIRE";
+    public string AlAireText => LocalizationService.GetString(_isAlAire
+        ? "Loc.Main.OnAir.Live"
+        : "Loc.Main.OnAir.OffAir");
 
 
     // ───── Panel superior informativo ────────────────────────────────────
@@ -201,7 +212,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private string _nowPlayingPosition = string.Empty;
 
     /// -------------Titulo del proximo item a reproducir, o "(sin proximo)".</summary>
-    [ObservableProperty] private string _nextTitle = "(sin proximo)";
+    [ObservableProperty] private string _nextTitle = LocalizationService.GetString("Loc.Main.Next.None");
 
     /// -------------Artista u origen del proximo item.</summary>
     [ObservableProperty] private string _nextArtist = string.Empty;
@@ -507,12 +518,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     public string PlaybackStateText => PlaybackState switch
     {
-        PlaybackState.Playing => "Reproduciendo",
-        PlaybackState.Paused  => "Pausado",
-        PlaybackState.Stopped => "Detenido",
-        PlaybackState.Ended   => "Fin de reproduccion",
-        PlaybackState.Stalled => "Estancado",
-        PlaybackState.Error   => "Error",
+        PlaybackState.Playing => LocalizationService.GetString("Loc.Main.Playback.Playing"),
+        PlaybackState.Paused  => LocalizationService.GetString("Loc.Main.Playback.Paused"),
+        PlaybackState.Stopped => LocalizationService.GetString("Loc.Main.Playback.Stopped"),
+        PlaybackState.Ended   => LocalizationService.GetString("Loc.Main.Playback.Ended"),
+        PlaybackState.Stalled => LocalizationService.GetString("Loc.Main.Playback.Stalled"),
+        PlaybackState.Error   => LocalizationService.GetString("Loc.Main.Playback.Error"),
         _ => PlaybackState.ToString()
     };
 
@@ -1023,6 +1034,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         _tipTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
         _tipTimer.Tick += (_, _) => AdvanceTip();
         _tipTimer.Start();
+        LocalizationService.LanguageChanged += OnLanguageChanged;
 
         // Suscripcion al cambio de tema: refrescar IsDarkTheme y los brushes
         // de los paneles "En reproduccion" / "Siguiente".
@@ -1126,7 +1138,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            LastError = $"No se pudo iniciar el scheduler: {ex.Message}";
+            LastError = string.Format(LocalizationService.GetString("Loc.Main.Error.SchedulerStart"), ex.Message);
             _logService.Error("Scheduler", "No se pudo iniciar", ex);
         }
 
@@ -1253,7 +1265,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             // Aplicar el volumen actual del VM al engine (por si arranca en <1).
             try { _engine.GlobalVolume = Volume; } catch { }
 
-            StatusMessage = $"Motor inicializado. {Buses.Count} bus(es) activo(s).";
+            SetLocalizedStatus("Loc.Main.Status.EngineInitialized", Buses.Count);
             _logService.Info("Engine", $"Motor inicializado con {Buses.Count} bus(es).");
 
             // ── Inicializar RMVoice DESPUES del engine ────────────────────
@@ -1268,8 +1280,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            LastError = $"Error al inicializar el motor de audio: {ex.Message}";
-            StatusMessage = "Fallo en la inicializacion del motor.";
+            LastError = string.Format(
+                LocalizationService.GetString("Loc.Main.Error.EngineInitialization"),
+                ex.Message);
+            SetLocalizedStatus("Loc.Main.Status.EngineInitializationFailed");
             _logService.Error("Engine", "Fallo al inicializar", ex);
         }
     }
@@ -1393,7 +1407,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             if (HasFile)
             {
                 ReleaseCurrentChannel();
-                StatusMessage = "El bus de reproduccion fue eliminado. Volve a cargar un archivo.";
+                SetLocalizedStatus("Loc.Main.Status.PlaybackBusRemoved");
             }
         }
 
@@ -1440,7 +1454,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         Dispatcher.UIThread.Post(() =>
         {
-            StatusMessage = $"PROGRAMADO: {e.Item.DisplayTitle} desde '{e.SourceListName}'";
+            SetLocalizedStatus("Loc.Main.Status.ScheduledTriggered", e.Item.DisplayTitle, e.SourceListName);
             _logService.Info("Scheduler", $"Item disparado: {e.Item.DisplayTitle}");
 
             foreach (var tab in TabHost.Tabs)
@@ -1461,7 +1475,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     listVm.ResetAllIsPlayed();
             }
 
-            StatusMessage = "Estado de disparos reiniciado.";
+            SetLocalizedStatus("Loc.Main.Status.TriggersReset");
             _logService.Info("Scheduler", "Estado de disparos reiniciado.");
         });
     }
@@ -1641,7 +1655,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         var selectedTab = TabHost.SelectedTab;
         if (selectedTab is null)
         {
-            StatusMessage = "No hay una pestaña activa.";
+            SetLocalizedStatus("Loc.Main.Status.NoActiveTab");
             return;
         }
 
@@ -1651,30 +1665,30 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             {
                 case PlaylistEditorViewModel playlist:
                     playlist.AddTrackFromFile(file.FullPath);
-                    StatusMessage = $"Agregado a Playlist: {file.FileName}";
+                    SetLocalizedStatus("Loc.Main.Status.AddedToPlaylist", file.FileName);
                     _logService.Info("FileBrowser", $"Agregado a playlist: {file.FileName}");
                     break;
 
                 case EncadenadoresEditorViewModel encadenadores:
                     encadenadores.AddFile(file.FullPath);
-                    StatusMessage = $"Agregado a Encadenadores: {file.FileName}";
+                    SetLocalizedStatus("Loc.Main.Status.AddedToChainers", file.FileName);
                     _logService.Info("FILE MANAGER", $"Agregado a Encadenadores: {file.FileName}");
                     break;
 
                 case ScheduledListViewModel scheduled:
                     scheduled.AddFileAsItem(file.FullPath);
-                    StatusMessage = $"Agregado a Programados: {file.FileName}";
+                    SetLocalizedStatus("Loc.Main.Status.AddedToScheduled", file.FileName);
                     _logService.Info("FileBrowser", $"Agregado a programados: {file.FileName}");
                     break;
 
                 case TandaEditorViewModel tanda:
                     tanda.AddTrackFromFile(file.FullPath);
-                    StatusMessage = $"Agregado a Tanda: {file.FileName}";
+                    SetLocalizedStatus("Loc.Main.Status.AddedToSequence", file.FileName);
                     _logService.Info("FileBrowser", $"Agregado a tanda: {file.FileName}");
                     break;
 
                 default:
-                    StatusMessage = $"La pestaña '{selectedTab.Title}' no admite archivos.";
+                    SetLocalizedStatus("Loc.Main.Status.TabDoesNotAcceptFiles", selectedTab.Title);
                     _logService.Warning("FILE MANAGER",
                         $"No se pudo agregar '{file.FileName}': la pestaña '{selectedTab.Title}' no admite archivos.");
                     break;
@@ -1682,7 +1696,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al agregar: {ex.Message}";
+            SetLocalizedStatus("Loc.Main.Status.AddFileError", ex.Message);
             _logService.Error("FileBrowser", "Error al agregar archivo", ex);
         }
     }
@@ -2050,8 +2064,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         var airBus = GetSchedulerBus();
         if (airBus is null)
         {
-            AutoDjStatusText = "No hay un bus de aire disponible para AutoDJ.";
-            StatusMessage = AutoDjStatusText;
+            SetAutoDjStatus("Loc.Main.AutoDj.Status.NoAirBus");
+            SetLocalizedStatus("Loc.Main.AutoDj.Status.NoAirBus");
             return false;
         }
 
@@ -2059,13 +2073,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         _autoDjPlaylist.OutputBusId = airBus.Id;
         ShowAutoDjPlaylist(_autoDjPlaylist, "AutoDJ habilitado; esperando un punto seguro para tomar el aire.");
         IsAutoDjEnabled = true;
-        AutoDjStatusText = "AutoDJ habilitado; esperando un punto seguro para tomar el aire.";
+        SetAutoDjStatus("Loc.Main.AutoDj.Status.WaitingSafePoint");
         _autoDjNextStartAttemptUtc = DateTime.MinValue;
 
         if (_autoDjPlayer.IsPlayingNow)
         {
             _autoDjPlayer.StopAfterCurrentTrack();
-            AutoDjStatusText = "El nuevo reloj AutoDJ tomará el aire al terminar la pista actual.";
+            SetAutoDjStatus("Loc.Main.AutoDj.Status.NewClockWaitingForTrackEnd");
         }
         else
         {
@@ -2083,7 +2097,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (clock is null || tracks is null || tracks.Count == 0)
         {
-            AutoDjStatusText = "El reloj no contiene pistas reproducibles. Genera primero una vista previa válida.";
+            SetAutoDjStatus("Loc.Main.AutoDj.Status.ClockHasNoPlayableTracks");
             _logService.Warning("AUTODJ", AutoDjStatusText);
             return Task.FromResult(false);
         }
@@ -2112,7 +2126,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             try { player.CancelStopAfterCurrentTrack(); } catch { }
         }
         _autoDjPlaylist = null;
-        AutoDjStatusText = "AutoDJ desactivado.";
+        SetAutoDjStatus("Loc.Main.AutoDj.Status.Disabled");
         NotifyAutoDjButtonChanged();
         _logService.Info("AUTODJ", "AutoDJ desactivado por el operador.");
     }
@@ -2128,7 +2142,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             if (!string.Equals(_autoDjPlayer.TargetBus?.Id, airBus.Id, StringComparison.OrdinalIgnoreCase))
             {
                 _autoDjPlayer.StopAfterCurrentTrack();
-                AutoDjStatusText = "AutoDJ cambiará al nuevo bus al terminar la pista actual.";
+                SetAutoDjStatus("Loc.Main.AutoDj.Status.BusChangeWaitingForTrackEnd");
             }
             return;
         }
@@ -2142,7 +2156,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         var currentOwner = _coordinator.GetCurrentOwnerId(airBus.Id);
         if (!string.IsNullOrEmpty(currentOwner))
         {
-            AutoDjStatusText = "AutoDJ habilitado; esperando que se libere el bus de aire.";
+            SetAutoDjStatus("Loc.Main.AutoDj.Status.WaitingForAirBus");
             return;
         }
 
@@ -2155,17 +2169,17 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
         _autoDjEditorVm.SetStopPlaybackAction(StopAutoDj);
         _autoDjEditorVm.SetAutoDjEnabledProvider(() => IsAutoDjEnabled);
-        _autoDjEditorVm.SetAutoDjPlaylist(_autoDjPlaylist, "AutoDJ listo para salir al aire.");
+        _autoDjEditorVm.SetAutoDjPlaylist(_autoDjPlaylist, LocalizationService.GetString("Loc.Main.AutoDj.Status.ReadyToAir"));
         TabHost.ShowAutoDjPlaylist(_autoDjEditorVm);
         _autoDjPlayer.Play(_autoDjPlaylist);
         if (_autoDjPlayer.IsPlayingNow)
         {
-            AutoDjStatusText = $"AutoDJ al aire: {_autoDjPlaylist.Name}.";
+            SetAutoDjStatus("Loc.Main.AutoDj.Status.OnAir", _autoDjPlaylist.Name);
             _logService.Info("AUTODJ", $"Tomó el aire en '{airBus.DisplayName}'.");
         }
         else
         {
-            AutoDjStatusText = "AutoDJ habilitado; no se pudo iniciar. Reintentará cuando el bus esté disponible.";
+            SetAutoDjStatus("Loc.Main.AutoDj.Status.StartFailedRetrying");
         }
     }
 
@@ -2191,13 +2205,21 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             if (IsAutoDjEnabled)
             {
-                AutoDjStatusText = state.Status switch
+                switch (state.Status)
                 {
-                    PlaylistPlayerStatus.Playing => $"AutoDJ al aire: {_autoDjPlaylist?.Name ?? "AutoDJ"}.",
-                    PlaylistPlayerStatus.PausedByScheduler => "AutoDJ pausado por un programado; se reanudará al terminar.",
-                    PlaylistPlayerStatus.Paused => "AutoDJ pausado.",
-                    _ => "AutoDJ habilitado; esperando un punto seguro para tomar el aire."
-                };
+                    case PlaylistPlayerStatus.Playing:
+                        SetAutoDjStatus("Loc.Main.AutoDj.Status.OnAir", _autoDjPlaylist?.Name ?? "AutoDJ");
+                        break;
+                    case PlaylistPlayerStatus.PausedByScheduler:
+                        SetAutoDjStatus("Loc.Main.AutoDj.Status.PausedByScheduled");
+                        break;
+                    case PlaylistPlayerStatus.Paused:
+                        SetAutoDjStatus("Loc.Main.AutoDj.Status.Paused");
+                        break;
+                    default:
+                        SetAutoDjStatus("Loc.Main.AutoDj.Status.WaitingSafePoint");
+                        break;
+                }
             }
 
             if (state.Status == PlaylistPlayerStatus.Playing)
@@ -2272,7 +2294,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         _meterTimer.Stop();
         ResetMeter();
 
-        StatusMessage = "Reproduccion detenida globalmente.";
+        SetLocalizedStatus("Loc.Main.Status.StopAll");
         _logService.Info("APP", "Detener todo ejecutado (cart + playlist + scheduler + manual).");
 
         RefreshCommandStates();
@@ -2410,7 +2432,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _currentChannel.Play();
             _positionTimer.Start();
             _meterTimer.Start();
-            StatusMessage = "Reproduciendo.";
+            SetLocalizedStatus("Loc.Main.Status.Playing");
             _logService.Info("Player", "Reproduciendo manual.");
             LastError = string.Empty;
             SyncPlaybackState();
@@ -2426,7 +2448,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _currentChannel?.Pause();
             _positionTimer.Stop();
             _meterTimer.Stop();
-            StatusMessage = "Pausado.";
+            SetLocalizedStatus("Loc.Main.Status.Paused");
             _logService.Info("PLAYER MANUAL", $"Pausa solicitada: {Path.GetFileName(CurrentFilePath)}.");
             SyncPlaybackState();
             RefreshCommandStates();
@@ -2447,7 +2469,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             _meterTimer.Stop();
             Position = TimeSpan.Zero;
             ResetMeter();
-            StatusMessage = "Detenido.";
+            SetLocalizedStatus("Loc.Main.Status.Stopped");
             _logService.Info("PLAYER MANUAL", $"Detención solicitada: {Path.GetFileName(CurrentFilePath)}.");
             SyncPlaybackState();
             RefreshCommandStates();
@@ -2463,7 +2485,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            if (SelectedBus is null) { LastError = "No hay bus de salida."; return; }
+            if (SelectedBus is null) { LastError = LocalizationService.GetString("Loc.Main.Error.NoOutputBus"); return; }
 
             ReleaseCurrentChannel();
 
@@ -2486,7 +2508,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             Position = TimeSpan.Zero;
             PlaybackState = PlaybackState.Stopped;
             ResetMeter();
-            StatusMessage = $"Cargado: {Path.GetFileName(filePath)}";
+            SetLocalizedStatus("Loc.Main.Status.FileLoaded", Path.GetFileName(filePath));
             _logService.Info("Player", $"Cargado: {Path.GetFileName(filePath)}");
             LastError = string.Empty;
             SyncPlaybackState();
@@ -2541,14 +2563,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             {
                 Position = TimeSpan.Zero;
                 PlaybackState = PlaybackState.Stopped;
-                StatusMessage = "Detenido por el usuario.";
+                SetLocalizedStatus("Loc.Main.Status.StoppedByUser");
                 _logService.Info("PLAYER MANUAL", $"Detenido: {Path.GetFileName(CurrentFilePath)}.");
             }
             else
             {
                 Position = Duration;
                 PlaybackState = PlaybackState.Ended;
-                StatusMessage = "Fin.";
+                SetLocalizedStatus("Loc.Main.Status.PlaybackFinished");
                 _logService.Info("PLAYER MANUAL", $"Reproducción finalizada: {Path.GetFileName(CurrentFilePath)}.");
             }
             SyncPlaybackState();
@@ -2678,7 +2700,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 {
                     var title = !string.IsNullOrWhiteSpace(info.TandaTrackTitle)
                         ? info.TandaTrackTitle
-                        : "Tanda";
+                        : LocalizationService.GetString("Loc.Main.Source.Sequence");
 
                     string secondary;
                     if (schedChannel is not null)
@@ -2688,20 +2710,20 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                         secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
                             ? tags!.Performers
                             : (_playback.IsEncadenadorPlaying
-                                ? "Encadenador"
-                                : $"Tanda: {info.TandaNameText}");
+                                ? LocalizationService.GetString("Loc.Main.Source.Chainer")
+                                : string.Format(LocalizationService.GetString("Loc.Main.Source.SequenceNamed"), info.TandaNameText));
                     }
                     else
                     {
                         // Es locución de tanda: sin archivo, sin tags.
-                        secondary = $"Tanda: {info.TandaNameText}";
+                        secondary = string.Format(LocalizationService.GetString("Loc.Main.Source.SequenceNamed"), info.TandaNameText);
                     }
 
                     NowPlayingTitle = title;
                     NowPlayingArtist = secondary;
                     NowPlayingPosition = _playback.IsEncadenadorPlaying
-                        ? "Encadenador"
-                        : info.TandaProgressText;
+                        ? LocalizationService.GetString("Loc.Main.Source.Chainer")
+                        : string.Format(LocalizationService.GetString("Loc.Main.TrackPosition"), info.TandaTrackIndex + 1, info.TandaTrackCount);
                     NowPlayingChannel = schedChannel;
                     IsNowPlayingActive = true;
                     return;
@@ -2717,11 +2739,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     NowPlayingArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
                         ? tags!.Performers
                         : (_playback.IsEncadenadorPlaying
-                            ? "Encadenador"
+                            ? LocalizationService.GetString("Loc.Main.Source.Chainer")
                             : !string.IsNullOrWhiteSpace(info.SourceListName)
-                            ? $"Programado: {info.SourceListName}"
-                            : "Programado");
-                    NowPlayingPosition = _playback.IsEncadenadorPlaying ? "Encadenador" : string.Empty;
+                            ? string.Format(LocalizationService.GetString("Loc.Main.Source.ScheduledNamed"), info.SourceListName)
+                            : LocalizationService.GetString("Loc.Main.Source.Scheduled"));
+                    NowPlayingPosition = _playback.IsEncadenadorPlaying ? LocalizationService.GetString("Loc.Main.Source.Chainer") : string.Empty;
                     NowPlayingChannel = schedChannel;
                     IsNowPlayingActive = true;
                     return;
@@ -2751,7 +2773,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                         // Locución suelta en playlist: usar DisplayTitle del track.
                         title = (playlist is not null && idx >= 0 && idx < playlist.Tracks.Count)
                             ? playlist.Tracks[idx].DisplayTitle
-                            : "Locución";
+                            : LocalizationService.GetString("Loc.Main.Source.VoiceOver");
                         secondary = playlist?.DisplayName ?? "Playlist";
                     }
                     else
@@ -2762,16 +2784,16 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                         secondary = !string.IsNullOrWhiteSpace(tags?.Performers)
                             ? tags!.Performers
                             : (activePl.IsEncadenadorPlaying
-                                ? "Encadenador"
+                                ? LocalizationService.GetString("Loc.Main.Source.Chainer")
                                 : playlist?.DisplayName ?? "Playlist");
                     }
 
                     NowPlayingTitle = title;
                     NowPlayingArtist = secondary;
                     NowPlayingPosition = activePl.IsEncadenadorPlaying
-                        ? "Encadenador"
+                        ? LocalizationService.GetString("Loc.Main.Source.Chainer")
                         : (playlist is not null && idx >= 0)
-                            ? $"Pista {idx + 1} de {playlist.Tracks.Count}"
+                            ? string.Format(LocalizationService.GetString("Loc.Main.TrackPosition"), idx + 1, playlist.Tracks.Count)
                             : string.Empty;
                     NowPlayingChannel = plChannel;
                     IsNowPlayingActive = true;
@@ -2844,7 +2866,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     NextTitle = ResolveDisplayTitle(tags, chain.Title);
                     NextArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
                         ? tags!.Performers
-                        : "Encadenador";
+                        : LocalizationService.GetString("Loc.Main.Source.Chainer");
                     NextPosition = string.Empty;
                     IsNextPlayingActive = true;
                     return;
@@ -2864,9 +2886,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
                     NextArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
                         ? tags!.Performers
-                        : "tanda en curso";
+                        : LocalizationService.GetString("Loc.Main.Source.SequenceInProgress");
 
-                    NextPosition = $"Pista {nextTanda.Value.Index + 1} de {nextTanda.Value.Count}";
+                    NextPosition = string.Format(LocalizationService.GetString("Loc.Main.TrackPosition"), nextTanda.Value.Index + 1, nextTanda.Value.Count);
                     IsNextPlayingActive = true;
                     return;
                 }
@@ -2881,9 +2903,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 NextTitle = next.Title;
 
                 NextArtist = next.IsTanda && next.TandaTrackCount > 0
-                    ? $"Tanda, {next.TandaTrackCount} pista/s"
+                    ? string.Format(LocalizationService.GetString("Loc.Main.Source.SequenceQueue"), next.TandaTrackCount)
                     : (!string.IsNullOrWhiteSpace(next.ListName)
-                        ? $"desde {next.ListName}"
+                        ? string.Format(LocalizationService.GetString("Loc.Main.Source.FromList"), next.ListName)
                         : string.Empty);
 
                 NextPosition = string.Empty;
@@ -2901,11 +2923,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 if (tandaInfo is not null)
                 {
                     NextArtist = tandaInfo.Value.TrackTitle;
-                    NextPosition = $"Pista {tandaInfo.Value.Index + 1} de {tandaInfo.Value.Count}";
+                    NextPosition = string.Format(LocalizationService.GetString("Loc.Main.TrackPosition"), tandaInfo.Value.Index + 1, tandaInfo.Value.Count);
                 }
                 else
                 {
-                    NextArtist = "se reanudara";
+                    NextArtist = LocalizationService.GetString("Loc.Main.Next.Resuming");
                     NextPosition = string.Empty;
                 }
                 IsNextPlayingActive = true;
@@ -2922,7 +2944,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 NextTitle = ResolveDisplayTitle(tags, chain.Title);
                 NextArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
                     ? tags!.Performers
-                    : "Encadenador";
+                    : LocalizationService.GetString("Loc.Main.Source.Chainer");
                 NextPosition = string.Empty;
                 IsNextPlayingActive = true;
                 return;
@@ -2943,13 +2965,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     ? tags!.Performers
                     : string.Empty;
 
-                NextPosition = $"Pista {upcoming.Value.Index + 1} de {upcoming.Value.Total}";
+                NextPosition = string.Format(LocalizationService.GetString("Loc.Main.TrackPosition"), upcoming.Value.Index + 1, upcoming.Value.Total);
                 IsNextPlayingActive = true;
                 return;
             }
 
             // 4) Nada en el horizonte.
-            NextTitle = "(sin proximo)";
+            NextTitle = LocalizationService.GetString("Loc.Main.Next.None");
             NextArtist = string.Empty;
             NextPosition = string.Empty;
             IsNextPlayingActive = false;
@@ -2957,7 +2979,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch
         {
             IsNextPlayingActive = !string.IsNullOrWhiteSpace(NextTitle)
-                && NextTitle != "(sin proximo)";
+                && NextTitle != LocalizationService.GetString("Loc.Main.Next.None");
         }
     }
 
@@ -3125,7 +3147,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (_locution.IsPlaying && _locution.CurrentSpectrum is { } locutionSpectrum)
         {
-            Spectrum.SetSpectrumSource(locutionSpectrum, "LOCUCIÓN", "Hora / clima");
+            Spectrum.SetSpectrumSource(
+                locutionSpectrum,
+                LocalizationService.GetString("Loc.Main.Source.Locution"),
+                LocalizationService.GetString("Loc.Main.Source.HourWeather"));
             return;
         }
 
@@ -3135,7 +3160,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (_currentChannel is not null)
         {
             active = _currentChannel;
-            source = "MANUAL";
+            source = LocalizationService.GetString("Loc.Main.Source.Manual");
         }
         else
         {
@@ -3143,7 +3168,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             if (sched is not null)
             {
                 active = sched;
-                source = "SCHEDULER";
+                source = LocalizationService.GetString("Loc.Main.Source.Scheduler");
             }
             else
             {
@@ -3162,7 +3187,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 if (pl is not null)
                 {
                     active = pl;
-                    source = "PLAYLIST";
+                    source = LocalizationService.GetString("Loc.Main.Source.Playlist");
                 }
                 else
                 {
@@ -3170,7 +3195,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     if (autoDj is not null)
                     {
                         active = autoDj;
-                        source = "AUTODJ";
+                        source = LocalizationService.GetString("Loc.Main.Source.AutoDj");
                     }
                     else
                     {
@@ -3178,7 +3203,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                         if (cart is not null)
                         {
                             active = cart;
-                            source = "CART";
+                            source = LocalizationService.GetString("Loc.Main.Source.Cart");
                         }
                         else
                         {
@@ -3187,7 +3212,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                             if (demoCh is not null)
                             {
                                 active = demoCh;
-                                source = "DEMO";
+                                source = LocalizationService.GetString("Loc.Main.Source.Demo");
                             }
                         }
                     }
@@ -3341,6 +3366,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanStop));
         OnPropertyChanged(nameof(PositionText));
         OnPropertyChanged(nameof(PlaybackStateText));
+        RefreshNowPlayingPanel();
+        RefreshNextPlayingPanel();
     }
 
     private PlaybackStateKind _lastPlaybackEngineKind = PlaybackStateKind.Idle;
@@ -3409,9 +3436,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             // Si cambio el AirBus, refrescar el indicador inmediatamente.
             try { UpdateTabLiveStates(); } catch { }
 
-            StatusMessage = _routing.UseGlobalBus
-                ? $"Bus global aplicado a todos los modulos: {_routing.GlobalBus.DisplayName}"
-                : "Modo por modulo activo. Cada modulo puede elegir su salida.";
+            if (_routing.UseGlobalBus)
+                SetLocalizedStatus("Loc.Main.Status.GlobalBusApplied", _routing.GlobalBus.DisplayName);
+            else
+                SetLocalizedStatus("Loc.Main.Status.PerModuleRouting");
             _logService.Info("SETTINGS ROUTING",
                 _routing.UseGlobalBus
                     ? $"Modo global activo; bus={_routing.GlobalBus.DisplayName}."
@@ -3436,7 +3464,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     // ── FASE C: el bus del cart es POR PESTAÑA. Este handler
                     // ya no toca pestañas existentes. El modulo Cart solo
                     // se usa como default al crear pestañas nuevas.
-                    StatusMessage = $"Bus default de Cart -> {bus.DisplayName}";
+                    SetLocalizedStatus("Loc.Main.Status.DefaultCartBus", bus.DisplayName);
                     break;
 
                 case AudioModuleKind.Playlist:
@@ -3444,17 +3472,17 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                     // Este handler ya no toca pestañas existentes. El
                     // modulo Playlist solo se usa como default al crear
                     // pestañas nuevas.
-                    StatusMessage = $"Bus default de Playlist -> {bus.DisplayName}";
+                    SetLocalizedStatus("Loc.Main.Status.DefaultPlaylistBus", bus.DisplayName);
                     break;
 
                 case AudioModuleKind.Scheduler:
                     try { _playback.SetBus(bus); } catch { }
-                    StatusMessage = $"Programados -> {bus.DisplayName}";
+                    SetLocalizedStatus("Loc.Main.Status.DefaultScheduledBus", bus.DisplayName);
                     break;
 
                 case AudioModuleKind.FileManager:
                     // Reservado para preescucha del File Manager.
-                    StatusMessage = $"File Manager -> {bus.DisplayName}";
+                    SetLocalizedStatus("Loc.Main.Status.DefaultFileManagerBus", bus.DisplayName);
                     break;
             }
         });
@@ -3462,6 +3490,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     partial void OnSelectedBusChanged(IAudioBus? oldValue, IAudioBus? newValue)
     {
+        OnPropertyChanged(nameof(SelectedBusDisplayText));
         if (_suppressBusSelectionHook) return;
         if (ReferenceEquals(oldValue, newValue)) return;
         if (newValue is null) return;
@@ -3474,7 +3503,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (HasFile)
         {
             ReleaseCurrentChannel();
-            StatusMessage = "Canal liberado al cambiar de bus.";
+            SetLocalizedStatus("Loc.Main.Status.ChannelReleasedForBusChange");
         }
 
         RefreshCommandStates();
@@ -3754,7 +3783,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
                 System.Diagnostics.Process.Start(psi);
 
-                StatusMessage = "Abriendo RMVoice...";
+                SetLocalizedStatus("Loc.Main.Status.OpeningRMVoice");
                 return;
             }
 
@@ -3765,7 +3794,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             }
             catch { }
 
-            StatusMessage = "No se encontro RMVoice.exe. Verifica que este en Addons/RMVoice/.";
+            SetLocalizedStatus("Loc.Main.Status.RMVoiceNotFound");
         }
         catch (Exception ex)
         {
@@ -3777,7 +3806,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             }
             catch { }
 
-            StatusMessage = $"Error al abrir RMVoice: {ex.Message}";
+            SetLocalizedStatus("Loc.Main.Status.OpenRMVoiceError", ex.Message);
         }
     }
 
@@ -3907,6 +3936,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(AlAireLedColor));
         OnPropertyChanged(nameof(AlAireTextColor));
         OnPropertyChanged(nameof(AlAireText));
+        OnPropertyChanged(nameof(SelectedBusDisplayText));
+        OnPropertyChanged(nameof(AppSlogan));
     }
 
     private void ApplyStatesToHost(
@@ -4076,10 +4107,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     // ═════════════════════════════════════════════════════════════════════
 
     public string AutoDjButtonTooltip => IsAutoDjEnabled
-        ? "Desactivar AutoDJ"
+        ? LocalizationService.GetString("Loc.Toolbar.AutoDJ.Disable")
         : _autoDjPreparedPlaylist is { Tracks.Count: > 0 } || File.Exists(AutoDjTemporaryPlaylistPath)
-            ? "Activar la lista AutoDJ preparada"
-            : "Generar una lista AutoDJ";
+            ? LocalizationService.GetString("Loc.Toolbar.AutoDJ.ActivatePrepared")
+            : LocalizationService.GetString("Loc.Toolbar.AutoDJ.Generate");
 
     public IBrush AutoDjButtonBackground => IsAutoDjEnabled
         ? new SolidColorBrush(Color.Parse("#16A34A"))
@@ -4104,8 +4135,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     /// -------------Tooltip dinámico del botón.</summary>
     public string DuckingTooltip => IsDuckingActive
-        ? "Desactivar micrófono / ducking"
-        : "Activar micrófono / ducking";
+        ? LocalizationService.GetString("Loc.Toolbar.Ducking.Disable")
+        : LocalizationService.GetString("Loc.Toolbar.Ducking.Enable");
 
     /// -------------Fondo del botón: rojo si activo, color base si inactivo.</summary>
     public IBrush DuckingButtonBackground => IsDuckingActive
@@ -4143,9 +4174,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         get
         {
-            if (IsEmergencyActive) return "EMERGENCIA ACTIVA - Click para detener";
-            if (IsEmergencyArmed) return "Desactivar emergencia";
-            return "Activar emergencia";
+            if (IsEmergencyActive) return LocalizationService.GetString("Loc.Main.Emergency.Tooltip.Active");
+            if (IsEmergencyArmed) return LocalizationService.GetString("Loc.Main.Emergency.Tooltip.Deactivate");
+            return LocalizationService.GetString("Loc.Main.Emergency.Tooltip.Activate");
         }
     }
 
@@ -4210,7 +4241,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             // no romper el early-return del setter (ver ApplyEmergencyArm).
             Emergency.IsEnabled = false;
             NotifyEmergencyButtonChanged();
-            StatusMessage = "Emergencia desactivada.";
+            SetLocalizedStatus("Loc.Main.Status.EmergencyDisabled");
             return;
         }
 
@@ -4219,7 +4250,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             // Config incompleta: abrir ventana de configuración. El code-behind
             // llamará a OnEmergencySettingsClosed() cuando el usuario cierre.
-            StatusMessage = "Configura la emergencia antes de activarla.";
+            SetLocalizedStatus("Loc.Main.Status.ConfigureEmergencyFirst");
             OpenEmergencySettingsRequested?.Invoke(this, EventArgs.Empty);
             return;
         }
@@ -4242,7 +4273,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
         else
         {
-            StatusMessage = "La configuración de emergencia sigue incompleta.";
+            SetLocalizedStatus("Loc.Main.Status.EmergencyConfigurationIncomplete");
         }
     }
 
@@ -4260,7 +4291,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         Emergency.IsEnabled = false;
 
         NotifyEmergencyButtonChanged();
-        StatusMessage = "Emergencia detenida y desactivada.";
+        SetLocalizedStatus("Loc.Main.Status.EmergencyStopped");
     }
 
     private void ApplyEmergencyArm()
@@ -4273,7 +4304,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         Emergency.IsEnabled = true;
 
         NotifyEmergencyButtonChanged();
-        StatusMessage = "Emergencia activada. Watchdog monitoreando el aire.";
+        SetLocalizedStatus("Loc.Main.Status.EmergencyEnabled");
     }
 
     private void NotifyEmergencyButtonChanged()
@@ -4285,8 +4316,64 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     }
 
     // ───── Dispose ───────────────────────────────────────────────────────
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(CurrentTip));
+        PlaybackLog.ReloadSnapshot();
+        TabHost.RefreshLocalizedTitles();
+        TabHostCenter.RefreshLocalizedTitles();
+        TabHostRight.RefreshLocalizedTitles();
+        OnPropertyChanged(nameof(AlAireText));
+        OnPropertyChanged(nameof(PlaybackStateText));
+        OnPropertyChanged(nameof(EmergencyButtonTooltip));
+        OnPropertyChanged(nameof(AutoDjButtonTooltip));
+        OnPropertyChanged(nameof(DuckingTooltip));
+        UpdateSpectrumChannel();
+        LocutionPanel?.RefreshLocalizedTexts();
+        if (!string.IsNullOrEmpty(_autoDjStatusResourceKey))
+            SetAutoDjStatus(_autoDjStatusResourceKey, _autoDjStatusResourceArgs);
+        if (!string.IsNullOrEmpty(_statusMessageResourceKey))
+            SetLocalizedStatus(_statusMessageResourceKey, _statusMessageResourceArgs);
+    }
+
+    public void SetLocalizedStatus(string resourceKey, params object?[] args)
+    {
+        _statusMessageResourceKey = resourceKey;
+        _statusMessageResourceArgs = args;
+        _settingLocalizedStatus = true;
+        try { StatusMessage = string.Format(LocalizationService.GetString(resourceKey), args); }
+        finally { _settingLocalizedStatus = false; }
+    }
+
+    private void SetAutoDjStatus(string resourceKey, params object?[] args)
+    {
+        _autoDjStatusResourceKey = resourceKey;
+        _autoDjStatusResourceArgs = args;
+        _settingLocalizedAutoDjStatus = true;
+        try { AutoDjStatusText = string.Format(LocalizationService.GetString(resourceKey), args); }
+        finally { _settingLocalizedAutoDjStatus = false; }
+        if (_autoDjEditorVm is not null)
+            _autoDjEditorVm.RefreshAutoDjStatus(resourceKey, args);
+    }
+
+    partial void OnAutoDjStatusTextChanged(string value)
+    {
+        if (_settingLocalizedAutoDjStatus) return;
+        _autoDjStatusResourceKey = null;
+        _autoDjStatusResourceArgs = Array.Empty<object?>();
+    }
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        if (_settingLocalizedStatus) return;
+        _statusMessageResourceKey = null;
+        _statusMessageResourceArgs = Array.Empty<object?>();
+    }
+
     public void Dispose()
     {
+        LocalizationService.LanguageChanged -= OnLanguageChanged;
+        try { Scheduler.Dispose(); } catch { }
         try { _autoDjTimer.Stop(); } catch { }
         try { _autoDjPlayer.StateChanged -= OnAutoDjPlayerStateChanged; } catch { }
         try { StopAutoDj(); } catch { }

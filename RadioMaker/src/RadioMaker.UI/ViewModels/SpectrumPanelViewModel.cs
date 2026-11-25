@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Abstractions;
 using RadioMaker.UI.Controls;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -18,12 +19,13 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
 {
     private IAudioChannel? _channel;
     private IAudioSpectrum? _spectrumSource;
+    private string _sourceDisplayName = string.Empty;
 
     // ───── Estado ────────────────────────────────────────────────────────
 
     [ObservableProperty] private SpectrumMode _mode = SpectrumMode.Fft;
     [ObservableProperty] private bool _isRunning = true;
-    [ObservableProperty] private string _statusMessage = "Sin canal activo.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Controls.Spectrum.Status.NoChannel");
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
 
@@ -46,6 +48,7 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
 
     public SpectrumPanelViewModel()
     {
+        LocalizationService.LanguageChanged += OnLanguageChanged;
     }
 
     // ───── API publica ───────────────────────────────────────────────────
@@ -67,6 +70,7 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
 
         _channel = channel;
         _spectrumSource = null;
+        _sourceDisplayName = string.Empty;
         SourceText = sourceLabel ?? string.Empty;
 
         OnPropertyChanged(nameof(Channel));
@@ -76,7 +80,7 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
 
         if (channel is null)
         {
-            StatusMessage = "Sin canal activo.";
+            StatusMessage = LocalizationService.GetString("Loc.Controls.Spectrum.Status.NoChannel");
         }
         else
         {
@@ -85,8 +89,8 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
                 : Path.GetFileName(channel.FilePath);
 
             StatusMessage = string.IsNullOrEmpty(SourceText)
-                ? $"Monitoreando: {file}"
-                : $"[{SourceText}] {file}";
+                ? string.Format(LocalizationService.GetString("Loc.Controls.Spectrum.Status.Monitoring"), file)
+                : string.Format(LocalizationService.GetString("Loc.Controls.Spectrum.Status.Source"), SourceText, file);
         }
     }
 
@@ -98,14 +102,15 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
 
         _channel = null;
         _spectrumSource = spectrum;
+        _sourceDisplayName = displayName ?? string.Empty;
         SourceText = sourceLabel ?? string.Empty;
         OnPropertyChanged(nameof(Channel));
         OnPropertyChanged(nameof(SpectrumSource));
         OnPropertyChanged(nameof(HasChannel));
         OnPropertyChanged(nameof(SourceText));
         StatusMessage = spectrum is null
-            ? "Sin canal activo."
-            : $"[{SourceText}] {displayName}";
+            ? LocalizationService.GetString("Loc.Controls.Spectrum.Status.NoChannel")
+            : string.Format(LocalizationService.GetString("Loc.Controls.Spectrum.Status.Source"), SourceText, displayName);
     }
 
     // ───── Comandos ──────────────────────────────────────────────────────
@@ -123,8 +128,29 @@ public sealed partial class SpectrumPanelViewModel : ViewModelBase
     private void ToggleRunning()
     {
         IsRunning = !IsRunning;
-        StatusMessage = IsRunning
-            ? "Analisis activo."
-            : "Analisis pausado.";
+        StatusMessage = LocalizationService.GetString(IsRunning
+            ? "Loc.Controls.Spectrum.Status.Active"
+            : "Loc.Controls.Spectrum.Status.Paused");
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        if (_channel is not null)
+        {
+            string file = string.IsNullOrEmpty(_channel.FilePath) ? "(sin archivo)" : Path.GetFileName(_channel.FilePath);
+            StatusMessage = string.IsNullOrEmpty(SourceText)
+                ? string.Format(LocalizationService.GetString("Loc.Controls.Spectrum.Status.Monitoring"), file)
+                : string.Format(LocalizationService.GetString("Loc.Controls.Spectrum.Status.Source"), SourceText, file);
+        }
+        else if (_spectrumSource is not null)
+        {
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.Controls.Spectrum.Status.Source"), SourceText, _sourceDisplayName);
+        }
+        else
+        {
+            StatusMessage = LocalizationService.GetString(IsRunning
+                ? "Loc.Controls.Spectrum.Status.NoChannel"
+                : "Loc.Controls.Spectrum.Status.Paused");
+        }
     }
 }

@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Controls;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
@@ -12,6 +13,7 @@ public partial class PlaylistGeneratorWindow : CustomChromeWindow
     public PlaylistGeneratorWindow()
     {
         InitializeComponent();
+        Closed += (_, _) => GetVm()?.Dispose();
     }
 
     private PlaylistGeneratorWindowViewModel? GetVm()
@@ -30,7 +32,7 @@ public partial class PlaylistGeneratorWindow : CustomChromeWindow
 
         var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            Title = "Seleccionar carpeta de origen",
+            Title = LocalizationService.GetString("Loc.PlaylistGenerator.Dialog.SelectSourceFolder"),
             AllowMultiple = false
         });
 
@@ -53,14 +55,14 @@ public partial class PlaylistGeneratorWindow : CustomChromeWindow
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var filter = new FilePickerFileType("Preset del generador")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistGenerator.Dialog.PresetFileType"))
         {
             Patterns = new[] { "*" + PlaylistGeneratorPresetStore.FileExtension }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir preset (.rpg)",
+            Title = LocalizationService.GetString("Loc.PlaylistGenerator.Dialog.OpenPreset"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -92,7 +94,7 @@ public partial class PlaylistGeneratorWindow : CustomChromeWindow
 
         // Nombre sugerido: el del preset actual, o uno generico.
         var suggested = string.IsNullOrWhiteSpace(vm.CurrentPresetName)
-            ? "Preset Generador"
+            ? LocalizationService.GetString("Loc.PlaylistGenerator.Dialog.DefaultPresetName")
             : vm.CurrentPresetName;
 
         var suggestedFileName = SanitizeFileName(suggested)
@@ -100,12 +102,12 @@ public partial class PlaylistGeneratorWindow : CustomChromeWindow
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar preset (.rpg)",
+            Title = LocalizationService.GetString("Loc.PlaylistGenerator.Dialog.SavePreset"),
             SuggestedFileName = suggestedFileName,
             DefaultExtension = PlaylistGeneratorPresetStore.FileExtension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Preset del generador")
+                new FilePickerFileType(LocalizationService.GetString("Loc.PlaylistGenerator.Dialog.PresetFileType"))
                 {
                     Patterns = new[] { "*" + PlaylistGeneratorPresetStore.FileExtension }
                 }

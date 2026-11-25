@@ -8,22 +8,22 @@
         <Border Grid.Row="0" Background="{DynamicResource BgPrimary}"
                 BorderBrush="{DynamicResource BorderPrimary}" BorderThickness="0,0,0,1" Padding="4,2">
             <StackPanel Orientation="Horizontal" Spacing="2">
-                <Button Click="OnNewClick" ToolTip.Tip="Nuevo archivo de encadenadores"
+                <Button Click="OnNewClick" ToolTip.Tip="{DynamicResource Loc.Views.Encadenadores.New}"
                         Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="FilePlus" Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
                 </Button>
-                <Button Click="OnOpenClick" ToolTip.Tip="Abrir archivo .rme"
+                <Button Click="OnOpenClick" ToolTip.Tip="{DynamicResource Loc.Views.Encadenadores.Open}"
                         Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="FolderOpen" Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
                 </Button>
-                <Button Click="OnSaveClick" ToolTip.Tip="Guardar"
+                <Button Click="OnSaveClick" ToolTip.Tip="{DynamicResource Loc.Views.Encadenadores.Save}"
                         Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="ContentSave" Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
                 </Button>
-                <Button Click="OnSaveAsClick" ToolTip.Tip="Guardar como..."
+                <Button Click="OnSaveAsClick" ToolTip.Tip="{DynamicResource Loc.Views.Encadenadores.SaveAs}"
                         Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="ContentSaveEdit" Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -31,21 +31,21 @@
                 <Border Width="1" Background="{DynamicResource BorderPrimary}" Margin="3,2" />
                 <Button Command="{Binding RemoveSelectedCommand}"
                         IsEnabled="{Binding HasSelection}"
-                        ToolTip.Tip="Quitar audio seleccionado"
+                        ToolTip.Tip="{DynamicResource Loc.Views.Encadenadores.Remove}"
                         Padding="3" Background="Transparent" BorderThickness="0">
                     <materialIcons:MaterialIcon Kind="Close" Width="15" Height="15"
                                                 Foreground="{DynamicResource Error}" />
                 </Button>
                 <ToggleSwitch IsChecked="{Binding IsActive, Mode=TwoWay}"
-                              OnContent="Activado" OffContent="Desactivado"
-                              ToolTip.Tip="Solo una pestaña de Encadenadores puede estar activa." />
+                              OnContent="{DynamicResource Loc.Views.Encadenadores.On}" OffContent="{DynamicResource Loc.Views.Encadenadores.Off}"
+                              ToolTip.Tip="{DynamicResource Loc.Views.Encadenadores.OnlyOneActive}" />
             </StackPanel>
         </Border>
 
         <Border Grid.Row="1" Background="{DynamicResource BgSecondary}"
                 BorderBrush="{DynamicResource BorderPrimary}" BorderThickness="0,0,0,1" Padding="5">
             <Grid RowDefinitions="Auto,*">
-                <TextBlock Grid.Row="0" Text="Audios encadenadores"
+                <TextBlock Grid.Row="0" Text="{DynamicResource Loc.Views.Encadenadores.AudioList}"
                            FontWeight="SemiBold" FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
                            Margin="8,6,8,3" />
@@ -81,8 +81,8 @@
                                     PointerPressed="OnTrackPointerPressed">
                                 <Border.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Editar..." Click="OnContextEditClick" />
-                                        <MenuItem Header="Editar Tags..."
+                                        <MenuItem Header="{DynamicResource Loc.Views.Encadenadores.Edit}" Click="OnContextEditClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.Encadenadores.EditTags}"
                                                   IsEnabled="{Binding FilePath, Converter={x:Static vm:IsNotRmwFileConverter.Instance}}"
                                                   Click="OnContextEditTagsClick" />
                                     </ContextMenu>
@@ -112,14 +112,14 @@
                                                 Orientation="Vertical" Spacing="2"
                                                 VerticalAlignment="Center" Margin="6,0,0,0">
                                         <Button Padding="2" Background="Transparent" BorderThickness="0"
-                                                ToolTip.Tip="Subir audio"
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Encadenadores.MoveUp}"
                                                 Command="{Binding $parent[ListBox].DataContext.MoveTrackUpCommand}"
                                                 CommandParameter="{Binding}">
                                             <materialIcons:MaterialIcon Kind="ChevronUp" Width="14" Height="14"
                                                                         Foreground="{DynamicResource FgPrimary}" />
                                         </Button>
                                         <Button Padding="2" Background="Transparent" BorderThickness="0"
-                                                ToolTip.Tip="Bajar audio"
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Encadenadores.MoveDown}"
                                                 Command="{Binding $parent[ListBox].DataContext.MoveTrackDownCommand}"
                                                 CommandParameter="{Binding}">
                                             <materialIcons:MaterialIcon Kind="ChevronDown" Width="14" Height="14"
@@ -137,27 +137,27 @@
         <Border Grid.Row="2" Background="{DynamicResource BgPrimary}"
                 BorderBrush="{DynamicResource BorderPrimary}" BorderThickness="0,0,0,1" Padding="8,7">
             <StackPanel Spacing="7">
-                <TextBlock Text="Configuración de inserción" FontWeight="SemiBold"
+                <TextBlock Text="{DynamicResource Loc.Views.Encadenadores.Configuration}" FontWeight="SemiBold"
                            FontSize="10" Foreground="{DynamicResource FgSecondary}" />
                 <Grid ColumnDefinitions="*,Auto,*,Auto,*,Auto" RowDefinitions="Auto,Auto">
-                    <TextBlock Text="Orden"
+                    <TextBlock Text="{DynamicResource Loc.Views.Encadenadores.Order}"
                                FontSize="10" VerticalAlignment="Center" />
                     <ComboBox Grid.Column="1" ItemsSource="{Binding OrderOptions}"
                               SelectedItem="{Binding SelectedOrder, Mode=TwoWay}" MinWidth="145" />
-                    <TextBlock Grid.Column="2" Text="Insertar cada"
+                    <TextBlock Grid.Column="2" Text="{DynamicResource Loc.Views.Encadenadores.InsertEvery}"
                                Margin="12,0,5,0" FontSize="10" VerticalAlignment="Center" />
                     <ComboBox Grid.Column="3" ItemsSource="{Binding InsertIntervals}"
                               SelectedItem="{Binding InsertEvery, Mode=TwoWay}" MinWidth="72" />
-                    <TextBlock Grid.Column="4" Text="audio(s)"
+                    <TextBlock Grid.Column="4" Text="{DynamicResource Loc.Views.Encadenadores.AudioUnit}"
                                Margin="5,0,12,0" FontSize="10" VerticalAlignment="Center" />
-                    <TextBlock Grid.Row="1" Text="Reiniciar contador"
+                    <TextBlock Grid.Row="1" Text="{DynamicResource Loc.Views.Encadenadores.ResetCounter}"
                                Margin="0,7,6,0" FontSize="10" VerticalAlignment="Center" />
                     <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                               ItemsSource="{Binding CounterResetOptions}"
                               SelectedItem="{Binding SelectedCounterReset, Mode=TwoWay}"
                               Margin="0,7,0,0" MinWidth="160" />
                     <TextBlock Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3"
-                               Text="Arrastra archivos desde el File Manager y la lista los intercalará automáticamente."
+                               Text="{DynamicResource Loc.Views.Encadenadores.DragHint}"
                                Margin="10,7,0,0" FontSize="10" TextWrapping="Wrap"
                                Foreground="{DynamicResource FgSecondary}" VerticalAlignment="Center" />
                 </Grid>

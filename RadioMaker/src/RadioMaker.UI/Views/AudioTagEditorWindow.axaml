@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
         x:Class="RadioMaker.UI.Views.AudioTagEditorWindow"
         x:DataType="vm:AudioTagEditorViewModel"
-        Title="Editar tags"
+        Title="{DynamicResource Loc.Window.AudioTags.Title}"
         Width="560" Height="650"
         MinWidth="560" MinHeight="650"
         WindowStartupLocation="CenterOwner">
@@ -50,7 +50,7 @@
                             BorderThickness="1"
                             CornerRadius="4"
                             IsVisible="{Binding !HasCoverArt}">
-                        <TextBlock Text="Sin&#10;caratula"
+                        <TextBlock Text="{DynamicResource Loc.Views.AudioTags.NoCover}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgMuted}"
                                    TextAlignment="Center"
@@ -89,7 +89,7 @@
                       Margin="2">
 
                     <TextBlock Grid.Row="0" Grid.Column="0"
-                               Text="Titulo:"
+                               Text="{DynamicResource Loc.Views.AudioTags.Title}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center" />
@@ -97,10 +97,10 @@
                              Text="{Binding Title}"
                              FontSize="11"
                              Padding="6,4"
-                             PlaceholderText="Titulo del audio" />
+                             PlaceholderText="{DynamicResource Loc.Views.AudioTags.TitleHint}" />
 
                     <TextBlock Grid.Row="1" Grid.Column="0"
-                               Text="Artista(s):"
+                               Text="{DynamicResource Loc.Views.AudioTags.Artists}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center" />
@@ -108,10 +108,10 @@
                              Text="{Binding Performers}"
                              FontSize="11"
                              Padding="6,4"
-                             PlaceholderText="Multiples separados por ;" />
+                             PlaceholderText="{DynamicResource Loc.Views.AudioTags.MultipleHint}" />
 
                     <TextBlock Grid.Row="2" Grid.Column="0"
-                               Text="Album:"
+                               Text="{DynamicResource Loc.Views.AudioTags.Album}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center" />
@@ -119,10 +119,10 @@
                              Text="{Binding Album}"
                              FontSize="11"
                              Padding="6,4"
-                             PlaceholderText="Nombre del album" />
+                             PlaceholderText="{DynamicResource Loc.Views.AudioTags.AlbumHint}" />
 
                     <TextBlock Grid.Row="3" Grid.Column="0"
-                               Text="Album Artists:"
+                               Text="{DynamicResource Loc.Views.AudioTags.AlbumArtists}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center" />
@@ -130,10 +130,10 @@
                              Text="{Binding AlbumArtists}"
                              FontSize="11"
                              Padding="6,4"
-                             PlaceholderText="Multiples separados por ;" />
+                             PlaceholderText="{DynamicResource Loc.Views.AudioTags.MultipleHint}" />
 
                     <TextBlock Grid.Row="4" Grid.Column="0"
-                               Text="Genero(s):"
+                               Text="{DynamicResource Loc.Views.AudioTags.Genres}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center" />
@@ -141,10 +141,10 @@
                              Text="{Binding Genres}"
                              FontSize="11"
                              Padding="6,4"
-                             PlaceholderText="Multiples separados por ;" />
+                             PlaceholderText="{DynamicResource Loc.Views.AudioTags.MultipleHint}" />
 
                     <TextBlock Grid.Row="5" Grid.Column="0"
-                               Text="Año / Pista / Disco:"
+                               Text="{DynamicResource Loc.Views.AudioTags.YearTrackDisc}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center" />
@@ -174,7 +174,7 @@
                     </Grid>
 
                     <TextBlock Grid.Row="6" Grid.Column="0"
-                               Text="Comentario:"
+                               Text="{DynamicResource Loc.Views.AudioTags.Comment}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Top"
@@ -187,7 +187,7 @@
                              TextWrapping="Wrap"
                              MinHeight="80"
                              MaxHeight="120"
-                             PlaceholderText="Comentario libre (opcional)" />
+                             PlaceholderText="{DynamicResource Loc.Views.AudioTags.CommentHint}" />
                 </Grid>
             </ScrollViewer>
 
@@ -198,7 +198,7 @@
                         BorderThickness="1"
                         CornerRadius="4"
                         Padding="8,5">
-                    <TextBlock Text="La caratula embebida no se modifica desde este editor. Los campos vacios borran el tag correspondiente."
+                    <TextBlock Text="{DynamicResource Loc.Views.AudioTags.CoverHelp}"
                                FontSize="9"
                                Foreground="{DynamicResource FgSecondary}"
                                TextWrapping="Wrap" />
@@ -217,12 +217,12 @@
                         HorizontalAlignment="Right"
                         Spacing="6"
                         Margin="0,10,0,0">
-                <Button Content="Cancelar"
+                <Button Content="{DynamicResource Loc.Views.AudioTags.Cancel}"
                         x:Name="CancelButton"
                         Click="OnCancelClick"
                         MinWidth="90"
                         FontSize="11" />
-                <Button Content="Guardar"
+                <Button Content="{DynamicResource Loc.Views.AudioTags.Save}"
                         x:Name="SaveButton"
                         Click="OnSaveClick"
                         MinWidth="90"

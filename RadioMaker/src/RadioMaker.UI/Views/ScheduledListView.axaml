@@ -19,7 +19,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="0">
                     <Button x:Name="NewButton" Click="OnNewClick"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Nueva lista de programados">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.New}">
                         <materialIcons:MaterialIcon Kind="FilePlus"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -27,7 +27,7 @@
 
                     <Button x:Name="OpenButton" Click="OnOpenClick"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Abrir archivo .rms">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.Open}">
                         <materialIcons:MaterialIcon Kind="FolderOpen"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -35,7 +35,7 @@
 
                     <Button x:Name="SaveButton" Click="OnSaveClick"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Guardar">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.Save}">
                         <materialIcons:MaterialIcon Kind="ContentSave"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -43,7 +43,7 @@
 
                     <Button x:Name="SaveAsButton" Click="OnSaveAsClick"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Guardar como...">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.SaveAs}">
                         <materialIcons:MaterialIcon Kind="ContentSaveEdit"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource FgPrimary}" />
@@ -53,7 +53,7 @@
 
                     <Button Command="{Binding AddItemCommand}"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Agregar archivo suelto">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.AddFile}">
                         <materialIcons:MaterialIcon Kind="Plus"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource AccentText}" />
@@ -61,7 +61,7 @@
 
                     <Button Command="{Binding AddTandaItemCommand}"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Agregar tanda">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.AddTanda}">
                         <materialIcons:MaterialIcon Kind="FormatListBulleted"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Warning}" />
@@ -69,7 +69,7 @@
 
                     <Button Command="{Binding AddPlaylistItemCommand}"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Agregar playlist (.rmf)">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.AddPlaylist}">
                         <materialIcons:MaterialIcon Kind="PlaylistMusic"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Success}" />
@@ -77,7 +77,7 @@
 
                     <Button Command="{Binding AddBlockItemCommand}"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Agregar bloque de programacion (playlists + tandas + archivos en secuencia)">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.AddBlock}">
                         <materialIcons:MaterialIcon Kind="Layers"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Accent}" />
@@ -88,7 +88,7 @@
                     <Button Command="{Binding RemoveSelectedItemCommand}"
                             IsEnabled="{Binding HasSelection}"
                             Padding="3" Background="Transparent" BorderThickness="0"
-                            ToolTip.Tip="Quitar item seleccionado">
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.Remove}">
                         <materialIcons:MaterialIcon Kind="Close"
                                                     Width="15" Height="15"
                                                     Foreground="{DynamicResource Error}" />
@@ -100,9 +100,9 @@
                               IsChecked="{Binding IsEnabled}"
                               VerticalAlignment="Center"
                               Margin="0,0,10,0"
-                              OnContent="Activa"
-                              OffContent="Desactivada"
-                              ToolTip.Tip="Si está desactivada, el motor de programación no procesa esta lista. Sus items no se disparan." />
+                              OnContent="{DynamicResource Loc.Views.Scheduled.Active}"
+                              OffContent="{DynamicResource Loc.Views.Scheduled.Disabled}"
+                              ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.DisabledTooltip}" />
                 <controls:BusSelectorButton Grid.Column="2"
                                             DataContext="{Binding BusSelector}"
                                             VerticalAlignment="Center" />
@@ -120,7 +120,7 @@
                         Background="{DynamicResource Warning}"
                         Padding="8,4"
                         IsVisible="{Binding !IsEnabled}">
-                    <TextBlock Text="LISTA DESACTIVADA — El motor de programación no procesará esta lista hasta que la actives."
+                    <TextBlock Text="{DynamicResource Loc.Views.Scheduled.DisabledBanner}"
                                FontSize="10"
                                FontWeight="Bold"
                                Foreground="White"
@@ -128,7 +128,7 @@
                 </Border>
 
                 <TextBlock Grid.Row="1"
-                           Text="Items programados (arrastra archivos aqui, o clic derecho sobre un item para editar)"
+                           Text="{DynamicResource Loc.Views.Scheduled.ItemsHeader}"
                            FontWeight="SemiBold"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
@@ -169,13 +169,13 @@
                                     PointerPressed="OnItemPointerPressed">
                                 <Border.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Editar..." Click="OnContextEditClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.Scheduled.Edit}" Click="OnContextEditClick" />
                                         <Separator />
-                                        <MenuItem Header="Editar en RMWave..."
+                                        <MenuItem Header="{DynamicResource Loc.Views.Scheduled.EditRmw}"
                                                   Click="OnContextEditInRMWaveClick"
                                                   IsEnabled="{Binding FilePath, Converter={x:Static vm:IsRmwFileConverter.Instance}}" />
                                         <Separator />
-                                        <MenuItem Header="Eliminar" Click="OnContextDeleteClick" />
+                                        <MenuItem Header="{DynamicResource Loc.Views.Scheduled.Delete}" Click="OnContextDeleteClick" />
                                     </ContextMenu>
                                 </Border.ContextMenu>
                                 <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*,Auto,Auto">
@@ -247,7 +247,7 @@
                                         <Button Padding="2"
                                                 Background="Transparent"
                                                 BorderThickness="0"
-                                                ToolTip.Tip="Subir item"
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.MoveUp}"
                                                 Command="{Binding $parent[ListBox].DataContext.MoveItemUpCommand}"
                                                 CommandParameter="{Binding}">
                                             <materialIcons:MaterialIcon Kind="ChevronUp"
@@ -257,7 +257,7 @@
                                         <Button Padding="2"
                                                 Background="Transparent"
                                                 BorderThickness="0"
-                                                ToolTip.Tip="Bajar item"
+                                                ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.MoveDown}"
                                                 Command="{Binding $parent[ListBox].DataContext.MoveItemDownCommand}"
                                                 CommandParameter="{Binding}">
                                             <materialIcons:MaterialIcon Kind="ChevronDown"
@@ -291,7 +291,7 @@
 
                     <Button Command="{Binding PrevPlaybackCommand}"
                             IsEnabled="{Binding CanPrevPlayback}"
-                            ToolTip.Tip="Elemento anterior"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.Previous}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0">
@@ -314,7 +314,7 @@
 
                     <Button Command="{Binding ResumePlaybackCommand}"
                             IsEnabled="{Binding CanResumePlayback}"
-                            ToolTip.Tip="Reanudar"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.Resume}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0"
@@ -326,7 +326,7 @@
 
                     <Button Command="{Binding PausePlaybackCommand}"
                             IsEnabled="{Binding CanPausePlayback}"
-                            ToolTip.Tip="Pausar"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.Pause}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0">
@@ -337,7 +337,7 @@
 
                     <Button Command="{Binding StopPlaybackCommand}"
                             IsEnabled="{Binding CanStopThisList}"
-                            ToolTip.Tip="Detener"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.Stop}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0">
@@ -348,7 +348,7 @@
 
                     <Button Command="{Binding NextPlaybackCommand}"
                             IsEnabled="{Binding CanNextPlayback}"
-                            ToolTip.Tip="Elemento siguiente"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.Next}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800"
                             Padding="8,5" Background="Transparent" BorderThickness="0">
@@ -364,14 +364,14 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Margin="12,0,4,0"
-                            ToolTip.Tip="Duración total de los items habilitados"
+                            ToolTip.Tip="{DynamicResource Loc.Views.Scheduled.TotalDuration}"
                             ToolTip.Placement="Bottom"
                             ToolTip.ShowDelay="800">
                     <materialIcons:MaterialIcon Kind="ClockOutline"
                                                 Width="13" Height="13"
                                                 Foreground="{DynamicResource FgSecondary}"
                                                 VerticalAlignment="Center" />
-                    <TextBlock Text="Total:"
+                    <TextBlock Text="{DynamicResource Loc.Views.Scheduled.Total}"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
                                VerticalAlignment="Center" />

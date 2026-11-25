@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Loc.RMWave.Main.Title" xml:space="preserve"><value>RadioMaker Wave Add-on</value></data>
+  <data name="Loc.RMWave.Main.New" xml:space="preserve"><value>New</value></data>
+  <data name="Loc.RMWave.Main.Open" xml:space="preserve"><value>Open...</value></data>
+  <data name="Loc.RMWave.Main.ProjectProperties" xml:space="preserve"><value>Project properties...</value></data>
+  <data name="Loc.RMWave.Main.ExportMix" xml:space="preserve"><value>Export mix...</value></data>
+  <data name="Loc.RMWave.Main.ExportSelection" xml:space="preserve"><value>Export selection...</value></data>
+  <data name="Loc.RMWave.Main.RecentProjects" xml:space="preserve"><value>Recent projects</value></data>
+  <data name="Loc.RMWave.Main.Exit" xml:space="preserve"><value>Exit</value></data>
+  <data name="Loc.RMWave.Main.Devices" xml:space="preserve"><value>Devices</value></data>
+  <data name="Loc.RMWave.Main.Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Loc.RMWave.Main.DuplicateClip" xml:space="preserve"><value>Duplicate clip</value></data>
+  <data name="Loc.RMWave.Main.DeleteClip" xml:space="preserve"><value>Delete clip</value></data>
+  <data name="Loc.RMWave.Main.SplitAtCursor" xml:space="preserve"><value>Split clip at cursor</value></data>
+  <data name="Loc.RMWave.Main.AddMarker" xml:space="preserve"><value>Add marker</value></data>
+  <data name="Loc.RMWave.Main.Markers" xml:space="preserve"><value>Markers...</value></data>
+  <data name="Loc.RMWave.Main.ImportRegions" xml:space="preserve"><value>Import region markers...</value></data>
+  <data name="Loc.RMWave.Main.RecordAudio" xml:space="preserve"><value>Record audio...</value></data>
+  <data name="Loc.RMWave.Main.Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="Loc.RMWave.Main.Help" xml:space="preserve"><value>Help</value></data>
+  <data name="Loc.RMWave.Main.About" xml:space="preserve"><value>About RMWave</value></data>
+  <data name="Loc.RMWave.Main.NewProject" xml:space="preserve"><value>New project</value></data>
+  <data name="Loc.RMWave.Main.OpenProject" xml:space="preserve"><value>Open project</value></data>
+  <data name="Loc.RMWave.Main.SaveProject" xml:space="preserve"><value>Save project</value></data>
+  <data name="Loc.RMWave.Main.AddTrackTooltip" xml:space="preserve"><value>Add track</value></data>
+  <data name="Loc.RMWave.Main.Play" xml:space="preserve"><value>Play (Space)</value></data>
+  <data name="Loc.RMWave.Main.Pause" xml:space="preserve"><value>Pause (Space)</value></data>
+  <data name="Loc.RMWave.Main.Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Loc.RMWave.Main.Record" xml:space="preserve"><value>Record</value></data>
+  <data name="Loc.RMWave.Main.Snap" xml:space="preserve"><value>Snap</value></data>
+  <data name="Loc.RMWave.Main.SnapTooltip" xml:space="preserve"><value>Toggle snap</value></data>
+  <data name="Loc.RMWave.Main.SelectedClip" xml:space="preserve"><value>Selected clip</value></data>
+  <data name="Loc.RMWave.Main.Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Loc.RMWave.Main.Offset" xml:space="preserve"><value>Offset</value></data>
+  <data name="Loc.RMWave.Main.Duration" xml:space="preserve"><value>Duration</value></data>
+  <data name="Loc.RMWave.Main.Gain" xml:space="preserve"><value>Gain</value></data>
+  <data name="Loc.RMWave.Main.FadeIn" xml:space="preserve"><value>Fade in</value></data>
+  <data name="Loc.RMWave.Main.FadeOut" xml:space="preserve"><value>Fade out</value></data>
+  <data name="Loc.RMWave.Main.ApplyChanges" xml:space="preserve"><value>Apply changes</value></data>
+  <data name="Loc.RMWave.Main.DuplicateClipShortcut" xml:space="preserve"><value>Duplicate clip (Ctrl+D)</value></data>
+  <data name="Loc.RMWave.Main.SplitClipShortcut" xml:space="preserve"><value>Split clip at cursor (Ctrl+B)</value></data>
+  <data name="Loc.RMWave.Main.RemoveClip" xml:space="preserve"><value>Delete clip (Delete)</value></data>
+  <data name="Loc.RMWave.Main.NormalizeClip" xml:space="preserve"><value>Adjust gain so the clip peak reaches -1 dB</value></data>
+  <data name="Loc.RMWave.Main.ClosePanel" xml:space="preserve"><value>Close panel</value></data>
+  <data name="Loc.RMWave.Main.Untitled" xml:space="preserve"><value>untitled document.rmw</value></data>
+  <data name="Loc.RMWave.Main.Minimize" xml:space="preserve"><value>Minimize</value></data>
+  <data name="Loc.RMWave.Main.Maximize" xml:space="preserve"><value>Maximize</value></data>
+  <data name="Loc.RMWave.Main.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.RMWave.Main.GainKnob" xml:space="preserve"><value>Gain</value></data>
+  <data name="Loc.RMWave.Main.UntitledTitle" xml:space="preserve"><value>RadioMaker Wave Editor Add-on - untitled document.rmw</value></data>
+  <data name="Loc.RMWave.Main.FileMenu" xml:space="preserve"><value>File</value></data>
+  <data name="Loc.RMWave.Main.RecordTooltip" xml:space="preserve"><value>Record audio</value></data>
+  <data name="Loc.RMWave.Main.InitializingAudio" xml:space="preserve"><value>Initializing audio...</value></data>
+  <data name="Loc.RMWave.Main.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.RMWave.Dialog.AddMarkerName" xml:space="preserve"><value>Marker name:</value></data>
+  <data name="Loc.RMWave.Dialog.Accept" xml:space="preserve"><value>OK</value></data>
+  <data name="Loc.RMWave.Dialog.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Loc.RMWave.Dialog.EditMarkerTitle" xml:space="preserve"><value>Edit marker</value></data>
+  <data name="Loc.RMWave.Dialog.MarkerLabel" xml:space="preserve"><value>Marker: {0}</value></data>
+  <data name="Loc.RMWave.Dialog.MarkerPosition" xml:space="preserve"><value>New position (e.g. 90, 1:30, 0:01:30):</value></data>
+  <data name="Loc.RMWave.Dialog.MarkersTitle" xml:space="preserve"><value>Project markers</value></data>
+  <data name="Loc.RMWave.Dialog.NoMarkers" xml:space="preserve"><value>There are no markers in this project.</value></data>
+  <data name="Loc.RMWave.Dialog.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.RMWave.Dialog.ImportRegionsTitle" xml:space="preserve"><value>Import region markers</value></data>
+  <data name="Loc.RMWave.Dialog.RecordTitle" xml:space="preserve"><value>Audio recording</value></data>
+  <data name="Loc.RMWave.Dialog.RecordDevice" xml:space="preserve"><value>Recording device:</value></data>
+  <data name="Loc.RMWave.Dialog.Format" xml:space="preserve"><value>Format:</value></data>
+  <data name="Loc.RMWave.Dialog.Duration" xml:space="preserve"><value>Duration: {0}</value></data>
+  <data name="Loc.RMWave.Dialog.Record" xml:space="preserve"><value>● Record</value></data>
+  <data name="Loc.RMWave.Dialog.Stop" xml:space="preserve"><value>■ Stop</value></data>
+  <data name="Loc.RMWave.Dialog.SaveRecording" xml:space="preserve"><value>Save recording</value></data>
+  <data name="Loc.RMWave.Dialog.AddClips" xml:space="preserve"><value>Add clips to {0}</value></data>
+  <data name="Loc.RMWave.Dialog.ExportMix" xml:space="preserve"><value>Export mix</value></data>
+  <data name="Loc.RMWave.Dialog.AboutTitle" xml:space="preserve"><value>About RMWave</value></data>
+  <data name="Loc.RMWave.Dialog.AppName" xml:space="preserve"><value>RadioMaker Wave Editor</value></data>
+  <data name="Loc.RMWave.Dialog.Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="Loc.RMWave.Dialog.BuildDate" xml:space="preserve"><value>Last build: {0}</value></data>
+  <data name="Loc.RMWave.Dialog.Description" xml:space="preserve"><value>Multitrack audio editor</value></data>
+  <data name="Loc.RMWave.Dialog.UnsavedTitle" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="Loc.RMWave.Dialog.UnsavedMessage" xml:space="preserve"><value>There are unsaved changes.&#10;Do you want to save them before continuing?</value></data>
+  <data name="Loc.RMWave.Dialog.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.RMWave.Dialog.DontSave" xml:space="preserve"><value>Don't save</value></data>
+  <data name="Loc.RMWave.Dialog.SaveProjectTitle" xml:space="preserve"><value>Save RMWave project</value></data>
+  <data name="Loc.RMWave.Dialog.OpenProjectTitle" xml:space="preserve"><value>Open RMWave project</value></data>
+  <data name="Loc.RMWave.Dialog.ProjectPropertiesTitle" xml:space="preserve"><value>Project properties</value></data>
+  <data name="Loc.RMWave.Dialog.ProgramName" xml:space="preserve"><value>Show name:</value></data>
+  <data name="Loc.RMWave.Dialog.Episode" xml:space="preserve"><value>Episode / air date:</value></data>
+  <data name="Loc.RMWave.Dialog.Author" xml:space="preserve"><value>Author / producer:</value></data>
+  <data name="Loc.RMWave.Dialog.Notes" xml:space="preserve"><value>Notes:</value></data>
+  <data name="Loc.RMWave.Dialog.CreatedModified" xml:space="preserve"><value>Created: {0}   |   Modified: {1}</value></data>
+  <data name="Loc.RMWave.Dialog.ExportSelectionTitle" xml:space="preserve"><value>Export selection</value></data>
+  <data name="Loc.RMWave.Dialog.Yes" xml:space="preserve"><value>Yes</value></data>
+  <data name="Loc.RMWave.Dialog.No" xml:space="preserve"><value>No</value></data>
+  <data name="Loc.RMWave.Dialog.DeleteSelectionTitle" xml:space="preserve"><value>Delete selection</value></data>
+  <data name="Loc.RMWave.Dialog.DeleteSelectionMessage" xml:space="preserve"><value>The content between {0} and {1} will be deleted.&#10;&#10;The following content will shift to close the gap.&#10;Markers inside the range will also be removed.&#10;&#10;Do you want to continue?</value></data>
+  <data name="Loc.RMWave.Dialog.MissingProjectTitle" xml:space="preserve"><value>File not found</value></data>
+  <data name="Loc.RMWave.Dialog.MissingProjectMessage" xml:space="preserve"><value>The project no longer exists:&#10;{0}&#10;&#10;Do you want to remove it from the recent list?</value></data>
+  <data name="Loc.RMWave.Status.Ready" xml:space="preserve"><value>Audio ready. Add tracks and clips.</value></data>
+  <data name="Loc.RMWave.Status.BassMixerError" xml:space="preserve"><value>Could not initialize BASS/mixer: {0}</value></data>
+  <data name="Loc.RMWave.Status.BassLoadError" xml:space="preserve"><value>Error loading BASS or BASSmix: {0}</value></data>
+  <data name="Loc.RMWave.Status.FileMissing" xml:space="preserve"><value>File does not exist: {0}</value></data>
+  <data name="Loc.RMWave.Status.OpenedFromCommandLine" xml:space="preserve"><value>Opened from command line: {0}</value></data>
+  <data name="Loc.RMWave.Status.OpenFileError" xml:space="preserve"><value>Error opening {0}: {1}</value></data>
+  <data name="Loc.RMWave.Status.Playing" xml:space="preserve"><value>Playing</value></data>
+  <data name="Loc.RMWave.Status.PlayError" xml:space="preserve"><value>Playback failed. BASS error: {0}</value></data>
+  <data name="Loc.RMWave.Status.Paused" xml:space="preserve"><value>Paused</value></data>
+  <data name="Loc.RMWave.Status.Stopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="Loc.RMWave.Status.PlaybackEnded" xml:space="preserve"><value>Playback ended</value></data>
+  <data name="Loc.RMWave.Status.MarkerAdded" xml:space="preserve"><value>Marker '{0}' added at {1}.</value></data>
+  <data name="Loc.RMWave.Status.NoSelection" xml:space="preserve"><value>There is no active selection to delete.</value></data>
+  <data name="Loc.RMWave.Status.SelectionDeleted" xml:space="preserve"><value>Selection deleted: {0} - {1}.</value></data>
+  <data name="Loc.RMWave.Status.SelectClipForRegions" xml:space="preserve"><value>Select the audio clip that contains these regions first.</value></data>
+  <data name="Loc.RMWave.Status.NoValidRegions" xml:space="preserve"><value>No valid regions were found in the file.</value></data>
+  <data name="Loc.RMWave.Status.MarkersImported" xml:space="preserve"><value>Imported {0} marker(s) from {1}.</value></data>
+  <data name="Loc.RMWave.Status.ImportMarkersError" xml:space="preserve"><value>Error importing markers: {0}</value></data>
+  <data name="Loc.RMWave.Status.MarkerRenamed" xml:space="preserve"><value>Marker renamed to '{0}'.</value></data>
+  <data name="Loc.RMWave.Status.MarkerMoved" xml:space="preserve"><value>Marker '{0}' moved to {1}.</value></data>
+  <data name="Loc.RMWave.Status.MarkerDeleted" xml:space="preserve"><value>Marker '{0}' deleted.</value></data>
+  <data name="Loc.RMWave.Status.RecordingAdded" xml:space="preserve"><value>Recording added as '{0}'.</value></data>
+  <data name="Loc.RMWave.Status.RecordingAddError" xml:space="preserve"><value>Could not add the recording.</value></data>
+  <data name="Loc.RMWave.Status.RecordDeviceUnavailable" xml:space="preserve"><value>Could not initialize the recording device.</value></data>
+  <data name="Loc.RMWave.Status.RecordStartError" xml:space="preserve"><value>Could not start recording.</value></data>
+  <data name="Loc.RMWave.Status.Recording" xml:space="preserve"><value>Recording...</value></data>
+  <data name="Loc.RMWave.Status.RecordingFinished" xml:space="preserve"><value>Recording finished.</value></data>
+  <data name="Loc.RMWave.Status.ClipDeleted" xml:space="preserve"><value>Clip '{0}' deleted.</value></data>
+  <data name="Loc.RMWave.Status.ClipNormalized" xml:space="preserve"><value>Clip normalized. Gain: {0:F2}x</value></data>
+  <data name="Loc.RMWave.Status.NormalizeError" xml:space="preserve"><value>Could not normalize the clip.</value></data>
+  <data name="Loc.RMWave.Status.ClipDuplicated" xml:space="preserve"><value>Clip duplicated.</value></data>
+  <data name="Loc.RMWave.Status.SelectClipToSplit" xml:space="preserve"><value>Select a clip to split.</value></data>
+  <data name="Loc.RMWave.Status.CursorOutsideClip" xml:space="preserve"><value>The playhead must be inside the clip to split it.</value></data>
+  <data name="Loc.RMWave.Status.SplitNearEdge" xml:space="preserve"><value>The split point is too close to the clip edge.</value></data>
+  <data name="Loc.RMWave.Status.ClipSplit" xml:space="preserve"><value>Clip split at {0}.</value></data>
+  <data name="Loc.RMWave.Status.TrackDeleted" xml:space="preserve"><value>Track '{0}' deleted.</value></data>
+  <data name="Loc.RMWave.Status.TrackAdded" xml:space="preserve"><value>Track '{0}' added.</value></data>
+  <data name="Loc.RMWave.Status.ClipsAdded" xml:space="preserve"><value>Added {0} clip(s) to {1}.</value></data>
+  <data name="Loc.RMWave.Status.GenericError" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.RMWave.Status.InvalidNumbers" xml:space="preserve"><value>Invalid numeric values.</value></data>
+  <data name="Loc.RMWave.Status.ClipUpdated" xml:space="preserve"><value>Clip updated.</value></data>
+  <data name="Loc.RMWave.Status.NoAudioToExport" xml:space="preserve"><value>There is no audio to export.</value></data>
+  <data name="Loc.RMWave.Status.ExportingMix" xml:space="preserve"><value>Exporting mix...</value></data>
+  <data name="Loc.RMWave.Status.NewProject" xml:space="preserve"><value>New project created.</value></data>
+  <data name="Loc.RMWave.Status.ProjectSaved" xml:space="preserve"><value>Project saved successfully.</value></data>
+  <data name="Loc.RMWave.Status.SaveProjectError" xml:space="preserve"><value>Error saving project: {0}</value></data>
+  <data name="Loc.RMWave.Status.InvalidProject" xml:space="preserve"><value>Error: the file is not a valid project.</value></data>
+  <data name="Loc.RMWave.Status.ProjectLoaded" xml:space="preserve"><value>Project loaded successfully.</value></data>
+  <data name="Loc.RMWave.Status.LoadProjectError" xml:space="preserve"><value>Error loading project: {0}</value></data>
+  <data name="Loc.RMWave.Status.PropertiesUpdated" xml:space="preserve"><value>Project properties updated.</value></data>
+  <data name="Loc.RMWave.Status.NoLoopSelection" xml:space="preserve"><value>There is no active selection. Mark a loop range first.</value></data>
+  <data name="Loc.RMWave.Status.ExportingSelection" xml:space="preserve"><value>Exporting selection: {0} - {1}...</value></data>
+  <data name="Loc.RMWave.Status.SelectionExported" xml:space="preserve"><value>Selection exported: {0}</value></data>
+  <data name="Loc.RMWave.Status.SelectionExportError" xml:space="preserve"><value>Could not export the selection.</value></data>
+  <data name="Loc.RMWave.Status.ExportSelectionError" xml:space="preserve"><value>Error exporting selection: {0}</value></data>
+  <data name="Loc.RMWave.Status.OutputChanged" xml:space="preserve"><value>Audio output: {0}</value></data>
+  <data name="Loc.RMWave.Status.OutputChangeError" xml:space="preserve"><value>Could not switch to '{0}'.</value></data>
+  <data name="Loc.RMWave.Export.MixerError" xml:space="preserve"><value>Error creating render mixer.</value></data>
+  <data name="Loc.RMWave.Export.EmptyProject" xml:space="preserve"><value>The project is empty.</value></data>
+  <data name="Loc.RMWave.Export.Completed" xml:space="preserve"><value>Export completed successfully.</value></data>
+  <data name="Loc.RMWave.Export.FileNotCreated" xml:space="preserve"><value>Warning: The file was not created.</value></data>
+  <data name="Loc.RMWave.Export.InvalidRange" xml:space="preserve"><value>Invalid range.</value></data>
+  <data name="Loc.RMWave.Export.SelectionCompleted" xml:space="preserve"><value>Selection export completed.</value></data>
+  <data name="Loc.RMWave.Export.MissingDirectory" xml:space="preserve"><value>Error: The directory does not exist: {0}</value></data>
+  <data name="Loc.RMWave.Export.EncoderError" xml:space="preserve"><value>Error starting MP3 encoder (code: {0}).</value></data>
+  <data name="Loc.RMWave.Export.Mp3Completed" xml:space="preserve"><value>MP3 export completed. Size: {0} KB.</value></data>
+  <data name="Loc.RMWave.Export.SelectionMp3Error" xml:space="preserve"><value>Error exporting MP3 selection: {0}</value></data>
+  <data name="Loc.RMWave.Export.SelectionError" xml:space="preserve"><value>Error exporting selection: {0}</value></data>
+  <data name="Loc.RMWave.Export.Mp3Error" xml:space="preserve"><value>Error exporting MP3: {0}</value></data>
+  <data name="Loc.RMWave.Export.Error" xml:space="preserve"><value>Error exporting: {0}</value></data>
+  <data name="Loc.RMWave.Track.Mute" xml:space="preserve"><value>Mute</value></data>
+  <data name="Loc.RMWave.Track.Solo" xml:space="preserve"><value>Solo</value></data>
+  <data name="Loc.RMWave.Track.Volume" xml:space="preserve"><value>Volume</value></data>
+  <data name="Loc.RMWave.Track.Pan" xml:space="preserve"><value>Pan</value></data>
+  <data name="Loc.RMWave.Track.Bass" xml:space="preserve"><value>Bass</value></data>
+  <data name="Loc.RMWave.Track.Mid" xml:space="preserve"><value>Mid</value></data>
+  <data name="Loc.RMWave.Track.Treble" xml:space="preserve"><value>Treble</value></data>
+  <data name="Loc.RMWave.Track.Zoom" xml:space="preserve"><value>Zoom</value></data>
+  <data name="Loc.RMWave.Track.Loop" xml:space="preserve"><value>Loop</value></data>
+  <data name="Loc.RMWave.Track.LoopIn" xml:space="preserve"><value>In</value></data>
+  <data name="Loc.RMWave.Track.LoopOut" xml:space="preserve"><value>Out</value></data>
+  <data name="Loc.RMWave.Track.CaptureLoopStart" xml:space="preserve"><value>Capture current position as loop start</value></data>
+  <data name="Loc.RMWave.Track.DeleteMarker" xml:space="preserve"><value>Delete marker</value></data>
+  <data name="Loc.RMWave.Track.AddClip" xml:space="preserve"><value>Add clip</value></data>
+  <data name="Loc.RMWave.Track.AddRow" xml:space="preserve"><value>Add row</value></data>
+  <data name="Loc.RMWave.Track.RemoveRow" xml:space="preserve"><value>Remove row</value></data>
+  <data name="Loc.RMWave.Track.CaptureLoopEnd" xml:space="preserve"><value>Capture current position as loop end</value></data>
+  <data name="Loc.RMWave.Track.DeleteTrack" xml:space="preserve"><value>Delete track</value></data>
+  <data name="Loc.RMWave.Dialog.NewMarkerTitle" xml:space="preserve"><value>New Marker</value></data>
+  <data name="Loc.RMWave.Dialog.RenameMarkerTitle" xml:space="preserve"><value>Rename Marker</value></data>
+  <data name="Loc.RMWave.Marker.Rename" xml:space="preserve"><value>Rename</value></data>
+  <data name="Loc.RMWave.Marker.EditPosition" xml:space="preserve"><value>Edit Position...</value></data>
+  <data name="Loc.RMWave.Marker.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Loc.RMWave.Main.ClearRecentList" xml:space="preserve"><value>Clear List</value></data>
+  <data name="Loc.RMWave.VuMeter.View" xml:space="preserve"><value>View</value></data>
+  <data name="Loc.RMWave.VuMeter.Solid" xml:space="preserve"><value>Solid</value></data>
+  <data name="Loc.RMWave.VuMeter.Segmented" xml:space="preserve"><value>Segmented</value></data>
+  <data name="Loc.RMWave.VuMeter.Analog" xml:space="preserve"><value>Analog (needle)</value></data>
+  <data name="Loc.RMWave.Theme.Dark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Loc.RMWave.Theme.Light" xml:space="preserve"><value>Light</value></data>
+  <data name="Loc.RMWave.Theme.MidnightBlue" xml:space="preserve"><value>Midnight Blue</value></data>
+  <data name="Loc.RMWave.Theme.WarmStudio" xml:space="preserve"><value>Warm Studio</value></data>
+  <data name="Loc.RMWave.Main.NoRecentProjects" xml:space="preserve"><value>(no recent projects)</value></data>
+  <data name="Loc.RMWave.Status.AddClipError" xml:space="preserve"><value>Could not add {0}. BASS error: {1}</value></data>
+  <data name="Loc.RMWave.FileType.Regions" xml:space="preserve"><value>Region files</value></data>
+  <data name="Loc.RMWave.FileType.All" xml:space="preserve"><value>All files</value></data>
+  <data name="Loc.RMWave.FileType.Project" xml:space="preserve"><value>RMWave project</value></data>
+  <data name="Loc.RMWave.Device.FallbackName" xml:space="preserve"><value>Device {0}</value></data>
+  <data name="Loc.RMWave.Device.Default" xml:space="preserve"><value>default</value></data>
+  <data name="Loc.RMWave.FileType.Wav" xml:space="preserve"><value>WAV audio</value></data>
+  <data name="Loc.RMWave.FileType.Mp3" xml:space="preserve"><value>MP3 audio</value></data>
+  <data name="Loc.RMWave.FileType.Audio" xml:space="preserve"><value>Audio files</value></data>
+</root>

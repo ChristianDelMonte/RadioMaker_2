@@ -5,7 +5,7 @@
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         x:Class="RadioMaker.UI.Views.AboutWindow"
         x:DataType="vm:AboutWindowViewModel"
-        Title="Acerca de RadioMaker"
+        Title="{DynamicResource Loc.Window.About.Title}"
         Width="720" Height="640"
         MinWidth="600" MinHeight="480"
         WindowStartupLocation="CenterOwner"
@@ -70,7 +70,7 @@
                     SelectedIndex="0">
 
             <!-- ═════ TAB 1: ACERCA DE ═════ -->
-            <TabItem Header="Acerca de">
+            <TabItem Header="{DynamicResource Loc.Views.About.Title}">
                 <ScrollViewer Padding="4,10,4,10">
                     <StackPanel Spacing="14">
 
@@ -89,7 +89,7 @@
 
                         <!-- Info de compilacion -->
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Informacion de compilacion"
+                            <TextBlock Text="{DynamicResource Loc.Views.About.BuildInfo}"
                                        FontSize="13"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource FgPrimary}"
@@ -105,7 +105,7 @@
                                       RowSpacing="6">
 
                                     <TextBlock Grid.Row="0" Grid.Column="0"
-                                               Text="Version:"
+                                               Text="{DynamicResource Loc.Views.About.Version}"
                                                FontSize="11"
                                                Foreground="{DynamicResource FgSecondary}" />
                                     <TextBlock Grid.Row="0" Grid.Column="1"
@@ -115,7 +115,7 @@
                                                Foreground="{DynamicResource FgPrimary}" />
 
                                     <TextBlock Grid.Row="1" Grid.Column="0"
-                                               Text="Compilacion:"
+                                               Text="{DynamicResource Loc.Views.About.Build}"
                                                FontSize="11"
                                                Foreground="{DynamicResource FgSecondary}" />
                                     <TextBlock Grid.Row="1" Grid.Column="1"
@@ -125,7 +125,7 @@
                                                Foreground="{DynamicResource FgPrimary}" />
 
                                     <TextBlock Grid.Row="2" Grid.Column="0"
-                                               Text="Plataforma:"
+                                               Text="{DynamicResource Loc.Views.About.Platform}"
                                                FontSize="11"
                                                Foreground="{DynamicResource FgSecondary}" />
                                     <TextBlock Grid.Row="2" Grid.Column="1"
@@ -140,7 +140,7 @@
 
                         <!-- Links rapidos -->
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Enlaces de interes"
+                            <TextBlock Text="{DynamicResource Loc.Views.About.Links}"
                                        FontSize="13"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource FgPrimary}"
@@ -193,11 +193,11 @@
             </TabItem>
 
             <!-- ═════ TAB 2: LIBRERIAS ═════ -->
-            <TabItem Header="Librerías">
+            <TabItem Header="{DynamicResource Loc.Views.About.Libraries}">
                 <ScrollViewer Padding="4,10,4,10">
                     <StackPanel Spacing="16">
 
-                        <TextBlock Text="RadioMaker esta construido sobre las siguientes librerias open source y comerciales. Cada una tiene su propia licencia, cuyos terminos se respetan integramente."
+                        <TextBlock Text="{DynamicResource Loc.Views.About.LibraryNotice}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}"
                                    TextWrapping="Wrap"
@@ -310,7 +310,7 @@
                                 Padding="12,10"
                                 Margin="0,8,0,0">
                             <StackPanel Spacing="4">
-                                <TextBlock Text="Nota sobre BASS"
+                                <TextBlock Text="{DynamicResource Loc.Views.About.BassNoticeTitle}"
                                            FontSize="11"
                                            FontWeight="SemiBold"
                                            Foreground="{DynamicResource FgPrimary}" />
@@ -318,7 +318,7 @@
                                            Foreground="{DynamicResource FgSecondary}"
                                            TextWrapping="Wrap"
                                            LineHeight="15"
-                                           Text="La libreria nativa BASS de Un4seen es gratuita para uso personal y educativo. El uso comercial (venta del software, uso en una emisora con fines de lucro, etc.) requiere una licencia comercial de Un4seen Developments. Consultar https://www.un4seen.com para mas informacion." />
+                                           Text="{DynamicResource Loc.Views.About.BassNotice}" />
                             </StackPanel>
                         </Border>
 
@@ -348,12 +348,12 @@
                         Padding="10,5"
                         Margin="0,0,8,0"
                         FontSize="11"
-                        ToolTip.Tip="Copia la info de la app al portapapeles">
+                        ToolTip.Tip="{DynamicResource Loc.Views.About.CopyTooltip}">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <materialIcons:MaterialIcon Kind="ContentCopy"
                                                     Width="13" Height="13"
                                                     Foreground="{DynamicResource FgPrimary}" />
-                        <TextBlock Text="Copiar info"
+                        <TextBlock Text="{DynamicResource Loc.Views.About.CopyInfo}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgPrimary}" />
                     </StackPanel>
@@ -365,7 +365,7 @@
                         Padding="16,5"
                         MinWidth="100"
                         FontSize="11"
-                        Content="Cerrar" />
+                        Content="{DynamicResource Loc.Views.About.Close}" />
             </Grid>
         </Border>
     </Grid>

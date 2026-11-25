@@ -5,7 +5,7 @@
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         x:Class="RadioMaker.UI.Views.CartButtonEditorWindow"
         x:DataType="vm:CartButtonEditorViewModel"
-        Title="Editar boton"
+        Title="{DynamicResource Loc.Window.CartButtonEditor.Title}"
         Width="560" Height="680"
         MinWidth="500" MinHeight="600"
         WindowStartupLocation="CenterOwner"
@@ -37,25 +37,25 @@
 
                     <!-- Archivo -->
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Archivo de audio"
+                        <TextBlock Text="{DynamicResource Loc.Views.CartEditor.AudioFile}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <Grid ColumnDefinitions="*,Auto,Auto">
                             <TextBox Grid.Column="0"
                                      Text="{Binding FilePath}"
                                      IsReadOnly="True"
-                                     PlaceholderText="(sin archivo)" />
+                                     PlaceholderText="{DynamicResource Loc.Views.CartEditor.NoFile}" />
                             <Button Grid.Column="1"
                                     x:Name="BrowseButton"
                                     Click="OnBrowseClick"
                                     Margin="8,0,0,0"
                                     Padding="8,4"
-                                    ToolTip.Tip="Elegir archivo de audio">
+                                    ToolTip.Tip="{DynamicResource Loc.Views.CartEditor.ChooseAudio}">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <materialIcons:MaterialIcon Kind="FolderOpen"
                                                                 Width="15" Height="15"
                                                                 Foreground="{DynamicResource FgPrimary}" />
-                                    <TextBlock Text="Examinar..."
+                                    <TextBlock Text="{DynamicResource Loc.Views.CartEditor.Browse}"
                                                FontSize="11"
                                                Foreground="{DynamicResource FgPrimary}" />
                                 </StackPanel>
@@ -67,7 +67,7 @@
                                     Padding="6,4"
                                     Background="Transparent"
                                     BorderThickness="0"
-                                    ToolTip.Tip="Quitar archivo">
+                                    ToolTip.Tip="{DynamicResource Loc.Views.CartEditor.RemoveFile}">
                                 <materialIcons:MaterialIcon Kind="Close"
                                                             Width="15" Height="15"
                                                             Foreground="{DynamicResource Error}" />
@@ -83,16 +83,16 @@
 
                     <!-- Etiqueta -->
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Etiqueta (texto del boton)"
+                        <TextBlock Text="{DynamicResource Loc.Views.CartEditor.ButtonLabel}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBox Text="{Binding Label}"
-                                 PlaceholderText="(usa el nombre del archivo)" />
+                                 PlaceholderText="{DynamicResource Loc.Views.CartEditor.FileNameHint}" />
                     </StackPanel>
 
                     <!-- Color -->
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Color de fondo"
+                        <TextBlock Text="{DynamicResource Loc.Views.CartEditor.BackgroundColor}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}" />
 
@@ -111,7 +111,7 @@
                                      VerticalAlignment="Center" />
                         </Grid>
 
-                        <TextBlock Text="Colores rapidos"
+                        <TextBlock Text="{DynamicResource Loc.Views.CartEditor.QuickColors}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgMuted}"
                                    Margin="0,6,0,0" />
@@ -140,16 +140,16 @@
 
                     <!-- Hotkey -->
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Atajo de teclado (opcional)"
+                        <TextBlock Text="{DynamicResource Loc.Views.CartEditor.Shortcut}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBox Text="{Binding Hotkey}"
-                                 PlaceholderText="ej: 1, F1, Numpad1 (proximamente)" />
+                                 PlaceholderText="{DynamicResource Loc.Views.CartEditor.ShortcutHint}" />
                     </StackPanel>
 
                     <!-- Volumen -->
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Volumen relativo"
+                        <TextBlock Text="{DynamicResource Loc.Views.CartEditor.RelativeVolume}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <Grid ColumnDefinitions="*,Auto">
@@ -171,11 +171,11 @@
 
                     <!-- Flags -->
                     <StackPanel Spacing="6">
-                        <CheckBox Content="Boton habilitado"
+                        <CheckBox Content="{DynamicResource Loc.Views.CartEditor.Enabled}"
                                   IsChecked="{Binding IsEnabled}"
                                   FontSize="12"
                                   Foreground="{DynamicResource FgPrimary}" />
-                        <CheckBox Content="Reproducir en loop (proximamente)"
+                        <CheckBox Content="{DynamicResource Loc.Views.CartEditor.Loop}"
                                   IsChecked="{Binding Loop}"
                                   IsEnabled="False"
                                   FontSize="12"
@@ -184,14 +184,14 @@
 
                     <!-- Notas -->
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Notas"
+                        <TextBlock Text="{DynamicResource Loc.Views.CartEditor.Notes}"
                                    FontSize="11"
                                    Foreground="{DynamicResource FgSecondary}" />
                         <TextBox Text="{Binding Notes}"
                                  AcceptsReturn="True"
                                  Height="80"
                                  TextWrapping="Wrap"
-                                 PlaceholderText="(opcional)" />
+                                 PlaceholderText="{DynamicResource Loc.Views.CartEditor.Optional}" />
                     </StackPanel>
 
                 </StackPanel>
@@ -203,11 +203,11 @@
                         HorizontalAlignment="Right"
                         Spacing="8"
                         Margin="0,14,0,0">
-                <Button Content="Cancelar"
+                <Button Content="{DynamicResource Loc.Views.CartEditor.Cancel}"
                         x:Name="CancelButton"
                         Click="OnCancelClick"
                         MinWidth="100" />
-                <Button Content="Guardar"
+                <Button Content="{DynamicResource Loc.Views.CartEditor.Save}"
                         x:Name="SaveButton"
                         Click="OnSaveClick"
                         MinWidth="100"

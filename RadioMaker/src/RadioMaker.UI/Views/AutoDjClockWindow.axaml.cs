@@ -3,13 +3,18 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Controls;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 
 namespace RadioMaker.UI.Views;
 
 public partial class AutoDjClockWindow : CustomChromeWindow
 {
-    public AutoDjClockWindow() => InitializeComponent();
+    public AutoDjClockWindow()
+    {
+        InitializeComponent();
+        Closed += (_, _) => ViewModel?.Dispose();
+    }
 
     private AutoDjClockWindowViewModel? ViewModel => DataContext as AutoDjClockWindowViewModel;
 
@@ -17,7 +22,7 @@ public partial class AutoDjClockWindow : CustomChromeWindow
     {
         var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            Title = "Seleccionar carpeta de música",
+            Title = LocalizationService.GetString("Loc.AutoDJ.Dialog.SelectMusicFolder"),
             AllowMultiple = false
         });
         if (folders.Count == 0) return;
@@ -29,11 +34,11 @@ public partial class AutoDjClockWindow : CustomChromeWindow
     {
         var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir reloj AutoDJ",
+            Title = LocalizationService.GetString("Loc.AutoDJ.Dialog.OpenClock"),
             AllowMultiple = false,
             FileTypeFilter = new[]
             {
-                new FilePickerFileType("Reloj AutoDJ") { Patterns = new[] { "*" + AutoDjClockStore.FileExtension } }
+                new FilePickerFileType(LocalizationService.GetString("Loc.AutoDJ.Dialog.ClockFileType")) { Patterns = new[] { "*" + AutoDjClockStore.FileExtension } }
             }
         });
         if (files.Count == 0) return;
@@ -62,12 +67,12 @@ public partial class AutoDjClockWindow : CustomChromeWindow
     {
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar reloj AutoDJ",
-            SuggestedFileName = "Reloj AutoDJ" + AutoDjClockStore.FileExtension,
+            Title = LocalizationService.GetString("Loc.AutoDJ.Dialog.SaveClock"),
+            SuggestedFileName = LocalizationService.GetString("Loc.AutoDJ.Dialog.ClockFileName") + AutoDjClockStore.FileExtension,
             DefaultExtension = AutoDjClockStore.FileExtension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Reloj AutoDJ") { Patterns = new[] { "*" + AutoDjClockStore.FileExtension } }
+                new FilePickerFileType(LocalizationService.GetString("Loc.AutoDJ.Dialog.ClockFileType")) { Patterns = new[] { "*" + AutoDjClockStore.FileExtension } }
             }
         });
         var path = file?.TryGetLocalPath();
@@ -80,12 +85,12 @@ public partial class AutoDjClockWindow : CustomChromeWindow
         if (vm is null || !vm.HasPreview) return;
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar playlist generada",
+            Title = LocalizationService.GetString("Loc.AutoDJ.Dialog.SaveGeneratedPlaylist"),
             SuggestedFileName = "Playlist AutoDJ.rmf",
             DefaultExtension = PlaylistStore.FileExtension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Playlist RadioMaker") { Patterns = new[] { "*" + PlaylistStore.FileExtension } }
+                new FilePickerFileType(LocalizationService.GetString("Loc.AutoDJ.Dialog.PlaylistFileType")) { Patterns = new[] { "*" + PlaylistStore.FileExtension } }
             }
         });
         var path = file?.TryGetLocalPath();

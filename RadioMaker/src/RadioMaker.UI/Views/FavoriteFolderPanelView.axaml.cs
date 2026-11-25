@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.ViewModels;
 using RadioMaker.UI.Views;
 using RadioMaker.UI.Services;
@@ -93,12 +94,12 @@ public partial class FavoriteFolderPanelView : UserControl
         if (!RMWaveLauncher.OpenFile(fileVm.FullPath, out var error))
         {
             if (vm is not null)
-                vm.StatusMessage = error ?? "No se pudo abrir en RMWave.";
+                vm.StatusMessage = error ?? LocalizationService.GetString("Loc.TandaEditor.Status.RmWaveError");
         }
         else
         {
             if (vm is not null)
-                vm.StatusMessage = $"Abriendo {System.IO.Path.GetFileName(fileVm.FullPath)} en RMWave...";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.FavoriteFolder.Status.OpeningRMWave"), System.IO.Path.GetFileName(fileVm.FullPath));
         }
     }
 

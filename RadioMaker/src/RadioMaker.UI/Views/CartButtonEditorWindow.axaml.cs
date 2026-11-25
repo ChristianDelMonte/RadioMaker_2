@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Controls;
 using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
@@ -60,7 +61,7 @@ public partial class CartButtonEditorWindow : CustomChromeWindow
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Seleccionar archivo para el boton",
+            Title = LocalizationService.GetString("Loc.Dialog.SelectCartAudio.Title"),
             AllowMultiple = false,
             FileTypeFilter = new[] { _audioFileType, FilePickerFileTypes.All }
         });

@@ -1,6 +1,8 @@
 
 # RadioMaker — Guía de ejecución en macOS
 
+[English version](README-MAC.en.md)
+
 Versión: 2.01 · Plataformas: macOS 11 (Big Sur) o superior
 Arquitecturas: Apple Silicon (arm64) · Intel (x64)
 

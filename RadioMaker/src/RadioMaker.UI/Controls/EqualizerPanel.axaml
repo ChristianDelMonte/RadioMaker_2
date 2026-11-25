@@ -17,7 +17,7 @@
                   Margin="0,0,0,6">
 
                 <TextBlock Grid.Column="0"
-                           Text="Ecualizador"
+                           Text="{DynamicResource Loc.Controls.Equalizer.Title}"
                            FontWeight="SemiBold"
                            FontSize="12"
                            Foreground="{DynamicResource FgPrimary}"
@@ -25,7 +25,7 @@
                            Margin="0,0,10,0" />
 
                 <CheckBox Grid.Column="1"
-                          Content="Activar"
+                          Content="{DynamicResource Loc.Controls.Equalizer.Enable}"
                           IsChecked="{Binding IsEnabled}"
                           FontSize="11"
                           Padding="4,0"
@@ -43,7 +43,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Margin="4,0,0,0"
-                        ToolTip.Tip="Resetear todas las bandas a 0 dB">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Equalizer.Reset}">
                     <materialIcons:MaterialIcon Kind="Refresh"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource FgPrimary}" />
@@ -57,7 +57,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Margin="2,0,0,0"
-                        ToolTip.Tip="Guardar preset actual">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Equalizer.SavePreset}">
                     <materialIcons:MaterialIcon Kind="ContentSave"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource AccentText}" />
@@ -70,7 +70,7 @@
                   Margin="0,0,0,6">
 
                 <TextBlock Grid.Column="0"
-                           Text="Nuevo:"
+                           Text="{DynamicResource Loc.Controls.Equalizer.NewPreset}"
                            VerticalAlignment="Center"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
@@ -78,7 +78,7 @@
 
                 <TextBox Grid.Column="1"
                          Text="{Binding NewPresetName}"
-                         PlaceholderText="Nombre del preset..."
+                         PlaceholderText="{DynamicResource Loc.Controls.Equalizer.PresetName}"
                          FontSize="11"
                          Padding="4,2" />
 
@@ -89,7 +89,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Margin="4,0,0,0"
-                        ToolTip.Tip="Eliminar preset personalizado seleccionado">
+                        ToolTip.Tip="{DynamicResource Loc.Controls.Equalizer.DeletePreset}">
                     <materialIcons:MaterialIcon Kind="Delete"
                                                 Width="15" Height="15"
                                                 Foreground="{DynamicResource Error}" />

@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -23,7 +24,7 @@ public sealed partial class PlaylistTrackEditorViewModel : ViewModelBase
     /// -------------Pista en edicion (clon). El editor bindea contra esto.</summary>
     public PlaylistTrackViewModel WorkingTrack { get; }
 
-    public string Header => "Editar pista de playlist";
+    public string Header => LocalizationService.GetString("Loc.PlaylistTrackEditor.Header");
 
     // ───── Constructor ───────────────────────────────────────────────────
 

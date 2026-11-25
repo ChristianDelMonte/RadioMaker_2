@@ -8,6 +8,7 @@ using RadioMaker.Core.Abstractions;
 using RadioMaker.Core.Logging;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Configuration;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.ViewModels;
@@ -81,7 +82,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
     // ───── Estado ────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _isLoading;
-    [ObservableProperty] private string _statusMessage = "Navega a una carpeta para ver sus archivos.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.FileBrowser.Status.Starting");
     [ObservableProperty] private int _fileCount;
     [ObservableProperty] private int _totalCount;
 
@@ -100,10 +101,10 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
     public bool HasNoSelection => !HasSelection;
 
     public string FileCountText => TotalCount == 0
-        ? "Sin archivos"
+        ? LocalizationService.GetString("Loc.FileBrowser.Status.NoFiles")
         : (FileCount == TotalCount
-            ? $"{TotalCount} archivo(s)"
-            : $"{FileCount} de {TotalCount} archivo(s)");
+            ? string.Format(LocalizationService.GetString("Loc.FileBrowser.Count.All"), TotalCount)
+            : string.Format(LocalizationService.GetString("Loc.FileBrowser.Count.Filtered"), FileCount, TotalCount));
 
     public bool CanGoUp => !string.IsNullOrEmpty(CurrentPath) &&
                            Path.GetDirectoryName(CurrentPath) is not null;
@@ -161,6 +162,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
         if (FavoriteFolders is not null)
             FavoriteFolders.Changed += OnFavoritesChanged;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
 
         var persisted = FileSystemBrowserStateStore.Load();
         var start = persisted.LastFolder;
@@ -189,14 +191,14 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
         AvailableFilters.Clear();
 
         // Opcion "Todas".
-        AvailableFilters.Add(new FileExtensionFilter("Todas las extensiones", null));
+        AvailableFilters.Add(new FileExtensionFilter(LocalizationService.GetString("Loc.FileBrowser.Filter.All"), null));
 
         // Proyectos nativos primero (mas relevantes para radio).
-        AvailableFilters.Add(new FileExtensionFilter(".rmf  — Playlist", ".rmf"));
-        AvailableFilters.Add(new FileExtensionFilter(".rme  — Encadenadores", ".rme"));
-        AvailableFilters.Add(new FileExtensionFilter(".tnd  — Tanda", ".tnd"));
-        AvailableFilters.Add(new FileExtensionFilter(".rms  — Programados", ".rms"));
-        AvailableFilters.Add(new FileExtensionFilter(".rcb  — Botonera", ".rcb"));
+        AvailableFilters.Add(new FileExtensionFilter(LocalizationService.GetString("Loc.FileBrowser.Filter.Playlists"), ".rmf"));
+        AvailableFilters.Add(new FileExtensionFilter(LocalizationService.GetString("Loc.FileBrowser.Filter.Chainers"), ".rme"));
+        AvailableFilters.Add(new FileExtensionFilter(LocalizationService.GetString("Loc.FileBrowser.Filter.Sequences"), ".tnd"));
+        AvailableFilters.Add(new FileExtensionFilter(LocalizationService.GetString("Loc.FileBrowser.Filter.Scheduled"), ".rms"));
+        AvailableFilters.Add(new FileExtensionFilter(LocalizationService.GetString("Loc.FileBrowser.Filter.Carts"), ".rcb"));
 
         // Extensiones de audio, en orden alfabetico.
         var audioExts = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -225,6 +227,23 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
         // Seleccion por defecto: "Todas".
         SelectedFilter = AvailableFilters[0];
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        var extension = SelectedFilter?.Extension;
+        _suppressFilterNavigation = true;
+        try
+        {
+            BuildAvailableFilters();
+            if (extension is not null)
+                SelectedFilter = AvailableFilters.FirstOrDefault(filter => filter.Extension == extension) ?? SelectedFilter;
+        }
+        finally
+        {
+            _suppressFilterNavigation = false;
+        }
+        OnPropertyChanged(nameof(FileCountText));
     }
 
     // ───── Helper: extensiones soportadas (filtro-aware) ────────────────
@@ -295,7 +314,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
         _ = ExpandAndSelectNodeAsync(folderPath);
 
         IsLoading = true;
-        StatusMessage = $"Leyendo '{Path.GetFileName(folderPath)}'...";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.ReadingFolder"), Path.GetFileName(folderPath));
 
         Files.Clear();
         FileCount = 0;
@@ -329,19 +348,19 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
             if (FileCount == 0)
             {
                 StatusMessage = (SelectedFilter is not null && !SelectedFilter.IsAll)
-                    ? $"Sin archivos {SelectedFilter.Extension} en esta carpeta."
-                    : "Sin archivos compatibles en esta carpeta.";
+                    ? string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.NoFilesWithExtension"), SelectedFilter.Extension)
+                    : LocalizationService.GetString("Loc.FileBrowser.Status.NoCompatibleFiles");
             }
             else
             {
-                StatusMessage = $"Cargando info de {FileCount} archivo(s)...";
+                StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.LoadingInfo"), FileCount);
             }
 
             _ = LoadTagsAsync(Files.ToList(), cts.Token);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error leyendo carpeta: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.ReadError"), ex.Message);
         }
         finally
         {
@@ -399,13 +418,13 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
                 loaded++;
 
                 if (loaded % 5 == 0)
-                    StatusMessage = $"Cargando info... {loaded}/{files.Count}";
+                    StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.LoadingProgress"), loaded, files.Count);
             }
             catch { }
         }
 
         if (!token.IsCancellationRequested)
-            StatusMessage = $"Listo. {files.Count} archivo(s) leidos.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.Ready"), files.Count);
     }
 
     // ───── Comandos ──────────────────────────────────────────────────────
@@ -456,7 +475,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
         if (!SelectedFile.IsAudio)
         {
-            StatusMessage = $"'{SelectedFile.FileName}' es un archivo de proyecto. Arrastralo a la pestaña que corresponda.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.ProjectHint"), SelectedFile.FileName);
             return;
         }
 
@@ -477,7 +496,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
         if (BusSelector.SelectedBus is not IAudioBus bus)
         {
-            StatusMessage = "No hay bus de salida seleccionado.";
+            StatusMessage = LocalizationService.GetString("Loc.FileBrowser.Status.NoOutputBus");
             AppLogger.Warning("FILE MANAGER PLAY", "No se pudo reproducir: no hay bus de salida seleccionado.");
             return;
         }
@@ -499,11 +518,11 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
             IsPlaying = true;
             NowPlayingText = Path.GetFileName(filePath);
-            StatusMessage = $"Reproduciendo: {NowPlayingText}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.Playing"), NowPlayingText);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al reproducir: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.FileBrowser.Status.PlayError"), ex.Message);
             AppLogger.Error("FILE MANAGER PLAY", $"Error al reproducir '{filePath}'", ex);
         }
     }
@@ -516,7 +535,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
         StopCurrentChannel();
         IsPlaying = false;
         NowPlayingText = string.Empty;
-        StatusMessage = "Detenido.";
+        StatusMessage = LocalizationService.GetString("Loc.FileBrowser.Status.Stopped");
     }
 
     private void StopCurrentChannel()
@@ -705,6 +724,11 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
 
     public void Dispose()
     {
+        LocalizationService.LanguageChanged -= OnLanguageChanged;
+        if (FavoriteFolders is not null)
+            FavoriteFolders.Changed -= OnFavoritesChanged;
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
         StopCurrentChannel();
     }
 }

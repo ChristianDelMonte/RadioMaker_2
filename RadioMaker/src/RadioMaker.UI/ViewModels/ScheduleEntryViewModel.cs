@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -93,18 +94,18 @@ public sealed partial class ScheduleEntryViewModel : ViewModelBase
     private string BuildShortDescription()
     {
         var dayList = new List<string>();
-        if (Monday) dayList.Add("Lun");
-        if (Tuesday) dayList.Add("Mar");
-        if (Wednesday) dayList.Add("Mie");
-        if (Thursday) dayList.Add("Jue");
-        if (Friday) dayList.Add("Vie");
-        if (Saturday) dayList.Add("Sab");
-        if (Sunday) dayList.Add("Dom");
+        if (Monday) dayList.Add(LocalizationService.GetString("Loc.Weekday.MonShort"));
+        if (Tuesday) dayList.Add(LocalizationService.GetString("Loc.Weekday.TueShort"));
+        if (Wednesday) dayList.Add(LocalizationService.GetString("Loc.Weekday.WedShort"));
+        if (Thursday) dayList.Add(LocalizationService.GetString("Loc.Weekday.ThuShort"));
+        if (Friday) dayList.Add(LocalizationService.GetString("Loc.Weekday.FriShort"));
+        if (Saturday) dayList.Add(LocalizationService.GetString("Loc.Weekday.SatShort"));
+        if (Sunday) dayList.Add(LocalizationService.GetString("Loc.Weekday.SunShort"));
 
         string days = dayList.Count switch
         {
             0 => "—",
-            7 => "Todos los dias",
+            7 => LocalizationService.GetString("Loc.Schedule.EveryDay"),
             _ => string.Join("/", dayList)
         };
 

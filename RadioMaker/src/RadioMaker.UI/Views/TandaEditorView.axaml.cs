@@ -5,6 +5,7 @@ using Avalonia.Platform.Storage;
 using RadioMaker.Core.Scheduling;
 using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.Views;
 
@@ -37,14 +38,14 @@ public partial class TandaEditorView : UserControl
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var filter = new FilePickerFileType("Tanda")
+        var filter = new FilePickerFileType(LocalizationService.GetString("Loc.TandaEditor.Dialog.FileType"))
         {
             Patterns = new[] { "*" + TandaStore.FileExtension }
         };
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Abrir tanda (.tnd)",
+            Title = LocalizationService.GetString("Loc.TandaEditor.Dialog.Open"),
             AllowMultiple = false,
             FileTypeFilter = new[] { filter, FilePickerFileTypes.All }
         });
@@ -87,12 +88,12 @@ public partial class TandaEditorView : UserControl
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Guardar tanda (.tnd)",
+            Title = LocalizationService.GetString("Loc.TandaEditor.Dialog.Save"),
             SuggestedFileName = suggestedName,
             DefaultExtension = TandaStore.FileExtension.TrimStart('.'),
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Tanda")
+                new FilePickerFileType(LocalizationService.GetString("Loc.TandaEditor.Dialog.FileType"))
                 {
                     Patterns = new[] { "*" + TandaStore.FileExtension }
                 }
@@ -123,7 +124,7 @@ public partial class TandaEditorView : UserControl
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Seleccionar archivo de audio",
+            Title = LocalizationService.GetString("Loc.TandaEditor.Dialog.SelectAudio"),
             AllowMultiple = false,
             FileTypeFilter = new[] { audioTypes, FilePickerFileTypes.All }
         });
@@ -149,12 +150,12 @@ public partial class TandaEditorView : UserControl
         if (!RMWaveLauncher.OpenFile(trackVm.FilePath, out var error))
         {
             if (vm is not null)
-                vm.StatusMessage = error ?? "No se pudo abrir en RMWave.";
+                vm.StatusMessage = error ?? LocalizationService.GetString("Loc.TandaEditor.Status.RmWaveError");
         }
         else
         {
             if (vm is not null)
-                vm.StatusMessage = $"Abriendo {System.IO.Path.GetFileName(trackVm.FilePath)} en RMWave...";
+                vm.StatusMessage = string.Format(LocalizationService.GetString("Loc.TandaEditor.Status.OpeningRmWave"), System.IO.Path.GetFileName(trackVm.FilePath));
         }
     }
 

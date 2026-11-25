@@ -1,5 +1,6 @@
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 using System;
 
@@ -14,13 +15,13 @@ namespace RadioMaker.UI.ViewModels;
 public sealed partial class SplashWindowViewModel : ViewModelBase
 {
     [ObservableProperty] private double _progress;
-    [ObservableProperty] private string _statusText = "Iniciando...";
+    [ObservableProperty] private string _statusText = LocalizationService.GetString("Loc.Splash.Starting");
 
     /// -------------Nombre de la app que se muestra en el splash.</summary>
     public string AppName => "RadioMaker";
 
     /// -------------Eslogan que se muestra debajo del nombre.</summary>
-    public string AppSlogan => "Forever FREE Radio Automation Software!";
+    public string AppSlogan => LocalizationService.GetString("Loc.App.Slogan");
 
     /// -------------Version de la app auto-generada en cada build.</summary>
     public string VersionText => Services.AppVersionInfo.VersionText;

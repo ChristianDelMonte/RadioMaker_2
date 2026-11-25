@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:RadioMaker.UI.Controls"
         x:Class="RadioMaker.UI.Views.LogExportDialog"
         x:DataType="vm:LogExportDialogViewModel"
-        Title="Exportar log"
+        Title="{DynamicResource Loc.Window.LogExport.Title}"
         Width="520" Height="420"
         MinWidth="440" MinHeight="360"
         WindowStartupLocation="CenterOwner"
@@ -24,7 +24,7 @@
 
             <!-- Encabezado (subtitulo) -->
             <TextBlock Grid.Row="0"
-                       Text="Elegi el formato y el contenido a exportar."
+                       Text="{DynamicResource Loc.Views.LogExport.Description}"
                        FontSize="11"
                        Foreground="{DynamicResource FgSecondary}"
                        Margin="0,0,0,16" />
@@ -34,13 +34,13 @@
 
                 <!-- Nombre del archivo -->
                 <StackPanel Spacing="6">
-                    <TextBlock Text="Nombre del archivo"
+                    <TextBlock Text="{DynamicResource Loc.Views.LogExport.FileName}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}" />
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBox Grid.Column="0"
                                  Text="{Binding FileName}"
-                                 PlaceholderText="nombre-sin-extension" />
+                                 PlaceholderText="{DynamicResource Loc.Views.LogExport.FileNameHint}" />
                         <TextBlock Grid.Column="1"
                                    Text="{Binding Extension, StringFormat='.{0}'}"
                                    FontFamily="Consolas"
@@ -53,7 +53,7 @@
 
                 <!-- Formato -->
                 <StackPanel Spacing="6">
-                    <TextBlock Text="Formato de salida"
+                    <TextBlock Text="{DynamicResource Loc.Views.LogExport.Format}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}" />
                     <ComboBox ItemsSource="{Binding AvailableFormats}"
@@ -69,7 +69,7 @@
 
                 <!-- Alcance -->
                 <StackPanel Spacing="6">
-                    <TextBlock Text="Contenido a exportar"
+                    <TextBlock Text="{DynamicResource Loc.Views.LogExport.Content}"
                                FontSize="11"
                                Foreground="{DynamicResource FgSecondary}" />
 
@@ -99,11 +99,11 @@
                         HorizontalAlignment="Right"
                         Spacing="8"
                         Margin="0,20,0,0">
-                <Button Content="Cancelar"
+                <Button Content="{DynamicResource Loc.Views.LogExport.Cancel}"
                         x:Name="CancelButton"
                         Click="OnCancelClick"
                         MinWidth="100" />
-                <Button Content="Exportar..."
+                <Button Content="{DynamicResource Loc.Views.LogExport.Export}"
                         x:Name="ExportButton"
                         Click="OnExportClick"
                         MinWidth="120" />

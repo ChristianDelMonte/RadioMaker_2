@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -25,7 +26,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
     [ObservableProperty] private string _notes;
     [ObservableProperty] private string? _loadedFilePath;
     [ObservableProperty] private bool _isDirty;
-    [ObservableProperty] private string _statusMessage = "Tanda lista. Agrega pistas o abri un archivo .tnd.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.TandaEditor.Status.Initial");
 
     public ObservableCollection<TandaTrackViewModel> Tracks { get; } = new();
 
@@ -44,12 +45,12 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
     public bool HasNoTracks => !HasTracks;
 
     public string SummaryText =>
-        $"{TrackCount} pista(s) — {EnabledCount} activa(s), {TotalDelaySeconds:F1} s de esperas";
+        string.Format(LocalizationService.GetString("Loc.TandaEditor.Summary"), TrackCount, EnabledCount, TotalDelaySeconds);
 
     // ───── Constructor ───────────────────────────────────────────────────
 
     public TandaEditorViewModel()
-        : this(new Tanda { Name = "Nueva Tanda" })
+        : this(new Tanda { Name = LocalizationService.GetString("Loc.TandaEditor.NewTanda") })
     {
     }
 
@@ -91,7 +92,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
         _tanda.Tracks.Add(track);
 
         IsDirty = true;
-        StatusMessage = "Pista agregada. Configura el archivo.";
+        StatusMessage = LocalizationService.GetString("Loc.TandaEditor.Status.TrackAdded");
         RefreshSummary();
     }
 
@@ -106,7 +107,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
         _tanda.Tracks.Remove(trackVm.Source);
 
         IsDirty = true;
-        StatusMessage = "Pista eliminada.";
+        StatusMessage = LocalizationService.GetString("Loc.TandaEditor.Status.TrackRemoved");
         RefreshSummary();
     }
 
@@ -162,7 +163,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
         var loaded = TandaStore.Load(filePath);
         if (loaded is null)
         {
-            StatusMessage = $"No se pudo cargar '{Path.GetFileName(filePath)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.TandaEditor.Status.LoadFailed"), Path.GetFileName(filePath));
             return false;
         }
 
@@ -175,7 +176,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
         LoadedFilePath = filePath;
         IsDirty = false;
 
-        StatusMessage = $"Cargada '{Path.GetFileName(filePath)}' con {Tracks.Count} pista(s).";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.TandaEditor.Status.Loaded"), Path.GetFileName(filePath), Tracks.Count);
         TitleChanged?.Invoke(this, TandaName);
         return true;
     }
@@ -185,7 +186,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
         var target = filePath ?? _currentFilePath;
         if (string.IsNullOrWhiteSpace(target))
         {
-            StatusMessage = "No hay ruta de guardado. Usa 'Guardar como...'.";
+            StatusMessage = LocalizationService.GetString("Loc.TandaEditor.Status.NoSavePath");
             return false;
         }
 
@@ -204,20 +205,20 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
             LoadedFilePath = target;
             IsDirty = false;
 
-            StatusMessage = $"Guardada en '{Path.GetFileName(target)}'.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.TandaEditor.Status.Saved"), Path.GetFileName(target));
             OnPropertyChanged(nameof(TitleWithDirty));
             return true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al guardar: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.TandaEditor.Status.SaveError"), ex.Message);
             return false;
         }
     }
 
     public void NewTanda()
     {
-        _tanda = new Tanda { Name = "Nueva Tanda" };
+        _tanda = new Tanda { Name = LocalizationService.GetString("Loc.TandaEditor.NewTanda") };
         TandaName = _tanda.Name;
         Notes = string.Empty;
         RebuildTracksFromModel();
@@ -226,7 +227,7 @@ public sealed partial class TandaEditorViewModel : ViewModelBase
         LoadedFilePath = null;
         IsDirty = false;
 
-        StatusMessage = "Tanda nueva creada.";
+        StatusMessage = LocalizationService.GetString("Loc.TandaEditor.Status.NewTanda");
         TitleChanged?.Invoke(this, TandaName);
     }
 

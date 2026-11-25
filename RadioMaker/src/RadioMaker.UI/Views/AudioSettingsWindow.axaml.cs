@@ -35,6 +35,7 @@ public partial class AudioSettingsWindow : CustomChromeWindow
                 BusConfigurationStore.Save(configs);
             }
             catch { /* best effort */ }
+            vm.Dispose();
         }
 
         base.OnClosing(e);

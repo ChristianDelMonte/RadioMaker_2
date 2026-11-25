@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
@@ -32,7 +33,7 @@ public sealed partial class AddFavoriteDialogViewModel : ViewModelBase
 
     private static string ComputeDefaultName(string? folderPath)
     {
-        if (string.IsNullOrWhiteSpace(folderPath)) return "(sin nombre)";
+        if (string.IsNullOrWhiteSpace(folderPath)) return LocalizationService.GetString("Loc.Views.FavoriteDialog.EmptyName");
 
         var trimmed = folderPath!.TrimEnd(
             System.IO.Path.DirectorySeparatorChar,

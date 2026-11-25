@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Loc.RMVoice.Main.ProfileTitle" xml:space="preserve"><value>Voice profile</value></data>
+  <data name="Loc.RMVoice.Main.ThemeTooltip" xml:space="preserve"><value>Switch between light and dark themes</value></data>
+  <data name="Loc.RMVoice.Main.Add" xml:space="preserve"><value>Add</value></data>
+  <data name="Loc.RMVoice.Main.Duplicate" xml:space="preserve"><value>Duplicate</value></data>
+  <data name="Loc.RMVoice.Main.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Loc.RMVoice.Main.Playback" xml:space="preserve"><value>Playback</value></data>
+  <data name="Loc.RMVoice.Main.ProfileFiles" xml:space="preserve"><value>Profile files</value></data>
+  <data name="Loc.RMVoice.Main.HourAudio" xml:space="preserve"><value>HOURS audio</value></data>
+  <data name="Loc.RMVoice.Main.HourTable" xml:space="preserve"><value>HOURS table</value></data>
+  <data name="Loc.RMVoice.Main.MinuteAudio" xml:space="preserve"><value>MINUTES audio</value></data>
+  <data name="Loc.RMVoice.Main.MinuteTable" xml:space="preserve"><value>MINUTES table</value></data>
+  <data name="Loc.RMVoice.Main.TemperatureAudio" xml:space="preserve"><value>TEMPERATURE audio</value></data>
+  <data name="Loc.RMVoice.Main.TemperatureTable" xml:space="preserve"><value>TEMPERATURE table</value></data>
+  <data name="Loc.RMVoice.Main.HumidityAudio" xml:space="preserve"><value>HUMIDITY audio</value></data>
+  <data name="Loc.RMVoice.Main.HumidityTable" xml:space="preserve"><value>HUMIDITY table</value></data>
+  <data name="Loc.RMVoice.Main.ReloadProfile" xml:space="preserve"><value>Reload profile</value></data>
+  <data name="Loc.RMVoice.Main.SaveProfiles" xml:space="preserve"><value>Save profiles</value></data>
+  <data name="Loc.RMVoice.Main.ManualTest" xml:space="preserve"><value>Manual test</value></data>
+  <data name="Loc.RMVoice.Main.Hour" xml:space="preserve"><value>Hour</value></data>
+  <data name="Loc.RMVoice.Main.Minute" xml:space="preserve"><value>Minute</value></data>
+  <data name="Loc.RMVoice.Main.Temperature" xml:space="preserve"><value>Temperature (°C)</value></data>
+  <data name="Loc.RMVoice.Main.Humidity" xml:space="preserve"><value>Humidity (%)</value></data>
+  <data name="Loc.RMVoice.Main.Mode" xml:space="preserve"><value>Mode:</value></data>
+  <data name="Loc.RMVoice.Main.PlaySelection" xml:space="preserve"><value>▶  Play selection</value></data>
+  <data name="Loc.RMVoice.Main.Stop" xml:space="preserve"><value>■  Stop</value></data>
+  <data name="Loc.RMVoice.Main.QuickAnnouncement" xml:space="preserve"><value>Quick announcement</value></data>
+  <data name="Loc.RMVoice.Main.CurrentTime" xml:space="preserve"><value>🔊  Current time</value></data>
+  <data name="Loc.RMVoice.Main.WeatherOnly" xml:space="preserve"><value>🌡  Weather only</value></data>
+  <data name="Loc.RMVoice.Main.TimeAndWeather" xml:space="preserve"><value>🔊🌡  Time + weather</value></data>
+  <data name="Loc.RMVoice.Main.EveryMinute" xml:space="preserve"><value>Announce automatically every minute</value></data>
+  <data name="Loc.RMVoice.Main.AutomaticMode" xml:space="preserve"><value>Automatic mode:</value></data>
+  <data name="Loc.RMVoice.Main.Volume" xml:space="preserve"><value>Volume</value></data>
+  <data name="Loc.RMVoice.Main.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Loc.RMVoice.Main.ModeHelp" xml:space="preserve"><value>Available modes: HourMinute (time only), ClimateOnly (temperature and humidity only), and HourMinuteAndClimate (all). Weather can be fetched automatically from Open-Meteo in the Weather (Open-Meteo) tab.</value></data>
+  <data name="Loc.RMVoice.Main.WeatherTab" xml:space="preserve"><value>Weather</value></data>
+  <data name="Loc.RMVoice.Main.SearchLocation" xml:space="preserve"><value>Search location</value></data>
+  <data name="Loc.RMVoice.Main.LocationHint" xml:space="preserve"><value>City, region, or country…</value></data>
+  <data name="Loc.RMVoice.Main.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Loc.RMVoice.Main.Searching" xml:space="preserve"><value>Searching…</value></data>
+  <data name="Loc.RMVoice.Main.UseLocation" xml:space="preserve"><value>Use this location</value></data>
+  <data name="Loc.RMVoice.Main.ActiveLocation" xml:space="preserve"><value>Active location</value></data>
+  <data name="Loc.RMVoice.Main.GetNow" xml:space="preserve"><value>🌦  Get now</value></data>
+  <data name="Loc.RMVoice.Main.Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Loc.RMVoice.Main.Fetching" xml:space="preserve"><value>Getting data…</value></data>
+  <data name="Loc.RMVoice.Main.WeatherUpdate" xml:space="preserve"><value>Automatic updates</value></data>
+  <data name="Loc.RMVoice.Main.AutoUpdateWeather" xml:space="preserve"><value>Update weather automatically</value></data>
+  <data name="Loc.RMVoice.Main.Every" xml:space="preserve"><value>Every</value></data>
+  <data name="Loc.RMVoice.Main.Minutes" xml:space="preserve"><value>minutes</value></data>
+  <data name="Loc.RMVoice.Main.AnnounceAfterUpdate" xml:space="preserve"><value>Announce after each update</value></data>
+  <data name="Loc.RMVoice.Main.WeatherStatus" xml:space="preserve"><value>Weather status</value></data>
+  <data name="Loc.RMVoice.Main.OpenMeteoHelp" xml:space="preserve"><value>Open-Meteo does not require an API key. If automatic updates and voice announcements are enabled, the app will announce the updated weather after each refresh.</value></data>
+  <data name="Loc.RMVoice.Main.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Loc.RMVoice.Main.SaveAs" xml:space="preserve"><value>Save as…</value></data>
+  <data name="Loc.RMVoice.Main.ReloadFromFile" xml:space="preserve"><value>Reload from file</value></data>
+  <data name="Loc.RMVoice.Main.Index" xml:space="preserve"><value>Index</value></data>
+  <data name="Loc.RMVoice.Main.Start" xml:space="preserve"><value>Start (HH:MM:SS.f)</value></data>
+  <data name="Loc.RMVoice.Main.End" xml:space="preserve"><value>End (HH:MM:SS.f)</value></data>
+  <data name="Loc.RMVoice.Main.Duration" xml:space="preserve"><value>Duration (s)</value></data>
+  <data name="Loc.RMVoice.Main.VoiceUnavailable" xml:space="preserve"><value>Unavailable</value></data>
+  <data name="Loc.RMVoice.Chrome.Minimize" xml:space="preserve"><value>Minimize</value></data>
+  <data name="Loc.RMVoice.Chrome.Maximize" xml:space="preserve"><value>Maximize</value></data>
+  <data name="Loc.RMVoice.Chrome.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Loc.RMVoice.Status.Starting" xml:space="preserve"><value>Starting…</value></data>
+  <data name="Loc.RMVoice.Status.BassReady" xml:space="preserve"><value>BASS initialized successfully.</value></data>
+  <data name="Loc.RMVoice.Status.BassUnavailable" xml:space="preserve"><value>BASS is not initialized. Check the audio device.</value></data>
+  <data name="Loc.RMVoice.Status.EngineUnavailable" xml:space="preserve"><value>The audio engine is not initialized.</value></data>
+  <data name="Loc.RMVoice.Status.PlayError" xml:space="preserve"><value>Playback error: {0}</value></data>
+  <data name="Loc.RMVoice.Status.Playing" xml:space="preserve"><value>Playing: {0}</value></data>
+  <data name="Loc.RMVoice.Status.PlaybackFinished" xml:space="preserve"><value>Announcement finished.</value></data>
+  <data name="Loc.RMVoice.Status.PlaybackError" xml:space="preserve"><value>Playback error: {0}</value></data>
+  <data name="Loc.RMVoice.Status.Stopped" xml:space="preserve"><value>Stopped.</value></data>
+  <data name="Loc.RMVoice.Status.WeatherUpdated" xml:space="preserve"><value>Weather updated: {0:0.#} °C, {1:0} % ({2})</value></data>
+  <data name="Loc.RMVoice.Status.WeatherError" xml:space="preserve"><value>Weather error: {0}</value></data>
+  <data name="Loc.RMVoice.Profile.New" xml:space="preserve"><value>New profile</value></data>
+  <data name="Loc.RMVoice.Status.ProfilesSaved" xml:space="preserve"><value>Profiles saved to {0}</value></data>
+  <data name="Loc.RMVoice.Status.NoProfile" xml:space="preserve"><value>No profile selected.</value></data>
+  <data name="Loc.RMVoice.Status.ProfileLoaded" xml:space="preserve"><value>Profile “{0}” → H:{1} M:{2} T:{3} Hu:{4} regions.</value></data>
+  <data name="Loc.RMVoice.Dialog.SaveTable" xml:space="preserve"><value>Save {0}</value></data>
+  <data name="Loc.RMVoice.Dialog.SaveTableAs" xml:space="preserve"><value>Save {0} as…</value></data>
+  <data name="Loc.RMVoice.Status.TableSaved" xml:space="preserve"><value>Table saved to {0}</value></data>
+  <data name="Loc.RMVoice.Status.TableSaveError" xml:space="preserve"><value>Could not save table: {0}</value></data>
+  <data name="Loc.RMVoice.Status.NoTableToReload" xml:space="preserve"><value>No table file to reload.</value></data>
+  <data name="Loc.RMVoice.Status.TableReloaded" xml:space="preserve"><value>Table reloaded ({0} regions).</value></data>
+  <data name="Loc.RMVoice.Status.TableReloadError" xml:space="preserve"><value>Could not reload table: {0}</value></data>
+  <data name="Loc.RMVoice.Weather.Status.NoActiveLocation" xml:space="preserve"><value>There is no active location. Search for and apply one first.</value></data>
+  <data name="Loc.RMVoice.Weather.LastUpdate.NoData" xml:space="preserve"><value>No data yet.</value></data>
+  <data name="Loc.RMVoice.Weather.Status.SearchError" xml:space="preserve"><value>Search error: {0}</value></data>
+  <data name="Loc.RMVoice.Weather.Status.Cleared" xml:space="preserve"><value>Location and data cleared.</value></data>
+  <data name="Loc.RMVoice.Weather.Status.SelectResult" xml:space="preserve"><value>Select a result from the list first.</value></data>
+  <data name="Loc.RMVoice.Weather.Status.QueryRequired" xml:space="preserve"><value>Enter a city to search.</value></data>
+  <data name="Loc.RMVoice.Weather.Status.SearchTimeout" xml:space="preserve"><value>Search timed out.</value></data>
+  <data name="Loc.RMVoice.Weather.Status.Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Loc.RMVoice.Weather.Status.Fetched" xml:space="preserve"><value>Weather data received for {0}.</value></data>
+  <data name="Loc.RMVoice.Weather.Status.Fetching" xml:space="preserve"><value>Getting weather for {0}…</value></data>
+  <data name="Loc.RMVoice.Weather.Status.FetchTimeout" xml:space="preserve"><value>Weather request timed out.</value></data>
+  <data name="Loc.RMVoice.Weather.Status.LocationApplied" xml:space="preserve"><value>Location applied: {0}</value></data>
+  <data name="Loc.RMVoice.Weather.LastUpdate.Summary" xml:space="preserve"><value>Last update: {0} · {1:0.#} °C · {2:0} %</value></data>
+  <data name="Loc.RMVoice.Weather.Status.Searching" xml:space="preserve"><value>Searching for “{0}”…</value></data>
+  <data name="Loc.RMVoice.Weather.Status.SearchPrompt" xml:space="preserve"><value>Enter a city and click Search.</value></data>
+  <data name="Loc.RMVoice.Main.Title" xml:space="preserve"><value>RadioMaker Voice Add-on</value></data>
+  <data name="Loc.RMVoice.Weather.Status.NoResults" xml:space="preserve"><value>No results were found for that search.</value></data>
+  <data name="Loc.RMVoice.Weather.Status.ResultCount" xml:space="preserve"><value>{0} result(s). Select one and click “Use this location”.</value></data>
+  <data name="Loc.RMVoice.Dialog.SelectAudio" xml:space="preserve"><value>Select audio for {0}</value></data>
+  <data name="Loc.RMVoice.Dialog.SelectTable" xml:space="preserve"><value>Select table for {0}</value></data>
+  <data name="Loc.RMVoice.Unit.Hours" xml:space="preserve"><value>hours</value></data>
+  <data name="Loc.RMVoice.Unit.Minutes" xml:space="preserve"><value>minutes</value></data>
+  <data name="Loc.RMVoice.Unit.Temperature" xml:space="preserve"><value>temperature</value></data>
+  <data name="Loc.RMVoice.Unit.Humidity" xml:space="preserve"><value>humidity</value></data>
+  <data name="Loc.RMVoice.StatusIndicator.Playing" xml:space="preserve"><value>PLAYING</value></data>
+</root>

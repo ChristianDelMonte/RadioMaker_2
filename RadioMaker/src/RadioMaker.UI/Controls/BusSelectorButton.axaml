@@ -14,7 +14,7 @@
             CornerRadius="5"
             VerticalAlignment="Center"
             IsEnabled="{Binding CanChangeBus}"
-            ToolTip.Tip="Seleccionar bus de salida de este modulo">
+            ToolTip.Tip="{DynamicResource Loc.BusSelector.Tooltip}">
 
         <Button.Flyout>
             <Flyout Placement="BottomEdgeAlignedRight"
@@ -22,7 +22,7 @@
 
                 <StackPanel Width="260" Spacing="6">
 
-                    <TextBlock Text="Bus de salida del modulo"
+                    <TextBlock Text="{DynamicResource Loc.BusSelector.Title}"
                                FontWeight="SemiBold"
                                FontSize="12"
                                Foreground="{DynamicResource FgPrimary}"
@@ -32,7 +32,7 @@
                             CornerRadius="4"
                             Padding="8,4"
                             Margin="0,0,0,4">
-                        <TextBlock Text="Selecciona por que dispositivo sale el audio de este modulo."
+                        <TextBlock Text="{DynamicResource Loc.BusSelector.Description}"
                                    FontSize="10"
                                    Foreground="{DynamicResource FgSecondary}"
                                    TextWrapping="Wrap" />
@@ -59,7 +59,7 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <TextBlock Text="Los cambios se aplican a los proximos audios. Lo que ya esta sonando termina en el bus anterior."
+                    <TextBlock Text="{DynamicResource Loc.BusSelector.Footer}"
                                FontSize="10"
                                Foreground="{DynamicResource FgSecondary}"
                                TextWrapping="Wrap"

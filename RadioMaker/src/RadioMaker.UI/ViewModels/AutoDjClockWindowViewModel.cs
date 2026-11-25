@@ -2,18 +2,26 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RadioMaker.Core.Scheduling;
+using RadioMaker.UI.Localization;
 
 namespace RadioMaker.UI.ViewModels;
 
-public sealed class AutoDjClockPreviewItem
+public sealed partial class AutoDjClockPreviewItem : ObservableObject
 {
     public int Number { get; init; }
     public string Title { get; init; } = string.Empty;
     public string Artist { get; init; } = string.Empty;
-    public string GenreSlot { get; init; } = string.Empty;
+    [ObservableProperty] private string _slotGenre = string.Empty;
+    public string GenreSlot => string.IsNullOrWhiteSpace(SlotGenre)
+        ? LocalizationService.GetString("Loc.AutoDJ.AnyGenre")
+        : SlotGenre;
     public string FilePath { get; init; } = string.Empty;
     public double DurationSeconds { get; init; }
     public string DurationText => AudioFileInfoReader.FormatDuration(DurationSeconds);
+
+    public void RefreshLanguage() => OnPropertyChanged(nameof(GenreSlot));
+
+    partial void OnSlotGenreChanged(string value) => OnPropertyChanged(nameof(GenreSlot));
 }
 
 public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
@@ -34,7 +42,7 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
     [ObservableProperty] private bool _isProgressIndeterminate;
     [ObservableProperty] private string _generationProgressText = string.Empty;
     [ObservableProperty] private bool _hasPreview;
-    [ObservableProperty] private string _statusMessage = "Elige la carpeta musical y define el orden de categorías.";
+    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.AutoDJ.Status.Initial");
     [ObservableProperty] private string _previewSummaryText = string.Empty;
     [ObservableProperty] private string? _currentClockPath;
     [ObservableProperty] private bool _isTakingAir;
@@ -60,6 +68,7 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
             .ToArray();
         _takeAir = takeAir;
         _previewReady = previewReady;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
     }
 
     [RelayCommand(CanExecute = nameof(CanGenerate))]
@@ -76,22 +85,22 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
         PreviewSummaryText = string.Empty;
         GenerationProgress = 0;
         IsProgressIndeterminate = true;
-        GenerationProgressText = "Buscando archivos de audio...";
-        StatusMessage = "Preparando biblioteca...";
+        GenerationProgressText = LocalizationService.GetString("Loc.AutoDJ.Progress.Searching");
+        StatusMessage = LocalizationService.GetString("Loc.AutoDJ.Status.Preparing");
 
         var clock = BuildClock();
         var progress = new Progress<PlaylistGeneratorProgress>(p =>
         {
-            StatusMessage = p.Message;
+            StatusMessage = LocalizeProgress(p.Message);
             IsProgressIndeterminate = p.Total <= 0;
             if (p.Total > 0)
             {
                 GenerationProgress = Math.Clamp(100.0 * p.Current / p.Total, 0, 100);
-                GenerationProgressText = $"{p.Message} ({p.Current:N0}/{p.Total:N0})";
+                GenerationProgressText = string.Format(LocalizationService.GetString("Loc.AutoDJ.Progress.WithCount"), LocalizeProgress(p.Message), p.Current, p.Total);
             }
             else
             {
-                GenerationProgressText = p.Message;
+                GenerationProgressText = LocalizeProgress(p.Message);
             }
         });
         try
@@ -102,7 +111,7 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
             {
                 _previewTracks = Array.Empty<AutoDjClockTrack>();
                 IsProgressIndeterminate = false;
-                StatusMessage = result.ErrorMessage ?? "No se pudo generar el reloj.";
+                StatusMessage = LocalizeError(result.ErrorMessage ?? "No se pudo generar el reloj.");
                 GenerationProgressText = StatusMessage;
                 return;
             }
@@ -121,7 +130,7 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
                         ? tags.DisplayTitle
                         : item.Candidate.DisplayName,
                     Artist = tags.Performers,
-                    GenreSlot = string.IsNullOrWhiteSpace(item.SlotGenre) ? "Cualquier género" : item.SlotGenre,
+                    SlotGenre = item.SlotGenre,
                     FilePath = item.Candidate.FilePath,
                     DurationSeconds = item.Candidate.DurationSeconds
                 });
@@ -130,29 +139,30 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
             HasPreview = true;
             GenerationProgress = 100;
             IsProgressIndeterminate = false;
-            GenerationProgressText = $"Lista generada: {result.LibraryTrackCount:N0} archivos analizados.";
+            GenerationProgressText = string.Format(LocalizationService.GetString("Loc.AutoDJ.Progress.LibraryAnalyzed"), result.LibraryTrackCount);
             var actual = TimeSpan.FromSeconds(result.ActualDurationSeconds);
             var target = TimeSpan.FromSeconds(result.TargetDurationSeconds);
             var diff = TimeSpan.FromSeconds(Math.Abs(result.DifferenceSeconds));
             string relation = Math.Abs(result.DifferenceSeconds) < 1
-                ? "ajustada al objetivo"
-                : result.DifferenceSeconds > 0 ? $"excede {diff:mm\\:ss}" : $"faltan {diff:mm\\:ss}";
-            PreviewSummaryText = $"{result.Tracks.Count} pistas · {AudioFileInfoReader.FormatDuration(actual.TotalSeconds)} / {AudioFileInfoReader.FormatDuration(target.TotalSeconds)}";
-            StatusMessage = $"Vista previa lista; duración {relation}. " +
-                $"Biblioteca: {result.LibraryTrackCount} pista(s), {result.SkippedUnreadable} ilegible(s).";
+                ? LocalizationService.GetString("Loc.AutoDJ.Relation.OnTarget")
+                : result.DifferenceSeconds > 0
+                    ? string.Format(LocalizationService.GetString("Loc.AutoDJ.Relation.Exceeds"), diff.ToString("mm\\:ss"))
+                    : string.Format(LocalizationService.GetString("Loc.AutoDJ.Relation.ShortBy"), diff.ToString("mm\\:ss"));
+            PreviewSummaryText = string.Format(LocalizationService.GetString("Loc.AutoDJ.PreviewSummary"), result.Tracks.Count, AudioFileInfoReader.FormatDuration(actual.TotalSeconds), AudioFileInfoReader.FormatDuration(target.TotalSeconds));
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.PreviewReady"), relation, result.LibraryTrackCount, result.SkippedUnreadable);
             if (result.SkippedClockSlots > 0)
-                StatusMessage += $" Espacios sin pista disponible: {result.SkippedClockSlots}.";
+                StatusMessage += " " + string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.SkippedSlots"), result.SkippedClockSlots);
         }
         catch (OperationCanceledException)
         {
             IsProgressIndeterminate = false;
-            StatusMessage = "Escaneo cancelado.";
+            StatusMessage = LocalizationService.GetString("Loc.AutoDJ.Status.Cancelled");
             GenerationProgressText = StatusMessage;
         }
         catch (Exception ex)
         {
             IsProgressIndeterminate = false;
-            StatusMessage = $"Error al generar el reloj: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.GenerateError"), ex.Message);
             GenerationProgressText = StatusMessage;
         }
         finally
@@ -173,14 +183,14 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(CanTakeAir));
         try
         {
-            StatusMessage = "Preparando AutoDJ y esperando un punto seguro para tomar el aire...";
+            StatusMessage = LocalizationService.GetString("Loc.AutoDJ.Status.TakingAir");
             TakeAirAccepted = await _takeAir(BuildClock(), _previewTracks);
             if (TakeAirAccepted)
-                StatusMessage = "AutoDJ quedó habilitado. Tomará el aire al terminar la pista actual.";
+                StatusMessage = LocalizationService.GetString("Loc.AutoDJ.Status.TakeAirEnabled");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"No se pudo habilitar AutoDJ: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.TakeAirError"), ex.Message);
         }
         finally
         {
@@ -204,7 +214,7 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
         var clock = AutoDjClockStore.Load(path);
         if (clock is null)
         {
-            StatusMessage = "No se pudo abrir el archivo de reloj.";
+            StatusMessage = LocalizationService.GetString("Loc.AutoDJ.Status.OpenError");
             return;
         }
 
@@ -216,7 +226,7 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
             (clock.Slots ?? new()).Select(slot => string.IsNullOrWhiteSpace(slot.Genre) ? "*" : slot.Genre));
         CurrentClockPath = path;
         ClearPreview();
-        StatusMessage = $"Reloj cargado: {Path.GetFileName(path)}.";
+        StatusMessage = string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.ClockLoaded"), Path.GetFileName(path));
     }
 
     public void SaveClock(string path)
@@ -227,12 +237,12 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
             CurrentClockPath = path.EndsWith(AutoDjClockStore.FileExtension, StringComparison.OrdinalIgnoreCase)
                 ? path
                 : path + AutoDjClockStore.FileExtension;
-            StatusMessage = $"Reloj guardado: {Path.GetFileName(CurrentClockPath)}.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.ClockSaved"), Path.GetFileName(CurrentClockPath));
             OnPropertyChanged(nameof(HasCurrentClock));
         }
         catch (Exception ex)
         {
-            StatusMessage = $"No se pudo guardar el reloj: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.ClockSaveError"), ex.Message);
         }
     }
 
@@ -252,15 +262,21 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
                 }).ToList()
             };
             PlaylistStore.Save(playlist, path);
-            StatusMessage = $"Playlist AutoDJ guardada: {Path.GetFileName(path)}.";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.PlaylistSaved"), Path.GetFileName(path));
         }
         catch (Exception ex)
         {
-            StatusMessage = $"No se pudo guardar la playlist: {ex.Message}";
+            StatusMessage = string.Format(LocalizationService.GetString("Loc.AutoDJ.Status.PlaylistSaveError"), ex.Message);
         }
     }
 
     public void CancelPendingOperation() => _scanCts?.Cancel();
+
+    public void Dispose()
+    {
+        CancelPendingOperation();
+        LocalizationService.LanguageChanged -= OnLanguageChanged;
+    }
 
     private List<AutoDjClockSlot> ParseSlots() => ClockSequenceText
         .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -274,6 +290,51 @@ public sealed partial class AutoDjClockWindowViewModel : ViewModelBase
         HasPreview = false;
         PreviewSummaryText = string.Empty;
         OnPropertyChanged(nameof(CanSavePlaylist));
+    }
+
+    private static string LocalizeProgress(string message)
+    {
+        if (message.StartsWith("Leyendo biblioteca ", StringComparison.Ordinal))
+            return LocalizationService.GetString("Loc.AutoDJ.Progress.ReadingLibrary") + message["Leyendo biblioteca ".Length..];
+        if (message.StartsWith("Organizando categorías ", StringComparison.Ordinal))
+            return LocalizationService.GetString("Loc.AutoDJ.Progress.OrganizingCategories") + message["Organizando categorías ".Length..];
+        return message switch
+        {
+            "Buscando archivos de audio..." => LocalizationService.GetString("Loc.AutoDJ.Progress.Searching"),
+            "Biblioteca analizada. Organizando categorías del reloj..." => LocalizationService.GetString("Loc.AutoDJ.Progress.Categorizing"),
+            "Generando la secuencia AutoDJ..." => LocalizationService.GetString("Loc.AutoDJ.Progress.Sequence"),
+            _ => message
+        };
+    }
+
+    private static string LocalizeError(string message) => message switch
+    {
+        "No se especificó una carpeta de biblioteca." => LocalizationService.GetString("Loc.AutoDJ.Error.NoLibraryFolder"),
+        "La carpeta seleccionada no existe." => LocalizationService.GetString("Loc.AutoDJ.Error.MissingFolder"),
+        "No se encontraron archivos de audio compatibles." => LocalizationService.GetString("Loc.AutoDJ.Error.NoCompatibleFiles"),
+        "No se pudo leer la duración de ningún archivo de audio." => LocalizationService.GetString("Loc.AutoDJ.Error.NoReadableAudio"),
+        "La duración objetivo debe estar entre 5 minutos y 24 horas." => LocalizationService.GetString("Loc.AutoDJ.Error.InvalidDuration"),
+        "No hay un reloj configurado." => LocalizationService.GetString("Loc.AutoDJ.Error.NoClock"),
+        "Agrega al menos un espacio al reloj." => LocalizationService.GetString("Loc.AutoDJ.Error.EmptyClock"),
+        "No se pudo generar el reloj." => LocalizationService.GetString("Loc.AutoDJ.Error.Generate"),
+        "No se pudo leer la biblioteca." => LocalizationService.GetString("Loc.AutoDJ.Error.ReadLibrary"),
+        _ => message
+    };
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        if (IsGenerating)
+            StatusMessage = LocalizationService.GetString("Loc.AutoDJ.Status.Preparing");
+        else if (!HasPreview)
+            StatusMessage = LocalizationService.GetString("Loc.AutoDJ.Status.Initial");
+        else
+        {
+            foreach (var item in PreviewTracks) item.RefreshLanguage();
+            StatusMessage = LocalizationService.GetString("Loc.AutoDJ.PreviewAvailable");
+            PreviewSummaryText = string.Format(LocalizationService.GetString("Loc.AutoDJ.PreviewSummary"), PreviewTracks.Count,
+                AudioFileInfoReader.FormatDuration(_previewTracks.Sum(x => x.Candidate.DurationSeconds)),
+                AudioFileInfoReader.FormatDuration(TargetDurationMinutes * 60));
+        }
     }
 
     partial void OnSourceFolderChanged(string value) => InvalidatePreview();

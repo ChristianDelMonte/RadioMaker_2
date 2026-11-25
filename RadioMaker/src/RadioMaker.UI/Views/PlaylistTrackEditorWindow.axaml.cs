@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using RadioMaker.UI.Controls;
+using RadioMaker.UI.Localization;
 using RadioMaker.UI.Services;
 using RadioMaker.UI.ViewModels;
 
@@ -46,7 +47,7 @@ public partial class PlaylistTrackEditorWindow : CustomChromeWindow
         var vm = GetVm();
         if (vm?.WorkingTrack is null) return;
 
-        var path = await PickAudioFileAsync("Seleccionar archivo de audio");
+        var path = await PickAudioFileAsync(LocalizationService.GetString("Loc.Dialog.SelectAudioFile"));
         if (string.IsNullOrEmpty(path)) return;
 
         vm.WorkingTrack.FilePath = path;
@@ -63,7 +64,7 @@ public partial class PlaylistTrackEditorWindow : CustomChromeWindow
         var vm = GetVm();
         if (vm?.WorkingTrack is null) return;
 
-        var path = await PickAudioFileAsync("Seleccionar archivo de mixado");
+        var path = await PickAudioFileAsync(LocalizationService.GetString("Loc.Dialog.SelectMixAudioFile"));
         if (string.IsNullOrEmpty(path)) return;
 
         vm.WorkingTrack.MixAudioPath = path;
