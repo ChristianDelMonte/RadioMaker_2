@@ -7,6 +7,8 @@
 
 > 🎙️ **Forever FREE Radio Automation Software!**
 
+[English version](README.en.md)
+
 Suite completa de automatización de radio multiplataforma, compuesta por
 **RadioMaker** como aplicación principal y los complementos **RMVoice** para
 locuciones y **RMWave** para edición multipista. Los tres proyectos se
@@ -39,6 +41,10 @@ distribuyen juntos en un mismo paquete. Escrita en **C# / .NET 8** con
 - [Licencia](#-licencia)
 
 ---
+
+<p align="center">
+	<img alt="RadioMaker" height="850" src="imagenes/Radiomaker_UI.jpg"/>
+</p>
 
 ## ✨ Características
 
@@ -561,7 +567,7 @@ Para instrucciones paso a paso de todos los módulos, consulte el
 
 | Librería ↕▾ | Versión ↕▾ | Licencia ↕▾ | Uso ↕▾ |
 |---|---|---|---|
-| −**BASS** | 2.4.x | ⚠️ Gratis uso no comercial | Motor de audio nativo |
+| −**BASS** | 2.4.x | ⚠️ Gratis solo en usos no comerciales | Motor de audio nativo; uso comercial sujeto a licencia |
 | **ManagedBass** | 4.0.2 | MIT | Wrapper .NET de BASS |
 | **ManagedBass.Fx** | 4.0.2 | MIT | Addon de efectos (EQ, reverb) |
 | **ManagedBass.Mix** | 4.0.2 | MIT | Addon de mezcla multipista |
@@ -592,34 +598,48 @@ Para instrucciones paso a paso de todos los módulos, consulte el
 | Librería | Versión | Licencia | Uso |
 |---|---|---|---|
 | **ClosedXML** | 0.105.1 | MIT | Generación de Excel (`.xlsx`) |
-| **QuestPDF** | 2024.12.3 | ⚠️ Community License | Generación de PDF |
+| **QuestPDF** | 2024.12.3 | ⚠️ Community License condicionada | Generación de PDF; algunos usuarios/organizaciones requieren licencia paga |
 
 ### APIs externas (sin librería, HTTP directo)
 
 | Servicio | Uso | Licencia |
 |---|---|---|
-| **Open-Meteo** | Clima en tiempo real | Datos libres, sin API key |
+| **Open-Meteo** | Clima en tiempo real | API gratuita para uso no comercial; uso comercial requiere plan pago |
 
 ---
 
 ### ⚠️ Notas importantes sobre licenciamiento
 
+RadioMaker, RMVoice y RMWave son gratuitos para descargar y usar. Las
+dependencias de terceros conservan sus propios términos: si un usuario final
+elige un uso comercial que requiera una licencia o suscripción, deberá
+obtenerla por su cuenta. Esta política no convierte las dependencias de
+terceros en MIT ni reemplaza sus condiciones; RadioMaker debe informar esos
+requisitos con claridad.
+
 #### BASS (Un4seen Developments)
 
-- **Gratis** para uso personal, educativo y proyectos no comerciales.
-- **Requiere licencia comercial** para uso en productos que generen ingresos.
+- Es **gratis para uso no comercial**.
+- Sus términos requieren licencia comercial para uso comercial y las licencias son por plataforma.
 - Ver un4seen.com para precios y condiciones.
 - Los wrappers `ManagedBass.*` son MIT, pero **la librería nativa de BASS no
 lo es**. La licencia de BASS prevalece sobre el wrapper.
 
 #### QuestPDF
 
-- **Community License**: gratis para proyectos con facturación anual **menor
-a USD 1.000.000**.
-- Para facturación mayor, requiere **Professional o Enterprise** (de pago).
+- Su Community License es gratuita solo para categorías elegibles y tiene
+  condiciones; algunas empresas, entidades públicas y proyectos que no
+  califican necesitan una licencia paga.
 - Ver [questpdf.com/license](https://www.questpdf.com/license/) para detalles.
 - El proyecto actual usa `LicenseType.Community` configurado en
 `Program.Main`.
+
+#### Open-Meteo
+
+- El endpoint gratuito es para uso **no comercial**; sus términos indican que
+  el uso comercial requiere un plan de API pago.
+- Si el usuario activa el clima en un contexto comercial, debe cumplir las
+  condiciones del proveedor o configurar otro proveedor compatible.
 
 #### TagLib#
 
@@ -636,12 +656,17 @@ a USD 1.000.000**.
 
 ### Features futuras
 
+- □ **Transparencia de licencias**: mantener un inventario de dependencias, codecs, servicios y términos por plataforma; informar qué incluye RadioMaker gratis y qué licencias/suscripciones debe gestionar el usuario para su caso de uso.
+- □ **Validación del motor de audio multiplataforma**: probar BASS y sus addons en Windows, macOS y Linux, cubrir formatos/dispositivos y documentar los requisitos de licencia aplicables al usuario final. Evaluar otro backend solo si aporta una ventaja técnica concreta o mejora compatibilidad, no como requisito de gratuidad.
+- □ **Proveedores externos configurables**: permitir elegir/configurar servicios de clima y otros datos; mostrar sus requisitos y degradar con seguridad si el servicio no está disponible.
+- □ **Emisión de streaming**: codificar y enviar la salida a Icecast/SHOUTcast con reconexión, metadatos “now playing” y varios perfiles de calidad; RadioMaker no dependerá de vender un servicio de hosting propio.
 - □ **AutoDJ con relojes y rotaciones**: generar y mantener una grilla de emisión continua a partir de plantillas por hora, categorías y reglas de selección.
 - □ **Biblioteca musical y reglas anti-repetición**: catálogo central con metadatos, intro/outro/cues, búsqueda avanzada y separación por artista, título, género y período.
 - □ **Voice tracking**: grabar, preescuchar y ubicar enlaces de locutor entre la salida de una pista y la entrada de la siguiente.
 - □ **Auditoría de emisión y aircheck**: historial real de lo emitido con hora/duración y grabación continua o segmentada del bus de aire, con retención configurable.
 - □ **Acceso remoto y API de control**: consultar estado, “al aire” y “siguiente”, y permitir controles remotos autenticados.
 - □ **Entradas y retransmisión**: streams y entrada de línea como fuentes programables, incluyendo toma prioritaria y retorno automático a la programación.
+- □ **Locución dinámica**: evaluar TTS local/offline y proveedores en nube como opciones; documentar licencias/costos de cada motor o voz y mantener disponible el flujo actual de RMVoice.
 - □ **Comandos y eventos automatizables**: acciones programadas (volumen, iniciar/detener, cargar/generar listas, llamadas HTTP) y cola de eventos manuales.
 - □ **Marcas / sweepers**: insertar identificadores o separadores sobre intros/outros mediante cues, con control de prioridad y mezcla.
 - □ **Programación comercial**: bloques de anuncios, campañas, reportes de emisión y, para una etapa avanzada, reemplazo local de publicidad en retransmisiones.
@@ -655,13 +680,14 @@ a USD 1.000.000**.
 
 #### Priorización sugerida
 
-1. **Base de emisión confiable**: matriz de compilación/validación en Windows, macOS y Linux, instaladores nativos, firma, actualización y recuperación de configuración.
+0. **Transparencia y cumplimiento**: inventario de licencias por paquete, codec, servicio y plataforma; documentación clara para el usuario final y distribución gratuita del software propio.
+1. **Base de emisión confiable**: matriz de compilación/validación en Windows, macOS y Linux, instaladores nativos, actualización y recuperación de configuración. La firma de código puede ser opcional si exige certificados o membresías pagas.
 2. **Automatización musical**: biblioteca, reglas anti-repetición, relojes y AutoDJ.
 3. **Producción y control al aire**: voice tracking, cues/marcas, eventos/comandos y entradas de audio.
 4. **Auditoría e integración**: as-run log, aircheck, now-playing/API y acceso remoto seguro.
 5. **Funciones de escala**: publicidad regional, sincronización multiestudio, multiestación, permisos e integración avanzada de consola.
 
-Estas funciones son propuestas para evaluar; no implican que estén implementadas. Las ideas de newsroom/multimedia, servicios distribuidos y redundancia se inspiran en suites de mayor escala y deben priorizarse solo si RadioMaker apunta a ese mercado.
+Estas funciones son propuestas para evaluar; no implican que estén implementadas. RadioMaker y sus addons se distribuyen gratis; las licencias de terceros se respetan y, si el usuario final elige un uso que requiera una licencia o servicio pago, ese usuario deberá gestionarlo y pagarlo. Cada nueva dependencia debe revisarse para las tres plataformas, para su redistribución en el paquete y para que sus condiciones queden documentadas.
 
 ### Empaquetado
 
@@ -700,9 +726,17 @@ licencia **MIT** para el código propio.
 **Las librerías de terceros mantienen sus propias licencias** (ver
 Librerías y licencias). En particular:
 
-- **BASS** requiere licencia comercial para uso comercial.
-- **QuestPDF** requiere licencia Professional/Enterprise para proyectos con
-facturación anual ≥ USD 1.000.000.
+- **BASS** es gratis para uso no comercial; el uso comercial puede requerir
+  licencia según los términos de Un4seen, a cargo del usuario que lo necesite.
+- **QuestPDF** usa una Community License condicionada; quienes no califican
+  deben adquirir una licencia paga para producción.
+- **Open-Meteo** reserva su endpoint gratuito al uso no comercial; el uso
+  comercial requiere una suscripción a cargo del usuario.
+
+RadioMaker no cobra por el software propio. El uso de dependencias y servicios
+de terceros queda sujeto a sus condiciones; cada usuario final debe obtener y
+pagar las licencias o suscripciones que correspondan a su uso en caso de utilizar
+Radiomaker con fines comerciales.
 
 Para detalles sobre la licencia MIT, ver LICENSE.
 

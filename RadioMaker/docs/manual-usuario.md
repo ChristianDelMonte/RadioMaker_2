@@ -2,9 +2,13 @@
 
 > Manual inicial de usuario para RadioMaker y sus complementos RMVoice y RMWave. La interfaz y las funciones pueden cambiar entre versiones
 
+[English version](user-manual.en.md)
+
 ## 1. ¿Qué es RadioMaker?
 
 RadioMaker es la aplicación principal de automatización y reproducción. Permite organizar audio en playlists, botoneras Cart, tandas y listas de programación. También incluye el File Manager o Explorador de Archivos, el control de buses de salida y herramientas de audio.
+
+![RadioMaker Main UI](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/Radiomaker_UI.jpg)
 
 Los complementos incluidos en el paquete amplían sus funciones:
 
@@ -21,6 +25,10 @@ Los complementos incluidos en el paquete amplían sus funciones:
 4. Compruebe el bus actual en la barra inferior de RadioMaker.
 
 Las tandas y los Encadenadores no tienen un selector de bus propio. Heredan el ruteo del Scheduler (programados) o de la playlist donde se están reproduciendo. El volumen general se controla desde el panel superior.
+
+![RadioMaker Buses de Salida](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Config_Buses.jpg)
+![RadioMaker Ruteo por modulos](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Config_Ruteo.jpg)
+![RadioMaker Configuracion de Politicas](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Config_Policy.jpg)
 
 ### 2.2 Familiarizarse con la ventana principal
 
@@ -49,6 +57,8 @@ RadioMaker guarda el espacio de trabajo para recuperar pestañas y distribución
 
 File Manager permite navegar por carpetas, filtrar por tipo, buscar por nombre y preescuchar archivos. El bus de preescucha se configura por separado desde el ruteo del módulo.
 
+![RadioMaker Exporador de Archivos](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_FileManager.jpg)
+
 Para trabajar con un archivo:
 
 1. Navegue hasta la carpeta o use los accesos de carpeta personal, Escritorio y carpeta superior.
@@ -61,6 +71,8 @@ El menú contextual de archivos permite, según el tipo de archivo, editar tags,
 ## 4. Playlists
 
 Una playlist reúne pistas de audio y, si RMVoice está disponible, comandos de locución. Se guarda en un archivo **`.rmf`**.
+
+![RadioMaker Playlist](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Playlist.jpg)
 
 ### Crear y editar
 
@@ -82,6 +94,9 @@ Desde **Edición > Playlists > Generador Automático** se puede crear una playli
 
 Una pestaña **Programados** contiene elementos que el Scheduler dispara según los días y horarios configurados. Cada lista se guarda en un archivo **`.rms`** y tiene un switch para activarla o desactivarla. Una lista desactivada no se dispara.
 
+![RadioMaker Programados](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Programados.jpg)
+![RadioMaker Eventos](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Events.jpg)
+
 ### Tipos de elemento que pueden ser contenidos en un Programado
 
 - **Archivo:** reproduce un archivo de audio suelto.
@@ -91,6 +106,8 @@ Una pestaña **Programados** contiene elementos que el Scheduler dispara según 
 
 Para programar un elemento, agréguelo a la lista, abra su editor y configure el contenido, los días, la hora, la prioridad y las demás opciones disponibles. Guarde el `.rms` y active la lista cuando quiera que el Scheduler la procese. Use el selector de bus de la pestaña para elegir la salida de Programados.
 
+![RadioMaker Edit Programado](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Programados_Edit.jpg)
+
 El panel **Eventos** muestra los próximos disparos de las listas activas, con su horario y duración; también incluye el estado y el registro del Scheduler.
 
 Los controles de la pestaña Programados permiten iniciar o detener la reproducción de la lista y avanzar, pausar o reanudar elementos. Una programación de prioridad **Alta** puede adelantarse a una playlist manual; al terminar, la playlist continúa desde donde quedó.
@@ -98,6 +115,8 @@ Los controles de la pestaña Programados permiten iniciar o detener la reproducc
 ## 6. Tandas
 
 Una tanda es una secuencia ordenada de pistas que se reproduce como una unidad. Se edita en una pestaña **Tanda** y se guarda en un archivo **`.tnd`**.
+
+![RadioMaker Tanda](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Tanda.jpg)
 
 1. Cree una tanda o abra un `.tnd` existente.
 2. Agregue archivos de audio y ordénelos con los controles de cada pista.
@@ -110,6 +129,8 @@ La pestaña de edición de tandas no tiene controles de reproducción. La tanda 
 ## 7. Encadenadores
 
 Los Encadenadores intercalan audios entre pistas de una playlist o una secuencia del Scheduler. No se aplican a Cart ni a tandas. Se configuran en una pestaña propia y se guardan en un archivo **`.rme`**.
+
+![RadioMaker Encadenador](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Encadenadores.jpg)
 
 1. Cree una pestaña Encadenadores en la columna izquierda o central.
 2. Arrastre audios desde File Manager y ordénelos en la lista.
@@ -127,6 +148,8 @@ La pestaña solo configura la lista; no incluye botones de reproducción.
 
 Cart es una botonera para disparar audios directamente. Cada botón puede tener un archivo asignado, etiqueta y atajo de teclado. La botonera se guarda como **`.rcb`**.
 
+![RadioMaker Carts](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Carts.jpg)
+
 - Use **Editar** en un botón para asignar o cambiar el archivo y sus opciones.
 - Seleccione un botón y use **Reproducir** para lanzarlo.
 - Use **Detener todos** para detener los audios disparados desde la botonera.
@@ -143,6 +166,11 @@ En el panel central inferior:
 - **Spectrum** ofrece vistas de FFT, bandas, waterfall y forma de onda; haga clic en el visualizador para cambiar de modo.
 - **Ecualizador** permite ajustar el EQ de RadioMaker para archivos de audio comunes.
 - **Log** muestra mensajes de reproducción y del sistema.
+
+![RadioMaker Spectrum Modo 1](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Spectrum_1.jpg)
+![RadioMaker Spectrum Modo 2](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Spectrum_2.jpg)
+![RadioMaker Spectrum Modo 3](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Spectrum_3.jpg)
+![RadioMaker Spectrum Modo 4](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Spectrum_4.jpg)
 
 El panel superior muestra el audio actual y el siguiente. El mini visualizador y el VU siguen la fuente activa, incluidas las locuciones RMVoice cuando hay un stream disponible.
 
@@ -166,6 +194,8 @@ Los cambios de configuración se aplican en vivo cuando corresponda. La configur
 
 Use **Edición > Editar tags** o el menú contextual de un archivo para modificar sus metadatos cuando el formato lo permita. Los proyectos `.rmw` se abren en RMWave en vez de tratarse como archivos con tags de audio.
 
+![RadioMaker Tag Editor](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Tags.jpg)
+
 El panel **Log** muestra el registro de reproducción. Desde sus opciones de exportación se puede guardar el registro en uno de los formatos ofrecidos por la aplicación.
 
 ### Notas
@@ -175,6 +205,8 @@ Use **Archivo > Nuevo > Nota** para abrir un editor de texto plano. Las notas se
 ## 10. RMVoice: locuciones de hora y clima
 
 RMVoice proporciona los audios y perfiles que RadioMaker usa para anunciar la hora y el clima. Se puede abrir desde **Complementos > RM Voice** o desde las opciones del panel superior.
+
+![RadioMaker RMVOice addon](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Voice_Addon.jpg)
 
 ### Configurar un perfil
 
@@ -189,6 +221,8 @@ RadioMaker ofrece botones rápidos para anunciar hora y clima. También se puede
 ## 11. RMWave: edición y exportación de audio
 
 RMWave es un editor multipista. Se abre desde **Complementos > RM Wave**, desde el menú contextual de algunos archivos o desde botones **Editar en RMWave**.
+
+![RadioMaker RMWave addon](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Wave_Addon.jpg)
 
 ### Crear un proyecto
 
@@ -230,6 +264,8 @@ Atajos de teclado principales de RMWave:
 El control de emergencia se configura desde **Configuración > Emergencia**. Configure la fuente o playlist prevista y sus opciones antes de utilizarlo al aire. El botón de emergencia inicia el modo configurado; el banner superior indica que está activo y ofrece **Detener emergencia**.
 
 Realice una prueba controlada fuera del aire para verificar la fuente, el volumen y el bus antes de depender de esta función en una situación real.
+
+![RadioMaker Emergencia Activada](https://github.com/ChristianDelMonte/RadioMaker_2/blob/main/imagenes/RM_Emergency.jpg)
 
 ## 13. Formatos de RadioMaker
 

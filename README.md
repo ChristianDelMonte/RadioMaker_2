@@ -7,6 +7,8 @@
 
 > 🎙️ **Forever FREE Radio Automation Software!**
 
+[English version](README.en.md)
+
 Suite completa de automatización de radio multiplataforma, compuesta por
 **RadioMaker** como aplicación principal y los complementos **RMVoice** para
 locuciones y **RMWave** para edición multipista. Los tres proyectos se
