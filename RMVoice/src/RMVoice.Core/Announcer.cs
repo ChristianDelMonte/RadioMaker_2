@@ -145,26 +145,106 @@ public sealed class Announcer : IAnnouncer
         _profiles.Clear();
 
         var loaded = _profileStore.Load();
+        var profilesChanged = false;
 
         if (loaded.Count == 0)
         {
             loaded.Add(new VoiceProfile
             {
-                Name = "Español · Ejemplo",
-                Language = "es",
+                Name = IsEnglishInterface ? "English · Sample" : "Español · Ejemplo",
+                Language = IsEnglishInterface ? "en" : "es",
                 Gender = "—",
-                HourTablePath = BundledAsset("Hora", "Hombre", "H_Esp_Comp.txt"),
-                MinuteTablePath = BundledAsset("Hora", "Hombre", "M_Esp_Comp.txt"),
-                TemperatureTablePath = BundledAsset("Clima", "Hombre", "T_Esp_Comp.txt"),
-                HumidityTablePath = BundledAsset("Clima", "Hombre", "Hu_Esp_Comp.txt"),
-                HourAudioPath = BundledAsset("Hora", "Hombre", "H_Esp_Comp.mp3"),
-                MinuteAudioPath = BundledAsset("Hora", "Hombre", "M_Esp_Comp.mp3"),
-                TemperatureAudioPath = BundledAsset("Clima", "Hombre", "T_Esp_Comp.mp3"),
-                HumidityAudioPath = BundledAsset("Clima", "Hombre", "Hu_Esp_Comp.mp3"),
+                UseInterfaceLanguageDefaults = true,
             });
+            profilesChanged = true;
+        }
+
+        foreach (var profile in loaded)
+        {
+            // Upgrade the untouched built-in Spanish sample from older versions.
+            if (!profile.UseInterfaceLanguageDefaults && IsLegacySpanishSample(profile))
+            {
+                profile.UseInterfaceLanguageDefaults = true;
+                profilesChanged = true;
+            }
+
+            if (profile.UseInterfaceLanguageDefaults)
+            {
+                var expectedName = IsEnglishInterface ? "English · Sample" : "Español · Ejemplo";
+                if ((profile.Name is "English · Sample" or "Español · Ejemplo") && profile.Name != expectedName)
+                {
+                    profile.Name = expectedName;
+                    profilesChanged = true;
+                }
+                profilesChanged |= ApplyBundledLanguageAssets(profile);
+            }
         }
 
         _profiles.AddRange(loaded);
+        if (profilesChanged)
+            _profileStore.Save(loaded);
+    }
+
+    private bool IsEnglishInterface => string.Equals(_options.InterfaceLanguage, "en", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsLegacySpanishSample(VoiceProfile profile)
+    {
+        static bool IsBuiltInPath(string path, string filePrefix)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+            var name = Path.GetFileName(path);
+            return name.StartsWith(filePrefix + "_Esp_Comp", StringComparison.OrdinalIgnoreCase);
+        }
+
+        return profile.Name == "Español · Ejemplo" &&
+               IsBuiltInPath(profile.HourAudioPath, "H") && IsBuiltInPath(profile.HourTablePath, "H") &&
+               IsBuiltInPath(profile.MinuteAudioPath, "M") && IsBuiltInPath(profile.MinuteTablePath, "M") &&
+               IsBuiltInPath(profile.TemperatureAudioPath, "T") && IsBuiltInPath(profile.TemperatureTablePath, "T") &&
+               IsBuiltInPath(profile.HumidityAudioPath, "Hu") && IsBuiltInPath(profile.HumidityTablePath, "Hu");
+    }
+
+    private bool ApplyBundledLanguageAssets(VoiceProfile profile)
+    {
+        var suffix = IsEnglishInterface ? "Eng" : "Esp";
+        var changed = profile.Language != (IsEnglishInterface ? "en" : "es");
+        profile.Language = IsEnglishInterface ? "en" : "es";
+        changed |= SetIfAvailable(profile, TrackKind.Hour, "Hora", "H", suffix);
+        changed |= SetIfAvailable(profile, TrackKind.Minute, "Hora", "M", suffix);
+        changed |= SetIfAvailable(profile, TrackKind.Temperature, "Clima", "T", suffix);
+        changed |= SetIfAvailable(profile, TrackKind.Humidity, "Clima", "Hu", suffix);
+        return changed;
+    }
+
+    private static bool SetIfAvailable(VoiceProfile profile, TrackKind kind, string folder, string prefix, string suffix)
+    {
+        var audio = BundledAsset(folder, "Hombre", $"{prefix}_{suffix}_Comp.mp3");
+        var table = BundledAsset(folder, "Hombre", $"{prefix}_{suffix}_Comp.txt");
+        if (string.IsNullOrEmpty(audio) || string.IsNullOrEmpty(table))
+            return false;
+
+        var previousAudio = kind switch
+        {
+            TrackKind.Hour => profile.HourAudioPath,
+            TrackKind.Minute => profile.MinuteAudioPath,
+            TrackKind.Temperature => profile.TemperatureAudioPath,
+            _ => profile.HumidityAudioPath
+        };
+        var previousTable = kind switch
+        {
+            TrackKind.Hour => profile.HourTablePath,
+            TrackKind.Minute => profile.MinuteTablePath,
+            TrackKind.Temperature => profile.TemperatureTablePath,
+            _ => profile.HumidityTablePath
+        };
+        var changed = previousAudio != audio || previousTable != table;
+        switch (kind)
+        {
+            case TrackKind.Hour: profile.HourAudioPath = audio; profile.HourTablePath = table; break;
+            case TrackKind.Minute: profile.MinuteAudioPath = audio; profile.MinuteTablePath = table; break;
+            case TrackKind.Temperature: profile.TemperatureAudioPath = audio; profile.TemperatureTablePath = table; break;
+            case TrackKind.Humidity: profile.HumidityAudioPath = audio; profile.HumidityTablePath = table; break;
+        }
+        return changed;
     }
 
     private void LoadSettingsFromDisk()

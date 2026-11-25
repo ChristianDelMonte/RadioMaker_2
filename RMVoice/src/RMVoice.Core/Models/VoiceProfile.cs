@@ -21,6 +21,7 @@ public sealed class VoiceProfile : ObservableObject
     private string _minuteTablePath = "";
     private string _temperatureTablePath = "";
     private string _humidityTablePath = "";
+    private bool _useInterfaceLanguageDefaults;
 
     public string Name
     {
@@ -40,6 +41,13 @@ public sealed class VoiceProfile : ObservableObject
     {
         get => _gender;
         set => SetProperty(ref _gender, value);
+    }
+
+    /// <summary>True only for the bundled sample profile, whose assets follow the host UI language.</summary>
+    public bool UseInterfaceLanguageDefaults
+    {
+        get => _useInterfaceLanguageDefaults;
+        set => SetProperty(ref _useInterfaceLanguageDefaults, value);
     }
 
     // -------------------------- Rutas de audio --------------------------

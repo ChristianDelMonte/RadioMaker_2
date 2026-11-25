@@ -26,7 +26,8 @@ public partial class App : Application
             var announcer = new Announcer(new AnnouncerOptions
             {
                 OwnsBass = true,
-                UserAgent = "RMVoice.App/1.0"
+                UserAgent = "RMVoice.App/1.0",
+                InterfaceLanguage = VoiceLocalizationService.CurrentCulture.TwoLetterISOLanguageName
             });
 
             try

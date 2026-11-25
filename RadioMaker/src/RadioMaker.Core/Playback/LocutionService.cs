@@ -32,6 +32,7 @@ public sealed class LocutionService : IDisposable
     private int _monitorHandle;
     private BassLevelMeter? _monitorMeter;
     private BassSpectrum? _monitorSpectrum;
+    public string InterfaceLanguage { get; set; } = "es";
 
     public LocutionService() { }
 
@@ -97,7 +98,8 @@ public sealed class LocutionService : IDisposable
                 var options = new AnnouncerOptions
                 {
                     OwnsBass = false,
-                    UserAgent = "RadioMaker/1.0"
+                    UserAgent = "RadioMaker/1.0",
+                    InterfaceLanguage = InterfaceLanguage
                 };
 
                 _announcer = new Announcer(options);

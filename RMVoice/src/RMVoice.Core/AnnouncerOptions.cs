@@ -5,6 +5,9 @@ namespace RMVoice.Core;
 /// -------------
 public sealed class AnnouncerOptions
 {
+    /// <summary>Interface language used to select the bundled default voice assets.</summary>
+    public string InterfaceLanguage { get; init; } = "es";
+
     /// -------------
     /// <c>true</c>  → el Engine llama a <c>Bass.Init()</c> y <c>Bass.Free()</c>.
     ///               Usar en el EXE standalone (RMVoice.exe).

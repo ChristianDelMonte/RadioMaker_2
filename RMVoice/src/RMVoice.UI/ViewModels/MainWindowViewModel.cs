@@ -360,6 +360,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         if (SelectedProfile is null) return;
         var path = await _dialogs.PickFileAsync(VoiceLocalizationService.Format("Loc.RMVoice.Dialog.SelectAudio", label), AudioPatterns);
         if (path is null) return;
+        SelectedProfile.UseInterfaceLanguageDefaults = false;
         assign(path);
         ApplySelectedProfile();
         PersistProfiles();
@@ -375,6 +376,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         if (SelectedProfile is null) return;
         var path = await _dialogs.PickFileAsync(VoiceLocalizationService.Format("Loc.RMVoice.Dialog.SelectTable", label), TablePatterns);
         if (path is null) return;
+        SelectedProfile.UseInterfaceLanguageDefaults = false;
         assign(path);
         ApplySelectedProfile();
         PersistProfiles();
@@ -389,11 +391,15 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         _suppressProfileApply = true;
 
         foreach (var p in _announcer.Profiles)
+        {
+            p.PropertyChanged += OnProfilePropertyChanged;
             Profiles.Add(p);
+        }
 
         if (Profiles.Count == 0)
         {
             var fallback = new VoiceProfile { Name = VoiceLocalizationService.GetString("Loc.RMVoice.Profile.New") };
+            fallback.PropertyChanged += OnProfilePropertyChanged;
             Profiles.Add(fallback);
         }
 
@@ -408,6 +414,18 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         if (_suppressProfileApply) return;
         ApplySelectedProfile();
+    }
+
+    private void OnProfilePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(VoiceProfile.HourAudioPath) or nameof(VoiceProfile.MinuteAudioPath)
+            or nameof(VoiceProfile.TemperatureAudioPath) or nameof(VoiceProfile.HumidityAudioPath)
+            or nameof(VoiceProfile.HourTablePath) or nameof(VoiceProfile.MinuteTablePath)
+            or nameof(VoiceProfile.TemperatureTablePath) or nameof(VoiceProfile.HumidityTablePath))
+        {
+            if (sender is VoiceProfile profile)
+                profile.UseInterfaceLanguageDefaults = false;
+        }
     }
 
     [RelayCommand]
@@ -426,6 +444,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             Gender = "—"
         };
 
+        profile.PropertyChanged += OnProfilePropertyChanged;
         Profiles.Add(profile);
         SelectedProfile = profile;
         PersistProfiles();
@@ -449,9 +468,11 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             HourTablePath = source.HourTablePath,
             MinuteTablePath = source.MinuteTablePath,
             TemperatureTablePath = source.TemperatureTablePath,
-            HumidityTablePath = source.HumidityTablePath
+            HumidityTablePath = source.HumidityTablePath,
+            UseInterfaceLanguageDefaults = source.UseInterfaceLanguageDefaults
         };
 
+        copy.PropertyChanged += OnProfilePropertyChanged;
         Profiles.Add(copy);
         SelectedProfile = copy;
         PersistProfiles();
@@ -638,6 +659,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     private void SetTablePath(bool isHour, bool isTemperature, bool isHumidity, string path)
     {
         var p = SelectedProfile!;
+        p.UseInterfaceLanguageDefaults = false;
         if (isHour) { p.HourTablePath = path; return; }
         if (isTemperature) { p.TemperatureTablePath = path; return; }
         if (isHumidity) { p.HumidityTablePath = path; return; }

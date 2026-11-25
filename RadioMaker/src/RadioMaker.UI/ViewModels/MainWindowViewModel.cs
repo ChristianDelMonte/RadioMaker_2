@@ -676,6 +676,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         //    real (que requiere que BASS ya esté inicializado) ocurre más
         //    tarde, en InitializeEngine().
         _locution = new LocutionService();
+        _locution.InterfaceLanguage = LocalizationService.CurrentLanguage;
         _locutionSettings = LocutionSettingsStore.Load();
 
         // 5) PlaybackEngine.
