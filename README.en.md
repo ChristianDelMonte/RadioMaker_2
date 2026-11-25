@@ -681,12 +681,14 @@ Contributions are welcome. For large changes, open an issue first to discuss wha
 
 ---
 
+<p align="center">
 <a href="https://alternativeto.net/software/radiomaker/about/?utm_source=badge&utm_medium=referral" target="_blank">
   <img src="https://alternativeto.net/static/badges/badge-wide-dark.svg"
        alt="RadioMaker | AlternativeTo"
        width="406" height="77"
        style="width: 406px; height: 77px;" />
 </a>
+</p>
 
 <p align="center">
   <strong>🎙️ RadioMaker</strong><br>
