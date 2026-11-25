@@ -776,6 +776,15 @@ hay `using` explícitos en RadioMaker.Core y RMWave.Core).
 
 ---
 <p align="center">
+<a href="https://alternativeto.net/software/radiomaker/about/?utm_source=badge&utm_medium=referral" target="_blank">
+  <img src="https://alternativeto.net/static/badges/badge-wide-dark.svg"
+       alt="RadioMaker | AlternativeTo"
+       width="406" height="77"
+       style="width: 406px; height: 77px;" />
+</a>
+</p>	
+
+<p align="center">
   <strong>🎙️ RadioMaker</strong><br>
   <strong>Copyright (c) 2020 / 2026 - Christian A. Del Monte</strong><br>
   <strong>creadig@gmail.com / creadig@hotmail.com</strong><br>
