@@ -243,6 +243,10 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
         {
             _suppressFilterNavigation = false;
         }
+
+        foreach (var file in Files)
+            file.RefreshLocalizedKind();
+
         OnPropertyChanged(nameof(FileCountText));
     }
 

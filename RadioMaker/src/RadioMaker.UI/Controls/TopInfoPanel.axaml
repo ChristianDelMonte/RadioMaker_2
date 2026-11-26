@@ -10,8 +10,20 @@
             BorderBrush="{DynamicResource BorderPrimary}"
             BorderThickness="0,0,0,1"
             Padding="8,6">
-        <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-              ColumnSpacing="8">
+        <Grid ColumnSpacing="8" ClipToBounds="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" MaxWidth="220" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*" MaxWidth="220" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="2.5*" MaxWidth="220" />
+            </Grid.ColumnDefinitions>
 
             <!-- ═══════════════════════════════════════════════════════
                  0) Logo de la app
@@ -21,23 +33,9 @@
                     BorderBrush="{DynamicResource BorderPrimary}"
                     BorderThickness="1"
                     CornerRadius="4"
-                    Width="220" Height="66"
+                    Height="66"
                     ClipToBounds="True">
                 <Panel>
-                    <StackPanel VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Spacing="2">
-                        <materialIcons:MaterialIcon Kind="MusicNote"
-                                                    Width="24" Height="24"
-                                                    Foreground="{DynamicResource Accent}"
-                                                    HorizontalAlignment="Center" />
-                        <TextBlock Text="LOGO"
-                                   FontSize="9"
-                                   FontWeight="Bold"
-                                   Foreground="{DynamicResource FgMuted}"
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
-
                     <Image Source="/Assets/logo.png"
                            Stretch="Uniform"
                            IsVisible="true" />
@@ -52,10 +50,14 @@
                     BorderBrush="{Binding NowPlayingPanelBorderBrush}"
                     BorderThickness="1"
                     CornerRadius="4"
-                    Padding="10,5"
+                    Padding="4"
                     Height="66"
-                    MinWidth="200">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    ClipToBounds="True">
+                <Grid ColumnSpacing="6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="*" MaxWidth="80" />
+                    </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0" RowDefinitions="Auto,Auto,Auto">
                         <TextBlock Grid.Row="0"
@@ -63,6 +65,7 @@
                                    FontSize="8"
                                    FontWeight="Bold"
                                    Foreground="{Binding NowPlayingPanelForeground}"
+                                   TextTrimming="CharacterEllipsis"
                                    LetterSpacing="1" />
 
                         <TextBlock Grid.Row="1"
@@ -93,8 +96,8 @@
                     <controls:MiniWaveform Grid.Column="1"
                                            Channel="{Binding NowPlayingChannel}"
                                            Spectrum="{Binding NowPlayingSpectrum}"
-                                           Width="110" Height="56"
-                                           VerticalAlignment="Center" />
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch" />
                 </Grid>
             </Border>
 
@@ -119,15 +122,16 @@
                     BorderBrush="{Binding NextPlayingPanelBorderBrush}"
                     BorderThickness="1"
                     CornerRadius="4"
-                    Padding="10,5"
+                    Padding="6"
                     Height="66"
-                    MinWidth="200">
+                    ClipToBounds="True">
                 <Grid RowDefinitions="Auto,Auto,Auto">
                     <TextBlock Grid.Row="0"
                                Text="{DynamicResource Loc.Controls.TopInfo.Next}"
                                FontSize="8"
                                FontWeight="Bold"
                                Foreground="{Binding NextPlayingPanelForeground}"
+                               TextTrimming="CharacterEllipsis"
                                LetterSpacing="1" />
 
                     <TextBlock Grid.Row="1"
@@ -165,8 +169,7 @@
                     BorderThickness="1"
                     CornerRadius="4"
                     Padding="8,5"
-                    MinWidth="180"
-                    MaxWidth="220">
+                    ClipToBounds="True">
                 <controls:VuMeter Orientation="Horizontal"
                                   Style="{Binding VuSettings.Style}"
                                   ShowDbScale="False"
@@ -175,7 +178,7 @@
                                   ShowRms="{Binding VuSettings.ShowRms}"
                                   ShowClipIndicator="{Binding VuSettings.ShowClipIndicator}"
                                   BarWidth="20"
-                                  HorizontalAlignment="Center"
+                                  HorizontalAlignment="Stretch"
                                   VerticalAlignment="Center"
                                   GreenZoneColor="{Binding VuSettings.GreenColor}"
                                   AmberZoneColor="{Binding VuSettings.AmberColor}"
@@ -222,7 +225,7 @@
                                    IsActive="True"
                                    Height="66"
                                    LineHeight="18"
-                                   MinWidth="155"
+                                   MinWidth="135"
                                    VerticalAlignment="Center"
                                    ToolTip.Tip="{DynamicResource Loc.Controls.TopInfo.DateTime}" />
             </Grid>
@@ -242,7 +245,7 @@
                 <controls:RotaryDial Minimum="0" Maximum="1"
                                      Step="0.01"
                                      Value="{Binding Volume, Mode=TwoWay}"
-                                     Width="48" Height="48"
+                                     Width="55" Height="55"
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center"
                                      ToolTip.Tip="{DynamicResource Loc.Controls.TopInfo.MasterVolume}" />
@@ -258,14 +261,14 @@
                     CornerRadius="4"
                     Padding="6,4"
                     Height="66"
-                    MinWidth="72"
+                    MinWidth="40"
                     VerticalAlignment="Center">
                 <Button Command="{Binding ToggleDuckingCommand}"
                         Background="{Binding DuckingButtonBackground}"
                         BorderBrush="Transparent"
                         BorderThickness="0"
                         CornerRadius="4"
-                        Width="48" Height="48"
+                        Width="40" Height="40"
                         Padding="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
@@ -293,14 +296,14 @@
                     CornerRadius="4"
                     Padding="6,4"
                     Height="66"
-                    MinWidth="72"
+                    MinWidth="40"
                     VerticalAlignment="Center">
                 <Button Command="{Binding ToggleEmergencyCommand}"
                         Background="{Binding EmergencyButtonBackground}"
                         BorderBrush="Transparent"
                         BorderThickness="0"
                         CornerRadius="4"
-                        Width="48" Height="48"
+                        Width="40" Height="40"
                         Padding="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
@@ -321,14 +324,14 @@
                     CornerRadius="4"
                     Padding="6,4"
                     Height="66"
-                    MinWidth="72"
+                    MinWidth="40"
                     VerticalAlignment="Center">
                 <Button Command="{Binding ToggleAutoDjCommand}"
                         Background="{Binding AutoDjButtonBackground}"
                         BorderBrush="Transparent"
                         BorderThickness="0"
                         CornerRadius="4"
-                        Width="48" Height="48"
+                        Width="40" Height="40"
                         Padding="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
@@ -356,7 +359,7 @@
                     CornerRadius="4"
                     Padding="8,5"
                     Height="66"
-                    MinWidth="200"
+                    ClipToBounds="True"
                     VerticalAlignment="Center">
 
                 <Border.ContextMenu>
@@ -406,27 +409,28 @@
                                    HorizontalAlignment="Center"/>
 
                         <!-- Linea 2: Temperatura y Humedad -->
-                        <StackPanel Grid.Row="1"
-                                    Orientation="Horizontal"
-                                    Spacing="8"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,4,0,0">
-
-                            <TextBlock Text="{Binding LocutionPanel.TemperatureDisplayText}"
-                                       FontSize="16"
-                                       FontFamily="Consolas"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource AccentText}" />
-                            <TextBlock Text="·"
-                                       FontSize="14"
-                                       Foreground="{DynamicResource FgMuted}"
-                                       VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding LocutionPanel.HumidityDisplayText}"
-                                       FontSize="16"
-                                       FontFamily="Consolas"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource AccentText}" />
-                        </StackPanel>
+                        <Viewbox Grid.Row="1"
+                                 Stretch="Uniform"
+                                 StretchDirection="DownOnly"
+                                 HorizontalAlignment="Center"
+                                 Margin="0,4,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding LocutionPanel.TemperatureDisplayText}"
+                                           FontSize="16"
+                                           FontFamily="Consolas"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource AccentText}" />
+                                <TextBlock Text="·"
+                                           FontSize="14"
+                                           Foreground="{DynamicResource FgMuted}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding LocutionPanel.HumidityDisplayText}"
+                                           FontSize="16"
+                                           FontFamily="Consolas"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource AccentText}" />
+                            </StackPanel>
+                        </Viewbox>
                     </Grid>
                 </Grid>
             </Border>

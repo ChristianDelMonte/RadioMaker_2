@@ -174,7 +174,7 @@ public sealed class VuMeter : Control
         else
         {
             double scale = ShowDbScale ? 20 : 0;
-            double w = double.IsInfinity(availableSize.Width) || availableSize.Width < 200 ? 300 : availableSize.Width;
+            double w = double.IsInfinity(availableSize.Width) ? 300 : availableSize.Width;
             double h = scale + BarWidth * 2 + 12;
             return new Size(w, h);
         }
@@ -362,7 +362,7 @@ public sealed class VuMeter : Control
     {
         var bgColor = GetEffectiveBackground();
         int segments = Math.Max(4, SegmentCount);
-        double gap = 2.5;
+        double gap = Math.Min(2.5, barRect.Width / segments / 2);
         double segWidth = (barRect.Width - gap * (segments - 1)) / segments;
         double pct = DbToPercent(LevelToDb(level));
         int activeCount = (int)Math.Round(pct * segments);

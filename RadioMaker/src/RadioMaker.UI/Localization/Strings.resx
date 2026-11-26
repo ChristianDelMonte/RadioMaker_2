@@ -1061,6 +1061,7 @@ caratula</value></data>
   <data name="Loc.Weekday.SunShort" xml:space="preserve"><value>Dom</value></data>
   <data name="Loc.EqPreset.Tooltip" xml:space="preserve"><value>Preset del ecualizador</value></data>
   <data name="Loc.Tabs.NewNote" xml:space="preserve"><value>Nueva Nota</value></data>
+  <data name="Loc.Tabs.AddMenu.Note" xml:space="preserve"><value>Nota</value></data>
   <data name="Loc.BusSelector.Tooltip" xml:space="preserve"><value>Seleccionar bus de salida de este modulo</value></data>
   <data name="Loc.BusSelector.Description" xml:space="preserve"><value>Selecciona por que dispositivo sale el audio de este modulo.</value></data>
   <data name="Loc.Tabs.AddTooltip" xml:space="preserve"><value>Agregar nueva pestaña</value></data>
@@ -1069,11 +1070,11 @@ caratula</value></data>
   <data name="Loc.Common.Save" xml:space="preserve"><value>Guardar</value></data>
   <data name="Loc.Tabs.ScrollLeft" xml:space="preserve"><value>Desplazar pestañas a la izquierda</value></data>
   <data name="Loc.PlaylistMode.Title" xml:space="preserve"><value>Modo de reproduccion</value></data>
-  <data name="Loc.Tabs.NewSequence" xml:space="preserve"><value>Nueva Tanda</value></data>
+  <data name="Loc.Tabs.AddMenu.Sequence" xml:space="preserve"><value>Tanda</value></data>
   <data name="Loc.Notes.NewTooltip" xml:space="preserve"><value>Nuevo documento</value></data>
   <data name="Loc.PlaylistMode.Description" xml:space="preserve"><value>Elegi como se reproduce la playlist al llegar al final.</value></data>
   <data name="Loc.Tabs.NewScheduled" xml:space="preserve"><value>Nuevo Programado</value></data>
-  <data name="Loc.Tabs.NewCart" xml:space="preserve"><value>Nuevo Cart</value></data>
+  <data name="Loc.Tabs.AddMenu.Cart" xml:space="preserve"><value>Cart</value></data>
   <data name="Loc.BusSelector.Footer" xml:space="preserve"><value>Los cambios se aplican a los proximos audios. Lo que ya esta sonando termina en el bus anterior.</value></data>
   <data name="Loc.EqPreset.Title" xml:space="preserve"><value>Preset del ecualizador</value></data>
   <data name="Loc.Tabs.FavoriteFolders" xml:space="preserve"><value>Carpetas favoritas</value></data>
@@ -1081,7 +1082,7 @@ caratula</value></data>
   <data name="Loc.Tabs.RenameTooltip" xml:space="preserve"><value>Doble clic para renombrar</value></data>
   <data name="Loc.EqPreset.Description" xml:space="preserve"><value>Elegi un preset de fabrica o uno guardado por vos.</value></data>
   <data name="Loc.Notes.Placeholder" xml:space="preserve"><value>Empeza a escribir...</value></data>
-  <data name="Loc.Tabs.NewChainer" xml:space="preserve"><value>Nuevo Encadenador</value></data>
+  <data name="Loc.Tabs.AddMenu.Chainer" xml:space="preserve"><value>Encadenador</value></data>
   <data name="Loc.PlaylistMode.Tooltip" xml:space="preserve"><value>Modo de reproduccion de la playlist</value></data>
   <data name="Loc.Tabs.ScrollRight" xml:space="preserve"><value>Desplazar pestañas a la derecha</value></data>
   <data name="Loc.Notes.OpenTooltip" xml:space="preserve"><value>Abrir archivo .txt</value></data>
@@ -1357,6 +1358,8 @@ caratula</value></data>
   <data name="Loc.Label.Module.Manual" xml:space="preserve"><value>Reproducción manual</value></data>
   <data name="Loc.Label.Module.AutoDj" xml:space="preserve"><value>AutoDJ</value></data>
   <data name="Loc.Label.FileKind.CartBoard" xml:space="preserve"><value>BOTONERA</value></data>
+  <data name="Loc.Label.FileKind.ScheduledList" xml:space="preserve"><value>PROGRAMADOS</value></data>
+  <data name="Loc.Label.FileKind.Chainers" xml:space="preserve"><value>ENCADENADORES</value></data>
   <data name="Loc.Label.PlaylistTrack.MixNone" xml:space="preserve"><value>(sin mezcla)</value></data>
   <data name="Loc.Label.Tanda.NoDelay" xml:space="preserve"><value>Sin espera</value></data>
   <data name="Loc.Label.Tanda.Delay" xml:space="preserve"><value>Espera {0:F1} s</value></data>

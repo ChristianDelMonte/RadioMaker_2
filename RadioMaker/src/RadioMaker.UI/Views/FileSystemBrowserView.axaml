@@ -247,7 +247,7 @@
                                     <Border Background="{Binding KindColor, Converter={x:Static vm:ThemeColorConverter.Instance}}"
                                             CornerRadius="3"
                                             Padding="4,1"
-                                            IsVisible="{Binding IsNativeProject}"
+                                            IsVisible="{Binding HasKindBadge}"
                                             VerticalAlignment="Center">
                                         <TextBlock Text="{Binding KindText}"
                                                    FontSize="8"

@@ -184,7 +184,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem Header="{DynamicResource Loc.Tabs.NewSequence}"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.AddMenu.Sequence}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddTandaTabCommand}">
                                     <MenuItem.Icon>
@@ -204,7 +204,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem Header="{DynamicResource Loc.Tabs.NewChainer}"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.AddMenu.Chainer}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddEncadenadoresTabCommand}">
                                     <MenuItem.Icon>
@@ -216,7 +216,7 @@
 
                                 <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}" />
 
-                                <MenuItem Header="{DynamicResource Loc.Tabs.NewNote}"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.AddMenu.Note}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).ShowStandardTabs}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddNotesTabCommand}">
                                     <MenuItem.Icon>
@@ -229,7 +229,7 @@
                                 <!-- Separador + Nuevo Cart: solo en la zona central -->
                                 <Separator IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).CanAddCartTab}" />
 
-                                <MenuItem Header="{DynamicResource Loc.Tabs.NewCart}"
+                                <MenuItem Header="{DynamicResource Loc.Tabs.AddMenu.Cart}"
                                           IsVisible="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).CanAddCartTab}"
                                           Command="{Binding $parent[UserControl].((vm:TabHostViewModel)DataContext).AddCartTabCommand}">
                                     <MenuItem.Icon>

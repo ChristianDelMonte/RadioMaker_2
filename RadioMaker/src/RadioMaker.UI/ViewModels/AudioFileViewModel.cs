@@ -15,14 +15,16 @@ public enum AudioFileKind
     Playlist = 1,
     Tanda = 2,
     ScheduledList = 3,
-    CartBoard = 4
+    CartBoard = 4,
+    Chainers = 5,
+    RmWaveProject = 6
 }
 
 /// -------------
 /// Representa un archivo en la lista del File Manager.
 ///
 /// Puede ser un archivo de audio (mp3, flac, etc) o un proyecto nativo
-/// de RadioMaker (.rmf / .tnd / .rms / .rcb). El tipo se detecta por
+/// de RadioMaker (.rmf / .tnd / .rms / .rcb / .rme) o RMWave (.rmw). El tipo se detecta por
 /// extension en el constructor.
 ///
 /// Carga lazy de TAGs: al construirse solo tiene el path y el tamaño.
@@ -52,22 +54,26 @@ public sealed partial class AudioFileViewModel : ViewModelBase
     public AudioFileKind Kind { get; }
 
     /// -------------True si es un archivo de audio reproducible.</summary>
-    public bool IsAudio => Kind == AudioFileKind.Audio;
+    public bool IsAudio => Kind is AudioFileKind.Audio or AudioFileKind.RmWaveProject;
 
     /// -------------
-    /// True si es un proyecto nativo de RadioMaker (.rmf / .tnd / .rms / .rcb).
+    /// True si es un proyecto nativo de RadioMaker (.rmf / .tnd / .rms / .rcb / .rme).
     /// Los proyectos no se reproducen directamente desde el explorador; se
     /// arrastran a la pestaña que corresponda.
     /// -------------
     public bool IsNativeProject => !IsAudio;
 
-    /// -------------Etiqueta del tipo (vacia para audios).</summary>
+    public bool HasKindBadge => Kind != AudioFileKind.Audio;
+
+    /// -------------Etiqueta del tipo (vacia para audios comunes).</summary>
     public string KindText => Kind switch
     {
         AudioFileKind.Playlist => LocalizationService.GetString("Loc.ScheduledItem.Kind.Playlist"),
         AudioFileKind.Tanda => LocalizationService.GetString("Loc.ScheduledItem.Kind.Sequence"),
-        AudioFileKind.ScheduledList => LocalizationService.GetString("Loc.Label.Module.Scheduler"),
+        AudioFileKind.ScheduledList => LocalizationService.GetString("Loc.Label.FileKind.ScheduledList"),
         AudioFileKind.CartBoard => LocalizationService.GetString("Loc.Label.FileKind.CartBoard"),
+        AudioFileKind.Chainers => LocalizationService.GetString("Loc.Label.FileKind.Chainers"),
+        AudioFileKind.RmWaveProject => LocalizationService.GetString("Loc.ScheduledItem.FileType.RMWave"),
         _ => string.Empty
     };
 
@@ -78,6 +84,8 @@ public sealed partial class AudioFileViewModel : ViewModelBase
         AudioFileKind.Tanda => "Accent",
         AudioFileKind.ScheduledList => "Warning",
         AudioFileKind.CartBoard => "Accent",
+        AudioFileKind.Chainers => "Success",
+        AudioFileKind.RmWaveProject => "Accent",
         _ => "FgMuted"
     };
 
@@ -260,7 +268,24 @@ public sealed partial class AudioFileViewModel : ViewModelBase
         if (string.Equals(extLower, CartBoardStore.FileExtension, StringComparison.OrdinalIgnoreCase))
             return AudioFileKind.CartBoard;
 
+        if (string.Equals(extLower, EncadenadoresStore.FileExtension, StringComparison.OrdinalIgnoreCase))
+            return AudioFileKind.Chainers;
+
+        if (extLower == ".rmw")
+            return AudioFileKind.RmWaveProject;
+
         return AudioFileKind.Audio;
+    }
+
+    internal void RefreshLocalizedKind()
+    {
+        if (!HasKindBadge) return;
+
+        OnPropertyChanged(nameof(KindText));
+        if (!IsNativeProject) return;
+
+        OnPropertyChanged(nameof(DetailText));
+        OnPropertyChanged(nameof(TagsLineTechnical));
     }
 
     // ───── Carga de TAGs (lazy) ──────────────────────────────────────────
