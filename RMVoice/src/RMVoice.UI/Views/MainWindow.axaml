@@ -181,13 +181,23 @@
         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="6">
 
           <!-- Fila superior: etiqueta + boton de tema -->
-          <Grid ColumnDefinitions="*,Auto">
+          <Grid ColumnDefinitions="*,Auto,Auto">
             <TextBlock Grid.Column="0"
                        Text="{DynamicResource Loc.RMVoice.Main.ProfileTitle}"
                        Foreground="#94A3B8"
                        FontSize="11"
                        VerticalAlignment="Center" />
-            <Button Grid.Column="1"
+            <ComboBox Grid.Column="1"
+                      Name="LanguageSelector"
+                      Width="100"
+                      SelectedIndex="0"
+                      SelectionChanged="LanguageSelector_SelectionChanged"
+                      FontSize="11"
+                      Margin="0,0,6,0">
+              <ComboBoxItem Content="Español" />
+              <ComboBoxItem Content="English" />
+            </ComboBox>
+            <Button Grid.Column="2"
                     Command="{Binding ToggleThemeCommand}"
                     Padding="6,3"
                     Background="Transparent"

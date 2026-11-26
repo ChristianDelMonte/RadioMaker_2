@@ -86,7 +86,11 @@ public partial class MainWindow : Controls.CustomChromeWindow
 
         Opened += (sender, args) => InitializeAudio();
         Opened += (sender, args) => _ = TryOpenStartupFileAsync();
-        Closing += (sender, args) => ShutdownAudio();
+        Closing += (sender, args) =>
+        {
+            WaveLocalizationService.LanguageChanged -= OnLanguageChanged;
+            ShutdownAudio();
+        };
 
         SelectedStart.KeyDown += SelectedEditor_KeyDown;
         SelectedOffset.KeyDown += SelectedEditor_KeyDown;
@@ -104,6 +108,7 @@ public partial class MainWindow : Controls.CustomChromeWindow
             RoutingStrategies.Tunnel);
 
         ThemeManager.ThemeChanged += OnThemeChanged;
+        WaveLocalizationService.LanguageChanged += OnLanguageChanged;
         ThemeManager.Load();
         BuildThemeMenu();
 
@@ -119,6 +124,24 @@ public partial class MainWindow : Controls.CustomChromeWindow
         RecentProjectsManager.ListChanged += BuildRecentMenu;
         BuildRecentMenu();
         UpdateWindowTitle();
+    }
+
+    private void SpanishLanguage_Click(object? sender, RoutedEventArgs e)
+        => WaveLocalizationService.SetLanguage("es");
+
+    private void EnglishLanguage_Click(object? sender, RoutedEventArgs e)
+        => WaveLocalizationService.SetLanguage("en");
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            UpdateWindowTitle();
+            BuildThemeMenu();
+            BuildRecentMenu();
+            if (_engine.IsInitialized) LoadAudioDevices();
+            StatusText.Text = WaveLocalizationService.GetString("Loc.RMWave.Status.Ready");
+        });
     }
 
     // ==========================================

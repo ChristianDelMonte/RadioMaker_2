@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using RMVoice.UI.Localization;
 using AvaloniaShapePath = Avalonia.Controls.Shapes.Path;
 
 namespace RMVoice.UI.Views;
@@ -13,6 +14,14 @@ public partial class MainWindow : RMVoice.UI.Controls.CustomChromeWindow
     {
         InitializeComponent();
         InitializeCustomChrome();
+        this.FindControl<ComboBox>("LanguageSelector")!.SelectedIndex =
+            VoiceLocalizationService.CurrentLanguage == "en" ? 1 : 0;
+    }
+
+    private void LanguageSelector_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ComboBox selector || selector.SelectedIndex < 0) return;
+        VoiceLocalizationService.SetLanguage(selector.SelectedIndex == 1 ? "en" : "es");
     }
 
     private void InitializeCustomChrome()

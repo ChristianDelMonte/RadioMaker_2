@@ -29,6 +29,7 @@ public sealed class Announcer : IAnnouncer
     private WeatherLocation? _activeWeatherLocation;
     private bool _initialized;
     private bool _disposed;
+    private string _interfaceLanguage;
 
     public event EventHandler<AnnounceRequest>? PlaybackStarted;
     public event EventHandler<AnnounceRequest>? PlaybackCompleted;
@@ -37,6 +38,7 @@ public sealed class Announcer : IAnnouncer
     public Announcer(AnnouncerOptions options)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
+        _interfaceLanguage = options.InterfaceLanguage;
 
         _audio = new AudioService(options.OwnsBass)
         {
@@ -140,6 +142,16 @@ public sealed class Announcer : IAnnouncer
         ActiveProfile = current;
     }
 
+    public void SetInterfaceLanguage(string language)
+    {
+        if (language is not ("en" or "es") ||
+            string.Equals(_interfaceLanguage, language, StringComparison.OrdinalIgnoreCase))
+            return;
+
+        _interfaceLanguage = language;
+        ReloadProfiles();
+    }
+
     private void LoadProfilesFromDisk()
     {
         _profiles.Clear();
@@ -185,7 +197,7 @@ public sealed class Announcer : IAnnouncer
             _profileStore.Save(loaded);
     }
 
-    private bool IsEnglishInterface => string.Equals(_options.InterfaceLanguage, "en", StringComparison.OrdinalIgnoreCase);
+    private bool IsEnglishInterface => string.Equals(_interfaceLanguage, "en", StringComparison.OrdinalIgnoreCase);
 
     private static bool IsLegacySpanishSample(VoiceProfile profile)
     {

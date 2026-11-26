@@ -93,6 +93,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         _dialogs = dialogs;
         _announcer = announcer;
+        VoiceLocalizationService.LanguageChanged += OnLanguageChanged;
         _profileStore = new ProfileStore();
 
         _selectedHour = Hours[DateTime.Now.Hour];
@@ -149,6 +150,26 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     private void OnThemeChanged(object? sender, EventArgs e)
     {
         Dispatcher.UIThread.Post(() => IsDarkTheme = ThemeService.IsDarkVariant);
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        _announcer.SetInterfaceLanguage(VoiceLocalizationService.CurrentLanguage);
+        var currentName = SelectedProfile?.Name;
+        _suppressProfileApply = true;
+        Profiles.Clear();
+        foreach (var profile in _announcer.Profiles)
+        {
+            profile.PropertyChanged += OnProfilePropertyChanged;
+            Profiles.Add(profile);
+        }
+        SelectedProfile = Profiles.FirstOrDefault(p => p.Name == currentName) ?? Profiles.FirstOrDefault();
+        _suppressProfileApply = false;
+        ApplySelectedProfile();
+        OnClockTick(this, EventArgs.Empty);
+        StatusMessage = _announcer.IsInitialized
+            ? VoiceLocalizationService.GetString("Loc.RMVoice.Status.BassReady")
+            : VoiceLocalizationService.GetString("Loc.RMVoice.Status.BassUnavailable");
     }
 
     // ------------------------------------------------------------------ //
@@ -674,6 +695,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         _disposed = true;
 
         try { ThemeService.ThemeChanged -= OnThemeChanged; } catch { }
+        VoiceLocalizationService.LanguageChanged -= OnLanguageChanged;
         _clockTimer.Stop();
 
         _announcer.PlaybackStarted -= OnPlaybackStarted;

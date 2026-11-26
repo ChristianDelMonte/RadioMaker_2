@@ -170,6 +170,11 @@
                 <!-- Los items se agregan dinámicamente desde el code-behind -->
             </MenuItem>
 
+            <MenuItem Header="{DynamicResource Loc.RMWave.Main.Language}">
+                <MenuItem Header="Español" Click="SpanishLanguage_Click" />
+                <MenuItem Header="English" Click="EnglishLanguage_Click" />
+            </MenuItem>
+
             <MenuItem Header="{DynamicResource Loc.RMWave.Main.Edit}">
                 <MenuItem Header="{DynamicResource Loc.RMWave.Main.DuplicateClip}"
                           Click="DuplicateClip_Click"

@@ -13,8 +13,11 @@ internal static class VoiceLocalizationService
         typeof(VoiceLocalizationService).Assembly);
 
     private static CultureInfo _culture = CultureInfo.GetCultureInfo("es");
+    private static ResourceDictionary? _activeDictionary;
 
     public static CultureInfo CurrentCulture => _culture;
+    public static string CurrentLanguage => _culture.TwoLetterISOLanguageName;
+    public static event EventHandler? LanguageChanged;
 
     public static string GetString(string key) => ResourceManager.GetString(key, _culture) ?? key;
 
@@ -23,13 +26,26 @@ internal static class VoiceLocalizationService
 
     public static void Initialize()
     {
+        ApplyLanguage(SharedLanguageSettings.LoadLanguage(), persist: false);
+    }
+
+    public static void SetLanguage(string language) => ApplyLanguage(language, persist: true);
+
+    private static void ApplyLanguage(string language, bool persist)
+    {
         try
         {
-            var culture = CultureInfo.GetCultureInfo(SharedLanguageSettings.LoadLanguage());
-            _culture = culture;
+            if (language is not ("en" or "es")) language = "en";
+            var culture = CultureInfo.GetCultureInfo(language);
             var set = ResourceManager.GetResourceSet(culture, createIfNotExists: true, tryParents: true);
             var application = Application.Current;
-            if (set is null || application is null) return;
+            _culture = culture;
+            if (application is null)
+            {
+                if (persist) SharedLanguageSettings.SaveLanguage(language);
+                return;
+            }
+            if (set is null) return;
 
             var dictionary = new ResourceDictionary();
             foreach (DictionaryEntry entry in set)
@@ -38,7 +54,12 @@ internal static class VoiceLocalizationService
                     dictionary[key] = ResourceManager.GetString(key, culture) ?? entry.Value ?? string.Empty;
             }
 
+            if (_activeDictionary is not null)
+                application.Resources.MergedDictionaries.Remove(_activeDictionary);
             application.Resources.MergedDictionaries.Add(dictionary);
+            _activeDictionary = dictionary;
+            if (persist) SharedLanguageSettings.SaveLanguage(language);
+            LanguageChanged?.Invoke(null, EventArgs.Empty);
         }
         catch
         {

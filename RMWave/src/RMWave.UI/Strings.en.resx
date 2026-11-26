@@ -13,6 +13,7 @@
   <data name="Loc.RMWave.Main.RecentProjects" xml:space="preserve"><value>Recent projects</value></data>
   <data name="Loc.RMWave.Main.Exit" xml:space="preserve"><value>Exit</value></data>
   <data name="Loc.RMWave.Main.Devices" xml:space="preserve"><value>Devices</value></data>
+  <data name="Loc.RMWave.Main.Language" xml:space="preserve"><value>Language</value></data>
   <data name="Loc.RMWave.Main.Edit" xml:space="preserve"><value>Edit</value></data>
   <data name="Loc.RMWave.Main.DuplicateClip" xml:space="preserve"><value>Duplicate clip</value></data>
   <data name="Loc.RMWave.Main.DeleteClip" xml:space="preserve"><value>Delete clip</value></data>

@@ -36,6 +36,9 @@ public interface IAnnouncer : IDisposable
     /// -------------
     void ReloadActiveProfile();
 
+    /// <summary>Updates bundled default voice assets to follow the UI language.</summary>
+    void SetInterfaceLanguage(string language);
+
     // -------------------------- Reproducción --------------------------
 
     Task PlayAsync(AnnounceRequest request, CancellationToken ct = default);
