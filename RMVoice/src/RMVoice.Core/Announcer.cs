@@ -62,6 +62,7 @@ public sealed class Announcer : IAnnouncer
     public bool IsInitialized => _initialized;
     public bool IsPlaying => _audio.IsPlaying;
     public int CurrentStreamHandle => _audio.CurrentStreamHandle;
+    public double? RemainingPlaybackSeconds => _audio.RemainingPlaybackSeconds;
 
     public int DefaultDevice
     {

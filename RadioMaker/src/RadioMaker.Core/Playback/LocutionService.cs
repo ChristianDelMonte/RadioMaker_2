@@ -57,6 +57,14 @@ public sealed class LocutionService : IDisposable
     public IAudioLevelMeter? CurrentMeter => GetCurrentMonitor().Meter;
     public IAudioSpectrum? CurrentSpectrum => GetCurrentMonitor().Spectrum;
 
+    public double? RemainingPlaybackSeconds
+    {
+        get
+        {
+            lock (_gate) return (_announcer as Announcer)?.RemainingPlaybackSeconds;
+        }
+    }
+
     private (IAudioLevelMeter? Meter, IAudioSpectrum? Spectrum) GetCurrentMonitor()
     {
         lock (_gate)

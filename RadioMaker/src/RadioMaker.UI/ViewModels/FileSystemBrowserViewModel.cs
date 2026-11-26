@@ -92,6 +92,7 @@ public sealed partial class FileSystemBrowserViewModel : ViewModelBase
     [ObservableProperty] private string _nowPlayingText = string.Empty;
 
     private IAudioChannel? _currentChannel;
+    internal IAudioChannel? PreviewChannel => _currentChannel;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
 

@@ -81,6 +81,10 @@ public sealed class EmergencyWatchdogService : IDisposable
 
     /// -------------Canales de audio activos de la playlist de emergencia.</summary>
     public IEnumerable<IAudioChannel> GetActiveChannels() => _player.GetActiveChannels();
+    public IAudioChannel? CurrentChannel => _player.CurrentChannel;
+
+    public (int Index, int Total, string Title, string FilePath)? GetUpcomingTrackInfo()
+        => _player.GetUpcomingTrackInfo();
 
     public EmergencyWatchdogService(
         IAudioEngine engine,

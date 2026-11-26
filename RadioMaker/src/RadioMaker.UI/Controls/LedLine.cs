@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using RadioMaker.UI.Services;
 
 namespace RadioMaker.UI.Controls;
@@ -48,6 +49,17 @@ public sealed class LedLine : Control
     public static readonly StyledProperty<HorizontalAlignment> ContentAlignmentProperty =
         AvaloniaProperty.Register<LedLine, HorizontalAlignment>(nameof(ContentAlignment), HorizontalAlignment.Right);
 
+    public static readonly StyledProperty<bool> BlinkOnTextChangeProperty =
+        AvaloniaProperty.Register<LedLine, bool>(nameof(BlinkOnTextChange));
+
+    private IDisposable? _blink;
+
+    public bool BlinkOnTextChange
+    {
+        get => GetValue(BlinkOnTextChangeProperty);
+        set => SetValue(BlinkOnTextChangeProperty, value);
+    }
+
     public bool IsActive
     {
         get => GetValue(IsActiveProperty);
@@ -86,6 +98,34 @@ public sealed class LedLine : Control
         DetachedFromVisualTree += OnDetachedFromVisualTree;
     }
 
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == BlinkOnTextChangeProperty && !BlinkOnTextChange)
+        {
+            EndBlink();
+        }
+        else if (change.Property == TextProperty && BlinkOnTextChange)
+        {
+            EndBlink();
+            if (!string.IsNullOrEmpty(Text) && this.IsAttachedToVisualTree())
+            {
+                _blink = DispatcherTimer.RunOnce(EndBlink, TimeSpan.FromMilliseconds(120), DispatcherPriority.Normal);
+                InvalidateVisual();
+            }
+        }
+    }
+
+    private void EndBlink()
+    {
+        if (_blink is null) return;
+
+        _blink.Dispose();
+        _blink = null;
+        InvalidateVisual();
+    }
+
     // ───── Suscripcion al tema ───────────────────────────────────────────
 
     private void OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -98,6 +138,7 @@ public sealed class LedLine : Control
     private void OnDetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
     {
         ThemeService.ThemeChanged -= OnThemeChanged;
+        EndBlink();
     }
 
     private void OnThemeChanged(object? sender, EventArgs e)
@@ -179,7 +220,7 @@ public sealed class LedLine : Control
         var defaultActive = new SolidColorBrush(GetDefaultOnColor());
         var defaultInactive = new SolidColorBrush(GetDefaultInactiveColor());
 
-        IBrush onBrush = IsActive
+        IBrush onBrush = IsActive && _blink is null
             ? (OnBrush ?? defaultActive)
             : (InactiveBrush ?? defaultInactive);
 

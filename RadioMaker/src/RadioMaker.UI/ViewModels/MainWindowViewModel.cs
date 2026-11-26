@@ -220,6 +220,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// -------------Posicion del proximo item.</summary>
     [ObservableProperty] private string _nextPosition = string.Empty;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowNextCountdown))]
+    private string _nextCountdownText = string.Empty;
+
+    public bool ShowNextCountdown => NextCountdownText.Length > 0;
+
     // ───── Brushes de los paneles "En reproduccion" / "Siguiente" ────────
     //
     // Se resuelven en el VM (no en el XAML) porque los converters
@@ -2649,6 +2655,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         // 5) Panel "Siguiente".
         RefreshNextPlayingPanel();
+        RefreshNextCountdown();
 
         // 6) Actualizar el indicador de "al aire" en las pestañas.
         UpdateTabLiveStates();
@@ -2679,8 +2686,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     /// -------------
     /// Actualiza las propiedades NowPlaying* con la info del canal activo
-    /// segun la prioridad scheduler > playlist. Cart y canal manual no
-    /// participan de este panel.
+    /// según la prioridad del audio al aire y luego de las preescuchas.
     /// -------------
     private void RefreshNowPlayingPanel()
     {
@@ -2802,19 +2808,29 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 }
             }
 
-            // 3) Cart.
-            var cartChannel = GetAnyActiveCartChannel();
-            if (cartChannel is not null)
+            // 3) Otros reproductores.
+            var (channel, source) = GetOtherNowPlayingAudio();
+            if (channel is not null)
             {
-                var path = cartChannel.FilePath;
+                var path = channel.FilePath;
                 var tags = GetTagsCached(path);
 
                 NowPlayingTitle = ResolveDisplayTitle(tags, SafeFileName(path));
                 NowPlayingArtist = !string.IsNullOrWhiteSpace(tags?.Performers)
                     ? tags!.Performers
-                    : "Cart";
+                    : source;
                 NowPlayingPosition = string.Empty;
-                NowPlayingChannel = cartChannel;
+                NowPlayingChannel = channel;
+                IsNowPlayingActive = true;
+                return;
+            }
+
+            if (_locution.IsPlaying)
+            {
+                NowPlayingTitle = LocalizationService.GetString("Loc.Main.Source.HourWeather");
+                NowPlayingArtist = LocalizationService.GetString("Loc.Main.Source.Locution");
+                NowPlayingPosition = string.Empty;
+                NowPlayingChannel = null;
                 IsNowPlayingActive = true;
                 return;
             }
@@ -2830,6 +2846,58 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             IsNowPlayingActive = !string.IsNullOrWhiteSpace(NowPlayingTitle);
         }
+    }
+
+    private (IAudioChannel? Channel, string Source) GetOtherNowPlayingAudio()
+    {
+        if (GetAnyActiveCartChannel() is { } cart)
+            return (cart, "Cart");
+        if (_emergency.CurrentChannel is { State: PlaybackState.Playing } emergency)
+            return (emergency, LocalizationService.GetString("Loc.Main.Emergency.Active"));
+        if (_currentChannel is { State: PlaybackState.Playing } manual)
+            return (manual, LocalizationService.GetString("Loc.Label.Module.Manual"));
+        if (FileBrowser.PreviewChannel is { State: PlaybackState.Playing } preview)
+            return (preview, LocalizationService.GetString("Loc.Label.Module.FileManager"));
+
+        foreach (var tab in TabHostRight.Tabs)
+        {
+            if (tab.Content is FavoriteFolderPanelViewModel folder &&
+                folder.PreviewChannel is { State: PlaybackState.Playing } favoritePreview)
+                return (favoritePreview, LocalizationService.GetString("Loc.Label.Module.FavoriteFolder"));
+        }
+
+        if (Demo?.GetCurrentChannel() is { State: PlaybackState.Playing } demo)
+            return (demo, LocalizationService.GetString("Loc.Main.Source.Demo"));
+
+        return (null, string.Empty);
+    }
+
+    private void RefreshNextCountdown()
+    {
+        double? remaining = null;
+        if (IsNextPlayingActive && IsNowPlayingActive)
+        {
+            try
+            {
+                var channel = NowPlayingChannel;
+                if (channel is { State: PlaybackState.Playing })
+                {
+                    var end = channel.Duration - channel.TrimEnd;
+                    if (end > TimeSpan.Zero)
+                        remaining = Math.Max(0, (end - channel.Position).TotalSeconds);
+                }
+                else if (channel is null)
+                {
+                    remaining = _locution.RemainingPlaybackSeconds;
+                }
+            }
+            catch
+            {
+                // The source may have finished or been released during this refresh.
+            }
+        }
+
+        NextCountdownText = remaining is >= 0 and <= 9 ? $"{Math.Ceiling(remaining.Value):0}" : string.Empty;
     }
 
     /// -------------
@@ -2952,6 +3020,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             }
 
             var upcoming = activePl?.GetUpcomingTrackInfo();
+            if (upcoming is null && NowPlayingChannel is not null &&
+                ReferenceEquals(NowPlayingChannel, _emergency.CurrentChannel))
+            {
+                upcoming = _emergency.GetUpcomingTrackInfo();
+            }
             if (upcoming is not null)
             {
                 // Locuciones: FilePath vacío → no intentamos leer tags.

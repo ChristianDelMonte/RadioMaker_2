@@ -27,6 +27,8 @@ public sealed class AudioService : IDisposable
     private readonly SemaphoreSlim _playLock = new(1, 1);
     private int _stopGeneration;
     private int _currentStreamHandle;
+    private double _segmentEndSeconds;
+    private double _followingSegmentsSeconds;
 
     // TCS del segmento en curso (lo completa el callback o Stop).
     private TaskCompletionSource<bool>? _currentSegmentTcs;
@@ -81,6 +83,26 @@ public sealed class AudioService : IDisposable
 
     /// -------------Handle BASS del segmento de voz actual, o cero si no hay audio activo.
     public int CurrentStreamHandle => Volatile.Read(ref _currentStreamHandle);
+
+    internal double? RemainingPlaybackSeconds
+    {
+        get
+        {
+            lock (_gate)
+            {
+                var stream = CurrentStreamHandle;
+                if (stream == 0) return null;
+
+                var position = Bass.ChannelGetPosition(stream, PositionFlags.Bytes);
+                if (position < 0) return null;
+
+                var seconds = Bass.ChannelBytes2Seconds(stream, position);
+                if (!double.IsFinite(seconds) || seconds < 0) return null;
+
+                return Math.Max(0, _segmentEndSeconds - seconds) + _followingSegmentsSeconds;
+            }
+        }
+    }
 
     /// -------------Dispositivo por defecto (se usa cuando el request no especifica uno).
     public int DefaultDevice { get; set; } = -1;
@@ -203,6 +225,14 @@ public sealed class AudioService : IDisposable
 
             ApplyDeviceAndVolume(deviceIndex, volume);
 
+            double remainingSeconds;
+            lock (_gate)
+            {
+                remainingSeconds = list
+                    .Where(segment => _streams.TryGetValue(segment.Kind, out var handle) && handle != 0)
+                    .Sum(segment => segment.Region.DurationSeconds);
+            }
+
             foreach (var segment in list)
             {
                 ct.ThrowIfCancellationRequested();
@@ -212,7 +242,8 @@ public sealed class AudioService : IDisposable
                 if (!_streams.TryGetValue(segment.Kind, out var stream) || stream == 0)
                     continue;   // pista no cargada: saltar
 
-                if (!await PlaySegmentAsync(segment, stream, ct).ConfigureAwait(false))
+                remainingSeconds = Math.Max(0, remainingSeconds - segment.Region.DurationSeconds);
+                if (!await PlaySegmentAsync(segment, stream, remainingSeconds, ct).ConfigureAwait(false))
                     break;
             }
         }
@@ -253,7 +284,8 @@ public sealed class AudioService : IDisposable
     /// Reproduce un único segmento: programa el sync de fin, hace seek al inicio
     /// de la región, arranca, espera el fin, y DETIENE el canal.
     /// -------------
-    private async Task<bool> PlaySegmentAsync(Segment segment, int stream, CancellationToken ct)
+    private async Task<bool> PlaySegmentAsync(Segment segment, int stream,
+        double followingSegmentsSeconds, CancellationToken ct)
     {
         var endBytes = Bass.ChannelSeconds2Bytes(stream, segment.Region.EndSeconds);
         var startBytes = Bass.ChannelSeconds2Bytes(stream, segment.Region.StartSeconds);
@@ -283,6 +315,8 @@ public sealed class AudioService : IDisposable
 
             _syncs[segment.Kind] = sync;
 
+            _segmentEndSeconds = segment.Region.EndSeconds;
+            _followingSegmentsSeconds = followingSegmentsSeconds;
             Interlocked.Exchange(ref _currentStreamHandle, stream);
 
             // 4. play.
@@ -307,6 +341,7 @@ public sealed class AudioService : IDisposable
         {
             lock (_gate)
             {
+                Interlocked.Exchange(ref _currentStreamHandle, 0);
                 _syncs[segment.Kind] = 0;
                 Bass.ChannelStop(stream);
             }

@@ -76,6 +76,7 @@ public sealed partial class FavoriteFolderPanelViewModel : ViewModelBase, IDispo
 
     // ───── Constructor ───────────────────────────────────────────────────
     private IAudioChannel? _currentChannel;
+    internal IAudioChannel? PreviewChannel => _currentChannel;
     public FavoriteFolderPanelViewModel(FavoriteFolderEntry entry, IAudioEngine engine)
     {
         _entry = entry ?? throw new ArgumentNullException(nameof(entry));

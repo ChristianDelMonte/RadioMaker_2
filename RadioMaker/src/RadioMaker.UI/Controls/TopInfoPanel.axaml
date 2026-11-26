@@ -68,13 +68,12 @@
                                    TextTrimming="CharacterEllipsis"
                                    LetterSpacing="1" />
 
-                        <TextBlock Grid.Row="1"
-                                   Text="{Binding NowPlayingTitle}"
-                                   FontSize="13"
-                                   FontWeight="SemiBold"
-                                   Foreground="{Binding NowPlayingPanelForeground}"
-                                   TextTrimming="CharacterEllipsis"
-                                   Margin="0,2,0,0" />
+                        <controls:ScrollingTitle Grid.Row="1" Margin="0,2,0,0">
+                            <TextBlock Text="{Binding NowPlayingTitle}"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="{Binding NowPlayingPanelForeground}" />
+                        </controls:ScrollingTitle>
 
                         <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,2,0,0">
                             <TextBlock Grid.Column="0"
@@ -125,7 +124,7 @@
                     Padding="6"
                     Height="66"
                     ClipToBounds="True">
-                <Grid RowDefinitions="Auto,Auto,Auto">
+                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
                     <TextBlock Grid.Row="0"
                                Text="{DynamicResource Loc.Controls.TopInfo.Next}"
                                FontSize="8"
@@ -134,13 +133,12 @@
                                TextTrimming="CharacterEllipsis"
                                LetterSpacing="1" />
 
-                    <TextBlock Grid.Row="1"
-                               Text="{Binding NextTitle}"
-                               FontSize="13"
-                               FontWeight="SemiBold"
-                               Foreground="{Binding NextPlayingPanelForeground}"
-                               TextTrimming="CharacterEllipsis"
-                               Margin="0,2,0,0" />
+                    <controls:ScrollingTitle Grid.Row="1" Margin="0,2,0,0">
+                        <TextBlock Text="{Binding NextTitle}"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   Foreground="{Binding NextPlayingPanelForeground}" />
+                    </controls:ScrollingTitle>
 
                     <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,2,0,0">
                         <TextBlock Grid.Column="0"
@@ -157,6 +155,23 @@
                                    Opacity="0.75"
                                    Margin="6,0,0,0" />
                     </Grid>
+
+                    <Border Grid.Column="1" Grid.RowSpan="3"
+                            IsVisible="{Binding ShowNextCountdown}"
+                            Background="Black"
+                            CornerRadius="4"
+                            Width="34" Height="44"
+                            Margin="6,0,0,0"
+                            VerticalAlignment="Center">
+                        <controls:LedLine Text="{Binding NextCountdownText}"
+                                          Height="32"
+                                          ContentAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          OnBrush="#FFD400"
+                                          OffBrush="#241B00"
+                                          InactiveBrush="#5A4300"
+                                          BlinkOnTextChange="True" />
+                    </Border>
                 </Grid>
             </Border>
 
