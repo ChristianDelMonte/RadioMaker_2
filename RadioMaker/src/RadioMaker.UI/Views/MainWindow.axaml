@@ -17,6 +17,45 @@
         WindowState="FullScreen">
 
     <Window.Styles>
+        <Style Selector="ToggleButton.processing-indicator">
+            <Setter Property="Background" Value="{DynamicResource BgTertiary}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderPrimary}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Foreground" Value="{DynamicResource FgSecondary}" />
+            <Setter Property="Padding" Value="8,3" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                        <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                            <Ellipse Name="IndicatorLed" Width="7" Height="7"
+                                     Fill="{DynamicResource FgMuted}" VerticalAlignment="Center" />
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              FontSize="10" FontWeight="Bold"
+                                              VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="ToggleButton.processing-indicator:checked">
+            <Setter Property="Background" Value="#071A20" />
+            <Setter Property="Foreground" Value="#00E5FF" />
+            <Setter Property="BorderBrush" Value="#008C9E" />
+        </Style>
+        <Style Selector="ToggleButton.processing-indicator:checked /template/ Ellipse#IndicatorLed">
+            <Setter Property="Fill" Value="#00E5FF" />
+        </Style>
+        <Style Selector="ToggleButton.processing-indicator:pointerover, ToggleButton.processing-indicator:focus-visible">
+            <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+        </Style>
+
         <!-- Animacion de parpadeo del banner de emergencia -->
         <Style Selector="Border.emergency-banner">
             <Style.Animations>
@@ -273,6 +312,24 @@
                                 Spacing="2"
                                 VerticalAlignment="Center"
                                 Margin="0,0,8,0">
+
+                        <!-- Indicador de configuracion -->
+                        <ToggleButton Classes="processing-indicator"
+                                      IsChecked="{Binding Fade.IsEnabled, Mode=TwoWay}"
+                                      Content="Fade In/Out"
+                                      ToolTip.Tip="{DynamicResource Loc.Toolbar.Processing.ToggleTooltip}" />
+                        <ToggleButton Classes="processing-indicator"
+                                      IsChecked="{Binding Fade.CartCrossfadeEnabled, Mode=TwoWay}"
+                                      Content="Crossfade"
+                                      ToolTip.Tip="{DynamicResource Loc.Toolbar.Processing.ToggleTooltip}" />
+                        <ToggleButton Classes="processing-indicator"
+                                      IsChecked="{Binding Silence.AutoTrimEnabled, Mode=TwoWay}"
+                                      Content="Auto-Trim"
+                                      ToolTip.Tip="{DynamicResource Loc.Toolbar.Processing.ToggleTooltip}" />
+                        <ToggleButton Classes="processing-indicator"
+                                      IsChecked="{Binding Normalization.IsEnabled, Mode=TwoWay}"
+                                      Content="Normalization"
+                                      ToolTip.Tip="{DynamicResource Loc.Toolbar.Processing.ToggleTooltip}" />
 
                         <!-- Indicador AL AIRE -->
                         <Border Background="{Binding AlAireBackground}"

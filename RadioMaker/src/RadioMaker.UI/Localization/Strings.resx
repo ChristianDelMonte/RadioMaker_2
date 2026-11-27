@@ -47,6 +47,7 @@
   <data name="Loc.Menu.Help" xml:space="preserve"><value>_Ayuda</value></data>
   <data name="Loc.Menu.Help.About" xml:space="preserve"><value>Acerca de...</value></data>
   <data name="Loc.Toolbar.OnAir.Tooltip" xml:space="preserve"><value>Estado de la salida al aire</value></data>
+  <data name="Loc.Toolbar.Processing.ToggleTooltip" xml:space="preserve"><value>Activar o desactivar. Los parámetros se ajustan en Configuración.</value></data>
   <data name="Loc.Toolbar.Theme.Tooltip" xml:space="preserve"><value>Cambiar entre tema claro y oscuro</value></data>
   <data name="Loc.Toolbar.Settings.Tooltip" xml:space="preserve"><value>Configuración</value></data>
   <data name="Loc.Settings.Window.Title" xml:space="preserve"><value>Configuración</value></data>
