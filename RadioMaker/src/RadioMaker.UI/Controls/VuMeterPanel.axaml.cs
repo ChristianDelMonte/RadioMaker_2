@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using RadioMaker.UI.ViewModels;
 using Avalonia;
+using Avalonia.VisualTree;
 
 namespace RadioMaker.UI.Controls;
 
@@ -16,24 +17,38 @@ namespace RadioMaker.UI.Controls;
 /// -------------
 public partial class VuMeterPanel : UserControl
 {
+    private VuMeterSettingsWindowViewModel? _previewViewModel;
+
     public VuMeterPanel()
     {
         InitializeComponent();
+        DataContextChanged += (_, _) =>
+        {
+            if (this.IsAttachedToVisualTree())
+                SetPreviewViewModel(DataContext as VuMeterSettingsWindowViewModel);
+        };
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
 
-        if (DataContext is VuMeterSettingsWindowViewModel vm)
-            vm.StartTimer();
+        SetPreviewViewModel(DataContext as VuMeterSettingsWindowViewModel);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
 
-        if (DataContext is VuMeterSettingsWindowViewModel vm)
-            vm.StopTimer();
+        SetPreviewViewModel(null);
+    }
+
+    private void SetPreviewViewModel(VuMeterSettingsWindowViewModel? viewModel)
+    {
+        if (ReferenceEquals(_previewViewModel, viewModel)) return;
+
+        _previewViewModel?.StopTimer();
+        _previewViewModel = viewModel;
+        _previewViewModel?.StartTimer();
     }
 }

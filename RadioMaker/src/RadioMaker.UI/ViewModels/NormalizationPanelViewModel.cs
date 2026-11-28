@@ -92,7 +92,7 @@ public sealed partial class NormalizationPanelViewModel : ViewModelBase
     // ───── Estado ────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _isAnalyzing;
-    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Normalization.Status.WaitingForFile");
+    [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private NormalizationResult _result = NormalizationResult.NotAnalyzed;
 
     // ───── Propiedades derivadas ─────────────────────────────────────────
@@ -152,7 +152,7 @@ public sealed partial class NormalizationPanelViewModel : ViewModelBase
 
         Result = NormalizationResult.NotAnalyzed;
         StatusMessage = channel is null
-            ? LocalizationService.GetString("Loc.Normalization.Status.NoChannel")
+            ? string.Empty
             : LocalizationService.GetString("Loc.Normalization.Status.Analyzing");
 
         RefreshTexts();

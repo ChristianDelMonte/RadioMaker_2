@@ -12,17 +12,6 @@ namespace RadioMaker.UI.ViewModels;
 /// derecha (estilo Google Chrome). Cada seccion tiene un titulo, un icono
 /// y un VM cuyo tipo determina que control se renderiza.
 ///
-/// Secciones:
-///   1. Fade
-///   2. Silencios
-///   3. Normalizacion
-///   4. Ducking
-///   5. Buses de salida     (ex ventana "Dispositivos de salida")
-///   6. Ruteo por modulo    (ex pestaña "Salidas")
-///   7. VU Meter            (ex ventana "Configuracion del VU meter")
-///   8. Plugins de formato  (ex ventana "Plugins de formato")
-///   9. Apariencia
-///
 /// Los cambios se aplican en vivo sobre los mismos objetos que usa el
 /// MainWindowViewModel, asi que no hay boton "Aplicar". La unica excepcion
 /// es la config de buses, que se persiste al cerrar la ventana.
@@ -76,8 +65,10 @@ public sealed class AudioSettingsWindowViewModel : ViewModelBase, IDisposable
     private static readonly MaterialIconKind IconDucking = MaterialIconKind.Microphone;
     private static readonly MaterialIconKind IconBuses = MaterialIconKind.SpeakerMultiple;
     private static readonly MaterialIconKind IconRouting = MaterialIconKind.CallSplit;
+    private static readonly MaterialIconKind IconExclusivity = MaterialIconKind.Shield;
     private static readonly MaterialIconKind IconVuMeter = MaterialIconKind.Gauge;
     private static readonly MaterialIconKind IconPlugins = MaterialIconKind.Puzzle;
+    private static readonly MaterialIconKind IconEmergency = MaterialIconKind.AlarmLight;
     private static readonly MaterialIconKind IconAppearance = MaterialIconKind.ThemeLightDark;
     private static readonly MaterialIconKind IconClimate = MaterialIconKind.WeatherPartlyCloudy;
     private static readonly MaterialIconKind IconBehavior = MaterialIconKind.Cog;
@@ -120,9 +111,11 @@ public sealed class AudioSettingsWindowViewModel : ViewModelBase, IDisposable
             new("behavior",      IconBehavior,   behaviorPanel),
             new("buses",         IconBuses,      busesPanel),
             new("routing",       IconRouting,    RoutingPanel),
+            new("exclusivity",   IconExclusivity, new ExclusivityPanelViewModel(main?.Coordinator)),
             new("climate",       IconClimate,    locutionPanel),
             new("vumeter",       IconVuMeter,    vuMeterPanel),
             new("plugins",       IconPlugins,    pluginsPanel),
+            new("emergency",     IconEmergency,  EmergencyPanel),
             new("appearance",    IconAppearance, AppearancePanel),
         };
 

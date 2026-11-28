@@ -90,7 +90,7 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
     // ───── Estado ────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _isAnalyzing;
-    [ObservableProperty] private string _statusMessage = LocalizationService.GetString("Loc.Controls.Silence.Status.Waiting");
+    [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private SilenceAnalysisResult _result = SilenceAnalysisResult.NotAnalyzed;
 
     // ───── Textos formateados ────────────────────────────────────────────
@@ -148,7 +148,7 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
 
         Result = SilenceAnalysisResult.NotAnalyzed;
         StatusMessage = channel is null
-            ? LocalizationService.GetString("Loc.Controls.Silence.Status.NoChannel")
+            ? string.Empty
             : LocalizationService.GetString("Loc.Controls.Silence.Status.Analyzing");
 
         OnPropertyChanged(nameof(HasChannel));
@@ -254,10 +254,10 @@ public sealed partial class SilencePanelViewModel : ViewModelBase
         StatusMessage = IsAnalyzing
             ? LocalizationService.GetString("Loc.Controls.Silence.Status.Analyzing")
             : _channel is null
-                ? LocalizationService.GetString("Loc.Controls.Silence.Status.NoChannel")
+                ? string.Empty
                 : Result.IsAnalyzed
                     ? string.Format(LocalizationService.GetString("Loc.Controls.Silence.Status.Completed"), FormatMs(Result.StartSilence), FormatMs(Result.EndSilence))
-                    : LocalizationService.GetString("Loc.Controls.Silence.Status.Waiting");
+                    : string.Empty;
         RefreshTexts();
     }
 

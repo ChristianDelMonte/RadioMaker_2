@@ -2,7 +2,6 @@ using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RadioMaker.Core.Abstractions;
-using RadioMaker.Core.Configuration;
 using RadioMaker.Core.Logging;
 
 namespace RadioMaker.UI.ViewModels;
@@ -12,7 +11,6 @@ public sealed partial class RoutingPanelViewModel : ViewModelBase
     public MainWindowViewModel? Main { get; }
 
     public ObservableCollection<IAudioBus> AvailableBuses { get; } = new();
-    public ObservableCollection<ModulePolicyItemViewModel> ModulePolicies { get; } = new();
 
     [ObservableProperty] private IAudioBus? _selectedAirBus;
 
@@ -24,7 +22,6 @@ public sealed partial class RoutingPanelViewModel : ViewModelBase
         Main = main;
 
         RefreshBuses();
-        LoadPolicies();
         SyncSelectedAirBus();
 
         if (main is not null)
@@ -43,45 +40,6 @@ public sealed partial class RoutingPanelViewModel : ViewModelBase
 
         foreach (var b in Main.Buses)
             AvailableBuses.Add(b);
-    }
-
-    private void LoadPolicies()
-    {
-        ModulePolicies.Clear();
-        if (Main?.Coordinator is not { } coordinator) return;
-
-        foreach (ModuleRole role in Enum.GetValues(typeof(ModuleRole)))
-        {
-            // Manual no participa del sistema de exclusividad.
-            if (role == ModuleRole.Manual) continue;
-
-            var policy = coordinator.Config.GetPolicy(role);
-            ModulePolicies.Add(new ModulePolicyItemViewModel(role, policy, SavePolicies));
-        }
-    }
-
-    private void SavePolicies()
-    {
-        try
-        {
-            if (Main?.Coordinator is { } c)
-                BusExclusivityConfigStore.Save(c.Config);
-        }
-        catch (Exception ex)
-        {
-            AppLogger.Error("SETTINGS EXCLUSIVITY", "No se pudieron guardar las políticas de exclusividad", ex);
-        }
-    }
-
-    [CommunityToolkit.Mvvm.Input.RelayCommand]
-    private void ResetPoliciesToDefaults()
-    {
-        if (Main?.Coordinator is not { } coordinator) return;
-
-        coordinator.ResetPoliciesToDefaults();
-        LoadPolicies();
-        SavePolicies();
-        AppLogger.Info("SETTINGS EXCLUSIVITY", "Políticas de exclusividad restablecidas a sus valores predeterminados.");
     }
 
     private void SyncSelectedAirBus()

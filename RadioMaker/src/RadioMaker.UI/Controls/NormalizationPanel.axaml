@@ -162,6 +162,7 @@
             <!-- Estado -->
             <StackPanel Grid.Row="5" Spacing="3">
                 <TextBlock Text="{Binding StatusMessage}"
+                           IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                            FontSize="10"
                            Foreground="{DynamicResource FgSecondary}"
                            TextWrapping="Wrap" />

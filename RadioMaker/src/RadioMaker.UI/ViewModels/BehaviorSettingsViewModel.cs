@@ -25,12 +25,6 @@ public sealed class BehaviorSettingsViewModel : ViewModelBase
     /// -------------
     public Action<PlaylistInterruptionBehavior>? BehaviorChanged { get; set; }
 
-    /// -------------
-    /// Panel de configuracion de emergencia. Se inyecta desde
-    /// MainWindowViewModel. Puede ser null en tests.
-    /// -------------
-    public EmergencyPanelViewModel? EmergencyPanel { get; set; }
-
     public BehaviorSettingsViewModel()
     {
         _settings = InterruptionBehaviorSettingsStore.Load();

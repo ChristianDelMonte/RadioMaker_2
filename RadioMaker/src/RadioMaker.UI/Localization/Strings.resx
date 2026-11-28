@@ -63,9 +63,11 @@
   <data name="Loc.Settings.Section.behavior" xml:space="preserve"><value>Comportamiento</value></data>
   <data name="Loc.Settings.Section.buses" xml:space="preserve"><value>Buses de salida</value></data>
   <data name="Loc.Settings.Section.routing" xml:space="preserve"><value>Ruteo por módulo</value></data>
+  <data name="Loc.Settings.Section.exclusivity" xml:space="preserve"><value>Exclusividad</value></data>
   <data name="Loc.Settings.Section.climate" xml:space="preserve"><value>Datos climáticos</value></data>
   <data name="Loc.Settings.Section.vumeter" xml:space="preserve"><value>VU Meter</value></data>
   <data name="Loc.Settings.Section.plugins" xml:space="preserve"><value>Plugins de formato</value></data>
+  <data name="Loc.Settings.Section.emergency" xml:space="preserve"><value>En Emergencia</value></data>
   <data name="Loc.Settings.Section.appearance" xml:space="preserve"><value>Apariencia</value></data>
   <data name="Loc.Main.Tab.Spectrum" xml:space="preserve"><value>Espectro</value></data>
   <data name="Loc.Main.Tab.Equalizer" xml:space="preserve"><value>Ecualizador</value></data>
@@ -86,7 +88,6 @@
   <data name="Loc.Settings.Body.PlaylistInterruptTitle" xml:space="preserve"><value>Cuando un programado interrumpe una playlist</value></data>
   <data name="Loc.Settings.Body.PlaylistInterruptDescription" xml:space="preserve"><value>Si un programado (o cualquier modulo con mayor prioridad) interrumpe una playlist que esta sonando, el motor puede reanudarla cuando el programado termine. Esta opcion decide desde que punto reanuda.</value></data>
   <data name="Loc.Settings.Body.CurrentBehavior" xml:space="preserve"><value>Comportamiento actual: {0}</value></data>
-  <data name="Loc.Settings.Body.EmergencyHeader" xml:space="preserve"><value>En Emergencia (Anti-Silencio)</value></data>
   <data name="Loc.Settings.Body.BusesTitle" xml:space="preserve"><value>Buses de salida</value></data>
   <data name="Loc.Settings.Body.BusesDescription" xml:space="preserve"><value>Cada bus es una salida fisica independiente con su propio dispositivo, nombre y volumen master.</value></data>
   <data name="Loc.Settings.Body.AddBusTooltip" xml:space="preserve"><value>Agregar un nuevo bus de salida</value></data>
@@ -113,7 +114,6 @@
   <data name="Loc.Settings.Body.Scheduled" xml:space="preserve"><value>Programados</value></data>
   <data name="Loc.Settings.Body.FileBrowser" xml:space="preserve"><value>Explorador</value></data>
   <data name="Loc.Settings.Body.RoutingNote" xml:space="preserve"><value>Nota: los cambios de bus se aplican a los proximos audios. Lo que ya esta sonando termina en el bus anterior sin interrupcion.</value></data>
-  <data name="Loc.Settings.Body.ExclusivityPolicies" xml:space="preserve"><value>Politicas de exclusividad</value></data>
   <data name="Loc.Settings.Body.ExclusivityDescription" xml:space="preserve"><value>Cuando dos modulos quieren sonar en el mismo bus, el coordinador decide quien gana. Regla: mayor prioridad gana; a igual prioridad, el ultimo en disparar gana. Un modulo &apos;No exclusivo&apos; puede sonar en paralelo sin pelear por el bus.</value></data>
   <data name="Loc.Settings.Body.ResetPolicies" xml:space="preserve"><value>Restablecer valores por defecto</value></data>
   <data name="Loc.Settings.Body.ResetPoliciesTooltip" xml:space="preserve"><value>Restaura todas las politicas a los valores originales: Scheduler con AutoResume, Cart/Playlist con Stop.</value></data>
@@ -672,8 +672,6 @@ caratula</value></data>
   <data name="Loc.Controls.Spectrum.Status.Active" xml:space="preserve"><value>Análisis activo.</value></data>
   <data name="Loc.Controls.Spectrum.Status.Paused" xml:space="preserve"><value>Análisis pausado.</value></data>
   <data name="Loc.Controls.Silence.None" xml:space="preserve"><value>Ninguno</value></data>
-  <data name="Loc.Controls.Silence.Status.Waiting" xml:space="preserve"><value>Esperando a que se cargue un archivo...</value></data>
-  <data name="Loc.Controls.Silence.Status.NoChannel" xml:space="preserve"><value>Sin canal cargado.</value></data>
   <data name="Loc.Controls.Silence.Status.Analyzing" xml:space="preserve"><value>Analizando silencios...</value></data>
   <data name="Loc.Controls.Silence.Status.Completed" xml:space="preserve"><value>Análisis completado. Silencio inicial: {0}, final: {1}.</value></data>
   <data name="Loc.Controls.Silence.Status.Failed" xml:space="preserve"><value>No se pudo analizar el archivo.</value></data>
@@ -1304,8 +1302,6 @@ caratula</value></data>
   <data name="Loc.FavoriteFolder.Status.NoAudioFiles" xml:space="preserve"><value>Sin archivos de audio</value></data>
   <data name="Loc.FileBrowser.Status.Starting" xml:space="preserve"><value>Navega a una carpeta para ver sus archivos.</value></data>
   <data name="Loc.FileBrowser.Status.NoFiles" xml:space="preserve"><value>Sin archivos</value></data>
-  <data name="Loc.Normalization.Status.WaitingForFile" xml:space="preserve"><value>Esperando a que se cargue un archivo...</value></data>
-  <data name="Loc.Normalization.Status.NoChannel" xml:space="preserve"><value>Sin canal cargado.</value></data>
   <data name="Loc.Normalization.Status.Analyzing" xml:space="preserve"><value>Analizando niveles...</value></data>
   <data name="Loc.Normalization.Status.AnalysisComplete" xml:space="preserve"><value>Análisis completado. Peak: {0:F2} dB, RMS: {1:F2} dB.</value></data>
   <data name="Loc.Normalization.Status.AnalysisFailed" xml:space="preserve"><value>No se pudo analizar el archivo.</value></data>

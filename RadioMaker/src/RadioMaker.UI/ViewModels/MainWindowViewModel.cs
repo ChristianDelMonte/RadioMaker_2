@@ -847,7 +847,6 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(EmergencyStatusText));
         });
 
-        Behavior.EmergencyPanel = Emergency;
 
         Ducking = new DuckingPanelViewModel(DuckingSettingsStore.Load(), engine);
         Ducking.PropertyChanged += (_, e) =>

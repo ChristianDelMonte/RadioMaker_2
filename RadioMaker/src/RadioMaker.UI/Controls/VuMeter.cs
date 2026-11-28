@@ -97,6 +97,7 @@ public sealed class VuMeter : Control
 
     static VuMeter()
     {
+        AffectsMeasure<VuMeter>(OrientationProperty, ShowDbScaleProperty, BarWidthProperty);
         AffectsRender<VuMeter>(
             StyleProperty, OrientationProperty, ShowDbScaleProperty, SegmentCountProperty,
             ShowPeakHoldProperty, ShowRmsProperty, ShowClipIndicatorProperty, BarWidthProperty,

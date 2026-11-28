@@ -298,7 +298,7 @@
                         <MenuItem Header="{DynamicResource Loc.Menu.Addons}">
                             <MenuItem Header="{DynamicResource Loc.Menu.Addons.Wave}" Click="OnMenuLaunchRMWave" />
                             <MenuItem Header="{DynamicResource Loc.Menu.Addons.Voice}" Click="OnMenuLaunchRMVoice" />
-                            <MenuItem Header="{DynamicResource Loc.Menu.Addons.Cast}" Click="OnMenuLaunchRMCast" />
+                            <MenuItem Header="{DynamicResource Loc.Menu.Addons.Cast}" Click="OnMenuLaunchRMCast" IsEnabled="False" />
                         </MenuItem>
 
                         <MenuItem Header="{DynamicResource Loc.Menu.Help}">

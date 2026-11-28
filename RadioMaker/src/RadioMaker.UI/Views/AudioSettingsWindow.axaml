@@ -131,7 +131,9 @@
 
                         <!-- En Emergencia -->
                         <DataTemplate DataType="vm:EmergencyPanelViewModel">
-                            <controls:EmergencyPanel />
+                            <ScrollViewer>
+                                <controls:EmergencyPanel />
+                            </ScrollViewer>
                         </DataTemplate>
 
                         <!-- Comportamiento -->
@@ -206,15 +208,6 @@
                                                Foreground="{DynamicResource FgMuted}"
                                                HorizontalAlignment="Right"
                                                Margin="0,4,0,0" />
-
-                                    <!-- ===== EMERGENCIA ===== -->
-                                    <Expander Header="{DynamicResource Loc.Settings.Body.EmergencyHeader}"
-                                              IsExpanded="False"
-                                              HorizontalAlignment="Stretch"
-                                              FontSize="12"
-                                              Margin="0,12,0,0">
-                                        <ContentControl Content="{Binding EmergencyPanel}" Margin="0,8,0,0" />
-                                    </Expander>
 
                                 </StackPanel>
                             </ScrollViewer>
@@ -562,223 +555,227 @@
                                                    Text="{DynamicResource Loc.Settings.Body.RoutingNote}" />
                                     </Border>
 
-                                    <Expander Header="{DynamicResource Loc.Settings.Body.ExclusivityPolicies}"
-                                              IsExpanded="False"
-                                              HorizontalAlignment="Stretch"
-                                              FontSize="12"
-                                              Margin="0,12,0,0">
-                                        <StackPanel Spacing="8" Margin="0,8,0,0">
+
+                                </StackPanel>
+                            </ScrollViewer>
+                        </DataTemplate>
+
+                        <!-- Exclusividad -->
+                        <DataTemplate DataType="vm:ExclusivityPanelViewModel">
+                            <ScrollViewer>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{DynamicResource Loc.Settings.Section.exclusivity}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource FgPrimary}" />
+                                    <TextBlock FontSize="10"
+                                               Foreground="{DynamicResource FgSecondary}"
+                                               TextWrapping="Wrap"
+                                               Text="{DynamicResource Loc.Settings.Body.ExclusivityDescription}" />
+
+                                    <Button Content="{DynamicResource Loc.Settings.Body.ResetPolicies}"
+                                            Command="{Binding ResetPoliciesToDefaultsCommand}"
+                                            HorizontalAlignment="Left"
+                                            Padding="10,5"
+                                            FontSize="11"
+                                            ToolTip.Tip="{DynamicResource Loc.Settings.Body.ResetPoliciesTooltip}" />
+
+
+                                    <Border Background="{DynamicResource BgTertiary}"
+                                            BorderBrush="{DynamicResource BorderPrimary}"
+                                            BorderThickness="1"
+                                            CornerRadius="6"
+                                            Padding="10">
+                                        <Grid ColumnDefinitions="*,Auto,110,180"
+                                              RowDefinitions="Auto,*">
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       Text="{DynamicResource Loc.Settings.Body.Module}"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource FgSecondary}"
+                                                       Margin="0,0,0,6" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                       Text="{DynamicResource Loc.Settings.Body.Exclusive}"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource FgSecondary}"
+                                                       HorizontalAlignment="Center"
+                                                       Margin="8,0,8,6" />
+                                            <TextBlock Grid.Row="0" Grid.Column="2"
+                                                       Text="{DynamicResource Loc.Settings.Body.Priority}"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource FgSecondary}"
+                                                       Margin="8,0,8,6" />
+                                            <TextBlock Grid.Row="0" Grid.Column="3"
+                                                       Text="{DynamicResource Loc.Settings.Body.OnPreempt}"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource FgSecondary}"
+                                                       Margin="8,0,0,6"
+                                                       ToolTip.Tip="{DynamicResource Loc.Settings.Body.OnPreemptTooltip}" />
+
+                                            <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"
+                                                          ItemsSource="{Binding ModulePolicies}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate x:DataType="vm:ModulePolicyItemViewModel">
+                                                        <Grid ColumnDefinitions="*,Auto,110,180"
+                                                              Margin="0,3">
+                                                            <TextBlock Grid.Column="0"
+                                                                       Text="{Binding RoleLabel}"
+                                                                       FontSize="11"
+                                                                       Foreground="{DynamicResource FgPrimary}"
+                                                                       VerticalAlignment="Center" />
+                                                            <CheckBox Grid.Column="1"
+                                                                      IsChecked="{Binding IsExclusive}"
+                                                                      HorizontalAlignment="Center"
+                                                                      Margin="8,0,8,0"
+                                                                      ToolTip.Tip="{DynamicResource Loc.Settings.Body.ExclusiveTooltip}" />
+                                                            <ComboBox Grid.Column="2"
+                                                                      ItemsSource="{Binding AvailablePriorities}"
+                                                                      SelectedItem="{Binding Priority}"
+                                                                      IsEnabled="{Binding IsExclusive}"
+                                                                      FontSize="11"
+                                                                      HorizontalAlignment="Stretch"
+                                                                      Margin="8,0,8,0">
+                                                                <ComboBox.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock Text="{Binding Converter={x:Static vm:ModulePriorityLabelConverter.Instance}}" />
+                                                                    </DataTemplate>
+                                                                </ComboBox.ItemTemplate>
+                                                            </ComboBox>
+                                                            <ComboBox Grid.Column="3"
+                                                                      ItemsSource="{Binding AvailableBehaviors}"
+                                                                      SelectedItem="{Binding Behavior}"
+                                                                      IsEnabled="{Binding IsExclusive}"
+                                                                      FontSize="11"
+                                                                      HorizontalAlignment="Stretch"
+                                                                      Margin="8,0,0,0"
+                                                                      ToolTip.Tip="{DynamicResource Loc.Settings.Body.PreemptActionsTooltip}">
+                                                                <ComboBox.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock Text="{Binding Converter={x:Static vm:ModuleInterruptionBehaviorLabelConverter.Instance}}" />
+                                                                    </DataTemplate>
+                                                                </ComboBox.ItemTemplate>
+                                                            </ComboBox>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- ===== Cuadro explicativo ===== -->
+                                    <Border Background="{DynamicResource BgTertiary}"
+                                            BorderBrush="{DynamicResource BorderPrimary}"
+                                            BorderThickness="1"
+                                            CornerRadius="6"
+                                            Padding="12,10"
+                                            Margin="0,4,0,0">
+                                        <StackPanel Spacing="8">
+
+                                            <TextBlock Text="{DynamicResource Loc.Settings.Body.PolicyHowTitle}"
+                                                       FontSize="12"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource FgPrimary}" />
+
                                             <TextBlock FontSize="10"
                                                        Foreground="{DynamicResource FgSecondary}"
                                                        TextWrapping="Wrap"
-                                                       Text="{DynamicResource Loc.Settings.Body.ExclusivityDescription}" />
+                                                       LineHeight="16"
+                                                       Text="{DynamicResource Loc.Settings.Body.PolicyHowDescription}" />
 
-                                            <Button Content="{DynamicResource Loc.Settings.Body.ResetPolicies}"
-                                                    Command="{Binding ResetPoliciesToDefaultsCommand}"
-                                                    HorizontalAlignment="Left"
-                                                    Padding="10,5"
-                                                    FontSize="11"
-                                                    ToolTip.Tip="{DynamicResource Loc.Settings.Body.ResetPoliciesTooltip}" />
+                                            <TextBlock Text="{DynamicResource Loc.Settings.Body.PolicyColumns}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource FgPrimary}"
+                                                       Margin="0,4,0,0" />
 
+                                            <StackPanel Spacing="4">
 
-                                            <Border Background="{DynamicResource BgTertiary}"
-                                                    BorderBrush="{DynamicResource BorderPrimary}"
+                                                <TextBlock FontSize="10"
+                                                           Foreground="{DynamicResource FgSecondary}"
+                                                           TextWrapping="Wrap">
+                                                    <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.ExclusiveTitle}" />
+                                                    <Run Text="{DynamicResource Loc.Settings.Run.ExclusiveDescription}" />
+                                                </TextBlock>
+
+                                                <TextBlock FontSize="10"
+                                                           Foreground="{DynamicResource FgSecondary}"
+                                                           TextWrapping="Wrap">
+                                                    <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.PriorityTitle}" />
+                                                    <Run Text="{DynamicResource Loc.Settings.Run.PriorityDescription}" />
+                                                </TextBlock>
+
+                                                <TextBlock FontSize="10"
+                                                           Foreground="{DynamicResource FgSecondary}"
+                                                           TextWrapping="Wrap">
+                                                    <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.PreemptTitle}" />
+                                                    <Run Text="{DynamicResource Loc.Settings.Run.PreemptDescription}" />
+                                                </TextBlock>
+
+                                            </StackPanel>
+
+                                            <TextBlock Text="{DynamicResource Loc.Settings.Body.PolicyOperator}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource FgPrimary}"
+                                                       Margin="0,6,0,0" />
+
+                                            <StackPanel Spacing="4">
+
+                                                <TextBlock FontSize="10"
+                                                           Foreground="{DynamicResource FgSecondary}"
+                                                           TextWrapping="Wrap">
+                                                    <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.NormalAirTitle}" />
+                                                    <Run Text="{DynamicResource Loc.Settings.Run.NormalAirDescription}" />
+                                                </TextBlock>
+
+                                                <TextBlock FontSize="10"
+                                                           Foreground="{DynamicResource FgSecondary}"
+                                                           TextWrapping="Wrap">
+                                                    <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.AggressiveCartTitle}" />
+                                                    <Run Text="{DynamicResource Loc.Settings.Run.AggressiveCartDescription}" />
+                                                </TextBlock>
+
+                                                <TextBlock FontSize="10"
+                                                           Foreground="{DynamicResource FgSecondary}"
+                                                           TextWrapping="Wrap">
+                                                    <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.PreviewTitle}" />
+                                                    <Run Text="{DynamicResource Loc.Settings.Run.PreviewDescription}" />
+                                                </TextBlock>
+
+                                                <TextBlock FontSize="10"
+                                                           Foreground="{DynamicResource FgSecondary}"
+                                                           TextWrapping="Wrap">
+                                                    <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.MultiplePlaylistsTitle}" />
+                                                    <Run Text="{DynamicResource Loc.Settings.Run.MultiplePlaylistsDescription}" />
+                                                </TextBlock>
+
+                                            </StackPanel>
+
+                                            <Border Background="{DynamicResource BgQuaternary}"
+                                                    BorderBrush="{DynamicResource AccentSoft}"
                                                     BorderThickness="1"
-                                                    CornerRadius="6"
-                                                    Padding="10">
-                                                <Grid ColumnDefinitions="*,Auto,110,180"
-                                                      RowDefinitions="Auto,*">
-
-                                                    <TextBlock Grid.Row="0" Grid.Column="0"
-                                                               Text="{DynamicResource Loc.Settings.Body.Module}"
-                                                               FontSize="10"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="{DynamicResource FgSecondary}"
-                                                               Margin="0,0,0,6" />
-                                                    <TextBlock Grid.Row="0" Grid.Column="1"
-                                                               Text="{DynamicResource Loc.Settings.Body.Exclusive}"
-                                                               FontSize="10"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="{DynamicResource FgSecondary}"
-                                                               HorizontalAlignment="Center"
-                                                               Margin="8,0,8,6" />
-                                                    <TextBlock Grid.Row="0" Grid.Column="2"
-                                                               Text="{DynamicResource Loc.Settings.Body.Priority}"
-                                                               FontSize="10"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="{DynamicResource FgSecondary}"
-                                                               Margin="8,0,8,6" />
-                                                    <TextBlock Grid.Row="0" Grid.Column="3"
-                                                               Text="{DynamicResource Loc.Settings.Body.OnPreempt}"
-                                                               FontSize="10"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="{DynamicResource FgSecondary}"
-                                                               Margin="8,0,0,6"
-                                                               ToolTip.Tip="{DynamicResource Loc.Settings.Body.OnPreemptTooltip}" />
-
-                                                    <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"
-                                                                  ItemsSource="{Binding ModulePolicies}">
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate x:DataType="vm:ModulePolicyItemViewModel">
-                                                                <Grid ColumnDefinitions="*,Auto,110,180"
-                                                                      Margin="0,3">
-                                                                    <TextBlock Grid.Column="0"
-                                                                               Text="{Binding RoleLabel}"
-                                                                               FontSize="11"
-                                                                               Foreground="{DynamicResource FgPrimary}"
-                                                                               VerticalAlignment="Center" />
-                                                                    <CheckBox Grid.Column="1"
-                                                                              IsChecked="{Binding IsExclusive}"
-                                                                              HorizontalAlignment="Center"
-                                                                              Margin="8,0,8,0"
-                                                                              ToolTip.Tip="{DynamicResource Loc.Settings.Body.ExclusiveTooltip}" />
-                                                                    <ComboBox Grid.Column="2"
-                                                                              ItemsSource="{Binding AvailablePriorities}"
-                                                                              SelectedItem="{Binding Priority}"
-                                                                              IsEnabled="{Binding IsExclusive}"
-                                                                              FontSize="11"
-                                                                              HorizontalAlignment="Stretch"
-                                                                              Margin="8,0,8,0">
-                                                                        <ComboBox.ItemTemplate>
-                                                                            <DataTemplate>
-                                                                                <TextBlock Text="{Binding Converter={x:Static vm:ModulePriorityLabelConverter.Instance}}" />
-                                                                            </DataTemplate>
-                                                                        </ComboBox.ItemTemplate>
-                                                                    </ComboBox>
-                                                                    <ComboBox Grid.Column="3"
-                                                                              ItemsSource="{Binding AvailableBehaviors}"
-                                                                              SelectedItem="{Binding Behavior}"
-                                                                              IsEnabled="{Binding IsExclusive}"
-                                                                              FontSize="11"
-                                                                              HorizontalAlignment="Stretch"
-                                                                              Margin="8,0,0,0"
-                                                                              ToolTip.Tip="{DynamicResource Loc.Settings.Body.PreemptActionsTooltip}">
-                                                                        <ComboBox.ItemTemplate>
-                                                                            <DataTemplate>
-                                                                                <TextBlock Text="{Binding Converter={x:Static vm:ModuleInterruptionBehaviorLabelConverter.Instance}}" />
-                                                                            </DataTemplate>
-                                                                        </ComboBox.ItemTemplate>
-                                                                    </ComboBox>
-                                                                </Grid>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                </Grid>
-                                            </Border>
-
-                                            <!-- ===== Cuadro explicativo ===== -->
-                                            <Border Background="{DynamicResource BgTertiary}"
-                                                    BorderBrush="{DynamicResource BorderPrimary}"
-                                                    BorderThickness="1"
-                                                    CornerRadius="6"
-                                                    Padding="12,10"
+                                                    CornerRadius="4"
+                                                    Padding="8,5"
                                                     Margin="0,4,0,0">
-                                                <StackPanel Spacing="8">
-
-                                                    <TextBlock Text="{DynamicResource Loc.Settings.Body.PolicyHowTitle}"
-                                                               FontSize="12"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="{DynamicResource FgPrimary}" />
-
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <materialIcons:MaterialIcon Kind="InformationOutline"
+                                                                                Width="13" Height="13"
+                                                                                Foreground="{DynamicResource AccentText}"
+                                                                                VerticalAlignment="Top"
+                                                                                Margin="0,1,0,0" />
                                                     <TextBlock FontSize="10"
                                                                Foreground="{DynamicResource FgSecondary}"
                                                                TextWrapping="Wrap"
-                                                               LineHeight="16"
-                                                               Text="{DynamicResource Loc.Settings.Body.PolicyHowDescription}" />
-
-                                                    <TextBlock Text="{DynamicResource Loc.Settings.Body.PolicyColumns}"
-                                                               FontSize="11"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="{DynamicResource FgPrimary}"
-                                                               Margin="0,4,0,0" />
-
-                                                    <StackPanel Spacing="4">
-
-                                                        <TextBlock FontSize="10"
-                                                                   Foreground="{DynamicResource FgSecondary}"
-                                                                   TextWrapping="Wrap">
-                                                            <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.ExclusiveTitle}" />
-                                                            <Run Text="{DynamicResource Loc.Settings.Run.ExclusiveDescription}" />
-                                                        </TextBlock>
-
-                                                        <TextBlock FontSize="10"
-                                                                   Foreground="{DynamicResource FgSecondary}"
-                                                                   TextWrapping="Wrap">
-                                                            <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.PriorityTitle}" />
-                                                            <Run Text="{DynamicResource Loc.Settings.Run.PriorityDescription}" />
-                                                        </TextBlock>
-
-                                                        <TextBlock FontSize="10"
-                                                                   Foreground="{DynamicResource FgSecondary}"
-                                                                   TextWrapping="Wrap">
-                                                            <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.PreemptTitle}" />
-                                                            <Run Text="{DynamicResource Loc.Settings.Run.PreemptDescription}" />
-                                                        </TextBlock>
-
-                                                    </StackPanel>
-
-                                                    <TextBlock Text="{DynamicResource Loc.Settings.Body.PolicyOperator}"
-                                                               FontSize="11"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="{DynamicResource FgPrimary}"
-                                                               Margin="0,6,0,0" />
-
-                                                    <StackPanel Spacing="4">
-
-                                                        <TextBlock FontSize="10"
-                                                                   Foreground="{DynamicResource FgSecondary}"
-                                                                   TextWrapping="Wrap">
-                                                            <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.NormalAirTitle}" />
-                                                            <Run Text="{DynamicResource Loc.Settings.Run.NormalAirDescription}" />
-                                                        </TextBlock>
-
-                                                        <TextBlock FontSize="10"
-                                                                   Foreground="{DynamicResource FgSecondary}"
-                                                                   TextWrapping="Wrap">
-                                                            <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.AggressiveCartTitle}" />
-                                                            <Run Text="{DynamicResource Loc.Settings.Run.AggressiveCartDescription}" />
-                                                        </TextBlock>
-
-                                                        <TextBlock FontSize="10"
-                                                                   Foreground="{DynamicResource FgSecondary}"
-                                                                   TextWrapping="Wrap">
-                                                            <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.PreviewTitle}" />
-                                                            <Run Text="{DynamicResource Loc.Settings.Run.PreviewDescription}" />
-                                                        </TextBlock>
-
-                                                        <TextBlock FontSize="10"
-                                                                   Foreground="{DynamicResource FgSecondary}"
-                                                                   TextWrapping="Wrap">
-                                                            <Run FontWeight="Bold" Foreground="{DynamicResource FgPrimary}" Text="{DynamicResource Loc.Settings.Run.MultiplePlaylistsTitle}" />
-                                                            <Run Text="{DynamicResource Loc.Settings.Run.MultiplePlaylistsDescription}" />
-                                                        </TextBlock>
-
-                                                    </StackPanel>
-
-                                                    <Border Background="{DynamicResource BgQuaternary}"
-                                                            BorderBrush="{DynamicResource AccentSoft}"
-                                                            BorderThickness="1"
-                                                            CornerRadius="4"
-                                                            Padding="8,5"
-                                                            Margin="0,4,0,0">
-                                                        <StackPanel Orientation="Horizontal" Spacing="6">
-                                                            <materialIcons:MaterialIcon Kind="InformationOutline"
-                                                                                        Width="13" Height="13"
-                                                                                        Foreground="{DynamicResource AccentText}"
-                                                                                        VerticalAlignment="Top"
-                                                                                        Margin="0,1,0,0" />
-                                                            <TextBlock FontSize="10"
-                                                                       Foreground="{DynamicResource FgSecondary}"
-                                                                       TextWrapping="Wrap"
-                                                                       Text="{DynamicResource Loc.Settings.Body.CrossfadeNote}" />
-                                                        </StackPanel>
-                                                    </Border>
-
+                                                               Text="{DynamicResource Loc.Settings.Body.CrossfadeNote}" />
                                                 </StackPanel>
                                             </Border>
-                                        </StackPanel>
-                                    </Expander>
 
+                                        </StackPanel>
+                                    </Border>
                                 </StackPanel>
                             </ScrollViewer>
                         </DataTemplate>

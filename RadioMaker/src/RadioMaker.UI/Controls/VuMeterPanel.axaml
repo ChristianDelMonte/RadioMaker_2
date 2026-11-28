@@ -16,7 +16,11 @@
                    TextWrapping="Wrap"
                    Margin="0,0,0,12" />
 
-        <Grid Grid.Row="1" ColumnDefinitions="380,*">
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" MaxWidth="380" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
             <!-- Panel de configuracion -->
             <Border Grid.Column="0"
@@ -211,28 +215,29 @@
                             Background="#0F0F10"
                             CornerRadius="6"
                             Padding="16">
-                        <controls:VuMeter HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Style="{Binding Settings.Style}"
-                                          Orientation="{Binding Settings.Orientation}"
-                                          ShowDbScale="{Binding Settings.ShowDbScale}"
-                                          SegmentCount="{Binding Settings.SegmentCount}"
-                                          ShowPeakHold="{Binding Settings.ShowPeakHold}"
-                                          ShowRms="{Binding Settings.ShowRms}"
-                                          ShowClipIndicator="{Binding Settings.ShowClipIndicator}"
-                                          BarWidth="{Binding Settings.BarWidth}"
-                                          GreenZoneColor="{Binding Settings.GreenColor}"
-                                          AmberZoneColor="{Binding Settings.AmberColor}"
-                                          RedZoneColor="{Binding Settings.RedColor}"
-                                          BackgroundColor="{Binding Settings.BgColor}"
-                                          ScaleTextColor="{Binding Settings.ScaleColor}"
-                                          AccentColor="{Binding Settings.AccentColor}"
-                                          LeftLevel="{Binding PreviewLeftLevel}"
-                                          RightLevel="{Binding PreviewRightLevel}"
-                                          LeftPeak="{Binding PreviewLeftPeak}"
-                                          RightPeak="{Binding PreviewRightPeak}"
-                                          LeftRms="{Binding PreviewLeftRms}"
-                                          RightRms="{Binding PreviewRightRms}"
-                                          ShowClip="{Binding PreviewClip}" />
+                        <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+                            <controls:VuMeter Style="{Binding Settings.Style}"
+                                              Orientation="{Binding Settings.Orientation}"
+                                              ShowDbScale="{Binding Settings.ShowDbScale}"
+                                              SegmentCount="{Binding Settings.SegmentCount}"
+                                              ShowPeakHold="{Binding Settings.ShowPeakHold}"
+                                              ShowRms="{Binding Settings.ShowRms}"
+                                              ShowClipIndicator="{Binding Settings.ShowClipIndicator}"
+                                              BarWidth="{Binding Settings.BarWidth}"
+                                              GreenZoneColor="{Binding Settings.GreenColor}"
+                                              AmberZoneColor="{Binding Settings.AmberColor}"
+                                              RedZoneColor="{Binding Settings.RedColor}"
+                                              BackgroundColor="{Binding Settings.BgColor}"
+                                              ScaleTextColor="{Binding Settings.ScaleColor}"
+                                              AccentColor="{Binding Settings.AccentColor}"
+                                              LeftLevel="{Binding PreviewLeftLevel}"
+                                              RightLevel="{Binding PreviewRightLevel}"
+                                              LeftPeak="{Binding PreviewLeftPeak}"
+                                              RightPeak="{Binding PreviewRightPeak}"
+                                              LeftRms="{Binding PreviewLeftRms}"
+                                              RightRms="{Binding PreviewRightRms}"
+                                              ShowClip="{Binding PreviewClip}" />
+                        </Viewbox>
                     </Border>
 
                     <CheckBox Grid.Row="2"
